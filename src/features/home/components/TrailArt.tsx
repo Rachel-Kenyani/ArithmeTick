@@ -122,16 +122,16 @@ export function TrailProp({ kind, size, style }: Readonly<ArtProps & { kind: Tra
 export function FinishFlag({ size, style }: Readonly<ArtProps>) {
   return (
     <Decor style={style}>
-      <Svg viewBox="0 0 64 80" width={size} height={(size * 80) / 64}>
+      <Svg viewBox="0 -8 64 88" width={size} height={(size * 88) / 64}>
         <G stroke={INK} strokeWidth={2.6} strokeLinejoin="round" strokeLinecap="round">
-          <Rect x={17} y={6} width={6} height={64} rx={3} fill="#a8713a" />
-          <Path d="M23 9h30l-8 11 8 11H23z" fill="#7e4fcb" />
+          <Rect x={17} y={-2} width={6} height={72} rx={3} fill="#a8713a" />
+          <Path d="M23 1h30l-8 11 8 11H23z" fill="#7e4fcb" />
           <Path
-            d="M36 13.4l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"
+            d="M36 5.4l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z"
             fill="#ffd54a"
             strokeWidth={1.6}
           />
-          <Circle cx={20} cy={6} r={4} fill="#ffd54a" />
+          <Circle cx={20} cy={-2} r={4} fill="#ffd54a" />
           <Path d="M6 76l5-9 9-4 10 1 8 5 4 7z" fill="#8a8a8a" />
           <Path d="M13 67l7-3 6 1-6 4z" fill="#b5b5b5" stroke="none" />
         </G>

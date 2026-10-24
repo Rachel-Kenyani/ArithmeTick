@@ -43,7 +43,8 @@ coverage/
 
 # editors / tools (shared .claude/settings.json is kept; personal overrides are not)
 .idea/
-.claude/settings.local.json
+.claude/
+
 
 # Generated native projects (Continuous Native Generation: npx expo prebuild)
 /ios

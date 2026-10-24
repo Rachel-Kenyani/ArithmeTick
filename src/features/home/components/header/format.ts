@@ -1,0 +1,18 @@
+/** Screen-time text for the home header: "m:ss" on screen and a spoken sentence for screen readers. */
+
+export function formatLeft(seconds: number) {
+  const s = Math.max(0, Math.floor(seconds));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function plural(count: number, unit: string) {
+  return `${count} ${unit}${count === 1 ? "" : "s"}`;
+}
+
+export function spokenLeft(seconds: number) {
+  const s = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  const parts = [m ? plural(m, "minute") : "", r ? plural(r, "second") : ""].filter(Boolean);
+  return `Screen time: ${parts.length ? parts.join(" ") : "none"} left today`;
+}

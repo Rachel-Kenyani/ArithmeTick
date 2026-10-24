@@ -16,6 +16,14 @@ export const HomeIcon = make(
   </>,
 );
 
+export const MapIcon = make(
+  "MapIcon",
+  <>
+    <Path d="m3.5 5.4 5.5-1.9 6 2 5.5-2v15.1L15 20.5l-6-2-6 2z" />
+    <Path d="M9 3.5v15M15 5.5v15" />
+  </>,
+);
+
 export const SpeakerIcon = make(
   "SpeakerIcon",
   <>
@@ -29,6 +37,14 @@ export const SpeakerOffIcon = make(
   <>
     <Path d="M4.5 9.2h3.1l4.4-3.8a.6.6 0 0 1 1 .5v12.2a.6.6 0 0 1-1 .5l-4.4-3.8H4.5a1 1 0 0 1-1-1v-3.6a1 1 0 0 1 1-1z" />
     <Path d="M16.5 9.5l5 5M21.5 9.5l-5 5" />
+  </>,
+);
+
+export const SettingsIcon = make(
+  "SettingsIcon",
+  <>
+    <Path d="M12 8.7a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6z" />
+    <Path d="M19.1 13.8a7.7 7.7 0 0 0 .1-1.8 7.7 7.7 0 0 0-.1-1.8l2-1.5-2-3.4-2.4 1a7.1 7.1 0 0 0-3.1-1.8L13.3 2h-4l-.3 2.5a7.1 7.1 0 0 0-3.1 1.8l-2.4-1-2 3.4 2 1.5a7.7 7.7 0 0 0-.1 1.8 7.7 7.7 0 0 0 .1 1.8l-2 1.5 2 3.4 2.4-1a7.1 7.1 0 0 0 3.1 1.8l.3 2.5h4l.3-2.5a7.1 7.1 0 0 0 3.1-1.8l2.4 1 2-3.4z" />
   </>,
 );
 

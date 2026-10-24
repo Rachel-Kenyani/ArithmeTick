@@ -16,6 +16,7 @@ export const ROUTES = {
   /** "Welcome Back! Who is playing today?" */
   profiles: "/profiles",
   home: "/home",
+  settings: "/settings",
   badges: "/badges",
   leaderboard: "/leaderboard",
   play: (level: number) => `/play/${level}` as const,

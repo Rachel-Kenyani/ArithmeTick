@@ -2,7 +2,7 @@
  * /home — the child's level map (docs/APP-SHELL.md §5 "Home").
  *
  * A fixed, full-height app shell over the jungle backdrop:
- *   top bar (explorer switcher · stars · screen time) → grade banner → scrolling trail → bottom tab bar
+ *   top bar (profile switcher · stars · practical-break timer) → progress card → scrolling trail → bottom tab bar
  *   (Map · Badges · Score)
  * Only the trail scrolls, so the jungle, the header and the tab bar stay put, and the trail's last stops can never
  * slip behind the tab bar.
@@ -64,17 +64,22 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
 
   const { scrollRef, regionHeight, handleRegionLayout, handleMapLayout, handleFocusY } = useMapAutoScroll(allDone);
 
-  const banner = <GradeBanner grade={grade} completed={completed} total={levels.length} />;
+  const banner = (
+    <GradeBanner grade={grade} completed={completed} total={levels.length} />
+  );
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
-      {/* Dark clock/battery: the light status bar text is unreadable on the pale meadow */}
-      {focused ? <StatusBar style="dark" /> : null}
-      {/* No art behind the clock / battery */}
+      {focused ? <StatusBar style="light" /> : null}
       <StatusBarScrim />
       <View style={styles.shell}>
         <View style={styles.header}>
-          <HomeTopBar profile={profile} secondsLeft={secondsLeft} onSwitchExplorer={() => go(ROUTES.profiles)} />
+          <HomeTopBar
+            stars={profile.stars}
+            secondsLeft={secondsLeft}
+            onBack={() => go(ROUTES.profiles)}
+            onStarsPress={() => go(ROUTES.badges)}
+          />
           {shortScreen ? null : banner}
         </View>
 

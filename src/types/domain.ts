@@ -52,7 +52,7 @@ export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 export interface GradeMeta {
   grade: Grade;
   shortLabel: string; // "Grade 1"
-  mechanic: string; // "Ten-Frames"
+  mechanic: string; // "Counting Fun"
   missionTitle: string; // tiny, glanceable — never a paragraph
   equation: string; // plain-text equation for reviewers / aria labels
   badgeName: string;
@@ -63,8 +63,8 @@ export const GRADE_META: Record<Grade, GradeMeta> = {
   1: {
     grade: 1,
     shortLabel: "Grade 1",
-    mechanic: "Ten-Frames",
-    missionTitle: "Make 7",
+    mechanic: "Counting Fun",
+    missionTitle: "Count to 7",
     equation: "7 = 5 + 2",
     badgeName: "Ten-Frame Explorer",
     badgeEmoji: "🧭",

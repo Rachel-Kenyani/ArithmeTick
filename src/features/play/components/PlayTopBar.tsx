@@ -46,7 +46,7 @@ export default function PlayTopBar({ level, stars, secondsLeft, timePaused, mute
       <View style={[styles.bar, { gap }]}>
         <BackButton label="Back to map" onPress={onBack} />
 
-        {/* Level chip — "Level 2 · Make 6" (two lines on phones) */}
+        {/* Level chip — "Level 2 · Count to 6" (two lines on phones) */}
         <View
           style={[
             pillStyles.pill,

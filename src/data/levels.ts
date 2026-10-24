@@ -1,7 +1,7 @@
 /**
  * The level map for each grade. Levels are played strictly in order: level n unlocks when
  * level n − 1 is finished. Every 3rd level is a Physical Quest (spec: Physical-Digital Bridge).
- * Level 1 of every grade is the exact puzzle from the original spec.
+ * Within each grade, puzzle difficulty rises with the level number.
  */
 
 import type { ArrayPuzzle, BalancePuzzle, Grade, TenFramePuzzle } from "@/types/domain";
@@ -28,7 +28,7 @@ const quest = (grade: Grade, number: number): LevelDef => ({
   grade,
   number,
   kind: "quest",
-  title: "Physical Quest",
+  title: "Move & Play",
   equation: "2 groups make 10",
 });
 
@@ -36,7 +36,7 @@ const tenFrame = (number: number, target: number): LevelDef => ({
   grade: 1,
   number,
   kind: "puzzle",
-  title: `Make ${target}`,
+  title: `Count to ${target}`,
   equation: `${target} = 5 + ${target - 5}`,
   puzzle: { target },
 });
@@ -60,7 +60,7 @@ const array = (number: number, rows: number, cols: number): LevelDef => ({
 });
 
 export const LEVELS: Record<Grade, readonly LevelDef[]> = {
-  1: [tenFrame(1, 7), tenFrame(2, 6), quest(1, 3), tenFrame(4, 8), tenFrame(5, 9), quest(1, 6)],
+  1: [tenFrame(1, 6), tenFrame(2, 7), quest(1, 3), tenFrame(4, 8), tenFrame(5, 9), quest(1, 6)],
   2: [balance(1, 8, 14), balance(2, 9, 13), quest(2, 3), balance(4, 7, 12), balance(5, 8, 15), quest(2, 6)],
   3: [array(1, 3, 4), array(2, 2, 6), quest(3, 3), array(4, 3, 5), array(5, 4, 3), quest(3, 6)],
 };

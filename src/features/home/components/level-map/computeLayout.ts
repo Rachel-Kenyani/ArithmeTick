@@ -1,4 +1,4 @@
-/** Level-map geometry: stop positions, trail legs, lead-in/out and the finish flag, in px. */
+/** Level-map geometry: stop positions, one continuous trail and the finish flag, in px. */
 
 import type { TrailPropKind } from "@/features/home/components/TrailArt";
 
@@ -17,8 +17,10 @@ export interface MapLayout {
   nodes: Pt[];
   /** segments[i] joins node i → node i + 1 */
   segments: string[];
-  leadIn: string;
-  leadOut: string;
+  /** The final leg runs from the last stop directly into the purple flag's pole. */
+  finishSegment: string;
+  /** A single C1-continuous spline passing through every stop centre in order. */
+  trailPath: string;
   flag: Pt;
   props: { kind: TrailPropKind; x: number; y: number; size: number }[];
 }
@@ -47,21 +49,15 @@ export function computeLayout(width: number, regionHeight: number, count: number
     y: height - padBottom - i * step,
   }));
 
-  // Each leg leaves a stop sideways (towards the other column), rises, and enters the next stop sideways —
-  // a gentle S that keeps the space right above (stars) and below (labels) every stop clear.
+  // Vertical tangents at every stop make this one smooth spline, rather than a set of crossing trail legs.
   const segments = nodes.slice(0, -1).map((a, i) => {
     const b = nodes[i + 1];
-    const dx = b.x - a.x;
-    return `M${f(a.x)} ${f(a.y)}C${f(a.x + dx * 0.62)} ${f(a.y - step * 0.06)} ${f(b.x - dx * 0.62)} ${f(b.y + step * 0.06)} ${f(b.x)} ${f(b.y)}`;
+    return `M${f(a.x)} ${f(a.y)}C${f(a.x)} ${f(a.y - step * 0.42)} ${f(b.x)} ${f(b.y + step * 0.42)} ${f(b.x)} ${f(b.y)}`;
   });
-
-  const first = nodes[0];
-  const startX = cx + amp * 0.55;
-  const leadIn = `M${f(startX)} ${height + 24}C${f(startX)} ${f(first.y + 46)} ${f(first.x + amp * 0.9)} ${f(first.y)} ${f(first.x)} ${f(first.y)}`;
-
-  const last = nodes.at(-1) ?? first;
+  const last = nodes.at(-1) ?? nodes[0];
   const flag = { x: cx - amp * 0.2, y: last.y - (big ? 50 : 40) };
-  const leadOut = `M${f(last.x)} ${f(last.y)}C${f(last.x - amp * 0.7)} ${f(last.y)} ${f(flag.x + 4)} ${f(flag.y + 30)} ${f(flag.x + 4)} ${f(flag.y)}`;
+  const finishSegment = `M${f(last.x)} ${f(last.y)}C${f(last.x)} ${f(last.y - step * 0.3)} ${f(flag.x)} ${f(flag.y + step * 0.2)} ${f(flag.x)} ${f(flag.y)}`;
+  const trailPath = `${segments[0] ?? ""}${segments.slice(1).map((segment) => segment.replace(/^M[^C]+/, "")).join("")}${finishSegment.replace(/^M[^C]+/, "")}`;
 
   // Small props on the outer edge opposite each stop (that edge is empty at that height).
   const inset = big ? 46 : 30;
@@ -81,8 +77,8 @@ export function computeLayout(width: number, regionHeight: number, count: number
     trail: big ? 30 : 26,
     nodes,
     segments,
-    leadIn,
-    leadOut,
+    finishSegment,
+    trailPath,
     flag,
     props,
   };

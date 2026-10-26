@@ -28,7 +28,8 @@ const EQ_LAYOUT = LinearTransition.springify().stiffness(SPRING_LAYOUT.stiffness
 
 export function EquationStrip({ top, bottom, topTone, solved, layout: L, reduced }: Readonly<EquationStripProps>) {
   const total = top + bottom;
-  const tile = L.eqH - 12;
+  // Room inside the pill: the 4px border plus ~10px of breathing space above and below the tiles
+  const tile = L.eqH - 28;
   const fontSize = L.eqFont;
   const order = solved ? PARTS_SOLVED : PARTS_LIVE;
 
@@ -58,7 +59,7 @@ export function EquationStrip({ top, bottom, topTone, solved, layout: L, reduced
       <Animated.View
         style={[
           styles.strip,
-          { height: L.eqH, gap: L.compact ? 6 : 8, paddingHorizontal: L.compact ? 10 : 16 },
+          { height: L.eqH, gap: L.compact ? 10 : 14, paddingHorizontal: L.compact ? 18 : 26 },
           solved ? styles.stripSolved : null,
           st,
         ]}

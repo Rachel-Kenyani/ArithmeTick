@@ -34,7 +34,7 @@ export default function SettingsScreen() {
   return (
     <ScreenShell back={ROUTES.home} align="top">
       <Panel style={styles.card}>
-        <ScreenHeading title="Explorer Settings" subtitle="Pick your name and animal." />
+        <ScreenHeading title="My Explorer" subtitle="Pick a name and an animal." />
         <View style={styles.section}>
           <Text style={styles.label}>Your name</Text>
           <TextField label="Explorer name" value={name} onChangeText={setName} maxLength={24} autoCapitalize="words" icon={<SmileIcon size={24} strokeWidth={2.2} color={colors.atPurple} />} />
@@ -43,7 +43,7 @@ export default function SettingsScreen() {
           <Text style={styles.label}>Choose your animal</Text>
           <AvatarPicker value={avatar} onChange={setAvatar} />
         </View>
-        <Button disabled={!validName} onPress={save}>Save changes</Button>
+        <Button disabled={!validName} onPress={save}>Save</Button>
       </Panel>
     </ScreenShell>
   );

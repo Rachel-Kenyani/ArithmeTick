@@ -10,17 +10,21 @@ import { cardShadow, colors } from "@/theme";
 
 export interface PanelProps {
   variant?: "card" | "pill";
+  /** Set false where a single clean card is clearer than the decorative outer halo. */
+  halo?: boolean;
   style?: StyleProp<ViewStyle>;
   children: ReactNode;
 }
 
 const HALO = 8;
 
-export default function Panel({ variant = "card", style, children }: Readonly<PanelProps>) {
+export default function Panel({ variant = "card", halo = true, style, children }: Readonly<PanelProps>) {
   const radius = variant === "card" ? 28 : 24;
+  const card = <View style={[variant === "card" ? styles.card : styles.pill, { borderRadius: radius }, style]}>{children}</View>;
+  if (!halo) return <View style={[cardShadow, { borderRadius: radius }]}>{card}</View>;
   return (
     <View style={[styles.halo, cardShadow, { borderRadius: radius + HALO }]}>
-      <View style={[variant === "card" ? styles.card : styles.pill, { borderRadius: radius }, style]}>{children}</View>
+      {card}
     </View>
   );
 }

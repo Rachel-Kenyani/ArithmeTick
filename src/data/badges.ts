@@ -24,7 +24,7 @@ export const BADGES: readonly BadgeDef[] = [
   { id: "ten-frame-explorer", name: "Ten-Frame Explorer", emoji: "🧭", how: "Grade 1 · Level 1", tone: "teal", grade: 1, test: (p) => p.progress[1] >= 1 },
   { id: "balance-master", name: "Balance Master", emoji: "⚖️", how: "Grade 2 · Level 1", tone: "purple", grade: 2, test: (p) => p.progress[2] >= 1 },
   { id: "array-architect", name: "Array Architect", emoji: "🏗️", how: "Grade 3 · Level 1", tone: "yellow", grade: 3, test: (p) => p.progress[3] >= 1 },
-  { id: "hands-on-hero", name: "Hands-On Hero", emoji: "🌿", how: "Finish a Physical Quest", tone: "leaf", test: (p) => p.questsDone >= 1 },
+  { id: "hands-on-hero", name: "Hands-On Hero", emoji: "🌿", how: "Finish a Move & Play level", tone: "leaf", test: (p) => p.questsDone >= 1 },
   { id: "number-builder", name: "Number Builder", emoji: "🧩", how: "Grade 1 · Level 5", tone: "teal", grade: 1, test: (p) => p.progress[1] >= 5 },
   { id: "number-detective", name: "Number Detective", emoji: "🔍", how: "Grade 2 · Level 5", tone: "purple", grade: 2, test: (p) => p.progress[2] >= 5 },
   { id: "regroup-ranger", name: "Regroup Ranger", emoji: "🧱", how: "Grade 3 · Level 5", tone: "yellow", grade: 3, test: (p) => p.progress[3] >= 5 },

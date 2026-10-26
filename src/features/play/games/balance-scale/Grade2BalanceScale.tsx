@@ -23,7 +23,7 @@ export default function Grade2BalanceScale({ level, start = 8, target = 14, palA
       <Panel style={styles.panel}>
         {palActive ? (
           <View style={styles.chip}>
-            <Text style={styles.chipText}>Helper on</Text>
+            <Text style={styles.chipText}>Help is on</Text>
           </View>
         ) : null}
         <Text style={styles.title}>{`Balance ${start} + ? = ${target} — board coming soon`}</Text>

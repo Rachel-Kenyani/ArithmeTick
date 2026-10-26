@@ -1,4 +1,4 @@
-/** A level stop's coin: chunky edge slab, the face (padlock or number), quest leaf and done check badge. */
+/** A level stop's rounded platform: chunky edge slab, face, quest leaf and done check badge. */
 
 import { StyleSheet, Text, View } from "react-native";
 
@@ -16,7 +16,8 @@ import { colors } from "@/theme";
 export default function LevelCoin({
   level,
   status,
-  size,
+  width,
+  height,
   left,
   radius,
   side,
@@ -27,7 +28,8 @@ export default function LevelCoin({
 }: Readonly<{
   level: LevelDef;
   status: LevelStatus;
-  size: number;
+  width: number;
+  height: number;
   left: number;
   radius: number;
   side: LevelNodeProps["side"];
@@ -38,20 +40,33 @@ export default function LevelCoin({
 }>) {
   const isQuest = level.kind === "quest";
   const locked = status === "locked";
-  const big = size >= 84;
+  const big = width >= 92;
   const face = FACE[status];
   const smallNumber = big ? 21 : 18;
 
   const lockedFace = (
     <>
-      <LockIcon size={big ? 30 : 26} strokeWidth={2.4} color={FACE.locked.text} />
-      <Text style={[sharedStyles.num, { fontSize: smallNumber, color: FACE.locked.text }]}>{level.number}</Text>
+      <LockIcon
+        size={big ? 30 : 26}
+        strokeWidth={2.4}
+        color={FACE.locked.text}
+      />
+      <Text
+        style={[
+          sharedStyles.num,
+          { fontSize: smallNumber, color: FACE.locked.text },
+        ]}
+      >
+        {level.number}
+      </Text>
     </>
   );
 
   return (
-    // The coin: chunky edge slab, then the face
-    <View pointerEvents="none" style={{ position: "absolute", left, top: ABOVE, width: size, height: size }}>
+    <View
+      pointerEvents="none"
+      style={{ position: "absolute", left, top: ABOVE, width, height }}
+    >
       <View
         style={[
           styles.edge,
@@ -61,7 +76,13 @@ export default function LevelCoin({
       <View
         style={[
           styles.coin,
-          { borderRadius: radius, backgroundColor: face.bg, borderColor: face.border },
+          {
+            borderRadius: radius,
+            backgroundColor: face.bg,
+            borderColor: face.border,
+            borderStyle: "solid",
+            opacity: locked ? 0.5 : 1,
+          },
         ]}
       >
         {locked ? (
@@ -74,18 +95,24 @@ export default function LevelCoin({
             delay={120}
             style={sharedStyles.faceContent}
           >
-            <UnlockedFace isQuest={isQuest} big={big} number={level.number} color={face.text} />
+            <UnlockedFace
+              big={big}
+              number={level.number}
+              color={face.text}
+            />
           </SpringIn>
         )}
         {flying ? (
-          <FlyingLock size={size} reduce={reduceMotion} onDone={onFlyDone}>
+          <FlyingLock size={height} reduce={reduceMotion} onDone={onFlyDone}>
             {lockedFace}
           </FlyingLock>
         ) : null}
       </View>
 
       {/* Quest leaf ornament — only on stops the child can reach, to keep the locked part of the map quiet */}
-      {isQuest && !locked ? <QuestLeaf side={side} big={big} dimmed={locked} /> : null}
+      {isQuest && !locked ? (
+        <QuestLeaf side={side} big={big} dimmed={locked} />
+      ) : null}
 
       {/* Done check badge */}
       {status === "done" ? (

@@ -2,7 +2,7 @@
  * /home — the child's level map (docs/APP-SHELL.md §5 "Home").
  *
  * A fixed, full-height app shell over the jungle backdrop:
- *   top bar (explorer switcher · stars · screen time) → grade banner → scrolling trail → bottom tab bar
+ *   top bar (profile switcher · stars · practical-break timer) → progress card → scrolling trail → bottom tab bar
  *   (Map · Badges · Score)
  * Only the trail scrolls, so the jungle, the header and the tab bar stay put, and the trail's last stops can never
  * slip behind the tab bar.
@@ -14,8 +14,8 @@ import { useIsFocused } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import GradeCompleteCard from "@/features/home/components/GradeCompleteCard";
-import GradeBanner from "@/features/home/components/header/GradeBanner";
-import HomeTopBar from "@/features/home/components/header/HomeTopBar";
+import AppTopBar from "@/components/top-bar/AppTopBar";
+import InfoBanner from "@/components/top-bar/InfoBanner";
 import LevelMap from "@/features/home/components/level-map/LevelMap";
 import BottomNav from "@/features/home/components/BottomNav";
 import StatusBarScrim from "@/features/home/components/StatusBarScrim";
@@ -64,17 +64,30 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
 
   const { scrollRef, regionHeight, handleRegionLayout, handleMapLayout, handleFocusY } = useMapAutoScroll(allDone);
 
-  const banner = <GradeBanner grade={grade} completed={completed} total={levels.length} />;
+  const meta = GRADE_META[grade];
+  const banner = (
+    <InfoBanner
+      tag={meta.shortLabel}
+      title={meta.mechanic}
+      spoken={`${meta.shortLabel}, ${meta.mechanic}. ${completed} of ${levels.length} levels done`}
+      progress={{ completed, total: levels.length }}
+      note={completed === levels.length ? "You did them all!" : undefined}
+    />
+  );
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
-      {/* Dark clock/battery: the light status bar text is unreadable on the pale meadow */}
-      {focused ? <StatusBar style="dark" /> : null}
-      {/* No art behind the clock / battery */}
+      {focused ? <StatusBar style="light" /> : null}
       <StatusBarScrim />
       <View style={styles.shell}>
         <View style={styles.header}>
-          <HomeTopBar profile={profile} secondsLeft={secondsLeft} onSwitchExplorer={() => go(ROUTES.profiles)} />
+          <AppTopBar
+            backLabel="Choose another explorer"
+            stars={profile.stars}
+            secondsLeft={secondsLeft}
+            onBack={() => go(ROUTES.profiles)}
+            onStarsPress={() => go(ROUTES.badges)}
+          />
           {shortScreen ? null : banner}
         </View>
 

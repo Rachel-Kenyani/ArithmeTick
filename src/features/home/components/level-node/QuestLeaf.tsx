@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { LeafIcon } from "@/components/ui/icons";
 import type { LevelNodeProps } from "@/features/home/components/level-node/types";
 
-/** Quest leaf ornament on the coin's inner side. */
+/** Quest leaf ornament on the platform's inner side. */
 export default function QuestLeaf({ side, big, dimmed }: Readonly<{ side: LevelNodeProps["side"]; big: boolean; dimmed: boolean }>) {
   return (
     <View

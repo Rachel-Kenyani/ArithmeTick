@@ -18,11 +18,17 @@ export interface BackButtonProps {
   fallbackHref?: Href;
   onPress?: () => void;
   label?: string;
+  size?: "sm" | "md";
 }
 
 const EDGE = 6;
+const SIZES = {
+  sm: { button: 44, radius: 14, icon: 24 },
+  md: { button: 64, radius: 16, icon: 30 },
+} as const;
 
-export default function BackButton({ href, fallbackHref = "/", onPress, label = "Go back" }: Readonly<BackButtonProps>) {
+export default function BackButton({ href, fallbackHref = "/", onPress, label = "Go back", size = "md" }: Readonly<BackButtonProps>) {
+  const dim = SIZES[size];
   const handlePress = () => {
     sfx.click();
     if (onPress) return onPress();
@@ -32,12 +38,12 @@ export default function BackButton({ href, fallbackHref = "/", onPress, label = 
   };
 
   return (
-    <Pressable onPress={handlePress} accessibilityRole="button" accessibilityLabel={label} hitSlop={8} style={styles.wrap}>
+    <Pressable onPress={handlePress} accessibilityRole="button" accessibilityLabel={label} hitSlop={8} style={{ width: dim.button, height: dim.button + EDGE }}>
       {({ pressed }) => (
         <>
-          <View style={[StyleSheet.absoluteFill, styles.edge]} />
-          <View style={[styles.face, pressed && styles.pressed]}>
-            <ChevronLeftIcon size={30} strokeWidth={2.6} color={colors.jgOutline} />
+          <View style={[StyleSheet.absoluteFill, styles.edge, { borderRadius: dim.radius }]} />
+          <View style={[styles.face, { width: dim.button, height: dim.button, borderRadius: dim.radius }, pressed && styles.pressed]}>
+            <ChevronLeftIcon size={dim.icon} strokeWidth={2.6} color={colors.jgOutline} />
           </View>
         </>
       )}
@@ -46,8 +52,7 @@ export default function BackButton({ href, fallbackHref = "/", onPress, label = 
 }
 
 const styles = StyleSheet.create({
-  wrap: { width: 64, height: 64 + EDGE },
-  edge: { top: EDGE, borderRadius: 16, backgroundColor: edges.sun },
-  face: { width: 64, height: 64, borderRadius: 16, backgroundColor: colors.jgSun, alignItems: "center", justifyContent: "center" },
+  edge: { top: EDGE, backgroundColor: edges.sun },
+  face: { backgroundColor: colors.jgSun, alignItems: "center", justifyContent: "center" },
   pressed: { backgroundColor: "#ffdb63", transform: [{ translateY: EDGE - 2 }] },
 });

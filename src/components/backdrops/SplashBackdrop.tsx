@@ -21,7 +21,13 @@ export default function SplashBackdrop({
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* Explicit 100% size: with only absoluteFill the image can render at its intrinsic pixel size (zoomed in) */}
-      <Image source={source} resizeMode="cover" style={styles.image} />
+      <Image
+        source={source}
+        resizeMode="cover"
+        blurRadius={source === HOME_BACKGROUND ? 2 : 0}
+        style={styles.image}
+      />
+      {source === HOME_BACKGROUND ? <View pointerEvents="none" style={styles.homeMute} /> : null}
       {children}
     </View>
   );
@@ -29,4 +35,5 @@ export default function SplashBackdrop({
 
 const styles = StyleSheet.create({
   image: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
+  homeMute: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(255,248,224,0.4)" },
 });

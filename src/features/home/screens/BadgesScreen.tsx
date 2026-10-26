@@ -10,7 +10,7 @@ export default function BadgesScreen() {
       tab="badges"
       title="Badges"
       icon={<MedalIcon size={34} strokeWidth={2.2} color={colors.white} />}
-      message="Finish levels to earn shiny badges. Your collection will live here."
+      message="Finish levels to win badges. They will show up here."
     />
   );
 }

@@ -10,7 +10,7 @@ export default function LeaderboardScreen() {
       tab="score"
       title="Score"
       icon={<TrophyIcon size={34} strokeWidth={2.2} color={colors.white} />}
-      message="See how your stars stack up with other explorers. It's on its way!"
+      message="Soon you can see your stars here."
     />
   );
 }

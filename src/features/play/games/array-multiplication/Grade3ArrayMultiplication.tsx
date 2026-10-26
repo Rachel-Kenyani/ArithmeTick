@@ -23,7 +23,7 @@ export default function Grade3ArrayMultiplication({ level, rows = 3, cols = 4, p
       <Panel style={styles.panel}>
         {palActive ? (
           <View style={styles.chip}>
-            <Text style={styles.chipText}>Helper on</Text>
+            <Text style={styles.chipText}>Help is on</Text>
           </View>
         ) : null}
         <Text style={styles.title}>{`Build ${rows} × ${cols} — board coming soon`}</Text>

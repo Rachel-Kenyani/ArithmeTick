@@ -76,10 +76,10 @@ export default function GradeCompleteCard({ gradeLabel }: Readonly<{ gradeLabel:
           </Animated.View>
           <View style={styles.text}>
             <Text accessibilityRole="header" style={[styles.title, { fontSize: sm ? 30 : 28 }]}>
-              Grade complete!
+              You did them all!
             </Text>
             <Text style={[styles.body, { fontSize: sm ? 16 : 15 }]}>
-              All 6 {gradeLabel} levels done. Play any level again!
+              All 6 {gradeLabel} levels are done. Play any level again!
             </Text>
             <View style={styles.stars} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
               {[0, 1, 2].map((i) => (

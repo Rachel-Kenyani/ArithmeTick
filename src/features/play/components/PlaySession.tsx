@@ -10,12 +10,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeroPop from "@/features/play/components/HeroPop";
 import LevelCelebrationModal from "@/features/play/components/LevelCelebrationModal";
 import LevelContent from "@/features/play/components/LevelContent";
-import PlayTopBar from "@/features/play/components/PlayTopBar";
 import ScreenTimeSheet from "@/features/play/components/ScreenTimeSheet";
 import { usePlaySession } from "@/features/play/hooks/usePlaySession";
 import { gutterFor } from "@/features/play/utils/playFormat";
 import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
-import type { LevelDef } from "@/data/levels";
+import AppTopBar from "@/components/top-bar/AppTopBar";
+import InfoBanner from "@/components/top-bar/InfoBanner";
+import { LEVELS_PER_GRADE, type LevelDef } from "@/data/levels";
 import type { ChildProfile } from "@/types/models";
 import { GRADE_META } from "@/types/domain";
 import { colors } from "@/theme";
@@ -25,7 +26,6 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const {
-    muted,
     secondsLeft,
     isQuest,
     levelNumber,
@@ -54,21 +54,15 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         accessibilityElementsHidden={inert}
         importantForAccessibility={inert ? "no-hide-descendants" : "auto"}
       >
-        <PlayTopBar
-          level={level}
-          stars={profile.stars}
-          secondsLeft={secondsLeft}
-          timePaused={isQuest}
-          muted={muted}
-          reduced={reduced}
-          onBack={goHome}
-        />
+        {/* Same top bar and banner as Home, so the level screen feels like part of the map */}
+        <AppTopBar backLabel="Back to map" onBack={goHome} stars={profile.stars} secondsLeft={secondsLeft} timePaused={isQuest} />
+        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} />
 
         <View
           style={[
             styles.main,
             {
-              paddingTop: sm ? 8 : 4,
+              paddingTop: sm ? 16 : 12,
               paddingLeft: Math.max(gutter, insets.left),
               paddingRight: Math.max(gutter, insets.right),
               paddingBottom: insets.bottom + (sm ? 20 : 14),
@@ -76,7 +70,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
           ]}
         >
           <Animated.View
-            accessibilityLabel={isQuest ? `Level ${levelNumber}: Physical Quest` : `Level ${levelNumber}: ${meta.mechanic} play area`}
+            accessibilityLabel={isQuest ? `Level ${levelNumber}: ${level.title}` : `Level ${levelNumber}: ${meta.mechanic} play area`}
             testID={`play-mat-g${profile.grade}-l${levelNumber}-pal-${palActive ? "on" : "off"}`}
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
@@ -93,6 +87,10 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         levelTitle={level.title}
         isQuest={isQuest}
         badge={completion?.newBadges[0] ?? null}
+        starsEarned={completion?.starsEarned ?? 0}
+        nextLabel={levelNumber >= LEVELS_PER_GRADE ? "Back to map" : "Next level"}
+        starsTotal={profile.stars}
+        reduced={reduced}
         onHighFive={handleHighFive}
         onClaim={goHome}
       />

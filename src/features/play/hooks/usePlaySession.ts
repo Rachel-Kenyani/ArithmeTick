@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { AppState } from "react-native";
 
 import useGoToMap from "@/features/play/hooks/useGoToMap";
-import { isMuted, sfx, subscribeMuted } from "@/services/audio";
+import { sfx } from "@/services/audio";
 import type { BadgeDef } from "@/data/badges";
 import type { LevelDef } from "@/data/levels";
 import type { ChildProfile } from "@/types/models";
@@ -28,7 +28,6 @@ function subscribeAppState(onChange: () => void) {
 const isBackgrounded = () => AppState.currentState !== "active" && AppState.currentState != null;
 
 export function usePlaySession(profile: ChildProfile, level: LevelDef) {
-  const muted = useSyncExternalStore(subscribeMuted, isMuted);
   const backgrounded = useSyncExternalStore(subscribeAppState, isBackgrounded);
   const secondsLeft = useScreenTimeRemaining();
   const goToMap = useGoToMap();
@@ -93,7 +92,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   }, [ticking]);
 
   return {
-    muted,
     secondsLeft,
     isQuest,
     levelNumber,

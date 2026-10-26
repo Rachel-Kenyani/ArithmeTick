@@ -8,8 +8,11 @@ import type { ChildProfile } from "@/types/models";
 
 import { getSnapshot, setState, updateProfile } from "../core";
 
+/** Stars a level is worth the first time it is finished. */
+export const STARS_PER_LEVEL = 3;
+
 export interface LevelCompletion {
-  /** Stars added by this completion (3 the first time, 1 on a replay). */
+  /** Stars added by this completion (3 the first time, 0 on a replay). */
   starsEarned: number;
   /** First time this level was finished (so the next level just unlocked). */
   firstTime: boolean;
@@ -26,7 +29,8 @@ export const progressActions = {
     const done = profile.progress[grade];
     const firstTime = levelNumber === done + 1;
     const level = getLevel(grade, levelNumber);
-    const starsEarned = firstTime ? 3 : 1;
+    // Each level is worth 3 stars, won once: replays add none, so the total can't be farmed.
+    const starsEarned = firstTime ? STARS_PER_LEVEL : 0;
 
     const next: ChildProfile = {
       ...profile,

@@ -1,4 +1,4 @@
-/** Styles shared by several level-stop pieces (rings, coin face content, numbers). */
+/** Styles shared by several level-stop pieces (rings, platform face content, numbers). */
 
 import { StyleSheet } from "react-native";
 

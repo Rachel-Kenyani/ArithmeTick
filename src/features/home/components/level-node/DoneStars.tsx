@@ -6,9 +6,9 @@ import { StarIcon } from "@/components/ui/icons";
 import { ABOVE, starSize } from "@/features/home/components/level-node/constants";
 
 /** Three tiny stars above a finished level. */
-export default function DoneStars({ size, big }: Readonly<{ size: number; big: boolean }>) {
+export default function DoneStars({ height, big }: Readonly<{ height: number; big: boolean }>) {
   return (
-    <View pointerEvents="none" style={[styles.stars, { left: 0, right: 0, bottom: ABOVE + size + 4 }]}>
+    <View pointerEvents="none" style={[styles.stars, { left: 0, right: 0, bottom: ABOVE + height + 4 }]}>
       {[-16, 0, 16].map((tilt) => (
         <View
           key={tilt}

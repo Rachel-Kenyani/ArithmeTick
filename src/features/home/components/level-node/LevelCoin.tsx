@@ -96,7 +96,6 @@ export default function LevelCoin({
             style={sharedStyles.faceContent}
           >
             <UnlockedFace
-              isQuest={isQuest}
               big={big}
               number={level.number}
               color={face.text}

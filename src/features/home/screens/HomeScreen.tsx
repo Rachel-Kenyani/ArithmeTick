@@ -14,8 +14,8 @@ import { useIsFocused } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import GradeCompleteCard from "@/features/home/components/GradeCompleteCard";
-import GradeBanner from "@/features/home/components/header/GradeBanner";
-import HomeTopBar from "@/features/home/components/header/HomeTopBar";
+import AppTopBar from "@/components/top-bar/AppTopBar";
+import InfoBanner from "@/components/top-bar/InfoBanner";
 import LevelMap from "@/features/home/components/level-map/LevelMap";
 import BottomNav from "@/features/home/components/BottomNav";
 import StatusBarScrim from "@/features/home/components/StatusBarScrim";
@@ -64,8 +64,15 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
 
   const { scrollRef, regionHeight, handleRegionLayout, handleMapLayout, handleFocusY } = useMapAutoScroll(allDone);
 
+  const meta = GRADE_META[grade];
   const banner = (
-    <GradeBanner grade={grade} completed={completed} total={levels.length} />
+    <InfoBanner
+      tag={meta.shortLabel}
+      title={meta.mechanic}
+      spoken={`${meta.shortLabel}, ${meta.mechanic}. ${completed} of ${levels.length} levels done`}
+      progress={{ completed, total: levels.length }}
+      note={completed === levels.length ? "You did them all!" : undefined}
+    />
   );
 
   return (
@@ -74,7 +81,8 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
       <StatusBarScrim />
       <View style={styles.shell}>
         <View style={styles.header}>
-          <HomeTopBar
+          <AppTopBar
+            backLabel="Choose another explorer"
             stars={profile.stars}
             secondsLeft={secondsLeft}
             onBack={() => go(ROUTES.profiles)}

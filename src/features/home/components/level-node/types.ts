@@ -7,7 +7,7 @@ export interface LevelNodeProps {
   status: LevelStatus;
   /** Coin diameter in px. */
   size: number;
-  /** Centre of the coin in map coordinates (px). */
+  /** Centre of the platform in map coordinates (px). */
   x: number;
   y: number;
   /** Which column of the zig-zag the stop is in (ornaments go on the inner side, Jaymo stands on the outer side). */

@@ -1,4 +1,4 @@
-/** Springs its children in on mount (used by the unlocked coin face and the "Play" pill). */
+/** Springs its children in on mount (used by the unlocked platform face and the "Play" pill). */
 
 import { useEffect, type ReactNode } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from "react-native-reanimated";

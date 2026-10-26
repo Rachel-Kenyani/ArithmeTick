@@ -2,7 +2,7 @@
  * LevelMap — the winding jungle trail on the home screen (docs/APP-SHELL.md §5 "Home").
  *
  * - Six stops zig-zag up the screen (level 1 at the bottom, by the grass — the trail climbs like a jungle
- *   path) joined by a sandy, pebbled SVG trail. The part already walked has white pebbles.
+ *   path) joined by one sandy SVG spline that terminates at the purple finish flag.
  * - Geometry is computed in px from the measured column width (onLayout) and the scroll region's height
  *   (`regionHeight`): on a typical phone (390×844) the whole trail fits; on short screens it scrolls and the
  *   home screen centres the stop to play on load (see `onFocusY`).

@@ -1,4 +1,4 @@
-/** The face of a reachable stop's coin. */
+/** The face of a reachable stop's platform. */
 
 import { Text } from "react-native";
 

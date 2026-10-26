@@ -16,7 +16,7 @@ export interface LevelCelebrationModalProps {
   grade: Grade;
   /** 1-based level number on the grade map. */
   levelNumber: number;
-  /** The level's map title, e.g. "Make 6" (lib/levels.ts). */
+  /** The level's child-facing map title, e.g. "Count to 6" (data/levels.ts). */
   levelTitle: string;
   isQuest: boolean;
   /** Newly earned badge to feature, or null → a "Level n complete!" card. */

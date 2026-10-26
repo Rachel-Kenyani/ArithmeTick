@@ -1,4 +1,4 @@
-/** What hangs below a stop's coin: the "Play" pill and the level title. */
+/** The small lesson label and local Play cue below a reached stop. */
 
 import { StyleSheet, Text, View } from "react-native";
 
@@ -7,12 +7,11 @@ import { ABOVE } from "@/features/home/components/level-node/constants";
 import type { LevelStatus } from "@/data/levels";
 import { colors, fonts } from "@/theme";
 
-/** Below the coin: the "Play" pill (current) and the level title. */
-export default function StopLabels({ status, size, title, reduceMotion }: Readonly<{ status: LevelStatus; size: number; title: string; reduceMotion: boolean }>) {
+export default function StopLabels({ status, height, title, reduceMotion }: Readonly<{ status: LevelStatus; height: number; title: string; reduceMotion: boolean }>) {
   return (
     <View
       pointerEvents="none"
-      style={[styles.below, { top: ABOVE + size + (status === "current" ? -12 : 8) }]}
+      style={[styles.below, { top: ABOVE + height + (status === "current" ? -12 : 8) }]}
     >
       {status === "current" ? <PlayPill reduceMotion={reduceMotion} /> : null}
       {/* Titles only on reached stops: locked ones show just the lock + number (the title is still spoken). */}
@@ -29,6 +28,6 @@ export default function StopLabels({ status, size, title, reduceMotion }: Readon
 
 const styles = StyleSheet.create({
   below: { position: "absolute", left: -40, right: -40, alignItems: "center" },
-  title: { marginTop: 6, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 2, backgroundColor: "rgba(255,255,255,0.9)" },
-  titleText: { fontFamily: fonts.headingBold, fontSize: 15, lineHeight: 19, color: colors.atTeal },
+  title: { marginTop: 6, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: "rgba(255,255,255,0.9)" },
+  titleText: { fontFamily: fonts.headingBold, fontSize: 18, lineHeight: 19, color: colors.atTeal },
 });

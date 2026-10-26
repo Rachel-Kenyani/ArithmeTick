@@ -1,5 +1,6 @@
 /** A level stop's motion state: unlock bounce, flying padlock, press squish and the locked "not yet" nudge. */
 
+import { AccessibilityInfo } from "react-native";
 import { useEffect, useState } from "react";
 import { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
@@ -47,6 +48,7 @@ export function useLevelNodeMotion({
   const handlePress = () => {
     if (locked) {
       sfx.nudge();
+      AccessibilityInfo.announceForAccessibility(`Finish level ${level.number - 1} to unlock`);
       if (reduceMotion) shakeLocked(shakeX);
       else wobbleLocked(rot);
       return;

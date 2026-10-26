@@ -1,17 +1,18 @@
-/** The explorer's star count pill in the home top bar. */
+/** The explorer's star count pill in the top bar. A button only when `onPress` is given (Home → Badges). */
 
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import { StarIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
 
-export default function StarsPill({ stars, onPress }: Readonly<{ stars: number; onPress: () => void }>) {
+export default function StarsPill({ stars, onPress }: Readonly<{ stars: number; onPress?: () => void }>) {
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole={onPress ? "button" : "text"}
       accessibilityLabel={`${stars} stars`}
-      accessibilityHint="Stars are earned for completing levels. Open Badges to see your rewards."
+      accessibilityHint={onPress ? "Win stars by finishing levels. Opens your badges." : undefined}
       hitSlop={6}
+      disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => [styles.stars, pressed ? styles.pressed : null]}
     >

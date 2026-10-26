@@ -26,11 +26,11 @@ export default function PhysicalQuestOverlay({ grade, onConfirmed }: Readonly<Ph
   return (
     <View style={styles.wrap}>
       <Panel style={styles.panel}>
-        <Text style={styles.title}>Physical Quest</Text>
-        <Text style={styles.copy}>Show your grown-up or tutor 2 groups that make 10.</Text>
+        <Text style={styles.title}>Move &amp; Play</Text>
+        <Text style={styles.copy}>Show a grown-up 2 groups that make 10.</Text>
         <Text style={styles.hint}>e.g. {HINTS[grade]}</Text>
         <Button variant="purple" onPress={confirm}>
-          Grown-up: confirm
+          Grown-up: tap when done
         </Button>
       </Panel>
     </View>

@@ -31,4 +31,13 @@ export const profileActions = {
   selectProfile(id: string) {
     setState((s) => (s.profiles.some((p) => p.id === id) ? { ...s, activeProfileId: id } : s));
   },
+
+  updateProfileAppearance(id: string, input: Pick<ChildProfile, "name" | "avatar">) {
+    const name = input.name.trim();
+    if (!name || !AVATARS.includes(input.avatar)) return;
+    setState((s) => ({
+      ...s,
+      profiles: s.profiles.map((profile) => (profile.id === id ? { ...profile, name, avatar: input.avatar } : profile)),
+    }));
+  },
 };

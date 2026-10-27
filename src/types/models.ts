@@ -33,6 +33,22 @@ export interface ChildProfile {
   highFives: number;
   /** Physical Quests confirmed by a grown-up (any grade). */
   questsDone: number;
+  /** Recent answers checked in levels (newest last, capped), kept on the phone for PAL later. */
+  attempts?: AttemptLog[];
+}
+
+/** One "Done" press: what the child built and whether it matched. */
+export interface AttemptLog {
+  grade: Grade;
+  level: number;
+  target: number;
+  answer: number;
+  correct: boolean;
+  /** Milliseconds from the level opening to this answer. */
+  ms: number;
+  /** Stealth PAL help was showing when they answered. */
+  pal: boolean;
+  at: number;
 }
 
 export interface Account {

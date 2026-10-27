@@ -1,59 +1,46 @@
 /**
- * Live equation strip: "5 + 2 = 7" reorders into "7 = 5 + 2" with a layout transition when solved.
+ * The question as an equation, shown from the start: "7 = 5 + ?". The 5 lights up purple when the top
+ * row is full (matching the "5" badge); while help is on, the "?" gently pulses as the part to work out.
+ * A right answer turns "?" into the missing number and the strip goes gold. It never counts along.
  */
 
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import Animated, { LinearTransition, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
+import { TARGET_TOP } from "../constants";
+import { useBreath } from "../hooks/useBreath";
 import { styles } from "../styles";
-import type { BoardLayout, EqPart, GroupTone } from "../types";
-import { EASE_IN_OUT, SPRING_LAYOUT, keyframes } from "../utils/motion";
+import type { BoardLayout } from "../types";
+import { EASE_IN_OUT, keyframes } from "../utils/motion";
 import { NumberTile } from "./NumberTile";
 import { SPARKLES, Sparkle } from "./Sparkle";
 
-const PARTS_LIVE: readonly EqPart[] = ["top", "plus", "bottom", "eq", "total"];
-const PARTS_SOLVED: readonly EqPart[] = ["total", "eq", "top", "plus", "bottom"];
-
 interface EquationStripProps {
-  top: number;
-  bottom: number;
-  topTone: GroupTone;
+  target: number;
+  topFull: boolean;
+  palActive: boolean;
   solved: boolean;
   layout: BoardLayout;
   reduced: boolean;
 }
 
-const EQ_LAYOUT = LinearTransition.springify().stiffness(SPRING_LAYOUT.stiffness).damping(SPRING_LAYOUT.damping);
-
-export function EquationStrip({ top, bottom, topTone, solved, layout: L, reduced }: Readonly<EquationStripProps>) {
-  const total = top + bottom;
+export function EquationStrip({ target, topFull, palActive, solved, layout: L, reduced }: Readonly<EquationStripProps>) {
+  const missing = target - TARGET_TOP;
   // Room inside the pill: the 4px border plus ~10px of breathing space above and below the tiles
   const tile = L.eqH - 28;
   const fontSize = L.eqFont;
-  const order = solved ? PARTS_SOLVED : PARTS_LIVE;
 
   const sc = useSharedValue(1);
   useEffect(() => {
     if (solved && !reduced) sc.set(keyframes([1, 1.09, 1], 600, 200, EASE_IN_OUT));
   }, [solved, reduced, sc]);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: sc.get() }] }));
+  const ask = useBreath(palActive && !solved && !reduced, 1, 1.12, 1, 900);
+  const askStyle = useAnimatedStyle(() => ({ transform: [{ scale: ask.get() }] }));
 
-  const renderPart = (part: EqPart) => {
-    switch (part) {
-      case "top":
-        return <NumberTile value={top} tone={topTone ?? "plain"} size={tile} fontSize={fontSize} />;
-      case "bottom":
-        return <NumberTile value={bottom} tone="plain" size={tile} fontSize={fontSize} />;
-      case "total":
-        return <NumberTile value={total} tone={solved ? "win" : "total"} size={tile} fontSize={fontSize} />;
-      case "plus":
-      case "eq":
-        return <Text style={[styles.operator, { fontSize, lineHeight: Math.round(fontSize * 1.15) }]}>{part === "plus" ? "+" : "="}</Text>;
-    }
-  };
-
-  const spoken = solved ? `${total} equals ${top} plus ${bottom}` : `${top} plus ${bottom} equals ${total}`;
+  const op = (sign: string) => <Text style={[styles.operator, { fontSize, lineHeight: Math.round(fontSize * 1.15) }]}>{sign}</Text>;
+  const spoken = solved ? `${target} equals ${TARGET_TOP} plus ${missing}` : `${target} equals ${TARGET_TOP} plus what?`;
   return (
     <View accessible accessibilityLabel={spoken} accessibilityLiveRegion="polite">
       <Animated.View
@@ -64,11 +51,13 @@ export function EquationStrip({ top, bottom, topTone, solved, layout: L, reduced
           st,
         ]}
       >
-        {order.map((part) => (
-          <Animated.View key={part} layout={EQ_LAYOUT}>
-            {renderPart(part)}
-          </Animated.View>
-        ))}
+        <NumberTile value={target} tone={solved ? "win" : "total"} size={tile} fontSize={fontSize} />
+        {op("=")}
+        <NumberTile value={TARGET_TOP} tone={topFull || solved ? "five" : "plain"} size={tile} fontSize={fontSize} />
+        {op("+")}
+        <Animated.View style={askStyle}>
+          <NumberTile value={solved ? missing : "?"} tone={solved ? "win" : "ask"} size={tile} fontSize={fontSize} />
+        </Animated.View>
       </Animated.View>
       {solved ? SPARKLES.map((s) => <Sparkle key={`${s.left}:${s.top}`} {...s} />) : null}
     </View>

@@ -15,8 +15,11 @@ export const NEAR_PX = 48;
 export const STRUGGLE_REMOVALS = 3;
 /** Solved flourish length before handing over to the page (onSolved). */
 export const SOLVED_HANDOFF_MS = 1150;
-export const PAL_FILL_START_MS = 420;
-export const PAL_FILL_STAGGER_MS = 170;
+/** The "Done" button's row (md button + its edge) and the gap above it. */
+export const DONE_H = 58;
+export const DONE_GAP = 10;
+/** After a wrong "Done", one cap is counted (hops + note) every COUNT_STEP_MS. */
+export const COUNT_STEP_MS = 420;
 export const INVITE_EVERY_MS = 4200;
 export const MIN_CELL = 52;
 export const MAX_CELL = 124;

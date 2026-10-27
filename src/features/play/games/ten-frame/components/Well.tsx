@@ -1,9 +1,9 @@
 /**
- * A ten-frame well (slot): PAL modes, idle hint dimple and the drop preview.
+ * A ten-frame well (slot): PAL modes (a pulsing ghost cap where a cap is still missing), idle hint dimple and the drop preview.
  */
 
 import { memo } from "react";
-import { View, type ViewStyle } from "react-native";
+import { Text, View, type ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { colors } from "@/theme";
@@ -31,16 +31,15 @@ interface WellProps {
 
 /** Border / fill of a well for its PAL mode and whether a cap sits in it. */
 function wellModeStyle(mode: WellMode, filled: boolean): ViewStyle {
-  if (mode === "palLocked") return { borderColor: "rgba(255,193,7,0.8)", backgroundColor: "rgba(255,193,7,0.3)" };
   if (mode === "palTop") return { borderColor: colors.atGlow, backgroundColor: "rgba(127,240,201,0.4)" };
-  if (mode === "palDrop" && !filled) return { borderColor: "rgba(0,111,104,0.55)", backgroundColor: colors.white, borderStyle: "dashed" };
+  if (mode === "palDrop" && !filled) return { borderColor: "rgba(0,111,104,0.55)", backgroundColor: colors.white };
   if (filled) return { borderColor: "rgba(0,79,74,0.1)", backgroundColor: colors.atMintDeep };
   return { borderColor: "rgba(0,79,74,0.1)", backgroundColor: colors.atMint };
 }
 
 function wellStateLabel(mode: WellMode, filled: boolean): string {
   if (filled) return "filled";
-  return mode === "palLocked" ? "stays empty" : "empty";
+  return mode === "palDrop" ? "empty, a cap goes here" : "empty";
 }
 
 export const Well = memo(function Well({
@@ -58,11 +57,9 @@ export const Well = memo(function Well({
   isNext,
   onFillNext,
 }: Readonly<WellProps>) {
-  const breatheOpacity = mode === "palLocked" && !reduced;
-  const breatheScale = mode === "palDrop" && !filled && !reduced;
-  const op = useBreath(breatheOpacity, 0.5, 1, mode === "palLocked" ? 0.85 : 1);
-  const sc = useBreath(breatheScale, 1, 1.04, 1);
-  const st = useAnimatedStyle(() => ({ opacity: op.get(), transform: [{ scale: sc.get() }] }));
+  const ghost = mode === "palDrop" && !filled;
+  const sc = useBreath(ghost && !reduced, 0.86, 1.04, 1, 900);
+  const ghostStyle = useAnimatedStyle(() => ({ transform: [{ scale: sc.get() }] }));
 
   const modeStyle = wellModeStyle(mode, filled);
   const label = `Slot ${index + 1}, ${wellStateLabel(mode, filled)}`;
@@ -76,11 +73,13 @@ export const Well = memo(function Well({
         styles.well,
         { left: x - size / 2, top: y - size / 2, width: size, height: size, borderRadius: radius, zIndex: preview ? 2 : 1 },
         modeStyle,
-        st,
       ]}
     >
-      {mode === "palLocked" ? (
-        <View style={{ width: size * 0.3, height: size * 0.3, borderRadius: size, backgroundColor: "rgba(255,193,7,0.45)" }} />
+      {ghost ? (
+        <Animated.View style={[styles.ghost, styles.center, { width: capSize * 0.86, height: capSize * 0.86, borderRadius: capSize }, ghostStyle]}>
+          {/* The count carries on into the ghosts: "5, 6" */}
+          <Text style={[styles.ghostNumber, { fontSize: Math.round(capSize * 0.36) }]}>{index + 1}</Text>
+        </Animated.View>
       ) : (
         <View style={[{ width: capSize * 0.8, height: capSize * 0.8, borderRadius: capSize }, hint ? styles.dimpleHint : styles.dimple]} />
       )}

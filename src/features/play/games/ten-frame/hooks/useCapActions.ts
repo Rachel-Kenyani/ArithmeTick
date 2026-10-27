@@ -1,13 +1,12 @@
 /**
- * Game actions (gesture callbacks / timers only): solve, place, remove, refuse and PAL auto-place.
+ * Game actions (gesture callbacks / timers only): solve, place, remove, refuse and check an answer.
  */
 
 import { useCallback, type Dispatch, type SetStateAction } from "react";
 
 import { sfx } from "@/services/audio";
 
-import { SOLVED_HANDOFF_MS, STRUGGLE_REMOVALS, TARGET_TOP } from "../constants";
-import { firstTrayCap } from "../logic/caps";
+import { CAP_COUNT, COUNT_STEP_MS, SOLVED_HANDOFF_MS, STRUGGLE_REMOVALS, TARGET_TOP } from "../constants";
 import type { FxKind } from "../types";
 import type { GameRefs } from "./useGameRefs";
 
@@ -17,12 +16,12 @@ interface CapActionsArgs {
   setPlaced: Dispatch<SetStateAction<number[]>>;
   setSolved: Dispatch<SetStateAction<boolean>>;
   schedule: (fn: () => void, ms: number) => void;
-  fire: (ids: readonly number[], kind: FxKind, delayFor?: (index: number) => number) => void;
+  fire: (ids: readonly number[], kind: FxKind, delayFor?: (index: number) => number, labelFor?: (index: number) => number) => void;
   syncCaps: (mode: "instant" | "spring", forceId?: number) => void;
 }
 
 export function useCapActions({ target, refs, setPlaced, setSolved, schedule, fire, syncCaps }: Readonly<CapActionsArgs>) {
-  const { placedRef, solvedRef, palRef, draggingRef, removalsRef, flightRef, solvedCalledRef, cbRef } = refs;
+  const { placedRef, solvedRef, palRef, removalsRef, flightRef, solvedCalledRef, cbRef } = refs;
   const solve = useCallback(
     (landMs: number) => {
       if (solvedRef.current) return;
@@ -43,8 +42,10 @@ export function useCapActions({ target, refs, setPlaced, setSolved, schedule, fi
   const placeCap = useCallback(
     (id: number, source: "drag" | "tap" | "auto"): boolean => {
       const current = placedRef.current;
-      // A (target + 1)th cap has no slot: refused. (With target 10 the frame is simply full.)
-      if (solvedRef.current || current.includes(id) || current.length >= target) return false;
+      // The child decides when to stop, so all 10 slots are open. Once PAL is helping, the
+      // slots past the target lock (the yellow chunk) and an extra cap bounces home.
+      const limit = palRef.current ? target : CAP_COUNT;
+      if (solvedRef.current || current.includes(id) || current.length >= limit) return false;
       const slot = current.length;
       const next = [...current, id];
       flightRef.current.set(id, source === "drag" ? "snap" : "fly");
@@ -61,10 +62,9 @@ export function useCapActions({ target, refs, setPlaced, setSolved, schedule, fi
         schedule(() => sfx.groupPulse(), at);
         fire(next.slice(0, TARGET_TOP), "pulse", (i) => at / 1000 + i * 0.06);
       }
-      if (next.length === target) solve(landMs);
       return true;
     },
-    [fire, schedule, solve, target, flightRef, placedRef, setPlaced, solvedRef],
+    [fire, schedule, target, flightRef, palRef, placedRef, setPlaced, solvedRef],
   );
 
   const removeCap = useCallback((id: number) => {
@@ -91,11 +91,29 @@ export function useCapActions({ target, refs, setPlaced, setSolved, schedule, fi
     [fire, syncCaps, cbRef, flightRef, solvedRef],
   );
 
-  const autoPlaceOne = useCallback(() => {
-    if (solvedRef.current || placedRef.current.length >= TARGET_TOP) return;
-    const id = firstTrayCap(placedRef.current, draggingRef.current);
-    if (id !== null) placeCap(id, "auto");
-  }, [placeCap, placedRef, solvedRef, draggingRef]);
+  /**
+   * "Done": right → the solved flourish. Wrong → count along: the caps hop up one by one with a rising
+   * note and the count stops at the target. Extra caps are left out of the count (then hop until sent
+   * back); if caps run out first, the count carries on into ghost caps in the empty slots. No error text.
+   */
+  const checkAnswer = useCallback(() => {
+    const current = placedRef.current;
+    if (solvedRef.current || current.length === 0) return;
+    const correct = current.length === target;
+    cbRef.current.onAttempt?.({ target, answer: current.length, correct });
+    if (correct) {
+      solve(0);
+      return;
+    }
+    const counted = Math.min(current.length, target);
+    fire(current.slice(0, counted), "count", (i) => (i * COUNT_STEP_MS) / 1000, (i) => i + 1);
+    for (let k = 0; k < counted; k += 1) schedule(() => sfx.snap(k), k * COUNT_STEP_MS);
+    const countEnd = counted * COUNT_STEP_MS;
+    if (current.length > target) schedule(() => fire(current.slice(target), "wobble"), countEnd);
+    // PAL steps in when the count stops: extras start hopping, or ghost caps appear and the count carries on.
+    schedule(() => cbRef.current.onStruggle(), countEnd);
+    for (let k = current.length; k < target; k += 1) schedule(() => sfx.snap(k), countEnd + 250 + (k - current.length) * COUNT_STEP_MS);
+  }, [cbRef, fire, placedRef, schedule, solve, solvedRef, target]);
 
-  return { placeCap, removeCap, refuseCap, autoPlaceOne };
+  return { placeCap, removeCap, refuseCap, checkAnswer };
 }

@@ -1,5 +1,6 @@
 /**
  * A draggable / tappable bottle cap: springs between computed spots, pops, wobbles and glows.
+ * Under PAL, a cap past the target ("extra") hops on the spot until it is tapped back to the tray.
  */
 
 import { memo, useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { StyleSheet, View } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
 
+import { useBreath } from "../hooks/useBreath";
 import { useCapFx } from "../hooks/useCapFx";
 import { useCapGesture } from "../hooks/useCapGesture";
 import { capColor } from "../logic/caps";
@@ -15,6 +17,7 @@ import type { CapMotion, DragShared, FxSignal, GroupTone, PaletteKey } from "../
 import { clamp } from "../utils/math";
 import { RM, SPRING_POP } from "../utils/motion";
 import { CapFace, ToneOverlay } from "./CapFace";
+import { CountBubble } from "./CountBubble";
 
 interface BottleCapProps {
   id: number;
@@ -23,6 +26,7 @@ interface BottleCapProps {
   slot: number | null;
   group: GroupTone;
   locked: boolean;
+  extra: boolean;
   frozen: boolean;
   visible: boolean;
   fx: FxSignal | undefined;
@@ -34,8 +38,9 @@ interface BottleCapProps {
   onTap: (id: number) => void;
 }
 
-function capLabel(colorName: string, slot: number | null, locked: boolean): string {
+function capLabel(colorName: string, slot: number | null, locked: boolean, extra: boolean): string {
   if (slot === null) return `${colorName} bottle cap in the tray, tap to place`;
+  if (extra) return `Extra ${colorName.toLowerCase()} bottle cap in slot ${slot + 1}, tap to send it back`;
   return locked
     ? `${colorName} bottle cap in slot ${slot + 1}, part of the group of five`
     : `${colorName} bottle cap in slot ${slot + 1}, tap to send back`;
@@ -48,6 +53,7 @@ export const BottleCap = memo(function BottleCap({
   slot,
   group,
   locked,
+  extra,
   frozen,
   visible,
   fx,
@@ -99,7 +105,8 @@ export const BottleCap = memo(function BottleCap({
       ],
     };
   });
-  const liftStyle = useAnimatedStyle(() => ({ transform: [{ scale: lift.get() }] }));
+  const hop = useBreath(extra && !reduced, 0, -size * 0.14, 0, 380);
+  const liftStyle = useAnimatedStyle(() => ({ transform: [{ translateY: hop.get() }, { scale: lift.get() }] }));
   const shadowStyle = useAnimatedStyle(() => {
     const t = dragT.get();
     return {
@@ -109,7 +116,7 @@ export const BottleCap = memo(function BottleCap({
   });
 
   const colorName = color === "teal" ? "Teal" : "Purple";
-  const label = capLabel(colorName, slot, locked);
+  const label = capLabel(colorName, slot, locked, extra);
 
   return (
     <GestureDetector gesture={gesture}>
@@ -139,6 +146,7 @@ export const BottleCap = memo(function BottleCap({
             {locked ? <View pointerEvents="none" style={[styles.lockRing, { borderRadius: size }]} /> : null}
           </Animated.View>
         </Animated.View>
+        {fx?.kind === "count" && fx.label ? <CountBubble key={fx.n} label={fx.label} delayMs={fx.delay * 1000} size={size} /> : null}
       </Animated.View>
     </GestureDetector>
   );

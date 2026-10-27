@@ -8,7 +8,7 @@ export type CapColor = "teal" | "purple";
 export type PaletteKey = CapColor | "gold" | "mint";
 export type GroupTone = "gold" | "mint" | null;
 export type Flight = "snap" | "fly" | "return";
-export type FxKind = "wobble" | "pulse" | "bounce" | "invite";
+export type FxKind = "wobble" | "pulse" | "bounce" | "invite" | "count";
 
 export interface Pt {
   x: number;
@@ -31,6 +31,8 @@ export interface FxSignal {
   kind: FxKind;
   /** Increments on every new signal so the cap replays even for the same kind. */
   n: number;
+  /** "count": the number shown in a bubble above the cap. */
+  label?: number;
   /** seconds (as on web) */
   delay: number;
 }
@@ -86,6 +88,8 @@ export interface Geometry {
   tray: Rect4;
   card: Rect4;
   eq: Rect4;
+  /** The "Done" button, under the equation. */
+  done: Rect4;
   slots: Pt[];
   homes: Pt[];
 }
@@ -99,5 +103,4 @@ export interface DragShared {
 
 export type WellMode = "plain" | "palTop" | "palDrop" | "palLocked";
 
-export type TileTone = "plain" | "gold" | "mint" | "total" | "win";
-export type EqPart = "top" | "plus" | "bottom" | "eq" | "total";
+export type TileTone = "plain" | "gold" | "mint" | "total" | "win" | "five" | "ask";

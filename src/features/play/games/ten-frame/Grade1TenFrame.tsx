@@ -3,19 +3,17 @@
  * Puzzle: build `target` (6–10, default 7) as 5 + (target − 5), e.g. 7 = 5 + 2.
  *
  * Interaction model
- * - 10 bottle caps (vifuniko) live in ONE absolutely-positioned overlay layer that covers the
- *   whole module. Each cap owns two shared values (x, y) = the centre point it sits on, in
- *   module-local pixels. The board lays itself out with its own maths (computeLayout + boardGeometry),
- *   so slot / tray-dimple centres are computed, never measured, and the caps spring there.
- *   Because a cap never changes parent, a drop animates from exactly where the finger
- *   let go into its slot, and drag / snap / spring-home / tap-return / compaction / PAL fly-ins
- *   are all the same primitive: "spring this cap to that centre".
+ * - 10 bottle caps (vifuniko) live in ONE overlay layer. Each cap owns shared values (x, y) = the
+ *   centre it sits on; slot / tray centres are computed (computeLayout + boardGeometry), never
+ *   measured, so drag / snap / spring-home / compaction / PAL fly-ins are all "spring this cap there".
  * - The drag runs on the UI thread (Gesture.Pan + Reanimated); JS only hears about pick-up,
  *   entering / leaving the grid's "near" zone, and the drop.
  * - Grid state is a single ordered list `placed` (cap ids in fill order): placed[i] sits in
  *   slot i. Fill order = ten-frame convention (top row L→R, then bottom row L→R) and stays
  *   contiguous when caps are removed (the rest compact).
- * - The equation strip uses a layout transition to reorder "5 + 2 = 7" into "7 = 5 + 2".
+ * - The child decides when to stop: any number of caps (up to 10), then "Done". A wrong answer counts
+ *   the caps aloud up to the target and lets Stealth PAL step in. The question shows as an equation
+ *   from the start ("7 = 5 + ?"); a right answer fills in the "?".
  */
 
 import { View } from "react-native";
@@ -24,6 +22,7 @@ import { useReducedMotion } from "react-native-reanimated";
 import type { TenFrameProps } from "@/types/domain";
 
 import { CapLayer } from "./components/CapLayer";
+import { DoneButton } from "./components/DoneButton";
 import { EquationStrip } from "./components/EquationStrip";
 import { FiveBadge } from "./components/FiveBadge";
 import { TargetCard } from "./components/TargetCard";
@@ -36,16 +35,19 @@ import { normalizeTarget } from "./logic/caps";
 import { frameChrome, groupTones, slotMarkers } from "./logic/viewState";
 import { styles } from "./styles";
 
-export default function Grade1TenFrame({ level, target: targetProp, palActive, onStruggle, onSolved }: Readonly<TenFrameProps>) {
-  /** Caps to place: 5 in the top row + (target − 5) in the bottom row. */
+/** The target card's dots stay empty while the child builds, so it never counts for them. */
+const NONE: readonly number[] = [];
+
+export default function Grade1TenFrame({ level, target: targetProp, palActive, onStruggle, onAttempt, onSolved }: Readonly<TenFrameProps>) {
   const target = normalizeTarget(targetProp);
   const reduced = useReducedMotion();
   const { layout, geo, onLayout } = useBoardLayout();
-  const { placed, solved, draggingId, near, fx, caps, drag, handleDragStart, handleNear, handleDragEnd, handleTap, fillNext } = useTenFrameGame({
+  const { placed, solved, draggingId, near, fx, caps, drag, checkAnswer, handleDragStart, handleNear, handleDragEnd, handleTap, fillNext } = useTenFrameGame({
     target,
     palActive,
     onSolved,
     onStruggle,
+    onAttempt,
     geo,
     measured: layout.measured,
     reduced,
@@ -82,7 +84,7 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
         <TargetCard
           variant={L.arrangement === "side" ? "side" : "pill"}
           target={target}
-          placed={placed}
+          placed={palActive || solved ? placed : NONE}
           topTone={topTone}
           solved={solved}
           layout={L}
@@ -107,10 +109,15 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
         onFillNext={fillNext}
       />
 
-      {/* live equation */}
+      {/* the question as an equation, "7 = 5 + ?", with Done under it */}
       <View style={[styles.abs, styles.center, { left: eq.x, top: eq.y, width: eq.w, height: eq.h }]}>
-        <EquationStrip top={topCount} bottom={bottomCount} topTone={topTone} solved={solved} layout={L} reduced={reduced} />
+        <EquationStrip target={target} topFull={topFull} palActive={palActive} solved={solved} layout={L} reduced={reduced} />
       </View>
+      {solved ? null : (
+        <View style={[styles.abs, styles.center, { left: geo.done.x, top: geo.done.y, width: geo.done.w, height: geo.done.h }]}>
+          <DoneButton count={count} onPress={checkAnswer} />
+        </View>
+      )}
 
       {/* wooden tray of vifuniko (decorative; the caps themselves are the accessible elements) */}
       <WoodenTray layout={L} tray={tray} homes={geo.homes} />
@@ -129,6 +136,7 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
         size={L.cap}
         rowTone={rowTone}
         palActive={palActive}
+        target={target}
         measured={L.measured}
         reduced={reduced}
       />
@@ -139,8 +147,8 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
           palActive={palActive}
           compact={L.compact}
           size={badge}
-          left={wellsX - haloInset - badge / 2 + 6}
-          top={wellsY - haloInset - badge / 2 + 6}
+          left={wellsX - haloInset - badge / 2 + 4}
+          top={wellsY - haloInset - badge / 2 + 4}
         />
       ) : null}
     </View>

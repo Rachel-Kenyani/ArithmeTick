@@ -4,10 +4,14 @@
 
 import { useEffect, useMemo, useRef } from "react";
 
+import type { GradeModuleProps } from "@/types/domain";
+
 import { CAP_IDS } from "../constants";
 import type { Flight, Geometry, Pt } from "../types";
 
-export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => void, onStruggle: () => void) {
+type OnAttempt = NonNullable<GradeModuleProps["onAttempt"]>;
+
+export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => void, onStruggle: () => void, onAttempt?: OnAttempt) {
   // Mirrors of state for gesture callbacks / timers (always the latest values).
   const geoRef = useRef<Geometry>(geo);
   const placedRef = useRef<number[]>([]);
@@ -19,11 +23,11 @@ export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => v
   const targetsRef = useRef<(Pt | null)[]>(CAP_IDS.map(() => null));
   const flightRef = useRef<Map<number, Flight>>(new Map());
   const solvedCalledRef = useRef(false);
-  const cbRef = useRef({ onSolved, onStruggle });
+  const cbRef = useRef({ onSolved, onStruggle, onAttempt });
 
   useEffect(() => {
-    cbRef.current = { onSolved, onStruggle };
-  }, [onSolved, onStruggle]);
+    cbRef.current = { onSolved, onStruggle, onAttempt };
+  }, [onSolved, onStruggle, onAttempt]);
 
   useEffect(() => {
     palRef.current = palActive;

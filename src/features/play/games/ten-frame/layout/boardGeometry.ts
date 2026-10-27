@@ -1,8 +1,8 @@
 /**
- * Board geometry: where the card, grid, equation, tray, slots and tray dimples sit (pure maths).
+ * Board geometry: where the card, grid, equation, Done button, tray, slots and tray dimples sit (pure maths).
  */
 
-import { CAP_IDS, ROW_SIZE } from "../constants";
+import { CAP_IDS, DONE_GAP, DONE_H, ROW_SIZE } from "../constants";
 import type { BoardLayout, Chrome, Geometry, Rect4 } from "../types";
 import { equationWidth, pillWidth, sideCardFor } from "./chrome";
 
@@ -19,6 +19,8 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
   const eqW = equationWidth(chrome, L.compact);
   const sg = L.sectionGap;
   const mid = W / 2;
+  /** The equation with the Done button under it. */
+  const eqBlock = L.eqH + DONE_GAP + DONE_H;
 
   const innerTop = L.pad;
   const innerH = Math.max(0, H - L.pad * 2);
@@ -32,7 +34,7 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
   if (L.arrangement === "side") {
     const sideH = sideCardFor(L.cell).h;
     const rowH = Math.max(gridH, sideH);
-    contentH = rowH + sg + L.eqH;
+    contentH = rowH + sg + eqBlock;
     const top = innerTop + Math.max(0, (mainH - contentH) / 2);
     const left = mid - (L.cardW + sg + gridW) / 2;
     card = { x: left, y: top + (rowH - sideH) / 2, w: L.cardW, h: sideH };
@@ -40,7 +42,7 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
     eq = { x: mid - eqW / 2, y: top + rowH + sg, w: eqW, h: L.eqH };
   } else if (L.arrangement === "rail") {
     const colW = Math.max(pillW, eqW);
-    const colH = L.cardH + sg + L.eqH;
+    const colH = L.cardH + sg + eqBlock;
     const rowH = Math.max(gridH, colH);
     contentH = rowH;
     const top = innerTop + Math.max(0, (mainH - contentH) / 2);
@@ -50,7 +52,7 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
     eq = { x: left, y: colTop + L.cardH + sg, w: colW, h: L.eqH };
     grid = { x: left + colW + sg, y: top + (rowH - gridH) / 2, w: gridW, h: gridH };
   } else {
-    contentH = L.cardH + sg + gridH + sg + L.eqH;
+    contentH = L.cardH + sg + gridH + sg + eqBlock;
     const top = innerTop + Math.max(0, (mainH - contentH) / 2);
     card = { x: mid - pillW / 2, y: top, w: pillW, h: L.cardH };
     grid = { x: mid - gridW / 2, y: top + L.cardH + sg, w: gridW, h: gridH };
@@ -70,5 +72,6 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
     x: tray.x + tin + (id % L.trayCols) * (L.cap + L.trayGap) + L.cap / 2,
     y: tray.y + tin + Math.floor(id / L.trayCols) * (L.cap + L.trayGap) + L.cap / 2,
   }));
-  return { grid, tray, card, eq, slots, homes };
+  const done: Rect4 = { x: eq.x, y: eq.y + eq.h + DONE_GAP, w: eq.w, h: DONE_H };
+  return { grid, tray, card, eq, done, slots, homes };
 }

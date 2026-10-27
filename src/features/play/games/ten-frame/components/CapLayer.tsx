@@ -18,6 +18,8 @@ interface CapLayerProps
   size: number;
   rowTone: GroupTone;
   palActive: boolean;
+  /** Under PAL, caps in slots at or past this index are extras that hop. */
+  target: number;
   measured: boolean;
   reduced: boolean;
 }
@@ -35,6 +37,7 @@ export function CapLayer({
   size,
   rowTone,
   palActive,
+  target,
   measured,
   reduced,
 }: Readonly<CapLayerProps>) {
@@ -51,6 +54,7 @@ export function CapLayer({
             slot={inSlot}
             group={isSlotBelow(inSlot, ROW_SIZE) ? rowTone : null}
             locked={palActive && isSlotBelow(inSlot, TARGET_TOP)}
+            extra={palActive && inSlot !== null && inSlot >= target}
             frozen={solved}
             visible={measured}
             fx={fx[id]}

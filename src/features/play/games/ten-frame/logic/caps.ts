@@ -4,12 +4,14 @@
 
 import { cancelAnimation, withSpring } from "react-native-reanimated";
 
-import { CAP_IDS, DEFAULT_TARGET, MAX_TARGET, MIN_TARGET, ROW_SIZE } from "../constants";
+import { CAP_IDS, DEFAULT_TARGET, MAX_TARGET, MIN_TARGET } from "../constants";
 import type { CapColor, CapMotion, Flight, Pt } from "../types";
 import { clamp } from "../utils/math";
 import { flightTransition } from "../utils/motion";
 
-export const capColor = (id: number): CapColor => (id < ROW_SIZE ? "teal" : "purple");
+/** Colours are mixed on purpose: they are only for looks, so they never hint how many caps to use. */
+const CAP_COLORS: readonly CapColor[] = ["teal", "purple", "purple", "teal", "purple", "teal", "teal", "purple", "teal", "purple"];
+export const capColor = (id: number): CapColor => CAP_COLORS[id % CAP_COLORS.length];
 
 /** Any incoming `target` becomes a whole number in 6..10 (bad input → the default 7). */
 export function normalizeTarget(target: number | undefined): number {

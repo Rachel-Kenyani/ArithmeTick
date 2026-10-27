@@ -31,6 +31,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
     levelNumber,
     palActive,
     engagePal,
+    handleAttempt,
     completion,
     celebrating,
     timeUp,
@@ -75,7 +76,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
           >
-            <LevelContent level={level} palActive={palActive} onStruggle={engagePal} onDone={handleComplete} />
+            <LevelContent level={level} palActive={palActive} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} />
           </Animated.View>
         </View>
       </View>

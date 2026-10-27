@@ -19,10 +19,14 @@ const TILE_TONES: Record<TileTone, { border: string; bg: string; fg: string }> =
   total: { border: "rgba(0,79,74,0.3)", bg: colors.atTeal, fg: colors.white },
   win: { border: "#E0A800", bg: colors.atYellow, fg: colors.atInk },
   plain: { border: "rgba(0,79,74,0.15)", bg: colors.white, fg: colors.atInk },
+  // the full top row: the same purple as the "5" badge
+  five: { border: "#4F2C7D", bg: colors.atPurple, fg: colors.white },
+  // the missing part: a dashed, empty-looking tile
+  ask: { border: "rgba(0,111,104,0.55)", bg: colors.atMint, fg: colors.atTeal },
 };
 
 /** A value change pops the new digit in (web: key={value}, scale .4 / y 6 → 1 / 0). */
-function TileDigit({ value, fontSize, color }: Readonly<{ value: number; fontSize: number; color: string }>) {
+function TileDigit({ value, fontSize, color }: Readonly<{ value: number | string; fontSize: number; color: string }>) {
   const t = useSharedValue(0);
   useEffect(() => {
     t.set(withSequence(withTiming(0, { duration: 0, reduceMotion: RM }), withSpring(1, SPRING_POP)));
@@ -34,11 +38,11 @@ function TileDigit({ value, fontSize, color }: Readonly<{ value: number; fontSiz
   return <Animated.Text style={[styles.tileText, { fontSize, lineHeight: Math.round(fontSize * 1.15), color }, st]}>{value}</Animated.Text>;
 }
 
-export function NumberTile({ value, tone, size, fontSize }: Readonly<{ value: number; tone: TileTone; size: number; fontSize: number }>) {
+export function NumberTile({ value, tone, size, fontSize }: Readonly<{ value: number | string; tone: TileTone; size: number; fontSize: number }>) {
   const t = TILE_TONES[tone];
   return (
     // minWidth: a two-digit total ("10") widens the tile instead of overflowing it
-    <View style={[styles.tile, { minWidth: size, height: size, borderColor: t.border, backgroundColor: t.bg }, tone === "win" ? styles.glowYellow : null]}>
+    <View style={[styles.tile, { minWidth: size, height: size, borderColor: t.border, backgroundColor: t.bg }, tone === "win" ? styles.glowYellow : null, tone === "ask" ? styles.tileAsk : null]}>
       <TileDigit value={value} fontSize={fontSize} color={t.fg} />
     </View>
   );

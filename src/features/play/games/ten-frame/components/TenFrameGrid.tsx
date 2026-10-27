@@ -6,11 +6,10 @@ import { View } from "react-native";
 
 import { colors } from "@/theme";
 
-import { CAP_COUNT, CAP_IDS, ROW_SIZE } from "../constants";
+import { CAP_IDS, ROW_SIZE } from "../constants";
 import { frameChrome, frameColorFor, gridLabelFor, wellModeFor } from "../logic/viewState";
 import { styles } from "../styles";
 import type { BoardLayout, Pt, Rect4 } from "../types";
-import { PopIn } from "./PopIn";
 import { TopRowHalo } from "./TopRowHalo";
 import { Well } from "./Well";
 
@@ -49,8 +48,6 @@ export function TenFrameGrid({
   hintSlot,
   onFillNext,
 }: Readonly<TenFrameGridProps>) {
-  /** Slots that stay empty once the target is reached (locked out under PAL). */
-  const lockedCount = CAP_COUNT - target;
   const { cellRadius, haloInset, frameEdge } = frameChrome(L);
   const rowWidth = L.cell * ROW_SIZE + L.gap * (ROW_SIZE - 1);
   const showTopHalo = palActive || topFull;
@@ -79,7 +76,7 @@ export function TenFrameGrid({
         ]}
       />
 
-      {/* 5-group halo (gold) / PAL locked row glow (mint) */}
+      {/* 5-group halo (purple) / PAL locked row glow (mint) */}
       {showTopHalo ? (
         <TopRowHalo
           palActive={palActive}
@@ -89,26 +86,6 @@ export function TenFrameGrid({
           width={rowWidth + haloInset * 2}
           height={L.cell + haloInset * 2}
           radius={cellRadius + haloInset + 2}
-        />
-      ) : null}
-
-      {/* PAL: the slots that stay empty (10 − target, e.g. 10 − 7 = 3) are one soft yellow chunk */}
-      {palActive && lockedCount > 0 ? (
-        <PopIn
-          from={0.94}
-          delayMs={150}
-          style={[
-            styles.abs,
-            styles.chunk,
-            {
-              borderWidth: L.compact ? 3 : 4,
-              left: wellsX + (target - ROW_SIZE) * (L.cell + L.gap) - haloInset,
-              top: wellsY + L.cell + L.gap - haloInset,
-              width: lockedCount * L.cell + (lockedCount - 1) * L.gap + haloInset * 2,
-              height: L.cell + haloInset * 2,
-              borderRadius: cellRadius + haloInset + 2,
-            },
-          ]}
         />
       ) : null}
 

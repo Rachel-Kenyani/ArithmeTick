@@ -24,6 +24,8 @@ export interface GradeModuleProps {
    * error message yourself — the screen responds by setting palActive=true.
    */
   onStruggle: () => void;
+  /** The child checked an answer (right or wrong). Optional: modules without a "Done" step skip it. */
+  onAttempt?: (attempt: { target: number; answer: number; correct: boolean }) => void;
   /** The puzzle is solved. Call exactly once, after the module's own "solved" flourish (~0.8–1.4s). */
   onSolved: () => void;
 }

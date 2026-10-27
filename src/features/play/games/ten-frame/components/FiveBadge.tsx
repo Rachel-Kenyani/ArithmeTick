@@ -1,5 +1,5 @@
 /**
- * The "5" badge that pops onto the full top row.
+ * The "5" badge that pops onto the full top row: big and purple so a child spots "that's 5" at a glance.
  */
 
 import { Text } from "react-native";
@@ -20,7 +20,7 @@ export function FiveBadge({
 }: Readonly<{ palActive: boolean; compact: boolean; size: number; left: number; top: number }>) {
   return (
     <PopIn
-      key={palActive ? "badge-pal" : "badge-gold"}
+      key={palActive ? "badge-pal" : "badge-five"}
       from={0}
       rotateFrom={-30}
       delayMs={420}
@@ -28,10 +28,10 @@ export function FiveBadge({
       style={[
         styles.abs,
         styles.badge,
-        { backgroundColor: palActive ? colors.atGlow : colors.atYellow, left, top, width: size, height: size, borderRadius: size },
+        { backgroundColor: palActive ? colors.atGlow : colors.atPurple, left, top, width: size, height: size, borderRadius: size },
       ]}
     >
-      <Text style={[styles.badgeText, { fontSize: compact ? 15 : 19, lineHeight: compact ? 18 : 23 }]}>5</Text>
+      <Text style={[styles.badgeText, { color: palActive ? colors.atInk : colors.white, fontSize: compact ? 22 : 28, lineHeight: compact ? 26 : 33 }]}>5</Text>
     </PopIn>
   );
 }

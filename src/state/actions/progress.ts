@@ -4,12 +4,14 @@
 
 import { newlyEarned, getBadge, type BadgeDef } from "@/data/badges";
 import { getLevel, LEVELS_PER_GRADE } from "@/data/levels";
-import type { ChildProfile } from "@/types/models";
+import type { AttemptLog, ChildProfile } from "@/types/models";
 
 import { getSnapshot, setState, updateProfile } from "../core";
 
 /** Stars a level is worth the first time it is finished. */
 export const STARS_PER_LEVEL = 3;
+/** How many recent answers each profile keeps. */
+const MAX_ATTEMPTS = 200;
 
 export interface LevelCompletion {
   /** Stars added by this completion (3 the first time, 0 on a replay). */
@@ -62,6 +64,11 @@ export const progressActions = {
     next.badges = [...next.badges, ...earned];
     updateProfile(profileId, () => next);
     return earned.map((id) => getBadge(id)).filter((b): b is BadgeDef => b !== null);
+  },
+
+  /** Keep a checked answer on the phone (the newest MAX_ATTEMPTS only) for adaptive learning later. */
+  logAttempt(profileId: string, attempt: AttemptLog) {
+    updateProfile(profileId, (p) => ({ ...p, attempts: [...(p.attempts ?? []), attempt].slice(-MAX_ATTEMPTS) }));
   },
 
   clearJustUnlocked() {

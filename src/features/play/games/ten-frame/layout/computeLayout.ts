@@ -2,7 +2,7 @@
  * Responsive sizing: picks the arrangement and well / cap sizes that fit the board.
  */
 
-import { CAP_RATIO, MAX_CAP, MAX_CELL, MIN_CAP, MIN_CELL } from "../constants";
+import { CAP_RATIO, DONE_GAP, DONE_H, MAX_CAP, MAX_CELL, MIN_CAP, MIN_CELL } from "../constants";
 import type { Arrangement, BoardLayout, Chrome } from "../types";
 import { clamp } from "../utils/math";
 import { chromeFor, equationWidth, pillWidth, sideCardFor } from "./chrome";
@@ -59,9 +59,10 @@ export function computeLayout(width: number, availH: number): BoardLayout {
     const rows = cols === 10 ? 1 : 2;
     const gridH = cell * 2 + gap + frameExtra;
     const trayH = cap * rows + trayGap * (rows - 1) + trayExtra;
-    if (a === "side") return pad * 2 + Math.max(gridH, sideCardFor(cell).h) + c.eqH + trayH + c.sectionGap * 2;
-    if (a === "rail") return pad * 2 + Math.max(gridH, c.cardH + c.sectionGap + c.eqH) + trayH + c.sectionGap;
-    return pad * 2 + c.cardH + gridH + c.eqH + trayH + c.sectionGap * 3;
+    const eqBlock = c.eqH + DONE_GAP + DONE_H;
+    if (a === "side") return pad * 2 + Math.max(gridH, sideCardFor(cell).h) + eqBlock + trayH + c.sectionGap * 2;
+    if (a === "rail") return pad * 2 + Math.max(gridH, c.cardH + c.sectionGap + eqBlock) + trayH + c.sectionGap;
+    return pad * 2 + c.cardH + gridH + eqBlock + trayH + c.sectionGap * 3;
   };
 
   /** Biggest wells for one arrangement: as wide as fits, then shrink (not below MIN_CELL) to fit the height. */

@@ -40,6 +40,23 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   const [palActive, setPalActive] = useState(false);
   const engagePal = useCallback(() => setPalActive(true), []);
 
+  /* ---- every "Done" press is saved on the phone (time since the level opened, PAL on or off) ---- */
+  const openedAt = useRef(0);
+  useEffect(() => {
+    openedAt.current = Date.now();
+  }, []);
+  const palRef = useRef(palActive);
+  useEffect(() => {
+    palRef.current = palActive;
+  }, [palActive]);
+  const grade = level.grade;
+  const handleAttempt = useCallback(
+    ({ target, answer, correct }: { target: number; answer: number; correct: boolean }) => {
+      actions.logAttempt(profileId, { grade, level: levelNumber, target, answer, correct, ms: Date.now() - openedAt.current, pal: palRef.current, at: Date.now() });
+    },
+    [profileId, grade, levelNumber],
+  );
+
   useEffect(() => {
     if (palActive) sfx.palShimmer();
   }, [palActive]);
@@ -97,6 +114,7 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     levelNumber,
     palActive,
     engagePal,
+    handleAttempt,
     completion,
     celebrating,
     timeUp,

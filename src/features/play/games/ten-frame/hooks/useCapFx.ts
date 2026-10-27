@@ -26,7 +26,7 @@ export function useCapFx(fx: FxSignal | undefined, landed: number, reduced: bool
       fxRot.set(keyframes([0, -14, 12, -8, 5, 0], 550, delay, EASE_IN_OUT));
     } else if (fx.kind === "pulse") {
       fxScale.set(keyframes([1, 1.15, 1], 420, delay));
-    } else if (fx.kind === "bounce") {
+    } else if (fx.kind === "bounce" || fx.kind === "count") {
       fxY.set(keyframes(reduced ? [0, -4, 0] : [0, -18, 0, -7, 0], 750, delay));
     } else {
       fxY.set(keyframes([0, -12, 0, -5, 0], 800, delay));

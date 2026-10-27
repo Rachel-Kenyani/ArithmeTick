@@ -22,7 +22,6 @@ export const SPRING_FLY_Y = spring(210, 19);
 
 export const SPRING_UI = spring(420, 26);
 export const SPRING_POP = spring(520, 20);
-export const SPRING_LAYOUT = { stiffness: 500, damping: 30 };
 export const BREATHE_MS = 2200;
 export const EASE_IN_OUT = Easing.inOut(Easing.ease);
 export const EASE_OUT = Easing.out(Easing.ease);

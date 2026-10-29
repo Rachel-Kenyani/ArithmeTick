@@ -6,9 +6,6 @@
 import { getSnapshot, setState } from "../core";
 import { demoProfiles } from "../seed";
 
-/** Placeholder identity until native Google Sign-In is wired in. */
-export const MOCK_GOOGLE_IDENTITY = { email: "parent@gmail.com", name: null } as const;
-
 export const accountActions = {
   markSplashSeen() {
     setState((s) => (s.seenSplash ? s : { ...s, seenSplash: true }));
@@ -25,11 +22,11 @@ export const accountActions = {
   },
 
   /**
-   * Check a one-time code for the pending flow. Prototype rule: any 5 digits pass.
+   * Record a checked one-time code for the pending flow (services/auth checks the code itself).
    * Signup → the account is created and signed in. Reset → the pending flow stays until resetPassword().
    */
   verifyCode(code: string): boolean {
-    if (!/^\d{5}$/.test(code)) return false;
+    if (!/^\d+$/.test(code)) return false;
     const pending = getSnapshot().pending;
     if (!pending) return false;
     if (pending.purpose === "signup") {
@@ -54,15 +51,15 @@ export const accountActions = {
   },
 
   /**
-   * "Continue with Google". Still mocked on mobile (native Google Sign-In comes later) — callers pass
-   * MOCK_GOOGLE_IDENTITY. Login seeds demo children on a fresh device; signup starts empty.
+   * "Continue with Google" succeeded (services/googleAuth). Only the offline sample identity on Log In seeds
+   * the demo children; real accounts keep the explorers already on this phone.
    */
-  continueWithGoogle(intent: "login" | "signup", identity: { email: string; name: string | null }) {
+  continueWithGoogle(identity: { email: string; name: string | null; sample: boolean }, intent: "login" | "signup") {
     setState((s) => ({
       ...s,
       account: { identifier: identity.email, method: "google", name: identity.name },
       pending: null,
-      profiles: s.profiles.length || intent === "signup" ? s.profiles : demoProfiles(),
+      profiles: s.profiles.length || !identity.sample || intent === "signup" ? s.profiles : demoProfiles(),
     }));
   },
 

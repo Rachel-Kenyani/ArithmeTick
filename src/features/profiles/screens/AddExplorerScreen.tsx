@@ -75,14 +75,14 @@ export default function AddExplorerScreen() {
             style={styles.grade}
           />
 
-          <SchoolCodeBlock
+          {/* <SchoolCodeBlock
             codeRef={codeRef}
             length={CODE_LENGTH}
             code={code}
             error={errors.code}
             codeReady={codeReady}
             onChange={onCodeChange}
-          />
+          /> */}
 
           <Button trailing="arrow" loading={busy} onPress={submit} style={styles.submit}>
             Let&apos;s Play

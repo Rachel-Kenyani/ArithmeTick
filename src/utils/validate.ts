@@ -82,7 +82,7 @@ export function identifierProblem(raw: string): string | null {
   if (!trimmed) return "Please enter your email or phone number.";
   if (isValidIdentifier(trimmed)) return null;
   if (trimmed.includes("@")) return "Please check the email address, e.g. name@gmail.com.";
-  if (/^[\d\s+\-().]+$/.test(trimmed)) return "Please check the phone number, e.g. 0723 456 767.";
+  if (/^[\d\s+\-().]+$/.test(trimmed)) return "Please enter a Kenyan mobile number, e.g. 0723 456 767.";
   return "Please use an email address or a phone number, e.g. 0723 456 767.";
 }
 

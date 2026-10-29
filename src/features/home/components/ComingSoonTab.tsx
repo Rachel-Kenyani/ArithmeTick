@@ -8,15 +8,13 @@
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 import JaymoHeadArt from "@/components/mascot/JaymoHeadArt";
-import BottomNav, { type BottomTab } from "@/features/home/components/BottomNav";
+import BottomNav, { navigateToTab, type BottomTab } from "@/features/home/components/BottomNav";
 import StatusBarScrim from "@/features/home/components/StatusBarScrim";
 import Panel from "@/components/ui/Panel";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
-import { ROUTES } from "@/constants/routes";
 import { useGuard } from "@/hooks/useGuard";
 import { colors, fonts } from "@/theme";
 
@@ -25,11 +23,6 @@ export interface ComingSoonTabProps {
   title: string;
   icon: ReactNode;
   message: string;
-}
-
-function navigate(href: string) {
-  if (href === ROUTES.home) router.dismissTo(ROUTES.home as never);
-  else router.replace(href as never);
 }
 
 export default function ComingSoonTab({ tab, title, icon, message }: Readonly<ComingSoonTabProps>) {
@@ -54,7 +47,7 @@ export default function ComingSoonTab({ tab, title, icon, message }: Readonly<Co
           <Text style={styles.message}>{message}</Text>
         </Panel>
       </View>
-      <BottomNav active={tab} onNavigate={navigate} />
+      <BottomNav active={tab} onNavigate={navigateToTab} />
     </SplashBackdrop>
   );
 }

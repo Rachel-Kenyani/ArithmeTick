@@ -4,7 +4,13 @@
  */
 
 import type { ReactNode } from "react";
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 
 import { colors, fonts } from "@/theme";
 
@@ -14,7 +20,11 @@ export interface ScreenHeadingProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export default function ScreenHeading({ title, subtitle, style }: Readonly<ScreenHeadingProps>) {
+export default function ScreenHeading({
+  title,
+  subtitle,
+  style,
+}: Readonly<ScreenHeadingProps>) {
   return (
     <View style={[styles.wrap, style]}>
       <Text style={styles.title} accessibilityRole="header">
@@ -27,10 +37,16 @@ export default function ScreenHeading({ title, subtitle, style }: Readonly<Scree
 
 const styles = StyleSheet.create({
   wrap: { alignItems: "center" },
-  title: { fontFamily: fonts.headingBold, fontSize: 30, lineHeight: 34, color: colors.atTeal, textAlign: "center" },
+  title: {
+    fontFamily: fonts.headingBold,
+    fontSize: 30,
+    lineHeight: 34,
+    color: colors.atTeal,
+    textAlign: "center",
+  },
   subtitle: {
     marginTop: 6,
-    maxWidth: 320,
+    maxWidth: 360,
     fontFamily: fonts.bodyMedium,
     fontSize: 16,
     lineHeight: 24,

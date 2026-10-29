@@ -1,0 +1,1065 @@
+{
+  "info": {
+    "_postman_id": "5381cf89-6e82-49aa-985a-7a4433d61768",
+    "name": "ArithmeTick API",
+    "description": "Every backend call the ArithmeTick app makes: Supabase Auth (email/phone sign-up with 6-digit codes, log in, forgot password, Google), the `send-sms` Edge Function (Supabase Send SMS hook) and Africa's Talking.\n\nSetup: import `ArithmeTick.postman_environment.json`, fill in `baseUrl` + `anonKey` (the same values as the app's .env) and the test email/phone. Verify and log-in requests save `accessToken` automatically.\n\nSecrets (Africa's Talking key, hook secret) belong in the environment's *current value* only, never in the shared collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Email: sign up, verify, log in",
+      "item": [
+        {
+          "name": "Sign up (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "signup"
+              ]
+            },
+            "description": "Create Account with email. Supabase emails a 6-digit code (Confirm signup template). App: auth.signUp.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Resend sign-up code (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "resend"
+              ]
+            },
+            "description": "\"Resend Code\" on Verify Account. App: auth.resendCode.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"signup\",\n  \"email\": \"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify sign-up code (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "verify"
+              ]
+            },
+            "description": "Put the emailed code in the `otp` variable first. Returns a session. App: auth.verifyCode (type signup).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"signup\",\n  \"email\": \"{{email}}\",\n  \"token\": \"{{otp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log in (email + password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/token?grant_type=password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                }
+              ]
+            },
+            "description": "Log In To Account. App: auth.logIn.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Phone: sign up, verify, log in (SMS via Africa's Talking)",
+      "item": [
+        {
+          "name": "Sign up (phone)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "signup"
+              ]
+            },
+            "description": "Create Account with a Kenyan number in E.164 (+2547\u2026). Supabase calls the send-sms hook, which texts the code via Africa's Talking (sandbox: shows in the simulator).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Resend sign-up code (SMS)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "resend"
+              ]
+            },
+            "description": "\"Resend Code\" for a phone sign-up.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"sms\",\n  \"phone\": \"{{phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify SMS code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "verify"
+              ]
+            },
+            "description": "Put the SMS code in `otp`. Used for phone sign-up and phone password reset. App: auth.verifyCode (type sms).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"sms\",\n  \"phone\": \"{{phone}}\",\n  \"token\": \"{{otp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log in (phone + password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/token?grant_type=password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                }
+              ]
+            },
+            "description": "Log In with a phone number.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Forgot password",
+      "item": [
+        {
+          "name": "Send reset code (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/recover",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "recover"
+              ]
+            },
+            "description": "Forgot Password with email: sends the Reset password email with a code. App: auth.sendResetCode.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify reset code (email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "verify"
+              ]
+            },
+            "description": "Checks the emailed reset code and returns a short session. App: auth.verifyCode (type recovery).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"recovery\",\n  \"email\": \"{{email}}\",\n  \"token\": \"{{otp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Send reset code (phone)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "otp"
+              ]
+            },
+            "description": "Forgot Password with a phone: Supabase has no reset-by-SMS, so this texts a sign-in code (no new account). Then use \"Verify SMS code\" from folder 2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"{{phone}}\",\n  \"create_user\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save new password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "user"
+              ]
+            },
+            "description": "Reset Password: needs the accessToken from a verify step. App: auth.setNewPassword.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{newPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Google",
+      "item": [
+        {
+          "name": "Sign in with Google ID token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/token?grant_type=id_token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "id_token"
+                }
+              ]
+            },
+            "description": "\"Continue with Google\" (Log In and Create Account). The app gets `idToken` from the native Google picker; paste one into `googleIdToken` to test. Creates the account the first time. App: services/googleAuth.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"google\",\n  \"id_token\": \"{{googleIdToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Session",
+      "item": [
+        {
+          "name": "Get current user",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "user"
+              ]
+            },
+            "description": "Who the accessToken belongs to (check created_at / last_sign_in_at, which the app uses to spot a brand-new Google account)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/token?grant_type=refresh_token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "grant_type",
+                  "value": "refresh_token"
+                }
+              ]
+            },
+            "description": "Swap the refresh token for a new access token (the app does this automatically).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.access_token) {",
+                  "  pm.collectionVariables.set('accessToken', data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', data.refresh_token || '');",
+                  "  console.log('Saved accessToken for the signed-in user');",
+                  "}",
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Log out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "logout"
+              ]
+            },
+            "description": "\"Grown-ups: hold to log out\". App: auth.signOut."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "apikey",
+                "value": "{{anonKey}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{anonKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/v1/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "v1",
+                "settings"
+              ]
+            },
+            "description": "Which sign-in methods are on (email, phone, google) and whether confirmations are required."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 2xx', () => pm.response.to.be.success);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. SMS (Edge Function + Africa's Talking)",
+      "item": [
+        {
+          "name": "send-sms hook (test directly)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Signs the body like Supabase does (Standard Webhooks), so the function accepts it.",
+                  "const secret = pm.variables.get('smsHookSecret').replace('v1,whsec_', '');",
+                  "const id = 'msg_' + Date.now();",
+                  "const ts = Math.floor(Date.now() / 1000).toString();",
+                  "const body = pm.request.body.raw.replace(/{{(\\w+)}}/g, (_, k) => pm.variables.get(k));",
+                  "const sig = CryptoJS.HmacSHA256(`${id}.${ts}.${body}`, CryptoJS.enc.Base64.parse(secret)).toString(CryptoJS.enc.Base64);",
+                  "pm.request.headers.upsert({ key: 'webhook-id', value: id });",
+                  "pm.request.headers.upsert({ key: 'webhook-timestamp', value: ts });",
+                  "pm.request.headers.upsert({ key: 'webhook-signature', value: 'v1,' + sig });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/functions/v1/send-sms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "functions",
+                "v1",
+                "send-sms"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"phone\": \"{{phoneDigits}}\"\n  },\n  \"sms\": {\n    \"otp\": \"123456\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Calls the deployed Edge Function the way Supabase's Send SMS hook does, so you can test Africa's Talking without signing up. Needs `smsHookSecret` (the v1,whsec_\u2026 secret from Auth \u2192 Hooks). Expect `{}` and the SMS in the Africa's Talking simulator."
+          }
+        },
+        {
+          "name": "Africa's Talking: send SMS (sandbox)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "apiKey",
+                "value": "{{atApiKey}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "https://api.sandbox.africastalking.com/version1/messaging",
+              "protocol": "https",
+              "host": [
+                "api",
+                "sandbox",
+                "africastalking",
+                "com"
+              ],
+              "path": [
+                "version1",
+                "messaging"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{atUsername}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{phone}}"
+                },
+                {
+                  "key": "message",
+                  "value": "Your ArithmeTick code is 123456. It expires soon. Don't share it with anyone."
+                }
+              ]
+            },
+            "description": "Africa's Talking directly (what the send-sms function calls). Check the API key works; the SMS shows in simulator.africastalking.com. Live: change the host to api.africastalking.com and use the live username/key."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    }
+  ]
+}

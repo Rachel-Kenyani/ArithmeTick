@@ -4,10 +4,11 @@
  * Title card on top, then the family as big pale-mint tiles (avatar, name in Quicksand teal, a tiny grade chip
  * and ★ stars) plus the dashed "Add Profile" tile. 2 columns on phones, 3 on tablets, 4 on wide screens; rows
  * are centred on wider screens. Tapping a child: chord + tile pop + avatar hop + sparkle burst, the other
- * tiles step back, then selectProfile → /home.
+ * tiles step back, then selectProfile → /home. A quiet press-and-hold "Grown-ups: Log out" sits underneath.
  */
 
 import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useReducedMotion } from "react-native-reanimated";
 
@@ -17,7 +18,13 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
-import { useAppState } from "@/state/store";
+import HoldToConfirm from "@/components/ui/HoldToConfirm";
+import { LogoutIcon } from "@/components/ui/icons";
+import { ROUTES } from "@/constants/routes";
+import { auth } from "@/services/auth";
+import { signOutOfGoogle } from "@/services/googleAuth";
+import { actions, useAppState } from "@/state/store";
+import { colors } from "@/theme";
 import { useGuard } from "@/hooks/useGuard";
 
 import AddProfileTile from "../components/AddProfileTile";
@@ -105,6 +112,16 @@ export default function ProfilesScreen() {
           />
         ) : null}
       </View>
+
+      <HoldToConfirm
+        label="Grown-ups: hold to log out"
+        icon={<LogoutIcon size={20} strokeWidth={2.2} color={colors.atTeal} />}
+        onConfirm={() => {
+          void signOutOfGoogle().then(() => auth.signOut());
+          actions.logout();
+          router.replace(ROUTES.welcome as never);
+        }}
+      />
     </ScreenShell>
   );
 }

@@ -1,6 +1,6 @@
 /**
  * Shared Log In / Sign Up form state: identifier + password, reward-early validation, submit and Google.
- * The password is only checked for shape and is never stored or logged.
+ * The password is only checked for shape here, handed to services/auth, and never stored or logged.
  */
 
 import { useRef, useState } from "react";
@@ -19,9 +19,10 @@ export function useCredentialsForm({
   submit,
   google,
 }: Readonly<{
-  /** Runs once both fields pass, with the normalized identifier. */
-  submit: (identifier: string) => void;
-  google: () => void;
+  /** Runs once both fields pass. Resolve with field notes to show (e.g. a wrong password), or nothing on success. */
+  submit: (identifier: string, password: string) => Promise<Partial<Errors> | null>;
+  /** Resolves with a message to show (e.g. no Google Play services), or null. */
+  google: () => Promise<string | null>;
 }>) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -48,13 +49,20 @@ export function useCredentialsForm({
     if (next.identifier) return identifierRef.current?.focus();
     if (next.password) return passwordRef.current?.focus();
     setBusy("form");
-    submit(normalizeIdentifier(identifier));
+    void submit(normalizeIdentifier(identifier), password).then((problems) => {
+      if (!problems) return;
+      setErrors({ ...NO_ERRORS, ...problems });
+      setBusy(null);
+    });
   };
 
   const onGoogle = () => {
     if (busy) return;
     setBusy("google");
-    google();
+    void google().then((message) => {
+      setBusy(null);
+      if (message) setErrors({ ...NO_ERRORS, identifier: message });
+    });
   };
 
   return {

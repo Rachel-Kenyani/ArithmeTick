@@ -35,7 +35,7 @@ export default function VerifyCard({
   onVerified: (flow: PendingVerification) => void;
 }>) {
   const {
-    code, copy, error, expired, onChange, otpRef, resend, resendStyle, secondsLeft, shakeStyle, toast, verified, verify,
+    canResend, checking, code, copy, error, expired, onChange, otpRef, resend, resendStyle, secondsLeft, shakeStyle, toast, verified, verify,
   } = useVerifyFlow(flow, onVerified);
 
   return (
@@ -45,14 +45,22 @@ export default function VerifyCard({
           <ScreenHeading
             title={copy.title}
             subtitle={
-              <>
-                Enter the{" "}
-                <Text style={styles.purple}>{CODE_LENGTH}-digit code</Text> sent
-                to your {identifierKind(flow.identifier).replace(" ", " ")}{" "}
-                <Text style={styles.purple}>
-                  {maskIdentifier(flow.identifier)}
-                </Text>
-              </>
+              flow.purpose === "reset" ? (
+                // Same words whether or not the account exists, so nobody can check who's registered.
+                <>
+                  If <Text style={styles.purple}>{maskIdentifier(flow.identifier)}</Text> has an account, we’ve sent
+                  a <Text style={styles.purple}>{CODE_LENGTH}-digit code</Text>. Enter it below.
+                </>
+              ) : (
+                <>
+                  Enter the{" "}
+                  <Text style={styles.purple}>{CODE_LENGTH}-digit code</Text> sent
+                  to your {identifierKind(flow.identifier).replace(" ", " ")}{" "}
+                  <Text style={styles.purple}>
+                    {maskIdentifier(flow.identifier)}
+                  </Text>
+                </>
+              )
             }
           />
 
@@ -78,7 +86,7 @@ export default function VerifyCard({
 
           <Button
             trailing="arrow"
-            loading={verified}
+            loading={verified || checking}
             onPress={() => verify(code)}
             style={styles.submit}
           >
@@ -88,7 +96,7 @@ export default function VerifyCard({
           <ResendFooter
             resendStyle={resendStyle}
             onResend={resend}
-            disabled={verified}
+            disabled={!canResend}
           />
 
           {/* The demo hint steps aside for a moment while the "New code sent" toast shows in its place. */}

@@ -1,5 +1,6 @@
 /**
- * "Didn't Get The Code? Resend Code" footer on the Verify card (the link pulses when the code expired).
+ * "Didn't Get The Code? Resend Code" footer on the Verify card. The link is muted (grey, not tappable) until the
+ * countdown ends, then turns purple (and pulses if they try to verify an expired code).
  */
 
 import type { ComponentProps } from "react";
@@ -26,14 +27,15 @@ export default function ResendFooter({
           disabled={disabled}
           accessibilityRole="button"
           accessibilityState={{ disabled }}
+          accessibilityHint={disabled ? "Available when the timer ends" : undefined}
           style={styles.footerLink}
         >
           {({ pressed }) => (
             <Text
               style={[
                 styles.footerText,
-                styles.link,
-                pressed && styles.linkPressed,
+                disabled ? styles.linkMuted : styles.link,
+                pressed && !disabled && styles.linkPressed,
               ]}
             >
               Resend Code
@@ -62,5 +64,7 @@ const styles = StyleSheet.create({
   },
   footerLink: { paddingVertical: 12, marginVertical: -6, paddingHorizontal: 2 },
   link: { color: colors.jgPurple },
+  // Muted while waiting: still readable (≈ 4.6:1 on the mint card) but clearly not tappable
+  linkMuted: { color: "#6B7F7D" },
   linkPressed: { color: "#6a3db8", textDecorationLine: "underline" },
 });

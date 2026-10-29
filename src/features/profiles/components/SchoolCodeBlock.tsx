@@ -1,7 +1,3 @@
-/**
- * The optional 6-character school invite code on "Almost Done!", with its error / "added" note.
- */
-
 import type { RefObject } from "react";
 import { StyleSheet, Text, View, type TextInputInstance } from "react-native";
 import Animated, { FadeIn, FadeOut, ReduceMotion } from "react-native-reanimated";

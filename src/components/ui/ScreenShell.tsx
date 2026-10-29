@@ -36,6 +36,10 @@ export interface ScreenShellProps {
   canopy?: boolean;
   /** A full-screen background image (cover) in place of the drawn JungleBackdrop; `grass`/`canopy` then only set spacing. */
   backgroundImage?: ImageSourcePropType;
+  /** Pinned above the scrolling column (e.g. the app top bar, which handles the status bar inset itself). */
+  header?: ReactNode;
+  /** Pinned under the scrolling column, on the same background (e.g. the bottom tab bar). */
+  footer?: ReactNode;
   /** Spacing between children (default 24). */
   gap?: number;
   style?: StyleProp<ViewStyle>;
@@ -51,6 +55,8 @@ export default function ScreenShell({
   gap = 24,
   style,
   backgroundImage,
+  header,
+  footer,
 }: Readonly<ScreenShellProps>) {
   const insets = useSafeAreaInsets();
   const content = (
@@ -62,7 +68,7 @@ export default function ScreenShell({
         contentContainerStyle={[
           styles.scroll,
           {
-            paddingTop: insets.top + 16,
+            paddingTop: header ? 16 : insets.top + 16,
             paddingBottom: insets.bottom + (grass ? 64 : 24),
             paddingLeft: Math.max(16, insets.left),
             paddingRight: Math.max(16, insets.right),
@@ -103,11 +109,15 @@ export default function ScreenShell({
         resizeMode="cover"
         style={styles.backgroundImage}
       />
+      {header}
       {content}
+      {footer}
     </View>
   ) : (
     <JungleBackdrop grass={grass} canopy={canopy}>
+      {header}
       {content}
+      {footer}
     </JungleBackdrop>
   );
 }

@@ -1,11 +1,13 @@
 /**
- * Reset Password (mockup 10). Last step of Forgot → Verify Identity → here; needs a pending reset
- * flow, otherwise → /login. The new password is only checked (≥ 8 characters, both entries match) —
+ * Reset Password (mockup 10). Last step of Forgot → Verify Identity → here, or opened straight from the
+ * "Reset password" link in the email (arithmetick://reset-password#…tokens). Needs a pending reset flow or a
+ * valid link, otherwise → Forgot Password / Log In. The new password is only checked (≥ 8 characters, both entries match) —
  * it is never stored or logged. Save → actions.completeReset() → Log In, which shows a one-time
  * "Password updated" note (in-memory flag from @/lib/flash, no secrets).
  */
 
-import { router } from "expo-router";
+import * as Linking from "expo-linking";
+import { router, useIsFocused } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, type TextInputInstance } from "react-native";
 import Animated, { FadeInDown, ReduceMotion } from "react-native-reanimated";
@@ -17,6 +19,7 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import SplashBackdrop, { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { PasswordField } from "@/components/ui/TextField";
 import { KeyIcon } from "@/components/ui/icons";
+import { auth } from "@/services/auth";
 import { markPasswordUpdated } from "@/services/flash";
 import { ROUTES } from "@/constants/routes";
 import { actions, useAppState, useHydrated } from "@/state/store";
@@ -38,10 +41,22 @@ export default function ResetPasswordScreen() {
   // completeReset() clears `pending` while we navigate to Log In — don't bounce meanwhile.
   const [saved, setSaved] = useState(false);
   const allowed = pending?.purpose === "reset" || saved;
+  // Opened from the email's link: turn it into a reset session first.
+  const url = Linking.useURL();
+  const fromLink = !allowed && !!url?.includes("reset-password") && /access_token|error/.test(url);
 
+  const focused = useIsFocused();
   useEffect(() => {
-    if (hydrated && !allowed) router.replace(ROUTES.login);
-  }, [hydrated, allowed]);
+    if (!focused || !hydrated || allowed) return;
+    if (!fromLink || !url) {
+      router.replace(ROUTES.login);
+      return;
+    }
+    void auth.openResetLink(url).then((result) => {
+      if (result.ok) actions.beginReset(result.email);
+      else router.replace(ROUTES.forgotPassword);
+    });
+  }, [focused, hydrated, allowed, fromLink, url]);
 
   if (!hydrated || !allowed) return <SplashBackdrop />;
   return <ResetCard onSaved={() => setSaved(true)} />;
@@ -77,10 +92,18 @@ function ResetCard({ onSaved }: Readonly<{ onSaved: () => void }>) {
     if (next.password) return passwordRef.current?.focus();
     if (next.confirm) return confirmRef.current?.focus();
     setBusy(true);
-    markPasswordUpdated();
-    onSaved();
-    actions.completeReset();
-    router.push(ROUTES.login);
+    void auth.setNewPassword(password).then((result) => {
+      if (!result.ok) {
+        setErrors({ password: result.message, confirm: null });
+        setBusy(false);
+        return;
+      }
+      markPasswordUpdated();
+      onSaved();
+      // Go to Log In first (replacing this screen), then clear the finished reset flow.
+      router.replace(ROUTES.login);
+      actions.completeReset();
+    });
   };
 
   return (

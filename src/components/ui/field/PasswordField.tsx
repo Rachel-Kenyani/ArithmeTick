@@ -15,26 +15,15 @@ export type PasswordFieldProps = Omit<
   "secureTextEntry" | "trailing"
 >;
 
-export function PasswordField({
-  label,
-  icon,
-  error,
-  hint,
-  ref,
-  style,
-}: Readonly<PasswordFieldProps>) {
+export function PasswordField(props: Readonly<PasswordFieldProps>) {
   const [show, setShow] = useState(false);
   return (
     <TextField
       autoCapitalize="none"
       autoCorrect={false}
       spellCheck={false}
-      label={label}
-      icon={icon}
-      error={error}
-      hint={hint}
-      ref={ref}
-      style={style}
+      // Everything else (value, onChangeText, placeholder, autofill hints, submit) passes straight through.
+      {...props}
       secureTextEntry={!show}
       trailing={
         <Pressable

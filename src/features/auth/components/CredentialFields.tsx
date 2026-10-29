@@ -5,9 +5,11 @@
 import type { RefObject } from "react";
 import { StyleSheet, View, type TextInputInstance } from "react-native";
 
-import { PasswordField, TextField } from "@/components/ui/TextField";
-import { KeyIcon, MailIcon } from "@/components/ui/icons";
+import { PasswordField } from "@/components/ui/TextField";
+import { KeyIcon } from "@/components/ui/icons";
 import { colors } from "@/theme";
+
+import IdentifierField from "./IdentifierField";
 
 export default function CredentialFields({
   identifierRef,
@@ -34,11 +36,8 @@ export default function CredentialFields({
 }>) {
   return (
     <View style={styles.fields}>
-      <TextField
+      <IdentifierField
         ref={identifierRef}
-        label="Email or phone number"
-        icon={<MailIcon color={colors.atPurple} />}
-        placeholder="Enter Email or Phone Number"
         keyboardType="email-address"
         textContentType="username"
         autoComplete="username"

@@ -1,6 +1,6 @@
 /**
  * Forgot Your Password? (mockup 08). The parent enters their email / phone, we "send" a code
- * (actions.beginReset) → Verify Identity → Reset Password. Nothing leaves the device.
+ * (auth.sendResetCode emails a code, actions.beginReset) → Verify Identity → Reset Password.
  */
 
 import { router } from "expo-router";
@@ -13,12 +13,12 @@ import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
-import { TextField } from "@/components/ui/TextField";
-import { MailIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { actions } from "@/state/store";
+import { auth } from "@/services/auth";
 import { identifierProblem, normalizeIdentifier } from "@/utils/validate";
-import { colors } from "@/theme";
+
+import IdentifierField from "../components/IdentifierField";
 
 const ENTER = FadeInDown.springify().stiffness(260).damping(24).reduceMotion(ReduceMotion.System);
 
@@ -40,8 +40,16 @@ export default function ForgotPasswordScreen() {
     setError(problem);
     if (problem) return identifierRef.current?.focus();
     setBusy(true);
-    actions.beginReset(normalizeIdentifier(identifier));
-    router.push(ROUTES.verify);
+    const normalized = normalizeIdentifier(identifier);
+    void auth.sendResetCode(normalized).then((result) => {
+      if (!result.ok) {
+        setError(result.message);
+        setBusy(false);
+        return;
+      }
+      actions.beginReset(normalized);
+      router.push(ROUTES.verify);
+    });
   };
 
   return (
@@ -53,11 +61,8 @@ export default function ForgotPasswordScreen() {
             subtitle="Enter your registered email or phone number to receive a verification code."
           />
 
-          <TextField
+          <IdentifierField
             ref={identifierRef}
-            label="Email or phone number"
-            icon={<MailIcon color={colors.atPurple} />}
-            placeholder="Enter Email or Phone Number"
             keyboardType="email-address"
             textContentType="username"
             autoComplete="username"

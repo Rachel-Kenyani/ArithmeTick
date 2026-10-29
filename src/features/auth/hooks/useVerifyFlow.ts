@@ -1,5 +1,6 @@
 /**
  * Verify card logic: code / error state, countdown + expiry, resend toast, shake + haptic, and verify → next.
+ * The code itself is checked by services/auth (Supabase, or any 8 digits offline).
  */
 
 import * as Haptics from "expo-haptics";
@@ -16,6 +17,7 @@ import {
 } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
+import { auth } from "@/services/auth";
 import type { PendingVerification } from "@/types/models";
 import { actions } from "@/state/store";
 
@@ -37,6 +39,8 @@ export function useVerifyFlow(
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [verified, setVerified] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [sending, setSending] = useState(false);
   const { secondsLeft, restart } = useCountdown(CODE_LIFETIME_SECONDS);
   /** Bumped on every resend: drives (and re-triggers) the "New code sent" toast. 0 = hidden. */
   const [toast, setToast] = useState(0);
@@ -83,7 +87,7 @@ export function useVerifyFlow(
   };
 
   const verify = (value: string) => {
-    if (verified) return;
+    if (verified || checking) return;
     if (expired) {
       // The status line already says the code expired: point at its action instead of adding a second error.
       setError(null);
@@ -107,23 +111,31 @@ export function useVerifyFlow(
       otpRef.current?.focus();
       return;
     }
-    onVerified(flow);
-    if (!actions.verifyCode(value)) {
-      setError("That code didn’t match. Check it and try again.");
-      setCode("");
-      shake();
-      otpRef.current?.focus();
-      return;
-    }
-    setError(null);
-    setVerified(true);
-    sfx.sparkle();
-    AccessibilityInfo.announceForAccessibility("Verified!");
-    navTimer.current = setTimeout(
-      () => router.push(copy.next),
-      SUCCESS_PAUSE_MS,
-    );
+    setChecking(true);
+    void auth.verifyCode(flow, value).then((result) => {
+      setChecking(false);
+      if (!result.ok) {
+        setError(result.message);
+        setCode("");
+        shake();
+        otpRef.current?.focus();
+        return;
+      }
+      onVerified(flow);
+      actions.verifyCode(value);
+      setError(null);
+      setVerified(true);
+      sfx.sparkle();
+      AccessibilityInfo.announceForAccessibility("Verified!");
+      navTimer.current = setTimeout(
+        () => router.push(copy.next),
+        SUCCESS_PAUSE_MS,
+      );
+    });
   };
+
+  /** Resend Code is muted until the clock ends (Supabase refuses sooner) and while a code is on its way. */
+  const canResend = expired && !sending && !verified;
 
   const onChange = (next: string) => {
     setCode(next);
@@ -131,16 +143,24 @@ export function useVerifyFlow(
   };
 
   const resend = () => {
-    if (verified) return;
+    if (!canResend) return;
     sfx.click();
-    restart();
     setCode("");
     setError(null);
-    setToast((n) => n + 1);
+    setSending(true);
+    void auth.resendCode(flow).then((result) => {
+      setSending(false);
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+      restart();
+      setToast((n) => n + 1);
+    });
   };
 
   return {
-    copy, code, error, verified, secondsLeft, expired, toast, otpRef,
+    copy, code, error, verified, checking, canResend, secondsLeft, expired, toast, otpRef,
     shakeStyle, resendStyle, verify, onChange, resend,
   };
 }

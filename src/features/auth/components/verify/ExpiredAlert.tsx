@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   expiredText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.headingMedium,
     fontSize: 17,
     color: colors.atPlum,
   },

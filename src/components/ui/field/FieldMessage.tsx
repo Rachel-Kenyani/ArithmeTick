@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   msgIcon: { marginTop: 1 },
   error: {
     flex: 1,
-    fontFamily: fonts.bodyMedium,
+    fontFamily: fonts.headingMedium,
     fontSize: 15,
     lineHeight: 20,
     color: colors.atPlum,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   hint: {
     marginTop: 6,
     paddingHorizontal: 8,
-    fontFamily: fonts.bodyMedium,
+    fontFamily: fonts.headingMedium,
     fontSize: 14,
     lineHeight: 19,
     color: "rgba(0,0,0,0.6)",

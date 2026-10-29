@@ -6,9 +6,11 @@
  */
 
 import { Pressable, StyleSheet, View } from "react-native";
+import { router } from "expo-router";
 
 import { MapIcon, MedalIcon, SettingsIcon, TrophyIcon } from "@/components/ui/icons";
 import { sfx } from "@/services/audio";
+
 import { ROUTES } from "@/constants/routes";
 import { colors } from "@/theme";
 
@@ -37,6 +39,12 @@ const TILE = colors.atPurple;
 const TILE_EDGE = "#4a2a75";
 const EDGE = 6;
 const EDGE_PRESSED = 2;
+
+/** Switch tabs without stacking screens: "Map" returns to the existing /home, other tabs replace the current one. */
+export function navigateToTab(href: string) {
+  if (href === ROUTES.home) router.dismissTo(ROUTES.home as never);
+  else router.replace(href as never);
+}
 
 export default function BottomNav({
   active,

@@ -1,8 +1,7 @@
 /**
- * One-box-per-character code entry ("Verify Account", school invite code).
+ * One-box-per-character code entry ("Verify Account").
  *
  *   <OtpInput length={5} value={code} onChange={setCode} onComplete={verify} label="5-digit verification code" autoFocus />
- *   <OtpInput length={6} mode="alphanumeric" size="sm" value={school} onChange={setSchool} label="School invite code" />
  *
  * Native pattern: one invisible TextInput stretched over the drawn boxes holds the whole code, so typing,
  * backspace, paste and SMS autofill (iOS oneTimeCode / Android sms-otp) all just work. Tapping any box
@@ -77,7 +76,12 @@ export default function OtpInput({
   const shown = sanitize(value, mode).slice(0, length);
   const lastCompleted = useRef<string | null>(null);
   const [focused, setFocused] = useState(false);
-  const dim = SIZES[size];
+  const [rowWidth, setRowWidth] = useState(0);
+  // Shrink the boxes (and digits) when they'd overflow the card, e.g. 6 boxes on a narrow phone.
+  const base = SIZES[size];
+  const fit = rowWidth ? Math.floor((rowWidth - base.gap * (length - 1)) / length) : base.box;
+  const box = Math.min(base.box, fit);
+  const dim = { box, gap: base.gap, font: Math.round(base.font * (box / base.box)) };
 
   useEffect(() => {
     if (shown.length < length) lastCompleted.current = null;
@@ -93,7 +97,7 @@ export default function OtpInput({
   };
 
   return (
-    <View style={[styles.row, { gap: dim.gap }, style]}>
+    <View style={[styles.row, { gap: dim.gap }, style]} onLayout={(e) => setRowWidth(e.nativeEvent.layout.width)}>
       {Array.from({ length }, (_, i) => (
         <Box key={i} ch={shown[i] ?? ""} active={focused && i === Math.min(shown.length, length - 1)} invalid={invalid} size={dim} />
       ))}

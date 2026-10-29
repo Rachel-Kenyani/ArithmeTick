@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pixeledge.arithmetick"
+      "bundleIdentifier": "com.rachelkenyani.arithmetick"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.pixeledge.arithmetick"
+      "package": "com.rachelkenyani.arithmetick"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,7 +36,13 @@
         }
       ],
       "expo-asset",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.957971466473-p693gq9usus5q1ea93nlib0umq9fu3p1"
+        }
+      ]
     ],
     "scheme": "arithmetick",
     "experiments": {

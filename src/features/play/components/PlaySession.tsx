@@ -3,6 +3,7 @@
  * celebration, the High-Five Hero pop and the screen-time sheet. State lives in usePlaySession.
  */
 
+import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,13 +11,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HeroPop from "@/features/play/components/HeroPop";
 import LevelCelebrationModal from "@/features/play/components/LevelCelebrationModal";
 import LevelContent from "@/features/play/components/LevelContent";
+import StoryIntro from "@/features/play/components/StoryIntro";
+import { sceneFor, storyFor, treasureCount } from "@/data/stories";
 import ScreenTimeSheet from "@/features/play/components/ScreenTimeSheet";
 import { usePlaySession } from "@/features/play/hooks/usePlaySession";
 import { gutterFor } from "@/features/play/utils/playFormat";
 import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
 import AppTopBar from "@/components/top-bar/AppTopBar";
 import InfoBanner from "@/components/top-bar/InfoBanner";
-import { LEVELS_PER_GRADE, type LevelDef } from "@/data/levels";
+import { levelCount, type LevelDef } from "@/data/levels";
 import type { ChildProfile } from "@/types/models";
 import { GRADE_META } from "@/types/domain";
 import { colors } from "@/theme";
@@ -32,6 +35,8 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
     palActive,
     engagePal,
     handleAttempt,
+    draft,
+    handleDraft,
     completion,
     celebrating,
     timeUp,
@@ -42,6 +47,9 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
   } = usePlaySession(profile, level);
 
   const meta = GRADE_META[profile.grade];
+  const story = storyFor(level.grade, level.number);
+  // The story stop opens every puzzle level (Move & Play has its own card).
+  const [storyOpen, setStoryOpen] = useState(!isQuest && story !== null);
   const inert = celebrating || timeUp;
   const sm = width >= 640;
   const gutter = gutterFor(width);
@@ -76,12 +84,17 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
           >
-            <LevelContent level={level} palActive={palActive} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} />
+            <LevelContent level={level} childName={profile.name} palActive={palActive} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
           </Animated.View>
         </View>
       </View>
 
+      {storyOpen && story ? <StoryIntro story={story} scene={sceneFor(story, level)} childName={profile.name} onStart={() => setStoryOpen(false)} /> : null}
+
       <LevelCelebrationModal
+        childName={profile.name}
+        treasure={story}
+        treasureCount={treasureCount(level)}
         open={celebrating}
         grade={profile.grade}
         levelNumber={levelNumber}
@@ -89,7 +102,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         isQuest={isQuest}
         badge={completion?.newBadges[0] ?? null}
         starsEarned={completion?.starsEarned ?? 0}
-        nextLabel={levelNumber >= LEVELS_PER_GRADE ? "Back to map" : "Next level"}
+        nextLabel={levelNumber >= levelCount(level.grade) ? "Back to map" : "Next level"}
         starsTotal={profile.stars}
         reduced={reduced}
         onHighFive={handleHighFive}

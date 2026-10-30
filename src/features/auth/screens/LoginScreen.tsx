@@ -61,7 +61,7 @@ export default function LoginScreen() {
         <Panel>
           <ScreenHeading
             title="Log In To Account"
-            subtitle={"Hello Parent👋 Happy to have you back!"}
+            subtitle={"Hello Parent! Happy to have you back!"}
           />
 
           <GoogleSignIn busy={busy} onPress={onGoogle} />

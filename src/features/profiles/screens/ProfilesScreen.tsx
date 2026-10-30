@@ -115,7 +115,7 @@ export default function ProfilesScreen() {
 
       <HoldToConfirm
         label="Grown-ups: hold to log out"
-        icon={<LogoutIcon size={20} strokeWidth={2.2} color={colors.atTeal} />}
+        icon={<LogoutIcon size={20} strokeWidth={2.2} color={colors.atPlum} />}
         onConfirm={() => {
           void signOutOfGoogle().then(() => auth.signOut());
           actions.logout();

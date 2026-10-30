@@ -1,5 +1,5 @@
 /**
- * Jaymo mood cross-fade: springs `blend` 0→1 from the previous mood's pose, plus a springy pop.
+ * Brijo mood cross-fade: springs `blend` 0→1 from the previous mood's pose, plus a springy pop.
  */
 
 import { useEffect, useRef } from "react";

@@ -29,7 +29,7 @@ export function makeProfile(input: Partial<ChildProfile> & Pick<ChildProfile, "n
 /** Demo children shown after "Log In" on a fresh device (matches the "Welcome Back!" mockup). */
 export function demoProfiles(): ChildProfile[] {
   const seeded = [
-    makeProfile({ name: "Jaymo", grade: 1, avatar: "owl" }),
+    makeProfile({ name: "Brijo", grade: 1, avatar: "owl" }),
     makeProfile({ name: "Bahati", grade: 2, avatar: "cheetah", progress: { 1: 0, 2: 2, 3: 0 }, stars: 6, questsDone: 0 }),
     makeProfile({ name: "Amani", grade: 3, avatar: "bear", progress: { 1: 0, 2: 0, 3: 4 }, stars: 12, questsDone: 1, highFives: 3 }),
     makeProfile({ name: "Raha", grade: 1, avatar: "fox", progress: { 1: 1, 2: 0, 3: 0 }, stars: 3 }),

@@ -1,6 +1,6 @@
 # ArithmeTick 🦉
 
-A playful maths adventure for kids aged 5–8. Explorers follow **Jaymo the owl** along a jungle trail,
+A playful maths adventure for kids aged 5–8. Explorers follow **Brijo the owl** along a jungle trail,
 unlocking levels by solving hands-on number puzzles: ten-frames, balance scales and arrays.
 
 Built with **Expo SDK 58**, **React Native 0.88**, **TypeScript** and **Reanimated 4**.
@@ -47,7 +47,7 @@ Feature-based, with small focused files (~150 lines).
     src/
       app/          expo-router routes (thin re-exports of feature screens)
       features/     splash · auth · profiles · home · play (each with screens/components/hooks/utils)
-      components/   shared UI kit, Jaymo mascot, backdrops
+      components/   shared UI kit, Brijo mascot, backdrops
       state/        persisted app store (AsyncStorage)
       services/     audio, screen hand-offs
       data/ types/ utils/ constants/ theme/
@@ -61,7 +61,8 @@ expo-audio · expo-haptics · AsyncStorage
 
 ## Roadmap
 
-- [ ] Grade 2 (Balance Scale) and Grade 3 (Array Multiplication) boards
+- [x] Grade 3 (Array Multiplication) board
+- [ ] Grade 2 (Balance Scale) board
 - [ ] Level celebration, physical quests, badge medallion
 - [ ] Badges and Leaderboard tabs
 - [ ] Native Google Sign-In and Sign in with Apple

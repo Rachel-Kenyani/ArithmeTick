@@ -1,5 +1,5 @@
 /**
- * Jaymo's squashable body SVG: body, flapping wings and kitenge chest, with the head as children.
+ * Brijo's squashable body SVG: body, flapping wings and kitenge chest, with the head as children.
  */
 
 import type { ReactNode } from "react";

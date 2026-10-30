@@ -1,5 +1,5 @@
 /**
- * Status icons — alert, clock, plus, lock, check, sparkle.
+ * Status icons — alert, clock, stopwatch, plus, lock, check, sparkle.
  */
 
 import { Circle, Path, Rect } from "react-native-svg";
@@ -21,6 +21,15 @@ export const ClockIcon = make(
   <>
     <Circle cx="12" cy="12" r="9" />
     <Path d="M12 7.2V12l3.2 2.2" />
+  </>,
+);
+
+/** Stopwatch — round face, top crown button and a side pusher. */
+export const StopwatchIcon = make(
+  "StopwatchIcon",
+  <>
+    <Circle cx="12" cy="13.5" r="7.5" />
+    <Path d="M10 2.8h4M12 2.8V6M18.2 6.6l1.4-1.4M12 9.6v3.9l2.4 1.6" />
   </>,
 );
 

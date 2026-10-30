@@ -32,12 +32,13 @@ export function slotMarkers(
   count: number,
   target: number,
   palActive: boolean,
+  revealAll: boolean,
   solved: boolean,
   isDragging: boolean,
   near: boolean,
 ): { nextSlot: number; previewSlot: number; hintSlot: number } {
   // Every empty slot is fair game until PAL locks the ones past the target.
-  const nextSlot = count < (palActive ? target : CAP_COUNT) ? count : -1;
+  const nextSlot = count < (palActive && revealAll ? target : CAP_COUNT) ? count : -1;
   return {
     nextSlot,
     previewSlot: isDragging && near && !solved ? nextSlot : -1,
@@ -58,13 +59,19 @@ export function frameChrome(L: BoardLayout): { cellRadius: number; haloInset: nu
 export function gridLabelFor(topCount: number, bottomCount: number, solved: boolean, target: number): string {
   return (
     `Ten-frame: ${topCount} ${topCount === 1 ? "cap" : "caps"} in top row, ${bottomCount} in bottom row` +
-    (solved ? `. ${target} = ${TARGET_TOP} + ${target - TARGET_TOP}` : "")
+    (solved ? `. ${TARGET_TOP} + ${target - TARGET_TOP} = ${target}` : "")
   );
 }
 
-export function wellModeFor(i: number, palActive: boolean, target: number): WellMode {
+/**
+ * First miss: help only groups the top row as "5" — no ghost caps and no locked slots, which would show where
+ * the target ends. From the second wrong "Done" (`revealAll`) the missing slots show numbered ghosts and the
+ * slots past the target lock.
+ */
+export function wellModeFor(i: number, palActive: boolean, target: number, revealAll: boolean): WellMode {
   if (!palActive) return "plain";
   if (i < TARGET_TOP) return "palTop";
+  if (!revealAll) return "plain";
   if (i < target) return "palDrop";
   return "palLocked";
 }

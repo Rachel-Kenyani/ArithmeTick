@@ -10,11 +10,11 @@
  *   7  the head floats up (centre at 37% of the screen height)
  *   8  the head slides 52.5/428 of the width to the right
  *   9  wings, body and feet appear below the head                                           (Logo-splash-9)
- *  10  the branch grows in under Jaymo from the left; grass rises along the bottom (Logo-splash-10-11-&-14, grass-splash-10)
+ *  10  the branch grows in under Brijo from the left; grass rises along the bottom (Logo-splash-10-11-&-14, grass-splash-10)
  *  11  clouds, jungle canopy and taller plants fade in                                     (bg-splash-11)
- *  12  vines drop in from the canopy; Jaymo tilts his head 20° one way                      (bg-splash-12-13-&-14, Logo-splash-12)
+ *  12  vines drop in from the canopy; Brijo tilts her head 20° one way                      (bg-splash-12-13-&-14, Logo-splash-12)
  *  13  …then 20° the other way                                                              (Logo-splash-13)
- *  14  head straight again; Jaymo winks, stars burst from his head and the wordmark bounces back in letter by
+ *  14  head straight again; Brijo winks, stars burst from her head and the wordmark bounces back in letter by
  *      letter — then `onDone` hands over to /welcome                                      (Logo-splash-10-11-&-14)
  *
  * Throughout: squash-and-stretch on each landing, a gentle idle "breath", and a sound + haptic on each beat.

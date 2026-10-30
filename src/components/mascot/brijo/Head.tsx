@@ -1,5 +1,5 @@
 /**
- * Jaymo's head: temple arms, face, tufts, lenses + eyes, mouth and beak (rotates about the neck).
+ * Brijo's head: temple arms, face, tufts, lenses + eyes, mouth and beak (rotates about the neck).
  */
 
 import type { SharedValue } from "react-native-reanimated";

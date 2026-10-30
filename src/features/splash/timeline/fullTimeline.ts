@@ -90,7 +90,7 @@ export function startFullTimeline(
   bigX.set(after(6, frame8X));
   // 8 → 9: wings, body and feet appear below the head
   bodyOpacity.set(after(7, 1));
-  // 9 → 10: the branch grows in under Jaymo from the left and the grass rises along the bottom
+  // 9 → 10: the branch grows in under Brijo from the left and the grass rises along the bottom
   scene.set(after(8, 1));
   // 10 → 11: clouds, canopy and taller plants; 11 → 12: vines
   bg11.set(after(9, 1));

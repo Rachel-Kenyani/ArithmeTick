@@ -28,6 +28,7 @@ interface TenFrameGridProps {
   nextSlot: number;
   previewSlot: number;
   hintSlot: number;
+  revealAll: boolean;
   onFillNext: () => void;
 }
 
@@ -46,6 +47,7 @@ export function TenFrameGrid({
   nextSlot,
   previewSlot,
   hintSlot,
+  revealAll,
   onFillNext,
 }: Readonly<TenFrameGridProps>) {
   const { cellRadius, haloInset, frameEdge } = frameChrome(L);
@@ -98,7 +100,7 @@ export function TenFrameGrid({
           size={L.cell}
           radius={cellRadius}
           capSize={L.cap}
-          mode={wellModeFor(i, palActive, target)}
+          mode={wellModeFor(i, palActive, target, revealAll)}
           filled={i < count}
           preview={i === previewSlot}
           hint={i === hintSlot}

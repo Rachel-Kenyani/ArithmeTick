@@ -9,7 +9,7 @@ import { progressActions } from "./progress";
 import { reviewerActions } from "./reviewer";
 import { screenTimeActions } from "./screenTime";
 
-export type { LevelCompletion } from "./progress";
+export { draftKey, type LevelCompletion } from "./progress";
 
 export const actions = {
   ...accountActions,

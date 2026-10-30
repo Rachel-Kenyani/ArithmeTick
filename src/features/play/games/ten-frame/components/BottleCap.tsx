@@ -16,10 +16,14 @@ import { styles } from "../styles";
 import type { CapMotion, DragShared, FxSignal, GroupTone, PaletteKey } from "../types";
 import { clamp } from "../utils/math";
 import { RM, SPRING_POP } from "../utils/motion";
-import { CapFace, ToneOverlay } from "./CapFace";
+import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
+
+import { ToneOverlay } from "./CapFace";
 import { CountBubble } from "./CountBubble";
 
 interface BottleCapProps {
+  /** What the cap is drawn as: a bottle top, or the story's item (feathers, shells…). */
+  item: CounterItem;
   id: number;
   size: number;
   mv: CapMotion;
@@ -58,6 +62,7 @@ export const BottleCap = memo(function BottleCap({
   visible,
   fx,
   reduced,
+  item,
   drag,
   onDragStart,
   onNear,
@@ -115,7 +120,7 @@ export const BottleCap = memo(function BottleCap({
     };
   });
 
-  const colorName = color === "teal" ? "Teal" : "Purple";
+  const colorName = item === "cap" ? (color === "teal" ? "Teal" : "Purple") : item;
   const label = capLabel(colorName, slot, locked, extra);
 
   return (
@@ -139,8 +144,8 @@ export const BottleCap = memo(function BottleCap({
           <Animated.View style={[StyleSheet.absoluteFill, styles.capShadow, { borderRadius: size / 2 }, shadowStyle]} />
           {/* fx layer: pops, wobbles, bounces */}
           <Animated.View style={[StyleSheet.absoluteFill, fxStyle]}>
-            <CapFace palette={color} />
-            {tones.map((t) => (
+            <CounterFace item={item} palette={color} size={size * 0.92} />
+            {item === "cap" && tones.map((t) => (
               <ToneOverlay key={t} tone={t} on={group === t} delayMs={slot !== null ? slot * 60 : 0} />
             ))}
             {locked ? <View pointerEvents="none" style={[styles.lockRing, { borderRadius: size }]} /> : null}

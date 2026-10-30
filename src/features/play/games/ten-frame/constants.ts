@@ -21,6 +21,9 @@ export const DONE_GAP = 10;
 /** After a wrong "Done", one cap is counted (hops + note) every COUNT_STEP_MS. */
 export const COUNT_STEP_MS = 420;
 export const INVITE_EVERY_MS = 4200;
+/** An empty board after this long shows the "drag a cap here" demo, then repeats it. */
+export const DEMO_AFTER_MS = 6000;
+export const DEMO_EVERY_MS = 9000;
 export const MIN_CELL = 52;
 export const MAX_CELL = 124;
 export const MIN_CAP = 56;

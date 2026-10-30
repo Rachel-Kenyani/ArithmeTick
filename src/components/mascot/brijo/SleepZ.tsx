@@ -1,5 +1,5 @@
 /**
- * A floating sleep "z" for Jaymo.
+ * A floating sleep "z" for Brijo.
  */
 
 import Animated, { useAnimatedStyle } from "react-native-reanimated";

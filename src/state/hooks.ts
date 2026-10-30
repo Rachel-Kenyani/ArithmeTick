@@ -5,7 +5,7 @@
 import { useSyncExternalStore } from "react";
 
 import type { ChildProfile, AppState } from "@/types/models";
-import { SESSION_CAP_SECONDS } from "@/types/domain";
+import { SCREEN_TIME_ENABLED, SESSION_CAP_SECONDS } from "@/types/domain";
 
 import { getSnapshot, isHydrated, subscribe } from "./core";
 
@@ -27,5 +27,6 @@ export function useActiveProfile(): ChildProfile | null {
 /** Seconds of today's 15-minute allowance left (call actions.ensureToday() on mount to roll the day over). */
 export function useScreenTimeRemaining(): number {
   const s = useAppState();
+  if (!SCREEN_TIME_ENABLED) return SESSION_CAP_SECONDS;
   return Math.max(0, SESSION_CAP_SECONDS - s.screenTime.usedSeconds);
 }

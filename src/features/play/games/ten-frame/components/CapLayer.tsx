@@ -2,6 +2,7 @@
  * The single overlay layer every cap lives in; caps spring between computed spots inside it.
  */
 
+import type { CounterItem } from "@/features/play/components/CounterFace";
 import { StyleSheet, View } from "react-native";
 
 import { CAP_IDS, ROW_SIZE, TARGET_TOP } from "../constants";
@@ -16,6 +17,7 @@ type Game = ReturnType<typeof useTenFrameGame>;
 interface CapLayerProps
   extends Pick<Game, "placed" | "solved" | "fx" | "caps" | "drag" | "handleDragStart" | "handleNear" | "handleDragEnd" | "handleTap"> {
   size: number;
+  item: CounterItem;
   rowTone: GroupTone;
   palActive: boolean;
   /** Under PAL, caps in slots at or past this index are extras that hop. */
@@ -40,6 +42,7 @@ export function CapLayer({
   target,
   measured,
   reduced,
+  item,
 }: Readonly<CapLayerProps>) {
   return (
     <View pointerEvents="box-none" style={[StyleSheet.absoluteFill, styles.capLayer]}>
@@ -50,6 +53,7 @@ export function CapLayer({
             key={id}
             id={id}
             size={size}
+            item={item}
             mv={caps[id]}
             slot={inSlot}
             group={isSlotBelow(inSlot, ROW_SIZE) ? rowTone : null}

@@ -1,5 +1,5 @@
 /**
- * Jaymo's head on /welcome: entrance, float, tilt, blink and tap-squish on the whole head.
+ * Brijo's head on /welcome: entrance, float, tilt, blink and tap-squish on the whole head.
  */
 
 import { useEffect } from "react";
@@ -16,14 +16,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import JaymoHeadArt, { HEAD_VIEW } from "@/components/mascot/JaymoHeadArt";
+import BrijoHeadArt, { HEAD_VIEW } from "@/components/mascot/BrijoHeadArt";
 
 import { SPRING } from "../utils/welcomeMotion";
 
 const HEAD_ASPECT = HEAD_VIEW.h / HEAD_VIEW.w;
 const ease = Easing.inOut(Easing.ease);
 
-export default function JaymoHead({ size }: Readonly<{ size: number }>) {
+export default function BrijoHead({ size }: Readonly<{ size: number }>) {
   const reduce = useReducedMotion();
   const enter = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -85,7 +85,7 @@ export default function JaymoHead({ size }: Readonly<{ size: number }>) {
           style={styles.fill}
         >
           <Animated.View style={[styles.fill, { transformOrigin: "50% 60%" }, squishStyle]}>
-            <JaymoHeadArt width={size} blink={blink} />
+            <BrijoHeadArt width={size} blink={blink} />
           </Animated.View>
         </Pressable>
       </Animated.View>

@@ -14,7 +14,7 @@ import { getSnapshot } from "./core";
 
 export { DEFAULT_STATE, whenHydrated } from "./core";
 export { useActiveProfile, useAppState, useHydrated, useScreenTimeRemaining } from "./hooks";
-export { actions, type LevelCompletion } from "./actions";
+export { actions, draftKey, type LevelCompletion } from "./actions";
 
 /** Test/reviewer helper: the raw snapshot outside React. */
 export function getAppState(): AppState {

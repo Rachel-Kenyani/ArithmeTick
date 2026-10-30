@@ -1,7 +1,16 @@
-/** "Grade complete! 🏆" — shown above the trail once all six levels of the grade are finished. */
+/**
+ * "You did them all, <name>!" (with a trophy) — a pop-up over the map once every level of the grade are finished (once per
+ * visit, so the trail keeps its space). Shows the grade's finishing time — the seed of a future leaderboard.
+ */
 
 import { useEffect } from "react";
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -14,11 +23,36 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import Button from "@/components/ui/Button";
 import Panel from "@/components/ui/Panel";
-import { StarIcon } from "@/components/ui/icons";
+import TrophyArt from "@/components/illustrations/TrophyArt";
+import { StarIcon, StopwatchIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
 
-export default function GradeCompleteCard({ gradeLabel }: Readonly<{ gradeLabel: string }>) {
+/** 412 → "6 min 52 s"; under a minute → "48 s". */
+export function formatFinishTime(seconds: number): string {
+  const s = Math.max(0, Math.round(seconds));
+  const min = Math.floor(s / 60);
+  return min > 0 ? `${min} min ${s % 60} s` : `${s} s`;
+}
+
+interface GradeCompleteCardProps {
+  gradeLabel: string;
+  childName: string;
+  levelTotal: number;
+  /** Seconds it took to finish the grade the first time (missing for grades finished before it was tracked). */
+  finishSeconds?: number;
+  visible: boolean;
+  onClose: () => void;
+}
+
+export default function GradeCompleteCard({
+  gradeLabel,
+  levelTotal,
+  finishSeconds,
+  visible,
+  onClose,
+}: Readonly<GradeCompleteCardProps>) {
   const reduceMotion = useReducedMotion();
   const sm = useWindowDimensions().width >= 640;
 
@@ -58,45 +92,100 @@ export default function GradeCompleteCard({ gradeLabel }: Readonly<{ gradeLabel:
     opacity: Math.min(1, opacity.value),
     transform: [{ translateY: y.value }, { scale: scale.value }],
   }));
-  const trophyStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${rot.value}deg` }] }));
+  const trophyStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rot.value}deg` }],
+  }));
 
   return (
-    <Animated.View style={[{ paddingHorizontal: sm ? 24 : 16, paddingTop: 20 }, cardStyle]}>
-      <View accessible accessibilityLiveRegion="polite" accessibilityRole="summary">
-        <Panel style={styles.panel}>
-          <Animated.View
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-            style={[styles.trophy, trophyStyle]}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={styles.backdrop}>
+        <Animated.View
+          style={[
+            { paddingHorizontal: sm ? 24 : 16, width: "100%", maxWidth: 520 },
+            cardStyle,
+          ]}
+        >
+          <View
+            accessible
+            accessibilityLiveRegion="polite"
+            accessibilityRole="summary"
           >
-            <View style={styles.trophyEdge} />
-            <View style={styles.trophyFace}>
-              <Text style={styles.trophyEmoji}>🏆</Text>
-            </View>
-          </Animated.View>
-          <View style={styles.text}>
-            <Text accessibilityRole="header" style={[styles.title, { fontSize: sm ? 30 : 28 }]}>
-              You did them all!
-            </Text>
-            <Text style={[styles.body, { fontSize: sm ? 16 : 15 }]}>
-              All 6 {gradeLabel} levels are done. Play any level again!
-            </Text>
-            <View style={styles.stars} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              {[0, 1, 2].map((i) => (
-                <StarIcon key={i} size={18} fill="#ffd54a" stroke="#1b1b1b" strokeWidth={1.7} />
-              ))}
-            </View>
+            <Panel style={styles.panel}>
+              <Animated.View
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                style={[styles.trophy, trophyStyle]}
+              >
+                <View style={styles.trophyEdge} />
+                <View style={styles.trophyFace}>
+                  <TrophyArt size={50} />
+                </View>
+              </Animated.View>
+              <View style={styles.text}>
+                <Text
+                  accessibilityRole="header"
+                  style={[styles.title, { fontSize: sm ? 30 : 28 }]}
+                >
+                  You did them all!
+                </Text>
+                <Text style={[styles.body, { fontSize: sm ? 20 : 18 }]}>
+                  All {levelTotal} {gradeLabel} levels are done.
+                </Text>
+                {finishSeconds ? (
+                  <View
+                    accessible
+                    style={styles.timeRow}
+                    accessibilityLabel={`Finished in ${formatFinishTime(finishSeconds)}`}
+                  >
+                    <StopwatchIcon size={18} color={colors.atPurple} strokeWidth={2.4} />
+                    <Text style={styles.time}>
+                      Finished in {formatFinishTime(finishSeconds)}
+                    </Text>
+                  </View>
+                ) : null}
+                <View
+                  style={styles.stars}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                >
+                  {[0, 1, 2].map((i) => (
+                    <StarIcon
+                      key={i}
+                      size={40}
+                      fill="#ffd54a"
+                      stroke="#1b1b1b"
+                      strokeWidth={1.7}
+                    />
+                  ))}
+                </View>
+              </View>
+              <Button onPress={onClose} style={styles.close}>
+                Play any level again!
+              </Button>
+            </Panel>
           </View>
-        </Panel>
+        </Animated.View>
       </View>
-    </Animated.View>
+    </Modal>
   );
 }
 
 const TROPHY = 72;
 
 const styles = StyleSheet.create({
-  panel: { flexDirection: "row", alignItems: "center", gap: 16, paddingTop: 20, paddingBottom: 20 },
+  panel: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
+  },
   trophy: { width: TROPHY + 8, height: TROPHY + 8 + 5, flexShrink: 0 },
   trophyEdge: {
     position: "absolute",
@@ -117,9 +206,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  trophyEmoji: { fontSize: 42, lineHeight: 50 },
   text: { flexShrink: 1, minWidth: 0 },
-  title: { fontFamily: fonts.headingBold, color: colors.atTeal },
-  body: { marginTop: 4, fontFamily: fonts.bodyMedium, color: colors.jgOutline, lineHeight: 21 },
-  stars: { marginTop: 6, flexDirection: "row", gap: 2 },
+  title: {
+    fontFamily: fonts.headingBold,
+    color: colors.atTeal,
+    textAlign: "center",
+  },
+  body: {
+    marginTop: 4,
+    fontFamily: fonts.bodyMedium,
+    color: colors.jgOutline,
+    lineHeight: 21,
+    textAlign: "center",
+  },
+  stars: {
+    marginTop: 6,
+    flexDirection: "row",
+    gap: 2,
+    justifyContent: "center",
+  },
+  timeRow: {
+    marginTop: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  time: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 16,
+    color: colors.atPurple,
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,40,37,0.55)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  close: { marginTop: 14 },
 });

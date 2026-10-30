@@ -1,7 +1,7 @@
 /**
  * ComingSoonTab — a placeholder screen for a bottom-tab destination that isn't built yet (Badges, Score).
  *
- * Same shell as /home (meadow backdrop + bottom tab bar), a heading, Jaymo and a short friendly note.
+ * Same shell as /home (meadow backdrop + bottom tab bar), a heading, Brijo and a short friendly note.
  * Switching tabs never stacks screens: "Map" returns to the existing /home, the other tab replaces this one.
  */
 
@@ -10,7 +10,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
-import JaymoHeadArt from "@/components/mascot/JaymoHeadArt";
+import BrijoHeadArt from "@/components/mascot/BrijoHeadArt";
 import BottomNav, { navigateToTab, type BottomTab } from "@/features/home/components/BottomNav";
 import StatusBarScrim from "@/features/home/components/StatusBarScrim";
 import Panel from "@/components/ui/Panel";
@@ -42,7 +42,7 @@ export default function ComingSoonTab({ tab, title, icon, message }: Readonly<Co
           <Text accessibilityRole="header" style={styles.title}>
             {title}
           </Text>
-          <JaymoHeadArt width={120} />
+          <BrijoHeadArt width={120} />
           <Text style={styles.soon}>Coming soon!</Text>
           <Text style={styles.message}>{message}</Text>
         </Panel>

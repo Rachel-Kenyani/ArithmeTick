@@ -1,5 +1,5 @@
 /**
- * Jaymo the Owl — ArithmeTick's mascot (React Native port of components/JaymoMascot.tsx).
+ * Brijo the Owl — ArithmeTick's mascot (React Native port of components/BrijoMascot.tsx).
  *
  * Same artwork as the web: a 200×200 viewBox drawn with react-native-svg, scaled to `size`.
  *
@@ -14,7 +14,7 @@
  *   Only parts that must move independently inside an SVG are animated SVG groups (via the
  *   native `matrix` prop): wings ×2, head, beak, mouth, gaze, upper + lower lids (both eyes
  *   share one node each), feet ×2.
- * - Blink and idle gaze are fired from effect-owned timers. Tapping Jaymo plays a "boop".
+ * - Blink and idle gaze are fired from effect-owned timers. Tapping Brijo plays a "boop".
  * - Reduced motion (`useReducedMotion`): the clock never starts and every part shows its rest pose.
  */
 import { memo, useCallback, useId } from "react";
@@ -24,29 +24,29 @@ import Svg, { Ellipse } from "react-native-svg";
 
 import { sfx } from "@/services/audio";
 
-import { Body } from "./jaymo/Body";
-import { MOODS } from "./jaymo/choreography";
-import { EYES } from "./jaymo/eyeConfig";
-import { Feet } from "./jaymo/Feet";
-import { C, inkFor, PIVOT } from "./jaymo/geometry";
-import { Head } from "./jaymo/Head";
-import type { Rig } from "./jaymo/sampling";
-import { SCRIPTS } from "./jaymo/scripts";
-import { SleepZ, Z_PARTS } from "./jaymo/SleepZ";
-import type { JaymoMascotProps } from "./jaymo/types";
-import { useBlink } from "./jaymo/useBlink";
-import { useGaze } from "./jaymo/useGaze";
-import { useJaymoClock } from "./jaymo/useJaymoClock";
-import { useLayerStyles } from "./jaymo/useLayerStyles";
-import { useMoodBlend } from "./jaymo/useMoodBlend";
+import { Body } from "./brijo/Body";
+import { MOODS } from "./brijo/choreography";
+import { EYES } from "./brijo/eyeConfig";
+import { Feet } from "./brijo/Feet";
+import { C, inkFor, PIVOT } from "./brijo/geometry";
+import { Head } from "./brijo/Head";
+import type { Rig } from "./brijo/sampling";
+import { SCRIPTS } from "./brijo/scripts";
+import { SleepZ, Z_PARTS } from "./brijo/SleepZ";
+import type { BrijoMascotProps } from "./brijo/types";
+import { useBlink } from "./brijo/useBlink";
+import { useGaze } from "./brijo/useGaze";
+import { useBrijoClock } from "./brijo/useBrijoClock";
+import { useLayerStyles } from "./brijo/useLayerStyles";
+import { useMoodBlend } from "./brijo/useMoodBlend";
 
-export type { JaymoMascotProps, JaymoMood } from "./jaymo/types";
+export type { BrijoMascotProps, BrijoMood } from "./brijo/types";
 
 /* ------------------------------------------------------------------------------------------
  * Component
  * ---------------------------------------------------------------------------------------- */
 
-function JaymoMascot({ mood = "idle", size = 96, style }: Readonly<JaymoMascotProps>) {
+function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotProps>) {
   const reduceMotion = useReducedMotion();
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const moodIdx = Math.max(0, MOODS.indexOf(mood));
@@ -55,7 +55,7 @@ function JaymoMascot({ mood = "idle", size = 96, style }: Readonly<JaymoMascotPr
   const k = size / 200;
 
   // One clock for every loop; never started under reduced motion.
-  const clock = useJaymoClock(reduceMotion);
+  const clock = useBrijoClock(reduceMotion);
   const popX = useSharedValue(1);
   const popY = useSharedValue(1);
   // Mood change: cross-fade from the old mood's pose, plus a springy pop.
@@ -69,7 +69,7 @@ function JaymoMascot({ mood = "idle", size = 96, style }: Readonly<JaymoMascotPr
   const canGaze = mood === "idle" && !reduceMotion;
   const { gazeX, gazeY } = useGaze(eyes, canGaze, reduceMotion);
 
-  // Tap Jaymo: squishy boop + blink + soft "boop" note. Purely decorative.
+  // Tap Brijo: squishy boop + blink + soft "boop" note. Purely decorative.
   const handleBoop = useCallback(() => {
     sfx.pickup();
     if (reduceMotion) return;
@@ -95,7 +95,7 @@ function JaymoMascot({ mood = "idle", size = 96, style }: Readonly<JaymoMascotPr
       onPressIn={handleBoop}
       accessible
       accessibilityRole="image"
-      accessibilityLabel="Jaymo the Owl"
+      accessibilityLabel="Brijo the Owl"
       style={[{ width: size, height: size, flexShrink: 0 }, style]}
     >
       <Animated.View
@@ -139,4 +139,4 @@ function JaymoMascot({ mood = "idle", size = 96, style }: Readonly<JaymoMascotPr
   );
 }
 
-export default memo(JaymoMascot);
+export default memo(BrijoMascot);

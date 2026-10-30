@@ -3,13 +3,16 @@
  */
 
 import { newlyEarned, getBadge, type BadgeDef } from "@/data/badges";
-import { getLevel, LEVELS_PER_GRADE } from "@/data/levels";
+import { getLevel, levelCount } from "@/data/levels";
+import type { LevelDraft } from "@/types/domain";
 import type { AttemptLog, ChildProfile } from "@/types/models";
 
 import { getSnapshot, setState, updateProfile } from "../core";
 
 /** Stars a level is worth the first time it is finished. */
 export const STARS_PER_LEVEL = 3;
+/** One level can add at most this much to a grade's finishing time (a phone left open on a level). */
+const MAX_LEVEL_SECONDS = 15 * 60;
 /** How many recent answers each profile keeps. */
 const MAX_ATTEMPTS = 200;
 
@@ -22,9 +25,15 @@ export interface LevelCompletion {
   newBadges: BadgeDef[];
 }
 
+/** Key of a level in ChildProfile.drafts. */
+export const draftKey = (grade: number, level: number) => `g${grade}-l${level}`;
+
 export const progressActions = {
-  /** Record a finished level for the profile's current grade. Safe to call for replays. */
-  completeLevel(profileId: string, levelNumber: number): LevelCompletion {
+  /**
+   * Record a finished level for the profile's current grade. Safe to call for replays. `seconds` is how long
+   * the level took; first-time finishes add it to the grade's finishing time.
+   */
+  completeLevel(profileId: string, levelNumber: number, seconds = 0): LevelCompletion {
     const profile = getSnapshot().profiles.find((p) => p.id === profileId);
     if (!profile) return { starsEarned: 0, firstTime: false, newBadges: [] };
     const grade = profile.grade;
@@ -36,23 +45,40 @@ export const progressActions = {
 
     const next: ChildProfile = {
       ...profile,
-      progress: firstTime ? { ...profile.progress, [grade]: Math.min(LEVELS_PER_GRADE, done + 1) } : profile.progress,
+      progress: firstTime ? { ...profile.progress, [grade]: Math.min(levelCount(grade), done + 1) } : profile.progress,
       stars: profile.stars + starsEarned,
+      gradeSeconds: firstTime
+        ? { ...profile.gradeSeconds, [grade]: (profile.gradeSeconds?.[grade] ?? 0) + Math.min(MAX_LEVEL_SECONDS, Math.max(0, Math.round(seconds))) }
+        : profile.gradeSeconds,
       questsDone: profile.questsDone + (level?.kind === "quest" ? 1 : 0),
     };
+    if (next.drafts?.[draftKey(grade, levelNumber)]) {
+      next.drafts = { ...next.drafts };
+      delete next.drafts[draftKey(grade, levelNumber)];
+    }
     const earned = newlyEarned(next);
     next.badges = [...next.badges, ...earned];
 
     setState((s) => ({
       ...s,
       profiles: s.profiles.map((p) => (p.id === profileId ? next : p)),
-      justUnlocked: firstTime && levelNumber < LEVELS_PER_GRADE ? { grade, level: levelNumber + 1 } : s.justUnlocked,
+      justUnlocked: firstTime && levelNumber < levelCount(grade) ? { grade, level: levelNumber + 1 } : s.justUnlocked,
     }));
     return {
       starsEarned,
       firstTime,
       newBadges: earned.map((id) => getBadge(id)).filter((b): b is BadgeDef => b !== null),
     };
+  },
+
+  /** Save (or with null, forget) where the child left an unfinished level. */
+  saveDraft(profileId: string, key: string, draft: { pal: boolean; board: LevelDraft } | null) {
+    updateProfile(profileId, (p) => {
+      const drafts = { ...p.drafts };
+      if (draft) drafts[key] = draft;
+      else delete drafts[key];
+      return { ...p, drafts };
+    });
   },
 
   /** A real high-five on the celebration screen. Returns badges this earned (e.g. High-Five Hero). */

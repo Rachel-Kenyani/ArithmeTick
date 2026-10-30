@@ -1,5 +1,5 @@
 /**
- * Static Jaymo limb artwork — wing and three-toed foot.
+ * Static Brijo limb artwork — wing and three-toed foot.
  */
 
 import { G, Path, Rect } from "react-native-svg";

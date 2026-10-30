@@ -1,5 +1,5 @@
 /**
- * Jaymo open eyes — gaze-tracking irises and blinking lids.
+ * Brijo open eyes — gaze-tracking irises and blinking lids.
  */
 
 import type { SharedValue } from "react-native-reanimated";

@@ -1,12 +1,12 @@
 /**
- * Jaymo eye config — per-mood eye kind, lid travel, gaze spots/springs and eye x positions.
+ * Brijo eye config — per-mood eye kind, lid travel, gaze spots/springs and eye x positions.
  */
 
 import { EYE, LENS } from "./geometry";
-import type { JaymoMood } from "./types";
+import type { BrijoMood } from "./types";
 
 export type EyeKind = "open" | "happy" | "closed";
-export const EYES: Record<JaymoMood, EyeKind> = {
+export const EYES: Record<BrijoMood, EyeKind> = {
   idle: "open",
   wave: "open",
   talk: "open",

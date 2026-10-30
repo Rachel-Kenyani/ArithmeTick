@@ -1,7 +1,8 @@
 // TEMPORARY stand-in — replaced when BadgeMedallion is ported (see README).
 
-import { StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 
+import BadgeArt from "@/components/illustrations/BadgeArt";
 import type { BadgeDef, BadgeTone } from "@/data/badges";
 import { colors } from "@/theme";
 
@@ -42,7 +43,9 @@ export default function BadgeMedallion({ badge, earned = true, size = 96, style 
         style,
       ]}
     >
-      <Text style={{ fontSize: size * 0.42, opacity: earned ? 1 : 0.2 }}>{badge.emoji}</Text>
+      <View style={{ opacity: earned ? 1 : 0.2 }}>
+        <BadgeArt id={badge.id} size={size * 0.62} />
+      </View>
     </View>
   );
 }

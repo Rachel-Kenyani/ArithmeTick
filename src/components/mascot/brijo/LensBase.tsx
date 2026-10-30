@@ -1,5 +1,5 @@
 /**
- * Jaymo lens rims, rings and eye base (static, both lenses).
+ * Brijo lens rims, rings and eye base (static, both lenses).
  */
 
 import { Circle, G, Path } from "react-native-svg";

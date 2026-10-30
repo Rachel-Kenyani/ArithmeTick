@@ -9,8 +9,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
+import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
 import { sfx } from "@/services/audio";
-import { colors, fonts } from "@/theme";
+import { fonts } from "@/theme";
 
 export interface HoldToConfirmProps {
   label: string;
@@ -51,7 +52,7 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000 }:
     >
       <Animated.View style={[styles.fill, fillStyle]} />
       <View style={styles.content}>
-        {icon}
+        {icon ?? <InfoIcon />}
         <Text style={styles.label}>{label}</Text>
       </View>
     </Pressable>
@@ -66,12 +67,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 999,
     borderWidth: 2,
-    borderColor: "rgba(0,79,74,0.25)",
-    backgroundColor: "rgba(255,255,255,0.85)",
+    borderColor: GROWN_UP.border,
+    backgroundColor: GROWN_UP.bg,
     paddingHorizontal: 18,
   },
-  fill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: "rgba(0,111,104,0.22)" },
+  fill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: GROWN_UP.fill },
   content: { flexDirection: "row", alignItems: "center", gap: 8 },
-  // #006f68 on the near-white pill ≈ 6:1
-  label: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: colors.atPlum },
+  // grown-up voice: plum on light plum (≈ 5.6:1)
+  label: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: GROWN_UP.ink },
 });

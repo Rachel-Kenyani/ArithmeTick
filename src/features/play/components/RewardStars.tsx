@@ -76,6 +76,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 14,
   },
-  note: { fontFamily: fonts.bodySemiBold, fontSize: 16, color: colors.atTeal, textAlign: "center" },
+  note: { fontFamily: fonts.bodySemiBold, fontSize: 18, color: colors.atTeal, textAlign: "center" },
   totalText: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.white, fontVariant: ["tabular-nums"] },
 });

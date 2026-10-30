@@ -1,6 +1,6 @@
 /** Persisted data shapes (see lib/store.ts). Pure types + constants — no React. */
 
-import type { Grade } from "@/types/domain";
+import type { Grade, LevelDraft } from "@/types/domain";
 
 export type AvatarKind = "owl" | "cheetah" | "bear" | "fox";
 
@@ -24,7 +24,7 @@ export interface ChildProfile {
   avatar: AvatarKind;
   /** Optional 6-character school invite code entered by the parent. */
   schoolCode: string | null;
-  /** Levels finished, in order, per grade (0..LEVELS_PER_GRADE). Level n is playable when n ≤ progress[grade] + 1. */
+  /** Levels finished, in order, per grade (0..levelCount). Level n is playable when n ≤ progress[grade] + 1. */
   progress: Record<Grade, number>;
   stars: number;
   /** Earned badge ids (lib/badges.ts), in the order they were earned. */
@@ -35,6 +35,13 @@ export interface ChildProfile {
   questsDone: number;
   /** Recent answers checked in levels (newest last, capped), kept on the phone for PAL later. */
   attempts?: AttemptLog[];
+  /**
+   * Seconds spent finishing each grade's levels for the first time (replays don't count). Stops growing once
+   * the grade is complete, so it is that grade's finishing time — kept for a future leaderboard.
+   */
+  gradeSeconds?: Partial<Record<Grade, number>>;
+  /** Unfinished levels by key `g{grade}-l{level}` (resume), with whether help was on. Cleared when the level is finished. */
+  drafts?: Record<string, { pal: boolean; board: LevelDraft }>;
 }
 
 /** One "Done" press: what the child built and whether it matched. */

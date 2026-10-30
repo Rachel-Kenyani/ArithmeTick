@@ -2,7 +2,7 @@
  * Screen-time actions — the daily 15-minute allowance.
  */
 
-import { SESSION_CAP_SECONDS } from "@/types/domain";
+import { SCREEN_TIME_ENABLED, SESSION_CAP_SECONDS } from "@/types/domain";
 
 import { setState, todayKey } from "../core";
 
@@ -15,6 +15,7 @@ export const screenTimeActions = {
 
   /** Count active play time against today's 15-minute cap. */
   tickScreenTime(seconds = 1) {
+    if (!SCREEN_TIME_ENABLED) return;
     const day = todayKey();
     setState((s) => {
       const used = s.screenTime.day === day ? s.screenTime.usedSeconds : 0;

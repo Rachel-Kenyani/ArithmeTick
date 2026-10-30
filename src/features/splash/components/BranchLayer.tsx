@@ -1,5 +1,5 @@
 /**
- * Splash intro — frame 10's branch, growing in under Jaymo from the left.
+ * Splash intro — frame 10's branch, growing in under Brijo from the left.
  */
 
 import Animated, { type AnimatedStyle } from "react-native-reanimated";

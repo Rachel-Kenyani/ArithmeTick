@@ -1,5 +1,5 @@
 /**
- * Twinkle — a softly pulsing star dot behind the sleepy Jaymo on the screen-time sheet.
+ * Twinkle — a softly pulsing star dot behind the sleepy Brijo on the screen-time sheet.
  */
 
 import { useEffect } from "react";

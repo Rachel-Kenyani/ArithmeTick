@@ -1,5 +1,5 @@
 /**
- * Jaymo eyelids: a one-shot blink helper plus natural blinking on a random timer.
+ * Brijo eyelids: a one-shot blink helper plus natural blinking on a random timer.
  */
 
 import { useCallback, useEffect } from "react";

@@ -1,5 +1,5 @@
 /**
- * Jaymo palette + artwork geometry (200×200 viewBox, identical to web) and rig pivots.
+ * Brijo palette + artwork geometry (200×200 viewBox, identical to web) and rig pivots.
  */
 
 /* ------------------------------------------------------------------------------------------

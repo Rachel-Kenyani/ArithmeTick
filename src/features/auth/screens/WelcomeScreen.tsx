@@ -1,11 +1,11 @@
 /**
  * /welcome — "Hey, Explorer! Get a Grown-up" (mockup 02, docs/APP-SHELL.md §5 "Welcome").
  *
- * Jaymo's head floats above the mint card (he just flew up here from the splash), the card holds the
+ * Brijo's head floats above the mint card (she just flew up here from the splash), the card holds the
  * heading and the two big doors into the app: teal "I'm New Here!" → /signup, purple "Back? Log In" → /login.
  * A parent who is already signed in also gets a small "Continue as …" link → /profiles.
  *
- * The scene matches the splash's last frame: its frame-12 background (bg-12) and Jaymo's head from
+ * The scene matches the splash's last frame: its frame-12 background (bg-12) and Brijo's head from
  * Logo-splash-4.svg. The float, tilt, blink and tap-squish are done here, on the whole head.
  */
 
@@ -23,7 +23,7 @@ import { ROUTES } from "@/constants/routes";
 import { useAppState } from "@/state/store";
 import { colors, fonts } from "@/theme";
 
-import JaymoHead from "../components/JaymoHead";
+import BrijoHead from "../components/BrijoHead";
 import SlideUp from "../components/SlideUp";
 
 const clamp = (min: number, v: number, max: number) => Math.min(max, Math.max(min, v));
@@ -36,7 +36,7 @@ export default function WelcomeScreen() {
 
   return (
     <ScreenShell backgroundImage={SPLASH_BACKGROUND} gap={clamp(16, H * 0.03, 28)} style={{ paddingTop: clamp(0, H * 0.1 - 40, 56) }}>
-      <JaymoHead size={head} />
+      <BrijoHead size={head} />
 
       <SlideUp>
         <Panel>

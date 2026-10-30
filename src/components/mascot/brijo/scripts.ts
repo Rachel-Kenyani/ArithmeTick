@@ -1,9 +1,9 @@
 /**
- * Jaymo mood scripts — keyframe loops and rest poses for every mood.
+ * Brijo mood scripts — keyframe loops and rest poses for every mood.
  */
 
 import { MOODS, type Keyframes, type MoodScript, type Timing } from "./choreography";
-import type { JaymoMood } from "./types";
+import type { BrijoMood } from "./types";
 
 const loopT = (d: number, extra?: Omit<Timing, "d">): Timing => ({ d, ...extra });
 const DANCE_TIMES = [0, 0.14, 0.28, 0.42, 0.56, 0.78, 1];
@@ -23,7 +23,7 @@ const Z_LOOP: Keyframes = {
  * Tufts keep each mood's static rest tilt; the web's small ear-twitch loops are dropped to keep
  * the number of animated SVG nodes down (they were barely visible at most sizes).
  */
-export const SCRIPTS: Record<JaymoMood, MoodScript> = {
+export const SCRIPTS: Record<BrijoMood, MoodScript> = {
   idle: {
     rig: { loop: { y: [0, -2.5, 0] }, t: loopT(3.4) },
     squash: { loop: { scaleY: [1, 1.03, 1], scaleX: [1, 0.99, 1] }, t: loopT(3.4) },

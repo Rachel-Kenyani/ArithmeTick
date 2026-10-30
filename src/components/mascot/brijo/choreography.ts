@@ -1,8 +1,8 @@
 /**
- * Jaymo choreography types, mood order and per-part rest defaults (plain data so worklets can read it).
+ * Brijo choreography types, mood order and per-part rest defaults (plain data so worklets can read it).
  */
 
-import type { JaymoMood } from "./types";
+import type { BrijoMood } from "./types";
 
 /* ------------------------------------------------------------------------------------------
  * Mood choreography (plain data so worklets can read it)
@@ -33,7 +33,7 @@ export interface PartMotion {
 
 export type MoodScript = Partial<Record<Part, PartMotion>>;
 
-export const MOODS: readonly JaymoMood[] = ["idle", "wave", "talk", "dance", "cheer", "sleep"];
+export const MOODS: readonly BrijoMood[] = ["idle", "wave", "talk", "dance", "cheer", "sleep"];
 
 export const PART_DEFAULTS: Record<Part, Pose> = {
   shadow: { scaleX: 1, opacity: 1 },

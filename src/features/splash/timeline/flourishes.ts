@@ -31,7 +31,7 @@ export function startFlourishes(v: SplashValues) {
     );
   squashX.set(pulses(1.08));
   squashY.set(pulses(0.92));
-  // From frame 4 on, Jaymo breathes whenever he's still
+  // From frame 4 on, Brijo breathes whenever she's still
   breath.set(
     withDelay(
       AT[3],

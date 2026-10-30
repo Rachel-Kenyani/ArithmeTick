@@ -1,5 +1,5 @@
 /**
- * Animated SVG group + matrix-prop hook used by every independently moving Jaymo part.
+ * Animated SVG group + matrix-prop hook used by every independently moving Brijo part.
  */
 
 import Animated, { useAnimatedProps } from "react-native-reanimated";

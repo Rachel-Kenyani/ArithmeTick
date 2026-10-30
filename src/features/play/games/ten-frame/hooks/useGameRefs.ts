@@ -11,10 +11,10 @@ import type { Flight, Geometry, Pt } from "../types";
 
 type OnAttempt = NonNullable<GradeModuleProps["onAttempt"]>;
 
-export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => void, onStruggle: () => void, onAttempt?: OnAttempt) {
+export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => void, onStruggle: () => void, onAttempt?: OnAttempt, initialPlaced: number[] = []) {
   // Mirrors of state for gesture callbacks / timers (always the latest values).
   const geoRef = useRef<Geometry>(geo);
-  const placedRef = useRef<number[]>([]);
+  const placedRef = useRef<number[]>(initialPlaced);
   const solvedRef = useRef(false);
   const palRef = useRef(palActive);
   const draggingRef = useRef<number | null>(null);

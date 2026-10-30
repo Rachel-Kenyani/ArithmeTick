@@ -48,7 +48,8 @@ export function useCapGesture({
   const pan = usePanGesture({
     enabled: canDrag,
     maxPointers: 1,
-    minDistance: 4,
+    // A real fingertip wobbles a few px on a tap; below this it stays a tap (cap hops into the next slot).
+    minDistance: 10,
     onBegin: () => {
       lift.set(withSpring(1.06, SPRING_UI));
     },

@@ -1,5 +1,5 @@
 /**
- * The question as an equation, shown from the start: "7 = 5 + ?". The 5 lights up purple when the top
+ * The question as an equation, shown from the start: "5 + ? = 7" (the sum last, the way Grade 1 reads it). The 5 lights up purple when the top
  * row is full (matching the "5" badge); while help is on, the "?" gently pulses as the part to work out.
  * A right answer turns "?" into the missing number and the strip goes gold. It never counts along.
  */
@@ -40,7 +40,7 @@ export function EquationStrip({ target, topFull, palActive, solved, layout: L, r
   const askStyle = useAnimatedStyle(() => ({ transform: [{ scale: ask.get() }] }));
 
   const op = (sign: string) => <Text style={[styles.operator, { fontSize, lineHeight: Math.round(fontSize * 1.15) }]}>{sign}</Text>;
-  const spoken = solved ? `${target} equals ${TARGET_TOP} plus ${missing}` : `${target} equals ${TARGET_TOP} plus what?`;
+  const spoken = solved ? `${TARGET_TOP} plus ${missing} equals ${target}` : `${TARGET_TOP} plus what equals ${target}?`;
   return (
     <View accessible accessibilityLabel={spoken} accessibilityLiveRegion="polite">
       <Animated.View
@@ -51,13 +51,13 @@ export function EquationStrip({ target, topFull, palActive, solved, layout: L, r
           st,
         ]}
       >
-        <NumberTile value={target} tone={solved ? "win" : "total"} size={tile} fontSize={fontSize} />
-        {op("=")}
         <NumberTile value={TARGET_TOP} tone={topFull || solved ? "five" : "plain"} size={tile} fontSize={fontSize} />
         {op("+")}
         <Animated.View style={askStyle}>
           <NumberTile value={solved ? missing : "?"} tone={solved ? "win" : "ask"} size={tile} fontSize={fontSize} />
         </Animated.View>
+        {op("=")}
+        <NumberTile value={target} tone={solved ? "win" : "total"} size={tile} fontSize={fontSize} />
       </Animated.View>
       {solved ? SPARKLES.map((s) => <Sparkle key={`${s.left}:${s.top}`} {...s} />) : null}
     </View>

@@ -1,6 +1,6 @@
 /**
  * Grade 1 — "Spatial Number Composition & Ten-Frames" (native port of arithmetick/components/Grade1TenFrame.tsx)
- * Puzzle: build `target` (6–10, default 7) as 5 + (target − 5), e.g. 7 = 5 + 2.
+ * Puzzle: build `target` (6–10, default 7) as 5 + (target − 5), e.g. 5 + 2 = 7.
  *
  * Interaction model
  * - 10 bottle caps (vifuniko) live in ONE overlay layer. Each cap owns shared values (x, y) = the
@@ -13,7 +13,7 @@
  *   contiguous when caps are removed (the rest compact).
  * - The child decides when to stop: any number of caps (up to 10), then "Done". A wrong answer counts
  *   the caps aloud up to the target and lets Stealth PAL step in. The question shows as an equation
- *   from the start ("7 = 5 + ?"); a right answer fills in the "?".
+ *   from the start ("5 + ? = 7"); a right answer fills in the "?".
  */
 
 import { View } from "react-native";
@@ -38,11 +38,11 @@ import { styles } from "./styles";
 /** The target card's dots stay empty while the child builds, so it never counts for them. */
 const NONE: readonly number[] = [];
 
-export default function Grade1TenFrame({ level, target: targetProp, palActive, onStruggle, onAttempt, onSolved }: Readonly<TenFrameProps>) {
+export default function Grade1TenFrame({ level, target: targetProp, palActive, onStruggle, onAttempt, onSolved, draft, onDraft, item = "cap" }: Readonly<TenFrameProps>) {
   const target = normalizeTarget(targetProp);
   const reduced = useReducedMotion();
   const { layout, geo, onLayout } = useBoardLayout();
-  const { placed, solved, draggingId, near, fx, caps, drag, checkAnswer, handleDragStart, handleNear, handleDragEnd, handleTap, fillNext } = useTenFrameGame({
+  const { placed, solved, revealAll, draggingId, near, fx, caps, drag, checkAnswer, handleDragStart, handleNear, handleDragEnd, handleTap, fillNext } = useTenFrameGame({
     target,
     palActive,
     onSolved,
@@ -51,6 +51,8 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
     geo,
     measured: layout.measured,
     reduced,
+    draft,
+    onDraft,
   });
 
   /* ─────────────── derived view state ─────────────── */
@@ -61,7 +63,7 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
   const bottomCount = Math.max(0, count - ROW_SIZE);
   const topFull = count >= TARGET_TOP;
   const { rowTone, topTone } = groupTones(palActive, topFull);
-  const { nextSlot, previewSlot, hintSlot } = slotMarkers(count, target, palActive, solved, draggingId !== null, near);
+  const { nextSlot, previewSlot, hintSlot } = slotMarkers(count, target, palActive, revealAll, solved, draggingId !== null, near);
 
   const { haloInset, badge } = frameChrome(L);
   const g = geo.grid;
@@ -106,10 +108,11 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
         nextSlot={nextSlot}
         previewSlot={previewSlot}
         hintSlot={hintSlot}
+        revealAll={revealAll}
         onFillNext={fillNext}
       />
 
-      {/* the question as an equation, "7 = 5 + ?", with Done under it */}
+      {/* the question as an equation, "5 + ? = 7", with Done under it */}
       <View style={[styles.abs, styles.center, { left: eq.x, top: eq.y, width: eq.w, height: eq.h }]}>
         <EquationStrip target={target} topFull={topFull} palActive={palActive} solved={solved} layout={L} reduced={reduced} />
       </View>
@@ -134,6 +137,7 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
         handleDragEnd={handleDragEnd}
         handleTap={handleTap}
         size={L.cap}
+        item={item}
         rowTone={rowTone}
         palActive={palActive}
         target={target}

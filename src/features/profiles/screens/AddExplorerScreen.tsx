@@ -85,7 +85,7 @@ export default function AddExplorerScreen() {
           /> */}
 
           <Button trailing="arrow" loading={busy} onPress={submit} style={styles.submit}>
-            Let&apos;s Play
+            Add Profile
           </Button>
         </Panel>
       </Animated.View>

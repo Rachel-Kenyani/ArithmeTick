@@ -43,7 +43,7 @@ export default function PlayScreen({ levelNumber }: Readonly<PlayScreenProps>) {
 
   const grade = profile?.grade ?? null;
   const level = grade ? getLevel(grade, levelNumber) : null;
-  const playable = profile !== null && level !== null && isPlayable(levelNumber, profile.progress[profile.grade] ?? 0);
+  const playable = profile !== null && level !== null && isPlayable(profile.grade, levelNumber, profile.progress[profile.grade] ?? 0);
   const bounce = ready && profile !== null && !playable;
 
   useEffect(() => {

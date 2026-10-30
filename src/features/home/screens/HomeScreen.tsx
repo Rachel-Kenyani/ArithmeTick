@@ -8,7 +8,7 @@
  * slip behind the tab bar.
  */
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -23,12 +23,15 @@ import { useMapAutoScroll } from "@/features/home/hooks/useMapAutoScroll";
 import { useMapUnlock } from "@/features/home/hooks/useMapUnlock";
 import { useNavigateOnce } from "@/features/home/hooks/useNavigateOnce";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
-import { levelsForGrade, LEVELS_PER_GRADE, type LevelDef } from "@/data/levels";
+import { levelCount, levelsForGrade, type LevelDef } from "@/data/levels";
 import type { ChildProfile } from "@/types/models";
 import { ROUTES } from "@/constants/routes";
 import { actions, useActiveProfile, useScreenTimeRemaining } from "@/state/store";
 import { GRADE_META } from "@/types/domain";
 import { useGuard } from "@/hooks/useGuard";
+
+/** Grades whose "You did them all!" pop-up was already shown this app session (profileId:grade). */
+const celebratedGrades = new Set<string>();
 
 /** Short landscape screens (a phone held sideways): the banner scrolls with the trail instead of eating its height. */
 const SHORT_SCREEN_MAX_HEIGHT = 520;
@@ -53,10 +56,19 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
 
   const grade = profile.grade;
   const levels = levelsForGrade(grade);
-  const completed = Math.min(profile.progress[grade] ?? 0, LEVELS_PER_GRADE);
-  const allDone = completed >= LEVELS_PER_GRADE;
+  const completed = Math.min(profile.progress[grade] ?? 0, levelCount(grade));
+  const allDone = completed >= levelCount(grade);
 
   const { unlockLevel, mapEpoch } = useMapUnlock(grade, completed, focused);
+
+  const celebrateKey = `${profile.id}:${grade}`;
+  // Closing records the grade in the module-level set; the counter just re-renders.
+  const [, setClosedCount] = useState(0);
+  const showComplete = allDone && !celebratedGrades.has(celebrateKey);
+  const closeComplete = useCallback(() => {
+    celebratedGrades.add(celebrateKey);
+    setClosedCount((n) => n + 1);
+  }, [celebrateKey]);
 
   const go = useNavigateOnce();
   const handlePlay = useCallback((level: LevelDef) => go(ROUTES.play(level.number)), [go]);
@@ -71,7 +83,6 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
       title={meta.mechanic}
       spoken={`${meta.shortLabel}, ${meta.mechanic}. ${completed} of ${levels.length} levels done`}
       progress={{ completed, total: levels.length }}
-      note={completed === levels.length ? "You did them all!" : undefined}
     />
   );
 
@@ -103,7 +114,6 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
           <View accessibilityLabel="Level map" style={styles.section}>
             {/* Short landscape screens: the banner scrolls with the trail instead of eating the map's height. */}
             {shortScreen ? banner : null}
-            {allDone ? <GradeCompleteCard gradeLabel={GRADE_META[grade].shortLabel} /> : null}
             <View onLayout={handleMapLayout}>
               <LevelMap
                 key={`${profile.id}-${grade}-${mapEpoch}`}
@@ -120,6 +130,16 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
         </ScrollView>
 
         <BottomNav active="map" onNavigate={go} />
+        {allDone ? (
+          <GradeCompleteCard
+            gradeLabel={GRADE_META[grade].shortLabel}
+            childName={profile.name}
+            levelTotal={levelCount(grade)}
+            finishSeconds={profile.gradeSeconds?.[grade]}
+            visible={showComplete && focused}
+            onClose={closeComplete}
+          />
+        ) : null}
       </View>
     </SplashBackdrop>
   );

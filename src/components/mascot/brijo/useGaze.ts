@@ -1,5 +1,5 @@
 /**
- * Jaymo idle gaze: pupils glance around now and then; other moods look straight ahead.
+ * Brijo idle gaze: pupils glance around now and then; other moods look straight ahead.
  */
 
 import { useEffect } from "react";

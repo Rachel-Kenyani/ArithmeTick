@@ -7,7 +7,7 @@ import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-nati
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Twinkle, { TWINKLES, twinkleKey } from "@/features/play/components/Twinkle";
-import JaymoMascot from "@/components/mascot/JaymoMascot";
+import BrijoMascot from "@/components/mascot/BrijoMascot";
 import Button from "@/components/ui/Button";
 import { HomeIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
@@ -28,7 +28,7 @@ export default function ScreenTimeSheet({ onBack, reduced }: Readonly<{ onBack: 
 
       <Animated.View
         accessibilityRole="none"
-        accessibilityLabel="That's today's screen time! Go play outside. Jaymo will be here tomorrow."
+        accessibilityLabel="That's today's screen time! Go play outside. Brijo will be here tomorrow."
         style={[
           styles.sheet,
           sm ? styles.sheetSm : styles.sheetPhone,
@@ -37,7 +37,7 @@ export default function ScreenTimeSheet({ onBack, reduced }: Readonly<{ onBack: 
         entering={reduced ? FadeIn : SlideInDown.springify().stiffness(260).damping(30)}
         exiting={reduced ? FadeOut : SlideOutDown}
       >
-        {/* moon + twinkles behind a sleepy Jaymo */}
+        {/* moon + twinkles behind a sleepy Brijo */}
         <View style={styles.moonStage} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
           <View style={styles.moon}>
             <View style={styles.moonShade} />
@@ -45,13 +45,13 @@ export default function ScreenTimeSheet({ onBack, reduced }: Readonly<{ onBack: 
           {TWINKLES.map((pos, i) => (
             <Twinkle key={twinkleKey(pos)} index={i} reduced={reduced} pos={pos} />
           ))}
-          <JaymoMascot mood="sleep" size={140} />
+          <BrijoMascot mood="sleep" size={140} />
         </View>
 
         <Text accessibilityRole="header" style={[styles.sheetTitle, { fontSize: sm ? 36 : 32 }]}>
           That&apos;s today&apos;s screen time!
         </Text>
-        <Text style={styles.sheetCopy}>Go play outside. Jaymo will be here tomorrow.</Text>
+        <Text style={styles.sheetCopy}>Go play outside. Brijo will be here tomorrow.</Text>
 
         <Button variant="teal" icon={<HomeIcon color={colors.white} />} trailing="chevron" onPress={onBack}>
           Back to map

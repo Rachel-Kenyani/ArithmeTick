@@ -1,5 +1,5 @@
 /**
- * Jaymo worklet sampling — keyframe easing, cross-faded part values and SVG matrices.
+ * Brijo worklet sampling — keyframe easing, cross-faded part values and SVG matrices.
  */
 
 import type { SharedValue } from "react-native-reanimated";

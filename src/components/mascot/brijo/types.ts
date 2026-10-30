@@ -1,5 +1,5 @@
 /**
- * Jaymo public contract — mood names and component props.
+ * Brijo public contract — mood names and component props.
  */
 
 import type { ViewStyle } from "react-native";
@@ -8,11 +8,11 @@ import type { ViewStyle } from "react-native";
  * Public contract
  * ---------------------------------------------------------------------------------------- */
 
-export type JaymoMood = "idle" | "wave" | "talk" | "dance" | "cheer" | "sleep";
+export type BrijoMood = "idle" | "wave" | "talk" | "dance" | "cheer" | "sleep";
 
-export interface JaymoMascotProps {
-  /** What Jaymo is doing. Every mood loops gently. Default `"idle"`. */
-  mood?: JaymoMood;
+export interface BrijoMascotProps {
+  /** What Brijo is doing. Every mood loops gently. Default `"idle"`. */
+  mood?: BrijoMood;
   /** Rendered width and height in px. Default 96. */
   size?: number;
   style?: ViewStyle;

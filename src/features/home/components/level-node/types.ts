@@ -10,7 +10,7 @@ export interface LevelNodeProps {
   /** Centre of the platform in map coordinates (px). */
   x: number;
   y: number;
-  /** Which column of the zig-zag the stop is in (ornaments go on the inner side, Jaymo stands on the outer side). */
+  /** Which column of the zig-zag the stop is in (ornaments go on the inner side, Brijo stands on the outer side). */
   side: "left" | "right";
   /** Increment to play the "just unlocked" bounce. */
   pop?: number;

@@ -1,5 +1,5 @@
 /**
- * Jaymo's head from Logo-splash-4.svg (the splash's frame-4 owl), cropped to the art. `blink` (0–1) hides the
+ * Brijo's head from Logo-splash-4.svg (the splash's frame-4 owl), cropped to the art. `blink` (0–1) hides the
  * pupils; drive it with a shared value for a blink.
  */
 
@@ -19,7 +19,7 @@ const PURPLE_DARK = "#6D41A3";
 const PURPLE = "#884DCF";
 const GOLD = "#FEAD1D";
 
-export default function JaymoHeadArt({
+export default function BrijoHeadArt({
   width,
   blink,
 }: Readonly<{

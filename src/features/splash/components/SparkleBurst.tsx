@@ -1,5 +1,5 @@
 /**
- * Splash intro — frame 14's sparkle burst: a ring of stars flying out from Jaymo's head.
+ * Splash intro — frame 14's sparkle burst: a ring of stars flying out from Brijo's head.
  */
 
 import { View } from "react-native";

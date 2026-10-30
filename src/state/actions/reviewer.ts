@@ -3,7 +3,7 @@
  */
 
 import { newlyEarned } from "@/data/badges";
-import { LEVELS_PER_GRADE } from "@/data/levels";
+import { levelCount } from "@/data/levels";
 import type { Grade } from "@/types/domain";
 
 import { DEFAULT_STATE, setState, todayKey, updateProfile } from "../core";
@@ -16,7 +16,7 @@ export const reviewerActions = {
   /** Reviewer: mark `count` levels of the profile's current grade as finished (0 = reset that grade). */
   setProgress(profileId: string, count: number) {
     updateProfile(profileId, (p) => {
-      const next = { ...p, progress: { ...p.progress, [p.grade]: Math.max(0, Math.min(LEVELS_PER_GRADE, count)) } };
+      const next = { ...p, progress: { ...p.progress, [p.grade]: Math.max(0, Math.min(levelCount(p.grade), count)) } };
       return { ...next, badges: [...next.badges, ...newlyEarned(next)] };
     });
   },

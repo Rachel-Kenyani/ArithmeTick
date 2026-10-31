@@ -1,7 +1,3 @@
-/**
- * Shared types of the Grade 1 ten-frame module (caps, motion, layout, view state).
- */
-
 import type { ReduceMotion, SharedValue } from "react-native-reanimated";
 
 export type CapColor = "teal" | "purple";
@@ -33,7 +29,7 @@ export interface FxSignal {
   n: number;
   /** "count": the number shown in a bubble above the cap. */
   label?: number;
-  /** seconds (as on web) */
+  /** seconds */
   delay: number;
 }
 

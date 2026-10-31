@@ -1,7 +1,3 @@
-/**
- * Static wood-grain artwork of the cap tray.
- */
-
 import { memo } from "react";
 import { StyleSheet } from "react-native";
 import Svg, { Defs, G, LinearGradient, RadialGradient, Rect, Stop } from "react-native-svg";

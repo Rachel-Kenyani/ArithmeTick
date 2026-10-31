@@ -24,7 +24,6 @@ export const GROWN_UP = {
   fill: "rgba(168,50,110,0.22)",
 } as const;
 
-/** A plum "i" in a ring. */
 export function InfoIcon({
   size = 20,
   color = GROWN_UP.ink,

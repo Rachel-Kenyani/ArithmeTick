@@ -1,5 +1,5 @@
 /**
- * Grade 3 — "Array Multiplication & Place-Value Regrouping" (native port of arithmetick/components/Grade3ArrayMultiplication.tsx)
+ * Grade 3 — "Array Multiplication & Place-Value Regrouping".
  * Puzzle `rows × cols` (default 3 × 4 = 12 → 1 ten + 2 ones; levels use 3×4, 2×6, 3×5, 4×3).
  *
  * Phase A (build):   stretch the array from its corner, then tap Done to check it. A wrong size lets
@@ -118,8 +118,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
     const regrouping = phase !== "build" && phase !== "locked";
     onDraft?.(regrouping ? { misses: missesRef.current, regrouping, picked } : { misses: missesRef.current, rows: childDims.rows, cols: childDims.cols });
   }, [onDraft, phase, picked, childDims]);
-
-  /* ─────────────── layout ─────────────── */
 
   const building = phase === "build" || phase === "locked";
   const stageW = size ? size.w - 24 : 0;

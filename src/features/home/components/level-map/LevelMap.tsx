@@ -1,7 +1,7 @@
 /**
  * LevelMap — the winding jungle trail on the home screen (docs/APP-SHELL.md §5 "Home").
  *
- * - Six stops zig-zag up the screen (level 1 at the bottom, by the grass — the trail climbs like a jungle
+ * - The stops zig-zag up the screen (level 1 at the bottom, by the grass — the trail climbs like a jungle
  *   path) joined by one sandy SVG spline that terminates at the purple finish flag.
  * - Geometry is computed in px from the measured column width (onLayout) and the scroll region's height
  *   (`regionHeight`): on a typical phone (390×844) the whole trail fits; on short screens it scrolls and the
@@ -25,7 +25,7 @@ import { levelStatus, type LevelDef, type LevelStatus } from "@/data/levels";
 
 export interface LevelMapProps {
   levels: readonly LevelDef[];
-  /** Levels finished in this grade (0..6). */
+  /** Levels finished in this grade. */
   completed: number;
   /** Height of the scroll region the map lives in (used for sizing). 0 until measured. */
   regionHeight: number;

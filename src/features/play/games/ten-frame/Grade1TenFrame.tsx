@@ -1,5 +1,5 @@
 /**
- * Grade 1 — "Spatial Number Composition & Ten-Frames" (native port of arithmetick/components/Grade1TenFrame.tsx)
+ * Grade 1 — "Spatial Number Composition & Ten-Frames".
  * Puzzle: build `target` (6–10, default 7) as 5 + (target − 5), e.g. 5 + 2 = 7.
  *
  * Interaction model
@@ -55,8 +55,6 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
     onDraft,
   });
 
-  /* ─────────────── derived view state ─────────────── */
-
   const L = layout;
   const count = placed.length;
   const topCount = Math.min(count, ROW_SIZE);
@@ -81,7 +79,6 @@ export default function Grade1TenFrame({ level, target: targetProp, palActive, o
       testID={`g1-board-l${level ?? 0}-t${target}`}
       accessibilityLabel={`Make ${target}: ${target} counters needed, ${count} placed`}
     >
-      {/* target card */}
       <View style={[styles.abs, styles.center, { left: card.x, top: card.y, width: card.w, height: card.h }]}>
         <TargetCard
           variant={L.arrangement === "side" ? "side" : "pill"}

@@ -1,7 +1,3 @@
-/**
- * Profile actions — add and select child profiles.
- */
-
 import { AVATARS, MAX_PROFILES, type ChildProfile } from "@/types/models";
 import type { Grade } from "@/types/domain";
 

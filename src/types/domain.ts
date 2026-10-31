@@ -1,5 +1,5 @@
 /**
- * Shared contract between app/page.tsx and every component in /components.
+ * Shared contract between the play screen and the grade modules.
  * Changing anything here means changing every consumer — keep it small.
  */
 

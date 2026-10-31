@@ -73,9 +73,7 @@ export function maskIdentifier(raw: string): string {
   return trimmed.length > 4 ? `${trimmed.slice(0, 2)}****${trimmed.slice(-2)}` : "****";
 }
 
-/* ------------------------------------------------------------------------------------------------
- * Friendly messages (parent-facing, shown under the field). null = all good.
- * ---------------------------------------------------------------------------------------------- */
+/* Parent-facing messages shown under the field; null = all good. */
 
 export function identifierProblem(raw: string): string | null {
   const trimmed = raw.trim();
@@ -97,10 +95,6 @@ export function confirmProblem(pw: string, confirm: string): string | null {
   if (confirm !== pw) return "The two passwords don't match yet.";
   return null;
 }
-
-/* ------------------------------------------------------------------------------------------------
- * Auth flow hand-offs (no secrets — just "something happened" flags between screens).
- * ---------------------------------------------------------------------------------------------- */
 
 /** sessionStorage key set by Reset Password and read once by Log In ("Password updated" note). */
 export const PASSWORD_UPDATED_FLAG = "arithmetick:password-updated"; // NOSONAR storage key name, not a credential

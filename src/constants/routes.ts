@@ -1,4 +1,3 @@
-/** Every screen's URL in one place. */
 export const ROUTES = {
   /** Launcher: decides between splash / welcome / profiles / home. */
   root: "/",

@@ -168,7 +168,6 @@ const styles = StyleSheet.create({
   },
   basketRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   basket: { width: 72, height: 40 },
-  // rows of 5, like the ten-frame
   items: {
     flexDirection: "row",
     flexWrap: "wrap",

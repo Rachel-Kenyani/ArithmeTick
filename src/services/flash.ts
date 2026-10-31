@@ -1,5 +1,5 @@
 /**
- * One-time hand-offs between screens (no secrets, in memory only — replaces the web's sessionStorage flag).
+ * One-time hand-offs between screens (no secrets, in memory only).
  * Reset Password sets it; Log In consumes it to show the "Password updated" note once.
  */
 

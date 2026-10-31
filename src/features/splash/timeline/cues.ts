@@ -14,7 +14,6 @@ function hapticTap(style: Haptics.ImpactFeedbackStyle) {
   return () => void Haptics.impactAsync(style).catch(() => {});
 }
 
-/** Sound and haptics on each beat */
 export function splashCues(): [number, () => void][] {
   return [
     [AT[2], sfx.pickup],

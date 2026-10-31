@@ -4,7 +4,6 @@
 
 import { Easing } from "react-native-reanimated";
 
-/** Reduced-motion timeline (ms). */
 /** Reduced motion: when the final scene is up and the wordmark fades back in. */
 export const reducedFinaleAt = (t: typeof T) =>
   t.hold1 + 1200 + 300 + t.hold9 + 300 + t.hold10 + 300 + t.hold11 + 300;

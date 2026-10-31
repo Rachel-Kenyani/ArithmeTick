@@ -3,13 +3,9 @@
  */
 
 
-/* ------------------------------------------------------------------------------------------------
- * Geometry helpers (module-level, pure, deterministic)
- * ---------------------------------------------------------------------------------------------- */
-
 export type Pt = readonly [number, number];
 
-/** mulberry32 — tiny seeded PRNG so the procedural art is identical on server and client. */
+/** mulberry32 — tiny seeded PRNG so the procedural art is identical on every run. */
 export function rng(seed: number) {
   let a = seed >>> 0;
   return () => {
@@ -23,7 +19,7 @@ export function rng(seed: number) {
 
 export const r1 = (n: number) => Math.round(n * 10) / 10;
 export const P = (p: Pt) => `${r1(p[0])} ${r1(p[1])}`;
-/** Whole-unit precision for big, dense artwork (keeps the SSR markup small). */
+/** Whole-unit precision for big, dense artwork (keeps the path strings small). */
 export const Q = (p: Pt) => `${Math.round(p[0])} ${Math.round(p[1])}`;
 export const deg = (d: number) => (d * Math.PI) / 180;
 

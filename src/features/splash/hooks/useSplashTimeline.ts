@@ -60,7 +60,6 @@ export function useSplashTimeline({
     startFullTimeline(values, centreShift, frame7Y, frame8X, done);
     startFlourishes(values);
 
-    // Sound and haptics on each beat
     const cues = splashCues();
     const timers = cues.map(([t, cue]) => setTimeout(cue, t));
     cueTimers.current = timers;

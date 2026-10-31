@@ -6,7 +6,6 @@ import type { LayoutChangeEvent, ScrollViewInstance } from "react-native";
 export function useMapAutoScroll(allDone: boolean) {
   const scrollRef = useRef<ScrollViewInstance>(null);
 
-  // Auto-scroll: centre the stop to play (or the top when the grade is complete) once the map is laid out.
   const [regionHeight, setRegionHeight] = useState(0);
   const mapTop = useRef<number | null>(null);
   const pendingFocus = useRef<number | null>(null);

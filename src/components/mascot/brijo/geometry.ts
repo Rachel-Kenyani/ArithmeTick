@@ -2,10 +2,6 @@
  * Brijo palette + artwork geometry (200×200 viewBox, identical to web) and rig pivots.
  */
 
-/* ------------------------------------------------------------------------------------------
- * Palette + geometry (identical to web)
- * ---------------------------------------------------------------------------------------- */
-
 export const C = {
   outline: "#1B1B1B",
   teal: "#009088",

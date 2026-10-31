@@ -1,5 +1,5 @@
 /**
- * Log In To Account (mockup 03). Returning parent: Google (services/googleAuth) or email/phone + password.
+ * Log In To Account. Returning parent: Google (services/googleAuth) or email/phone + password.
  * The password goes to services/auth (Supabase when configured, else the offline prototype) and is never
  * stored or logged. Log In → auth.logIn → actions.login(identifier) → "Who is playing today?".
  */

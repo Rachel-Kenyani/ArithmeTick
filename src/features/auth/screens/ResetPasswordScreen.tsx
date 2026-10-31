@@ -1,5 +1,5 @@
 /**
- * Reset Password (mockup 10). Last step of Forgot → Verify Identity → here, or opened straight from the
+ * Reset Password. Last step of Forgot → Verify Identity → here, or opened straight from the
  * "Reset password" link in the email (arithmetick://reset-password#…tokens). Needs a pending reset flow or a
  * valid link, otherwise → Forgot Password / Log In. The new password is only checked (≥ 8 characters, both entries match) —
  * it is never stored or logged. Save → actions.completeReset() → Log In, which shows a one-time

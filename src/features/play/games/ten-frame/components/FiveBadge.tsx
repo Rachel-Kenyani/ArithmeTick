@@ -10,6 +10,7 @@ import { styles } from "../styles";
 import { SPRING_POP } from "../utils/motion";
 import { PopIn } from "./PopIn";
 
+/** "5" badge on the full top row. */
 export function FiveBadge({
   palActive,
   compact,

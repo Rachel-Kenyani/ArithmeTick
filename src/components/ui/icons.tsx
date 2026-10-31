@@ -1,5 +1,5 @@
 /**
- * ArithmeTick outline icon set (app shell).
+ * ArithmeTick outline icon set (app shell) — React Native port of the web icons.
  *
  * Every icon: 24×24 viewBox, 2px strokes with round caps + joins. Colour comes from the `color`
  * prop (default colors.jgOutline); `stroke` / `fill` default to "currentColor", which

@@ -1,3 +1,7 @@
+/**
+ * Responsive sizing: picks the arrangement and well / cap sizes that fit the board.
+ */
+
 import { CAP_RATIO, DONE_GAP, DONE_H, MAX_CAP, MAX_CELL, MIN_CAP, MIN_CELL } from "../constants";
 import type { Arrangement, BoardLayout, Chrome } from "../types";
 import { clamp } from "../utils/math";
@@ -12,7 +16,7 @@ const RAIL_MIN_WIDTH = 560;
 const ARRANGEMENT_PREFERENCE: readonly Arrangement[] = ["side", "stack", "rail"];
 
 /**
- * Pick sizes that fit the module width and height:
+ * Pick sizes that fit the module width and height (identical maths to web):
  *  1. the biggest wells first (up to MAX_CELL), trying each arrangement that suits the canvas;
  *     the one that fits with the biggest wells wins (if none fits, the shortest one);
  *  2. then any height still spare grows the target card, equation and spacing.

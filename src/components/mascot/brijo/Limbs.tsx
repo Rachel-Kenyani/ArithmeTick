@@ -6,6 +6,10 @@ import { G, Path, Rect } from "react-native-svg";
 
 import { C, TOE, W, WING_L } from "./geometry";
 
+/* ------------------------------------------------------------------------------------------
+ * Static artwork pieces
+ * ---------------------------------------------------------------------------------------- */
+
 export function Wing({ ink, mirror }: Readonly<{ ink: number; mirror?: boolean }>) {
   return (
     <Path

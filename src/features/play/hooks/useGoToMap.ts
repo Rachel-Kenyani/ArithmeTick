@@ -1,3 +1,7 @@
+/**
+ * useGoToMap — "back to the map" for the play screen (pop to the mounted /home, else replace).
+ */
+
 import { useCallback } from "react";
 import { router, useNavigation } from "expo-router";
 

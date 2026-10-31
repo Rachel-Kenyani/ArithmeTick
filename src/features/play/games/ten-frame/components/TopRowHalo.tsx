@@ -16,6 +16,7 @@ function HaloBreath({ reduced, radius }: Readonly<{ reduced: boolean; radius: nu
   return <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.glowMint, { borderRadius: radius }, st]} />;
 }
 
+/** 5-group halo (purple) / PAL locked row glow (mint) around the top row. */
 export function TopRowHalo({
   palActive,
   reduced,

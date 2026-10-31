@@ -1,5 +1,5 @@
 /**
- * "Almost Done!" — add a child profile (docs/APP-SHELL.md §2/§5).
+ * "Almost Done!" — add a child profile (docs/APP-SHELL.md §2/§5, mockup 06).
  *
  * Parent-facing form on the mint card: the Explorer's name (with a live preview of the avatar the child
  * will get, popping in as soon as a name is typed), the grade select, and an optional 6-character school

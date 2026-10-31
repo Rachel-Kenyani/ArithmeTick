@@ -1,4 +1,7 @@
-/** One level, start to finish; its state lives in usePlaySession. */
+/**
+ * PlaySession — one level, start to finish: top bar, the mat card with the level content, the
+ * celebration, the High-Five Hero pop and the screen-time sheet. State lives in usePlaySession.
+ */
 
 import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";

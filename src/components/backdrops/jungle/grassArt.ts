@@ -4,6 +4,10 @@
 
 import { P, Q, rng, type Pt } from "./geometry";
 
+/* ------------------------------------------------------------------------------------------------
+ * Grass + rocks strip
+ * ---------------------------------------------------------------------------------------------- */
+
 export const GRASS_W = 2000;
 export const GRASS_H = 150;
 const GROUND = GRASS_H + 3; // blade bases sit just below the bottom edge

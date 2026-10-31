@@ -1,3 +1,7 @@
+/**
+ * LevelContent — the canvas content: the grade module (with its puzzle params) or the Physical Quest.
+ */
+
 import { memo } from "react";
 
 import { storyFor } from "@/data/stories";

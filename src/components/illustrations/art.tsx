@@ -12,6 +12,7 @@ import { a11y } from "@/components/ui/icons/make";
 export const OUTLINE = "#1b1b1b";
 export const STROKE = 2.4;
 
+/** Common stroke props for an outlined shape. */
 export const ink = {
   stroke: OUTLINE,
   strokeWidth: STROKE,

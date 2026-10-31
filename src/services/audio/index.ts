@@ -3,6 +3,7 @@
  *
  * Usage:   import { sfx } from "@/services/audio";   sfx.snap(3);
  *
+ * - Same API as the web version, so screens port unchanged.
  * - One player per sound, created on first use and rewound on each play.
  * - Sounds are deliberately soft and warm. There is NO buzzer / "wrong" sound.
  */

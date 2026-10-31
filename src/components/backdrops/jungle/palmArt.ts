@@ -4,6 +4,10 @@
 
 import { cubic, deg, leaf, leavesAlong, P, rng, towards, type Pt } from "./geometry";
 
+/* ------------------------------------------------------------------------------------------------
+ * Canopy — palm fronds in the corners (drawn for the top-left; the right one is mirrored)
+ * ---------------------------------------------------------------------------------------------- */
+
 export const PALM_W = 220;
 export const PALM_H = 330;
 

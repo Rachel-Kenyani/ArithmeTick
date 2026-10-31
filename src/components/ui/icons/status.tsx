@@ -6,6 +6,8 @@ import { Circle, Path, Rect } from "react-native-svg";
 
 import { make } from "./make";
 
+/* ---------------------------------------------------------------- status */
+
 export const AlertCircleIcon = make(
   "AlertCircleIcon",
   <>

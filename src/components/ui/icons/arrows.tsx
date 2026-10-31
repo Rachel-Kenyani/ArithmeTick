@@ -6,6 +6,8 @@ import { Circle, Path } from "react-native-svg";
 
 import { make } from "./make";
 
+/* ---------------------------------------------------------------- arrows */
+
 export const ChevronLeftIcon = make("ChevronLeftIcon", <Path d="M14.5 6 8.5 12l6 6" />);
 export const ChevronRightIcon = make("ChevronRightIcon", <Path d="M9.5 6l6 6-6 6" />);
 export const ChevronDownIcon = make("ChevronDownIcon", <Path d="M6 9.5l6 6 6-6" />);

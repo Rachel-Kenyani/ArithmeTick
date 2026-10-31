@@ -73,7 +73,7 @@ export const CapFace = memo(function CapFace({ palette }: Readonly<{ palette: Pa
   );
 });
 
-/** A group-tone face laid over the cap; fades in/out (0.35s, staggered by slot). */
+/** A group-tone face laid over the cap; fades in/out (web: AnimatePresence, 0.35s, staggered by slot). */
 export function ToneOverlay({ tone, on, delayMs }: Readonly<{ tone: PaletteKey; on: boolean; delayMs: number }>) {
   const o = useSharedValue(0);
   useEffect(() => {

@@ -6,6 +6,8 @@ import { Circle, Path } from "react-native-svg";
 
 import { make } from "./make";
 
+/* ---------------------------------------------------------------- rewards */
+
 /** Rounded 5-point star (pass fill="currentColor" for the solid version). */
 export const StarIcon = make(
   "StarIcon",

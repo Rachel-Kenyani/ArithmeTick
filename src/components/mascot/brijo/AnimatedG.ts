@@ -5,6 +5,10 @@
 import Animated, { useAnimatedProps } from "react-native-reanimated";
 import { G, type GProps } from "react-native-svg";
 
+/* ------------------------------------------------------------------------------------------
+ * Animated SVG group
+ * ---------------------------------------------------------------------------------------- */
+
 export const AnimatedG = Animated.createAnimatedComponent(G);
 
 /** `matrix` is react-native-svg's native transform prop; updating it skips JS transform parsing. */

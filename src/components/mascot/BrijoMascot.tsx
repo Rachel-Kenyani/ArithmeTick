@@ -1,5 +1,7 @@
 /**
- * Brijo the Owl — ArithmeTick's mascot: a 200×200 viewBox drawn with react-native-svg, scaled to `size`.
+ * Brijo the Owl — ArithmeTick's mascot (React Native port of components/BrijoMascot.tsx).
+ *
+ * Same artwork as the web: a 200×200 viewBox drawn with react-native-svg, scaled to `size`.
  *
  * Animation model (react-native-reanimated v4, everything on the UI thread)
  * -------------------------------------------------------------------------
@@ -40,6 +42,10 @@ import { useMoodBlend } from "./brijo/useMoodBlend";
 
 export type { BrijoMascotProps, BrijoMood } from "./brijo/types";
 
+/* ------------------------------------------------------------------------------------------
+ * Component
+ * ---------------------------------------------------------------------------------------- */
+
 function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotProps>) {
   const reduceMotion = useReducedMotion();
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -73,6 +79,7 @@ function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotPr
     if (eyes === "open") blinkOnce(false);
   }, [reduceMotion, popX, popY, eyes, blinkOnce]);
 
+  /* ---- View layers ---- */
   const origin = (p: readonly [number, number]) => [p[0] * k, p[1] * k, 0] as [number, number, number];
 
   const { boopStyle, shadowStyle, rigStyle, squashStyle } = useLayerStyles(rig, popX, popY, k);

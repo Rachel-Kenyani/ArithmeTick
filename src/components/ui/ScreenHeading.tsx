@@ -1,6 +1,6 @@
 /**
  * ScreenHeading — the Quicksand title in Deep Teal ("Log In To Account") with an optional DynaPuff
- * sub-line, centred.
+ * sub-line, centred, as in every onboarding mockup.
  */
 
 import type { ReactNode } from "react";

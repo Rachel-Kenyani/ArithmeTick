@@ -1,5 +1,5 @@
 /**
- * The chunky jungle button.
+ * The chunky jungle button from the onboarding mockups.
  *
  *   <Button icon={<RouteIcon />} trailing="chevron" onPress={…}>I'm New Here!</Button>
  *   <Button variant="white" icon={<GoogleIcon />}>Continue with Google</Button>

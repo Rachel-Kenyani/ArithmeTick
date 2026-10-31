@@ -4,6 +4,10 @@
 
 import type { ViewStyle } from "react-native";
 
+/* ------------------------------------------------------------------------------------------
+ * Public contract
+ * ---------------------------------------------------------------------------------------- */
+
 export type BrijoMood = "idle" | "wave" | "talk" | "dance" | "cheer" | "sleep";
 
 export interface BrijoMascotProps {

@@ -4,6 +4,10 @@
 
 import { colors } from "@/theme";
 
+/* ------------------------------------------------------------------------------------------------
+ * Palette (art-only colours with no theme token; sky stops use the jg-* tokens)
+ * ---------------------------------------------------------------------------------------------- */
+
 export const C = {
   cloudEdge: "#2e5d96",
   cloudHalo: "#a6d3f2",

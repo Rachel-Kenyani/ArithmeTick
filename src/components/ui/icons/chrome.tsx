@@ -6,6 +6,8 @@ import { Path, Rect } from "react-native-svg";
 
 import { make } from "./make";
 
+/* ---------------------------------------------------------------- app chrome */
+
 export const HomeIcon = make(
   "HomeIcon",
   <>
@@ -66,6 +68,8 @@ export const LogoutIcon = make(
     <Path d="M9.5 12h11M17.5 9l3 3-3 3" />
   </>,
 );
+
+/* ---------------------------------------------------------------- quests */
 
 export const LeafIcon = make(
   "LeafIcon",

@@ -4,10 +4,6 @@
 
 import type { BrijoMood } from "./types";
 
-/* ------------------------------------------------------------------------------------------
- * Mood choreography (plain data so worklets can read it)
- * ---------------------------------------------------------------------------------------- */
-
 export type Part =
   | "shadow" | "rig" | "squash" | "head" | "tuftL" | "tuftR" | "wingL" | "wingR"
   | "footL" | "footR" | "beak" | "mouth" | "z0" | "z1" | "z2";

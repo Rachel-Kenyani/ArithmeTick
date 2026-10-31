@@ -17,15 +17,11 @@ import { actions, draftKey, useScreenTimeRemaining, type LevelCompletion } from 
 const HIGH_FIVE_HERO = "high-five-hero";
 const HERO_POP_MS = 3200;
 
-/* ------------------------------------------------------------------------------------------------
- * Small external stores (mute lives in lib/audio; foreground state in AppState)
- * ---------------------------------------------------------------------------------------------- */
-
 function subscribeAppState(onChange: () => void) {
   const sub = AppState.addEventListener("change", onChange);
   return () => sub.remove();
 }
-/** Web paused on document visibilitychange; native pauses whenever the app is not in the foreground. */
+/** Pauses whenever the app is not in the foreground. */
 const isBackgrounded = () => AppState.currentState !== "active" && AppState.currentState != null;
 
 export function usePlaySession(profile: ChildProfile, level: LevelDef) {
@@ -120,7 +116,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   }, [backgrounded, persistDraft]);
   useEffect(() => persistDraft, [persistDraft]);
 
-  /* ---- daily screen time ---- */
   const celebrating = completion !== null;
   const timeUp = secondsLeft <= 0 && !celebrating;
   const ticking = !isQuest && !celebrating && !backgrounded && secondsLeft > 0;

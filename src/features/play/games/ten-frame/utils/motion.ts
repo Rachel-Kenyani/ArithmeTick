@@ -1,13 +1,9 @@
-/**
- * Motion presets: springs, easings, keyframe and breathing helpers (framer-style, on Reanimated).
- */
-
 import { Easing, ReduceMotion, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 
 import type { Flight, SpringCfg } from "../types";
 
 /**
- * Reduced motion is handled explicitly (as the web does with `reduced` branches), so the
+ * Reduced motion is handled explicitly (`reduced` branches), so the
  * animations themselves are never skipped by Reanimated's system setting: a cap must still be
  * seen travelling to its slot.
  */

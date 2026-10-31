@@ -1,7 +1,3 @@
-/**
- * Error / hint line shown under a form field.
- */
-
 import { useEffect, type ReactNode } from "react";
 import { AccessibilityInfo, StyleSheet, Text, View } from "react-native";
 

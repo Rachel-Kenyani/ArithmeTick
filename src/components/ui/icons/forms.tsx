@@ -6,8 +6,6 @@ import { Circle, Path, Rect } from "react-native-svg";
 
 import { make } from "./make";
 
-/* ---------------------------------------------------------------- forms */
-
 /** Inbox tray — the mockups' "Enter Email or Phone Number" glyph. */
 export const MailIcon = make(
   "MailIcon",

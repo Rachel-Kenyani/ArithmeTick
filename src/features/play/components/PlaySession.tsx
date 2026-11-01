@@ -65,7 +65,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
       >
         {/* Same top bar and banner as Home, so the level screen feels like part of the map */}
         <AppTopBar backLabel="Back to map" onBack={goHome} stars={profile.stars} secondsLeft={secondsLeft} timePaused={isQuest} />
-        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} />
+        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} onReplay={story && !isQuest ? () => setStoryOpen(true) : undefined} />
 
         <View
           style={[

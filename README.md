@@ -69,4 +69,11 @@ expo-audio · expo-haptics · AsyncStorage
 
 ## License
 
-See [MIT LICENSE](LICENSE).
+The source code is released under the [MIT License](LICENSE).
+
+### Voice recordings
+
+Brijo's voice recordings (`assets/voice/`) are **© Rachel Kenyani. All rights reserved.** They are not covered
+by the MIT License, are not included in this repository, and may not be copied, redistributed, modified or
+used in other projects without written permission. Forks and clones of this repository fall back to the
+phone's text-to-speech.

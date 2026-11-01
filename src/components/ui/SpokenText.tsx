@@ -9,14 +9,23 @@ import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
 import { narration, wordsOf } from "@/services/narration";
 import { colors } from "@/theme";
 
-export default function SpokenText({ text, style }: Readonly<{ text: string; style?: StyleProp<TextStyle> }>) {
+/**
+ * `source` + `offset`: this text is part of a longer line Brijo reads (a Move & Play step); it lights up when
+ * the reading reaches its words, which start at word `offset` of `source`.
+ */
+export default function SpokenText({
+  text,
+  style,
+  source = text,
+  offset = 0,
+}: Readonly<{ text: string; style?: StyleProp<TextStyle>; source?: string; offset?: number }>) {
   const spoken = useSyncExternalStore(narration.subscribe, narration.current);
-  const range = spoken?.text === text ? spoken : null;
+  const range = spoken?.text === source ? spoken : null;
   const words = wordsOf(text);
   return (
     <Text style={style} accessibilityLabel={text}>
       {words.map((w, i) => {
-        const lit = range !== null && i >= range.from && i < range.to;
+        const lit = range !== null && i + offset >= range.from && i + offset < range.to;
         return (
           <Text key={i}>
             {i > 0 ? " " : ""}

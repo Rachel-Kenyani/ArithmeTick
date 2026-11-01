@@ -115,10 +115,11 @@ function fitStarts(starts: number[], durationMs: number): number[] {
  */
 function playParts(text: string, parts: Part[], ticket: number) {
   const shown = wordsOf(text);
-  const players = parts.map((p) => createAudioPlayer(VOICE_CLIPS[p.id] as number));
+  // A part with no recording yet is read by the phone's voice in its turn (see speak below).
+  const players = parts.map((p) => (VOICE_CLIPS[p.id] === undefined ? null : createAudioPlayer(VOICE_CLIPS[p.id] as number)));
   const release = () => players.forEach((p) => {
     try {
-      p.remove();
+      p?.remove();
     } catch {
       // already released
     }
@@ -134,6 +135,10 @@ function playParts(text: string, parts: Part[], ticket: number) {
     }
     const part = parts[index];
     const next = players[index];
+    if (!next) {
+      speak(text, ticket, part.from, part.to, () => start(index + 1));
+      return;
+    }
     const read: number[] = [];
     for (let i = part.from; i < part.to; i++) read.push(i);
     const heard = VOICE_WORDS[part.id];
@@ -180,21 +185,27 @@ function playParts(text: string, parts: Part[], ticket: number) {
   start(0);
 }
 
-/** Speaks `text`, lighting up each word as the phone reaches it (where the platform reports word boundaries). */
-function speak(text: string, ticket: number) {
-  const words = wordsOf(text);
+/**
+ * Speaks words `from`–`to` of `text` with the phone's voice, lighting up each word as the phone reaches it
+ * (where the platform reports word boundaries). `then` runs when it finishes, to carry on a sequence.
+ */
+function speak(text: string, ticket: number, from = 0, to = wordsOf(text).length, then?: () => void) {
+  const words = wordsOf(text).slice(from, to);
+  const line = words.join(" ");
   const offsets: number[] = [];
   let at = 0;
   for (const w of words) {
-    at = text.indexOf(w, at);
+    at = line.indexOf(w, at);
     offsets.push(at);
     at += w.length;
   }
   const end = () => {
-    if (ticket === run) publish(null);
+    if (ticket !== run) return;
+    if (then) then();
+    else publish(null);
   };
   // A touch slower and brighter than default: clearer for young listeners.
-  Speech.speak(text, {
+  Speech.speak(line, {
     language: "en-GB",
     rate: 0.9,
     pitch: 1.15,
@@ -202,21 +213,28 @@ function speak(text: string, ticket: number) {
       if (ticket !== run || ev?.charIndex === undefined) return;
       let w = 0;
       while (w + 1 < offsets.length && offsets[w + 1] <= ev.charIndex) w++;
-      publish({ text, from: w, to: w + 1 });
+      publish({ text, from: from + w, to: from + w + 1 });
     },
     onDone: end,
-    onStopped: end,
+    onStopped: () => {
+      if (ticket === run) publish(null);
+    },
     onError: end,
   });
 }
 
-/** Plays `parts` back to back when every clip is recorded; otherwise speaks `text`. */
+/**
+ * Plays `parts` back to back. Recorded parts play their clip; the rest are read by the phone's voice in turn,
+ * so a recorded line is never lost because a later one isn't recorded yet. A wordless part (an opener) with no
+ * clip is skipped. With nothing recorded at all, the phone reads the whole of `text`.
+ */
 function say(text: string, parts: Part[]) {
   if (isMuted()) return;
   stopAll();
   try {
-    if (parts.every((p) => VOICE_CLIPS[p.id] !== undefined)) {
-      playParts(text, parts, run);
+    const playable = parts.filter((p) => VOICE_CLIPS[p.id] !== undefined || p.to > p.from);
+    if (playable.some((p) => VOICE_CLIPS[p.id] !== undefined)) {
+      playParts(text, playable, run);
     } else {
       speak(text, run);
     }
@@ -249,6 +267,18 @@ export const narration = {
   /** One number said aloud while counting ("49"): its recorded clip `num-49`, else the phone's voice. */
   number(n: number) {
     say(String(n), [{ id: `num-${n}`, from: 0, to: 1 }]);
+  },
+  /**
+   * Move & Play: the level's story line (recorded with the story lines), then the task's steps (`steps`, its
+   * clip `quest-<task>`). `text` is both, joined with a space.
+   */
+  quest(story: string, steps: string, grade: number, level: number, task: string) {
+    const split = wordsOf(story).length;
+    const text = `${story} ${steps}`;
+    say(text, [
+      { id: levelClip(grade, level, "ask"), from: 0, to: split },
+      { id: `quest-${task}`, from: split, to: wordsOf(text).length },
+    ]);
   },
   stop: stopAll,
   /** Follow the word being read; called with null when nothing is. */

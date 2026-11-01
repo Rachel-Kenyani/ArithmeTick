@@ -95,6 +95,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         childName={profile.name}
         treasure={story}
         treasureCount={treasureCount(level)}
+        questTask={level.kind === "quest" ? level.task : undefined}
         open={celebrating}
         grade={profile.grade}
         levelNumber={levelNumber}

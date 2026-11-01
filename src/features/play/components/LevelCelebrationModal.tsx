@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
+import { QuestTaskPicture, hasQuestTaskArt } from "@/components/illustrations/QuestTaskArt";
 import TreasureGroup from "@/features/play/components/TreasureGroup";
 import type { StoryStop } from "@/data/stories";
 import BadgeMedallion from "@/features/play/components/BadgeMedallion";
@@ -31,6 +32,8 @@ export interface LevelCelebrationModalProps {
   /** The level's child-facing map title, e.g. "Count to 6" (data/levels.ts). */
   levelTitle: string;
   isQuest: boolean;
+  /** A Move & Play task with its own picture (measuring, weighing, buying): shown instead of the treasure. */
+  questTask?: string;
   /** Newly earned badge to feature, or null → a "Level n complete!" card. */
   badge: BadgeDef | null;
   /** Stars this level just added (3 the first time, 0 on a replay; already saved), and the new total. */
@@ -49,7 +52,7 @@ export default function LevelCelebrationModal({ open, ...rest }: Readonly<LevelC
   return <Body {...rest} />;
 }
 
-function Body({ childName, treasure, treasureCount, grade, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
+function Body({ childName, treasure, treasureCount, questTask, grade, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
   const claimedRef = useRef(false);
 
   // The pop-up opens with a clap sound: no button to find, it just happens (once per opening).
@@ -97,7 +100,11 @@ function Body({ childName, treasure, treasureCount, grade, levelNumber, badge, s
 
         {treasure ? (
           <View style={styles.hero} accessible accessibilityLabel={doneLine ?? undefined}>
-            <TreasureGroup id={treasure.treasure} count={treasureCount} size={treasureCount > 10 ? 26 : 34} animate={!reduced} />
+            {hasQuestTaskArt(questTask) ? (
+              <QuestTaskPicture task={questTask} size={96} />
+            ) : (
+              <TreasureGroup id={treasure.treasure} count={treasureCount} size={treasureCount > 10 ? 26 : 34} animate={!reduced} />
+            )}
             {doneLine ? <SpokenText text={doneLine} style={styles.heroText} /> : null}
           </View>
         ) : null}

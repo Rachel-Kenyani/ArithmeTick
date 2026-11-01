@@ -84,6 +84,12 @@ export interface PlaceValuePuzzle {
   b: number;
 }
 
+/** Grade 2 counting (KICD Grade 2, 1.2): ten stones from `from`, counting back, with `gaps` to fill in. */
+export interface NumberTrackPuzzle {
+  from: number;
+  gaps: number[];
+}
+
 /** Grade 2 boards still to build: what the level is about, for the stand-in board. */
 export interface Grade2StubPuzzle {
   /** "Count back from 50", "3 groups of 2", … */
@@ -103,6 +109,7 @@ export type TenFrameProps = GradeModuleProps & Partial<TenFramePuzzle>;
 export type TakeAwayProps = GradeModuleProps & TakeAwayPuzzle;
 export type PlaceValueProps = GradeModuleProps & PlaceValuePuzzle;
 export type Grade2StubProps = GradeModuleProps & Grade2StubPuzzle;
+export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle;
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 
 export interface GradeMeta {

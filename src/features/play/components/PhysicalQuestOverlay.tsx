@@ -6,7 +6,7 @@
  * guess (e.g. 6 × 7). A wrong pick quietly swaps in a new sum — no reward, no error message.
  */
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
@@ -20,10 +20,14 @@ import {
   GroupsStepArt,
   GrownUpStepArt,
 } from "@/components/illustrations/QuestStepArt";
+import Button from "@/components/ui/Button";
 import GrownUpNote, { GROWN_UP } from "@/components/ui/GrownUpNote";
+import SpokenText from "@/components/ui/SpokenText";
+import { SpeakerIcon } from "@/components/ui/icons";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import { CapFace } from "@/features/play/games/ten-frame/components/CapFace";
 import { sfx } from "@/services/audio";
+import { narration, wordsOf } from "@/services/narration";
 import type { Grade, QuestTask } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";
@@ -34,6 +38,10 @@ export interface PhysicalQuestOverlayProps {
   task?: QuestTask;
   /** The child's name, for the directions ("Amani, make 2 groups"). */
   childName: string;
+  /** Brijo's story line for this stop ("Time to move! …"), read aloud before the steps. */
+  story?: string;
+  /** For the recorded story line's file name. */
+  levelNumber?: number;
   onConfirmed(): void;
 }
 
@@ -54,7 +62,7 @@ const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanAr
   length: {
     Art: HandspanArt,
     caption: "How many hands long?",
-    steps: ["Put your hand flat at one end of a table", "Move it along, hand after hand, and count", "Tell a grown-up how many hands"],
+    steps: ["Put your hand at one end of a table. That's 1.", "Lift it. Put it down just in front. That's 2.", "Keep going to the end.", "Tell a grown-up how many."],
   },
   massCapacity: {
     Art: ScaleCupArt,
@@ -99,9 +107,22 @@ export default function PhysicalQuestOverlay({
   grade,
   task = "groups",
   childName,
+  story = "",
+  levelNumber = 0,
   onConfirmed,
 }: Readonly<PhysicalQuestOverlayProps>) {
   const [first, second] = SPLITS[grade];
+  // Brijo reads the story line and then the steps as one line, so each step lights up as she reaches it.
+  const stepTexts: readonly string[] = task === "groups" ? STEPS.map((s) => s.text) : QUEST_TASKS[task].steps;
+  const stepsLine = stepTexts.map((t) => (/[.!?]$/.test(t) ? t : `${t}.`)).join(" ");
+  const line = story ? `${story} ${stepsLine}` : stepsLine;
+  const read = () => narration.quest(story, stepsLine, grade, levelNumber, task);
+  useEffect(() => {
+    narration.quest(story, stepsLine, grade, levelNumber, task);
+    return () => narration.stop();
+  }, [story, stepsLine, grade, levelNumber, task]);
+  /** Where each step's words start in `line`. */
+  const stepOffsets = stepTexts.map((_, i) => wordsOf(story).length + stepTexts.slice(0, i).reduce((n, t) => n + wordsOf(t).length, 0));
   const [checking, setChecking] = useState(false);
   const [sum, setSum] = useState(newSum);
   const doneRef = useRef(false);
@@ -129,6 +150,8 @@ export default function PhysicalQuestOverlay({
       contentContainerStyle={styles.panel}
       showsVerticalScrollIndicator={false}
     >
+      {story ? <SpokenText text={story} source={line} style={styles.story} /> : null}
+
       {task === "groups" ? (
         <>
           <View
@@ -181,14 +204,24 @@ export default function PhysicalQuestOverlay({
                   <Text style={styles.stepNumText}>{i + 1}</Text>
                 </View>
                 <s.Art size={56} />
-                <Text style={styles.stepText}>{s.text}</Text>
+                <SpokenText text={s.text} source={line} offset={stepOffsets[i]} style={styles.stepText} />
               </View>
             ))}
           </View>
         </>
       ) : (
-        <TaskCard task={task} />
+        <TaskCard task={task} line={line} offsets={stepOffsets} />
       )}
+
+      <Button
+        variant="purple"
+        size="md"
+        icon={<SpeakerIcon size={22} color={colors.white} />}
+        onPress={read}
+        accessibilityLabel="Repeat. Hear Brijo again"
+      >
+        Repeat
+      </Button>
 
       {checking ? (
         <GrownUpNote>
@@ -221,7 +254,7 @@ export default function PhysicalQuestOverlay({
   );
 }
 
-function TaskCard({ task }: Readonly<{ task: Exclude<QuestTask, "groups"> }>) {
+function TaskCard({ task, line, offsets }: Readonly<{ task: Exclude<QuestTask, "groups">; line: string; offsets: number[] }>) {
   const { Art, caption, steps } = QUEST_TASKS[task];
   return (
     <>
@@ -239,7 +272,7 @@ function TaskCard({ task }: Readonly<{ task: Exclude<QuestTask, "groups"> }>) {
               <Text style={styles.stepNumText}>{i + 1}</Text>
             </View>
             {i === steps.length - 1 ? <GrownUpStepArt size={56} /> : null}
-            <Text style={styles.stepText}>{text}</Text>
+            <SpokenText text={text} source={line} offset={offsets[i]} style={styles.stepText} />
           </View>
         ))}
       </View>
@@ -292,6 +325,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodyBold,
     fontSize: 18,
     color: colors.white,
+  },
+  story: {
+    fontFamily: fonts.headingBold,
+    fontSize: 20,
+    color: colors.atTeal,
+    textAlign: "center",
   },
   stepText: {
     fontFamily: fonts.headingBold,

@@ -27,7 +27,7 @@ export type LevelDef =
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   groups: { title: "Move & Play", equation: "2 groups make 10" },
-  length: { title: "Measure It", equation: "Measure with handspans" },
+  length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: { title: "Heavy or Full", equation: "Compare mass and capacity" },
   money: { title: "Market Day", equation: "Pay with shillings" },
   shapes: { title: "Shape Hunt", equation: "Find shapes and lines" },

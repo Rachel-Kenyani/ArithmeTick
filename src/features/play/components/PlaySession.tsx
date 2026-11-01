@@ -89,7 +89,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         </View>
       </View>
 
-      {storyOpen && story ? <StoryIntro story={story} scene={sceneFor(story, level)} childName={profile.name} onStart={() => setStoryOpen(false)} /> : null}
+      {storyOpen && story ? <StoryIntro story={story} grade={level.grade} level={level.number} scene={sceneFor(story, level)} onStart={() => setStoryOpen(false)} /> : null}
 
       <LevelCelebrationModal
         childName={profile.name}

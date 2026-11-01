@@ -32,6 +32,7 @@ import { CountBubble } from "../ten-frame/components/CountBubble";
 import { NumberTile } from "../ten-frame/components/NumberTile";
 import { COUNT_STEP_MS, DONE_GAP, DONE_H } from "../ten-frame/constants";
 import { useBoardLayout } from "../ten-frame/hooks/useBoardLayout";
+import { WhiteTenFrame } from "../ten-frame/components/WhiteTenFrame";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { keyframes } from "../ten-frame/utils/motion";
 
@@ -274,63 +275,28 @@ export default function Grade1TakeAway({
 
       <View style={{ height: sg }} />
       {/* the white ten-frame of the Count levels (dark edge underneath), at the bottom */}
-      <View
-        style={[
-          styles.frameEdge,
-          step === "solved" ? styles.frameEdgeWin : null,
-          // While Brijo takes hers, the frame steps back so the basket leads.
-          step === "watch" && !hinting ? styles.muted : null,
-        ]}
-      >
-        <View
-          style={[
-            styles.frame,
-            { padding: L.framePad, gap: L.gap },
-            step === "solved" ? styles.frameWin : null,
-          ]}
-          accessibilityLabel={`Board with ${remaining.length} left`}
-        >
-          {[0, 1].map((row) => (
-            <View key={row} style={[styles.row, { gap: L.gap }]}>
-              {SLOTS.slice(row * 5, row * 5 + 5).map((slot) => (
-                <View
-                  key={slot}
-                  style={[
-                    styles.slot,
-                    {
-                      width: L.cell,
-                      height: L.cell,
-                      borderRadius: Math.round(L.cell * 0.23),
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.dimple,
-                      {
-                        width: L.cell * 0.72,
-                        height: L.cell * 0.72,
-                        borderRadius: L.cell,
-                      },
-                    ]}
-                  />
-                  {remaining.includes(slot) ? (
-                    <Counter
-                      item={item}
-                      slot={slot}
-                      size={cell}
-                      fx={fx[slot]}
-                      reduced={reduced}
-                      onPress={step === "count" ? tally : undefined}
-                      label={`${itemName(item)} on the frame. Tap to count it`}
-                    />
-                  ) : null}
-                </View>
-              ))}
-            </View>
-          ))}
-        </View>
-      </View>
+      <WhiteTenFrame
+        cell={L.cell}
+        gap={L.gap}
+        pad={L.framePad}
+        win={step === "solved"}
+        // While Brijo takes hers, the frame steps back so the basket leads.
+        style={step === "watch" && !hinting ? styles.muted : null}
+        accessibilityLabel={`Board with ${remaining.length} left`}
+        renderSlot={(slot) =>
+          remaining.includes(slot) ? (
+            <Counter
+              item={item}
+              slot={slot}
+              size={cell}
+              fx={fx[slot]}
+              reduced={reduced}
+              onPress={step === "count" ? tally : undefined}
+              label={`${itemName(item)} on the frame. Tap to count it`}
+            />
+          ) : null
+        }
+      />
     </View>
   );
 }
@@ -447,29 +413,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 12,
   },
-  // the white ten-frame of the Count levels
-  frameEdge: {
-    borderRadius: 24,
-    paddingBottom: 6,
-    backgroundColor: colors.atInk,
-  },
-  frameEdgeWin: { backgroundColor: "#C48A00" },
-  frame: {
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    borderWidth: 3,
-    borderColor: "rgba(0,79,74,0.2)",
-  },
-  frameWin: { borderColor: colors.atYellow },
-  row: { flexDirection: "row" },
-  slot: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.atMint,
-    borderWidth: 2,
-    borderColor: "rgba(0,111,104,0.14)",
-  },
-  dimple: { position: "absolute", backgroundColor: "rgba(255,255,255,0.75)" },
   muted: { opacity: 0.4 },
   strip: {
     flexDirection: "row",

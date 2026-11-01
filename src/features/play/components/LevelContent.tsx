@@ -34,7 +34,7 @@ interface LevelContentProps {
  */
 const LevelContent = memo(function LevelContent({ level, childName, palActive, waiting, onStruggle, onAttempt, onDone, draft, onDraft }: Readonly<LevelContentProps>) {
   const key = `g${level.grade}-l${level.number}`;
-  if (level.kind === "quest") return <PhysicalQuestOverlay key={key} grade={level.grade} task={level.task} childName={childName} onConfirmed={onDone} />;
+  if (level.kind === "quest") return <PhysicalQuestOverlay key={key} grade={level.grade} task={level.task} childName={childName} story={storyFor(level.grade, level.number)?.ask} levelNumber={level.number} onConfirmed={onDone} />;
 
   const item = storyFor(level.grade, level.number)?.treasure ?? "cap";
   const shared = { item, level: level.number, palActive, waiting, onStruggle, onAttempt, onSolved: onDone, draft, onDraft };

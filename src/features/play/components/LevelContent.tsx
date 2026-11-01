@@ -16,6 +16,7 @@ import type { GradeModuleProps } from "@/types/domain";
 interface LevelContentProps {
   level: LevelDef;
   palActive: boolean;
+  waiting?: boolean;
   onStruggle: () => void;
   onAttempt: NonNullable<GradeModuleProps["onAttempt"]>;
   onDone: () => void;
@@ -29,12 +30,12 @@ interface LevelContentProps {
  * stable (level comes from the LEVELS table, callbacks are useCallback'd), so the grade module is
  * left alone mid-drag.
  */
-const LevelContent = memo(function LevelContent({ level, childName, palActive, onStruggle, onAttempt, onDone, draft, onDraft }: Readonly<LevelContentProps>) {
+const LevelContent = memo(function LevelContent({ level, childName, palActive, waiting, onStruggle, onAttempt, onDone, draft, onDraft }: Readonly<LevelContentProps>) {
   const key = `g${level.grade}-l${level.number}`;
   if (level.kind === "quest") return <PhysicalQuestOverlay key={key} grade={level.grade} childName={childName} onConfirmed={onDone} />;
 
   const item = storyFor(level.grade, level.number)?.treasure ?? "cap";
-  const shared = { item, level: level.number, palActive, onStruggle, onAttempt, onSolved: onDone, draft, onDraft };
+  const shared = { item, level: level.number, palActive, waiting, onStruggle, onAttempt, onSolved: onDone, draft, onDraft };
   switch (level.grade) {
     case 1:
       if (level.game === "takeAway") return <Grade1TakeAway key={key} {...shared} start={level.puzzle.start} away={level.puzzle.away} />;

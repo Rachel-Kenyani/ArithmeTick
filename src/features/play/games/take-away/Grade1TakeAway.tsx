@@ -1,25 +1,16 @@
 /**
  * Grade 1 — "Take away" (KICD Grade 1, 1.6 Subtraction: subtraction as removal, then count what is left).
- * Puzzle: `start` items sit on the ten-frame; the child moves `away` of them into Brijo's basket, then says
- * how many are left.
+ * Puzzle: `start` items sit on the ten-frame. Once the story card closes, Brijo puts `away` of them in her
+ * basket herself, one by one with a count bubble, exactly as the story says. The child answers the story's
+ * question, "how many are left?", and can tap the items still on the frame to count them first.
  *
- * Top to bottom: Brijo's basket, the equation, Done, then the ten-frame. Tap an item or drag it up into the
- * basket; tap it in the basket or drag it down to put it back.
- *
- * Feedback (no error text, same as Level 1): a wrong Done counts the basket aloud — items hop with a white
- * number bubble and a rising note. Too many: the count stops at the target and the extras wobble. Too few:
- * from the second miss the count carries on into numbered ghost items in the basket. A wrong "how many left?"
- * counts the items still on the frame, every time.
+ * Top to bottom: Brijo's basket, the equation, the answer tiles, then the ten-frame.
+ * Feedback (no error text, same as Level 1): a wrong answer counts the items left on the frame aloud — they
+ * hop with a white number bubble and a rising note, every time.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import {
-  GestureDetector,
-  useCompetingGestures,
-  usePanGesture,
-  useTapGesture,
-} from "react-native-gesture-handler";
 import Animated, {
   FadeIn,
   ReduceMotion,
@@ -27,9 +18,7 @@ import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
-  withSpring,
 } from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
 
 import BasketArt from "@/components/illustrations/BasketArt";
 import CounterFace, {
@@ -40,16 +29,14 @@ import type { TakeAwayProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
 import { CountBubble } from "../ten-frame/components/CountBubble";
-import { DoneButton } from "../ten-frame/components/DoneButton";
 import { NumberTile } from "../ten-frame/components/NumberTile";
 import { COUNT_STEP_MS, DONE_GAP, DONE_H } from "../ten-frame/constants";
 import { useBoardLayout } from "../ten-frame/hooks/useBoardLayout";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
-import { styles as frameStyles } from "../ten-frame/styles";
-import { EASE_IN_OUT, SPRING_UI, keyframes } from "../ten-frame/utils/motion";
+import { keyframes } from "../ten-frame/utils/motion";
 
-type Step = "take" | "count" | "solved";
-type FxKind = "count" | "wobble";
+type Step = "watch" | "count" | "solved";
+type FxKind = "count";
 interface Fx {
   kind: FxKind;
   n: number;
@@ -58,11 +45,12 @@ interface Fx {
 }
 
 /** Bump when the saved board's meaning changes; older drafts start fresh (all items on the frame). */
-const DRAFT_VERSION = 2;
+const DRAFT_VERSION = 3;
 const SLOTS = Array.from({ length: 10 }, (_, i) => i);
 const SOLVED_HANDOFF_MS = 1400;
-/** How far a drag has to travel (towards the basket, or back up to the frame) to count as a move. */
-const DRAG_MOVE_PX = 40;
+/** Brijo takes one item every this many ms (a little slower than a count, so each one can be followed). */
+const TAKE_STEP_MS = 700;
+const TAKE_START_MS = 500;
 const POP_IN = ZoomIn.springify()
   .stiffness(380)
   .damping(20)
@@ -85,7 +73,7 @@ export default function Grade1TakeAway({
   level,
   start: startProp,
   away: awayProp,
-  palActive,
+  waiting = false,
   onStruggle,
   onAttempt,
   onSolved,
@@ -99,16 +87,15 @@ export default function Grade1TakeAway({
   const schedule = useScheduler();
   const reduced = useReducedMotion();
 
-  // Resume: `placed` holds the frame slots now in the basket, in the order they went in.
-  const [taken, setTaken] = useState<number[]>(() =>
-    ((draft?.version === DRAFT_VERSION ? draft.placed : undefined) ?? []).filter(
-      (s, i, all) =>
-        Number.isInteger(s) && s >= 0 && s < start && all.indexOf(s) === i,
-    ),
-  );
-  const [step, setStep] = useState<Step>(draft?.version === DRAFT_VERSION && draft.regrouping ? "count" : "take");
-  const [misses, setMisses] = useState(draft?.misses ?? 0);
-  const [ghosts, setGhosts] = useState(false);
+  // Brijo takes the last `away` items, the same ones the story card shows leaving.
+  const awaySlots = useMemo(() => SLOTS.slice(start - away, start), [start, away]);
+  // Resume: once Brijo has taken hers, a returning child goes straight to the question.
+  const resumed = draft?.version === DRAFT_VERSION && draft.regrouping === true;
+  const [taken, setTaken] = useState<number[]>(() => (resumed ? awaySlots : []));
+  const [step, setStep] = useState<Step>(resumed ? "count" : "watch");
+  const [misses, setMisses] = useState(resumed ? (draft?.misses ?? 0) : 0);
+  /** Frame items the child has tapped to count, in order. */
+  const [, setTallied] = useState<number[]>([]);
   const [fx, setFx] = useState<Partial<Record<number, Fx>>>({});
   // Same sizes and spacing as the Count levels (cap size, section gap, equation height).
   const { layout: L, onLayout } = useBoardLayout();
@@ -119,8 +106,8 @@ export default function Grade1TakeAway({
   const [hinting, setHinting] = useState(false);
 
   useEffect(() => {
-    onDraft?.({ version: DRAFT_VERSION, misses, placed: taken, regrouping: step !== "take" });
-  }, [onDraft, misses, taken, step]);
+    onDraft?.({ version: DRAFT_VERSION, misses, regrouping: step !== "watch" });
+  }, [onDraft, misses, step]);
 
   /** Ask items (by frame slot) to hop / wobble; `labelFor` adds a count bubble. */
   const fire = useCallback(
@@ -163,51 +150,42 @@ export default function Grade1TakeAway({
     [fire, schedule],
   );
 
-  const moveToBasket = useCallback(
-    (slot: number) => {
-      if (step !== "take") return;
-      setGhosts(false);
-      setTaken((prev) => (prev.includes(slot) ? prev : [...prev, slot]));
-      sfx.pickup();
-    },
-    [step],
-  );
-  const moveToFrame = useCallback(
-    (slot: number) => {
-      if (step !== "take") return;
-      setGhosts(false);
-      setTaken((prev) => prev.filter((s) => s !== slot));
-      sfx.release();
-    },
-    [step],
-  );
+  // Brijo takes hers once the story card is out of the way. Each beat sets the whole basket (not "add one"),
+  // and the timers belong to this effect: if it re-runs midway, it simply starts the beats again, so the
+  // board always ends with exactly `left` items on it.
+  useEffect(() => {
+    if (step !== "watch" || waiting) return;
+    const timers = awaySlots.map((slot, k) =>
+      setTimeout(() => {
+        setTaken(awaySlots.slice(0, k + 1));
+        sfx.pickup();
+        fire([slot], "count", () => 120, () => k + 1);
+      }, TAKE_START_MS + k * TAKE_STEP_MS),
+    );
+    timers.push(
+      setTimeout(() => {
+        setTaken(awaySlots);
+        sfx.groupPulse();
+        setStep("count");
+      }, TAKE_START_MS + away * TAKE_STEP_MS + 300),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [step, waiting, awaySlots, away, fire]);
 
-  const checkTaken = () => {
-    const correct = taken.length === away;
-    onAttempt?.({ target: away, answer: taken.length, correct });
-    if (correct) {
-      sfx.groupPulse();
-      setGhosts(false);
-      setStep("count");
-      return;
-    }
-    const miss = misses + 1;
-    setMisses(miss);
-    const counted = taken.slice(0, away);
-    const end = countAlong(counted);
-    if (taken.length > away)
-      schedule(() => fire(taken.slice(away), "wobble", () => 0), end);
-    // Too few: from the second miss the count carries on into numbered ghosts in the basket.
-    else if (miss >= 2) {
-      schedule(() => setGhosts(true), end);
-      for (let k = taken.length; k < away; k += 1)
-        schedule(
-          () => sfx.snap(k),
-          end + 250 + (k - taken.length) * COUNT_STEP_MS,
-        );
-    }
-    schedule(onStruggle, end);
-  };
+  /** Counting on the frame: each item tapped gets the next number. */
+  const tally = useCallback(
+    (slot: number) => {
+      if (step !== "count") return;
+      setTallied((prev) => {
+        if (prev.includes(slot)) return prev;
+        const next = [...prev, slot];
+        fire([slot], "count", () => 0, () => next.length);
+        sfx.snap(next.length - 1);
+        return next;
+      });
+    },
+    [step, fire],
+  );
 
   const remaining = SLOTS.filter((s) => s < start && !taken.includes(s));
 
@@ -217,6 +195,8 @@ export default function Grade1TakeAway({
     onAttempt?.({ target: left, answer: n, correct });
     if (!correct) {
       // Every wrong pick counts what is left on the frame again.
+      setMisses((m) => m + 1);
+      setTallied([]);
       sfx.nudge();
       setHinting(true);
       const end = countAlong(remaining);
@@ -232,8 +212,6 @@ export default function Grade1TakeAway({
   };
 
   const basketItem = Math.round(cell * 0.62);
-  const ghostCount =
-    ghosts && step === "take" ? Math.max(0, away - taken.length) : 0;
 
   return (
     <View
@@ -263,35 +241,8 @@ export default function Grade1TakeAway({
                 size={basketItem}
                 fx={fx[slot]}
                 reduced={reduced}
-                enabled={step === "take"}
-                direction="down"
-                onMove={moveToFrame}
-                label={`${itemName(item)} in the basket. Tap to put it back`}
+                label={`${itemName(item)} in Brijo's basket`}
               />
-            </Animated.View>
-          ))}
-          {Array.from({ length: ghostCount }, (_, k) => (
-            <Animated.View
-              key={`ghost-${k}`}
-              entering={FadeIn.delay(250 + k * COUNT_STEP_MS)}
-              style={[
-                frameStyles.ghost,
-                frameStyles.center,
-                {
-                  width: basketItem,
-                  height: basketItem,
-                  borderRadius: basketItem,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  frameStyles.ghostNumber,
-                  { fontSize: Math.round(basketItem * 0.4) },
-                ]}
-              >
-                {taken.length + k + 1}
-              </Text>
             </Animated.View>
           ))}
         </View>
@@ -304,9 +255,6 @@ export default function Grade1TakeAway({
       <View style={{ height: DONE_GAP }} />
 
       <View style={[styles.action, { height: DONE_H }]}>
-        {step === "take" ? (
-          <DoneButton count={taken.length} onPress={checkTaken} />
-        ) : null}
         {step === "count" ? (
           <Animated.View entering={FadeIn.duration(220)} style={styles.choices}>
             {choicesFor(left, start).map((n) => (
@@ -330,8 +278,8 @@ export default function Grade1TakeAway({
         style={[
           styles.frameEdge,
           step === "solved" ? styles.frameEdgeWin : null,
-          // Answering "how many left?": the frame steps back so the equation leads, except while it counts as a hint.
-          step === "count" && !hinting ? styles.muted : null,
+          // While Brijo takes hers, the frame steps back so the basket leads.
+          step === "watch" && !hinting ? styles.muted : null,
         ]}
       >
         <View
@@ -366,17 +314,15 @@ export default function Grade1TakeAway({
                       },
                     ]}
                   />
-                  {slot < start && !taken.includes(slot) ? (
+                  {remaining.includes(slot) ? (
                     <Counter
                       item={item}
                       slot={slot}
                       size={cell}
                       fx={fx[slot]}
                       reduced={reduced}
-                      enabled={step === "take"}
-                      direction="up"
-                      onMove={moveToBasket}
-                      label={`${itemName(item)} ${slot + 1} on the frame. Tap to put it in the basket`}
+                      onPress={step === "count" ? tally : undefined}
+                      label={`${itemName(item)} on the frame. Tap to count it`}
                     />
                   ) : null}
                 </View>
@@ -398,95 +344,49 @@ interface CounterProps {
   size: number;
   fx?: Fx;
   reduced: boolean;
-  enabled: boolean;
-  /** Which way a drag moves it: up into the basket (top), or down back to the frame. */
-  direction: "down" | "up";
-  onMove: (slot: number) => void;
+  /** Tap to count it (frame items, while answering). */
+  onPress?: (slot: number) => void;
   label: string;
 }
 
-/** One item: tap or drag it to move it; hops / wobbles like a Count-level cap when the board asks. */
+/** One item: hops with a count bubble when counted, by Brijo or by the child's tap. */
 function Counter({
   item,
   slot,
   size,
   fx,
   reduced,
-  enabled,
-  direction,
-  onMove,
+  onPress,
   label,
 }: Readonly<CounterProps>) {
-  const tx = useSharedValue(0);
-  const ty = useSharedValue(0);
   const fy = useSharedValue(0);
-  const rot = useSharedValue(0);
-  const lift = useSharedValue(1);
 
   useEffect(() => {
     if (!fx) return;
-    if (fx.kind === "wobble")
-      rot.set(keyframes([0, -14, 12, -8, 5, 0], 550, fx.delayMs, EASE_IN_OUT));
-    else
-      fy.set(
-        keyframes(reduced ? [0, -4, 0] : [0, -18, 0, -7, 0], 750, fx.delayMs),
-      );
-  }, [fx, reduced, fy, rot]);
-
-  const move = () => onMove(slot);
-  const pan = usePanGesture({
-    enabled,
-    maxPointers: 1,
-    minDistance: 10,
-    onActivate: () => {
-      lift.set(withSpring(1.12, SPRING_UI));
-    },
-    onUpdate: (e) => {
-      tx.set(e.translationX);
-      ty.set(e.translationY);
-    },
-    onFinalize: () => {
-      const dy = ty.get();
-      const far = direction === "down" ? dy > DRAG_MOVE_PX : dy < -DRAG_MOVE_PX;
-      lift.set(withSpring(1, SPRING_UI));
-      tx.set(withSpring(0, SPRING_UI));
-      ty.set(withSpring(0, SPRING_UI));
-      if (far) scheduleOnRN(move);
-    },
-  });
-  const tap = useTapGesture({
-    enabled,
-    onDeactivate: (e) => {
-      if (!e.canceled) scheduleOnRN(move);
-    },
-  });
-  const gesture = useCompetingGestures(pan, tap);
+    fy.set(
+      keyframes(reduced ? [0, -4, 0] : [0, -18, 0, -7, 0], 750, fx.delayMs),
+    );
+  }, [fx, reduced, fy]);
 
   const st = useAnimatedStyle(() => ({
-    zIndex: lift.get() > 1 ? 10 : 0,
-    transform: [
-      { translateX: tx.get() },
-      { translateY: ty.get() + fy.get() },
-      { rotate: `${rot.get()}deg` },
-      { scale: lift.get() },
-    ],
+    transform: [{ translateY: fy.get() }],
   }));
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={label}
-        onAccessibilityTap={move}
-        style={[{ width: size, height: size }, st]}
-      >
+    <Pressable
+      disabled={!onPress}
+      onPress={() => onPress?.(slot)}
+      accessible
+      accessibilityRole={onPress ? "button" : "image"}
+      accessibilityLabel={label}
+    >
+      <Animated.View style={[{ width: size, height: size }, st]}>
         <CounterFace
           item={item}
           palette={paletteFor(slot)}
           size={size * 0.92}
         />
-        {fx?.kind === "count" && fx.label ? (
+        {fx?.label ? (
           <CountBubble
             key={fx.n}
             label={fx.label}
@@ -495,11 +395,11 @@ function Counter({
           />
         ) : null}
       </Animated.View>
-    </GestureDetector>
+    </Pressable>
   );
 }
 
-/** "7 − ? = ?" → "7 − 2 = ?" once the right number is in the basket → "7 − 2 = 5" (gold) when counted. */
+/** "7 − ? = ?" → "7 − 2 = ?" once Brijo has taken hers → "7 − 2 = 5" (gold) when answered. */
 function Equation({
   start,
   away,
@@ -508,7 +408,7 @@ function Equation({
 }: Readonly<{ start: number; away: number; left: number; step: Step }>) {
   const tile = 46;
   const font = 26;
-  const awayKnown = step !== "take";
+  const awayKnown = step !== "watch";
   const solved = step === "solved";
   const op = (s: string) => <Text style={styles.op}>{s}</Text>;
   return (

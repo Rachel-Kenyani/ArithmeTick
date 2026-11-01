@@ -53,8 +53,8 @@ const STEPS = [
 const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanArt; caption: string; steps: readonly string[] }> = {
   length: {
     Art: HandspanArt,
-    caption: "How many handspans?",
-    steps: ["Spread your hand on a table", "Count handspans to the end", "Tell a grown-up the number"],
+    caption: "How many hands long?",
+    steps: ["Put your hand flat at one end of a table", "Move it along, hand after hand, and count", "Tell a grown-up how many hands"],
   },
   massCapacity: {
     Art: ScaleCupArt,

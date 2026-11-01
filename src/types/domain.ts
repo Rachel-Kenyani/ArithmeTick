@@ -7,7 +7,7 @@ import type { CounterItem } from "@/features/play/components/CounterFace";
 
 export type Grade = 1 | 2 | 3;
 
-/** Props every grade module (Grade1TenFrame, Grade2BalanceScale, Grade3ArrayMultiplication) accepts. */
+/** Props every grade module (Grade1TenFrame, Grade2PlaceValue, Grade3ArrayMultiplication) accepts. */
 export interface GradeModuleProps {
   /** The story card is covering the board: hold anything that plays by itself until it closes. */
   waiting?: boolean;
@@ -72,10 +72,26 @@ export interface TakeAwayPuzzle {
 }
 
 /** Grade 2 balance scale: `start` pre-filled (6–9) + missing addend = `target` (11–17, target − start ≤ 7). Default 8 + 6 = 14. */
-export interface BalancePuzzle {
-  start: number;
-  target: number;
+/**
+ * Grade 2 place value (KICD Grade 2, 1.1–1.4), on a tens-and-ones mat:
+ *   build — make `a` from tens rods and ones;
+ *   add   — `a` + `b` ones, bundling ten ones into a rod when they reach 10;
+ *   sub   — `a` − `b`, breaking a rod into ten ones when there aren't enough.
+ */
+export interface PlaceValuePuzzle {
+  op: "build" | "add" | "sub";
+  a: number;
+  b: number;
 }
+
+/** Grade 2 boards still to build: what the level is about, for the stand-in board. */
+export interface Grade2StubPuzzle {
+  /** "Count back from 50", "3 groups of 2", … */
+  goal: string;
+}
+
+/** Real-world Move & Play tasks: the Grade 1 "make 10 in two groups", or a Grade 2 measurement / shapes hunt. */
+export type QuestTask = "groups" | "length" | "massCapacity" | "money" | "shapes";
 
 /** Grade 3 array: `rows` × `cols` (rows 2–4, cols 3–6, product 10–15) then regroup into 1 ten + ones. Default 3 × 4. */
 export interface ArrayPuzzle {
@@ -85,7 +101,8 @@ export interface ArrayPuzzle {
 
 export type TenFrameProps = GradeModuleProps & Partial<TenFramePuzzle>;
 export type TakeAwayProps = GradeModuleProps & TakeAwayPuzzle;
-export type BalanceProps = GradeModuleProps & Partial<BalancePuzzle>;
+export type PlaceValueProps = GradeModuleProps & PlaceValuePuzzle;
+export type Grade2StubProps = GradeModuleProps & Grade2StubPuzzle;
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 
 export interface GradeMeta {
@@ -109,10 +126,10 @@ export const GRADE_META: Record<Grade, GradeMeta> = {
   2: {
     grade: 2,
     shortLabel: "Grade 2",
-    mechanic: "Balance Scale",
-    missionTitle: "Balance 14",
-    equation: "8 + 6 = 14",
-    badgeName: "Balance Master",
+    mechanic: "Tens and Ones",
+    missionTitle: "Make 34",
+    equation: "27 + 5 = 32",
+    badgeName: "Place Value Pro",
   },
   3: {
     grade: 3,
@@ -126,4 +143,4 @@ export const GRADE_META: Record<Grade, GradeMeta> = {
 
 /** Daily screen-time cap (seconds). */
 export const SESSION_CAP_SECONDS = 15 * 60;
-export const SCREEN_TIME_ENABLED = true;
+export const SCREEN_TIME_ENABLED = false;

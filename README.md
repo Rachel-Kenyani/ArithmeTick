@@ -62,7 +62,7 @@ expo-audio · expo-haptics · AsyncStorage
 ## Roadmap
 
 - [x] Grade 3 (Array Multiplication) board
-- [ ] Grade 2 (Balance Scale) board
+- [ ] Grade 2 boards: place value done; number track, groups, halves and clock still to build
 - [ ] Level celebration, physical quests, badge medallion
 - [ ] Badges and Leaderboard tabs
 - [ ] Native Google Sign-In and Sign in with Apple

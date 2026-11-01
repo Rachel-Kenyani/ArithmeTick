@@ -246,6 +246,10 @@ export const narration = {
   prompt(text: string, clipId: string) {
     say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }]);
   },
+  /** One number said aloud while counting ("49"): its recorded clip `num-49`, else the phone's voice. */
+  number(n: number) {
+    say(String(n), [{ id: `num-${n}`, from: 0, to: 1 }]);
+  },
   stop: stopAll,
   /** Follow the word being read; called with null when nothing is. */
   subscribe(fn: (range: SpokenRange | null) => void) {

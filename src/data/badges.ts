@@ -22,7 +22,7 @@ export interface BadgeDef {
 
 export const BADGES: readonly BadgeDef[] = [
   { id: "ten-frame-explorer", name: "Ten-Frame Explorer", how: "Grade 1 · Level 1", tone: "teal", grade: 1, test: (p) => p.progress[1] >= 1 },
-  { id: "balance-master", name: "Balance Master", how: "Grade 2 · Level 1", tone: "purple", grade: 2, test: (p) => p.progress[2] >= 1 },
+  { id: "balance-master", name: "Place Value Pro", how: "Grade 2 · Level 1", tone: "purple", grade: 2, test: (p) => p.progress[2] >= 1 },
   { id: "array-architect", name: "Array Architect", how: "Grade 3 · Level 1", tone: "yellow", grade: 3, test: (p) => p.progress[3] >= 1 },
   { id: "hands-on-hero", name: "Hands-On Hero", how: "Finish a Move & Play level", tone: "leaf", test: (p) => p.questsDone >= 1 },
   { id: "number-builder", name: "Number Builder", how: "Grade 1 · Level 5", tone: "teal", grade: 1, test: (p) => p.progress[1] >= 5 },

@@ -20,6 +20,10 @@ export const DEFAULT_STATE: AppState = Object.freeze({
   justUnlocked: null,
 }) as AppState;
 
+/* ------------------------------------------------------------------------------------------------
+ * Core store
+ * ---------------------------------------------------------------------------------------------- */
+
 let state: AppState = DEFAULT_STATE;
 let hydrated = false;
 const listeners = new Set<() => void>();

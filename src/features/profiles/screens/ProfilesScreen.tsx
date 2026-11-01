@@ -1,5 +1,5 @@
 /**
- * "Welcome Back! Who is playing today?" — choose a child (docs/APP-SHELL.md §2/§5).
+ * "Welcome Back! Who is playing today?" — choose a child (docs/APP-SHELL.md §2/§5, mockup 07).
  *
  * Title card on top, then the family as big pale-mint tiles (avatar, name in Quicksand teal, a tiny grade chip
  * and ★ stars) plus the dashed "Add Profile" tile. 2 columns on phones, 3 on tablets, 4 on wide screens; rows

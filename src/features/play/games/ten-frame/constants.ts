@@ -1,3 +1,7 @@
+/**
+ * Game rules, sizes and timings of the Grade 1 ten-frame module.
+ */
+
 export const CAP_COUNT = 10;
 export const ROW_SIZE = 5;
 /** The 5-group: the top row is always completed first (ten-frame convention). */

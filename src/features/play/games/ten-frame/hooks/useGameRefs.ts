@@ -1,3 +1,7 @@
+/**
+ * Mirrors of game state for gesture callbacks / timers (always the latest values).
+ */
+
 import { useEffect, useMemo, useRef } from "react";
 
 import type { GradeModuleProps } from "@/types/domain";

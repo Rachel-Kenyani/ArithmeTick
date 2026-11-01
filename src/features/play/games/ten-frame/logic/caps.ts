@@ -1,3 +1,7 @@
+/**
+ * Pure cap bookkeeping: colours, targets, tray / slot lookups and sending a cap to its spot.
+ */
+
 import { cancelAnimation, withSpring } from "react-native-reanimated";
 
 import { CAP_IDS, DEFAULT_TARGET, MAX_TARGET, MIN_TARGET } from "../constants";

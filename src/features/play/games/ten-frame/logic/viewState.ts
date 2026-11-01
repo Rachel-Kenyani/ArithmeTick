@@ -1,3 +1,7 @@
+/**
+ * Pure derived view state of the board: group tones, slot markers, frame decorations, labels.
+ */
+
 import { colors } from "@/theme";
 
 import { CAP_COUNT, TARGET_TOP } from "../constants";
@@ -45,10 +49,10 @@ export function slotMarkers(
 /** Compact / roomy sizes of the frame decorations. */
 export function frameChrome(L: BoardLayout): { cellRadius: number; haloInset: number; badge: number; frameEdge: number } {
   if (L.compact) {
-    // 4px solid edge under the frame
+    // web shadow-chunky-sm (4px): a solid edge under the frame
     return { cellRadius: 16, haloInset: 2, badge: 40, frameEdge: 4 };
   }
-  // 8px solid edge under the frame
+  // web shadow-chunky (8px)
   return { cellRadius: clamp(Math.round(L.cell * 0.23), 22, 28), haloInset: 6, badge: 52, frameEdge: 8 };
 }
 

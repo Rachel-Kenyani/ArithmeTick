@@ -1,3 +1,7 @@
+/**
+ * Styles shared by the ten-frame board and its parts.
+ */
+
 import { StyleSheet, type ViewStyle } from "react-native";
 
 import { colors, fonts } from "@/theme";

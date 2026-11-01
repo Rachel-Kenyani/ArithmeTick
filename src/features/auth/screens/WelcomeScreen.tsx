@@ -1,11 +1,12 @@
 /**
- * /welcome — "Hey, Explorer! Get a Grown-up" (docs/APP-SHELL.md §5 "Welcome").
+ * /welcome — "Hey, Explorer! Get a Grown-up" (mockup 02, docs/APP-SHELL.md §5 "Welcome").
  *
  * Brijo's head floats above the mint card (she just flew up here from the splash), the card holds the
  * heading and the two big doors into the app: teal "I'm New Here!" → /signup, purple "Back? Log In" → /login.
  * A parent who is already signed in also gets a small "Continue as …" link → /profiles.
  *
- * The scene matches the splash's last frame so the hand-over is seamless.
+ * The scene matches the splash's last frame: its frame-12 background (bg-12) and Brijo's head from
+ * Logo-splash-4.svg. The float, tilt, blink and tap-squish are done here, on the whole head.
  */
 
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
@@ -30,7 +31,7 @@ const clamp = (min: number, v: number, max: number) => Math.min(max, Math.max(mi
 export default function WelcomeScreen() {
   const account = useAppState().account;
   const { width: W, height: H } = useWindowDimensions();
-  // The head art is about 37% of the screen width.
+  // The head art is about 37% of the screen width, as in the current /welcome.
   const head = clamp(140, W * 0.37, 200);
 
   return (

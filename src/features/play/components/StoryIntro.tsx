@@ -1,12 +1,14 @@
 /**
  * The level's story stop, built for children who can't read yet (KICD Grade 1: voice and pictures over text):
- *   1. The story is drawn: the items in rows of 5, and on take-away levels the ones Brijo takes, heading for
+ *   1. Brijo says the line aloud as the card opens, lighting up each word (tap Repeat to hear it again).
+ *   2. The story is drawn: the items in rows of 5, and on take-away levels the ones Brijo takes, heading for
  *      his basket.
- *   2. One short caption (≤ 8 words) with the numbers big and coloured.
- *   3. The full sentence sits in the plum grown-up note, to read aloud together.
+ *   3. One short caption (≤ 8 words) with the numbers big and coloured.
+ *   4. The full sentence sits in the plum grown-up note, to read aloud together.
  * "Let's go!" opens the puzzle.
  */
 
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   FadeIn,
@@ -20,8 +22,10 @@ import BrijoMascot from "@/components/mascot/BrijoMascot";
 import Button from "@/components/ui/Button";
 import GrownUpNote from "@/components/ui/GrownUpNote";
 import Panel from "@/components/ui/Panel";
+import { SpeakerIcon } from "@/components/ui/icons";
 import CounterFace from "@/features/play/components/CounterFace";
 import type { StoryScene, StoryStop } from "@/data/stories";
+import { narration } from "@/services/narration";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";
 
@@ -33,18 +37,25 @@ const ITEM = 56;
 
 interface StoryIntroProps {
   story: StoryStop;
+  grade: number;
+  level: number;
   scene: StoryScene;
-  childName: string;
   onStart: () => void;
 }
 
 export default function StoryIntro({
   story,
+  grade,
+  level,
   scene,
-  childName,
   onStart,
 }: Readonly<StoryIntroProps>) {
-  const line = story.ask(childName);
+  const line = story.ask;
+
+  useEffect(() => {
+    narration.story(line, grade, level);
+    return () => narration.stop();
+  }, [line, grade, level]);
 
   return (
     <Animated.View
@@ -59,13 +70,23 @@ export default function StoryIntro({
             <BrijoMascot mood="talk" size={112} />
           </View>
 
-          <Scene story={story} scene={scene} />
+          {scene.items ? <Scene story={story} scene={scene} /> : null}
 
           <Caption text={scene.caption} />
 
           <Divider />
 
-          <GrownUpNote>{line}</GrownUpNote>
+          <GrownUpNote spoken>{line}</GrownUpNote>
+
+          <Button
+            variant="purple"
+            size="md"
+            icon={<SpeakerIcon size={22} color={colors.white} />}
+            onPress={() => narration.story(line, grade, level)}
+            accessibilityLabel="Repeat. Hear Brijo again"
+          >
+            Repeat
+          </Button>
 
           <Button trailing="arrow" onPress={onStart}>
             Let&apos;s go!
@@ -168,6 +189,7 @@ const styles = StyleSheet.create({
   },
   basketRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   basket: { width: 72, height: 40 },
+  // rows of 5, like the ten-frame
   items: {
     flexDirection: "row",
     flexWrap: "wrap",

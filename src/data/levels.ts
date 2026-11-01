@@ -4,7 +4,7 @@
  * Within each grade, puzzle difficulty rises with the level number.
  */
 
-import type { ArrayPuzzle, BalancePuzzle, Grade, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
+import type { ArrayPuzzle, Grade, Grade2StubPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
 
 interface LevelBase {
   grade: Grade;
@@ -19,16 +19,25 @@ interface LevelBase {
 export type LevelDef =
   | (LevelBase & { kind: "puzzle"; grade: 1; game: "tenFrame"; puzzle: TenFramePuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 1; game: "takeAway"; puzzle: TakeAwayPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; puzzle: BalancePuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "placeValue"; puzzle: PlaceValuePuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "numberTrack" | "groups" | "halves" | "clock"; puzzle: Grade2StubPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; puzzle: ArrayPuzzle })
-  | (LevelBase & { kind: "quest" });
+  | (LevelBase & { kind: "quest"; task: QuestTask });
 
-const quest = (grade: Grade, number: number): LevelDef => ({
+const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
+  groups: { title: "Move & Play", equation: "2 groups make 10" },
+  length: { title: "Measure It", equation: "Measure with handspans" },
+  massCapacity: { title: "Heavy or Full", equation: "Compare mass and capacity" },
+  money: { title: "Market Day", equation: "Pay with shillings" },
+  shapes: { title: "Shape Hunt", equation: "Find shapes and lines" },
+};
+
+const quest = (grade: Grade, number: number, task: QuestTask = "groups"): LevelDef => ({
   grade,
   number,
   kind: "quest",
-  title: "Move & Play",
-  equation: "2 groups make 10",
+  task,
+  ...QUEST_TITLES[task],
 });
 
 const tenFrame = (number: number, target: number): LevelDef => ({
@@ -52,13 +61,32 @@ const takeAway = (number: number, start: number, away: number): LevelDef => ({
   puzzle: { start, away },
 });
 
-const balance = (number: number, start: number, target: number): LevelDef => ({
+const PLACE_VALUE_TITLES: Record<PlaceValuePuzzle["op"], (a: number, b: number) => string> = {
+  build: (a) => `Make ${a}`,
+  add: (a, b) => `${a} + ${b}`,
+  sub: (a, b) => `${a} − ${b}`,
+};
+
+/** Curriculum 1.1–1.4: tens and ones, adding and subtracting with regrouping. */
+const placeValue = (number: number, op: PlaceValuePuzzle["op"], a: number, b = 0): LevelDef => ({
   grade: 2,
   number,
   kind: "puzzle",
-  title: `Balance ${target}`,
-  equation: `${start} + ${target - start} = ${target}`,
-  puzzle: { start, target },
+  game: "placeValue",
+  title: PLACE_VALUE_TITLES[op](a, b),
+  equation: op === "build" ? `${a} = ${Math.floor(a / 10)} tens + ${a % 10} ones` : op === "add" ? `${a} + ${b} = ${a + b}` : `${a} − ${b} = ${a - b}`,
+  puzzle: { op, a, b },
+});
+
+/** A Grade 2 level whose board isn't built yet: it plays as a stand-in until then. */
+const grade2Stub = (number: number, game: "numberTrack" | "groups" | "halves" | "clock", title: string, equation: string): LevelDef => ({
+  grade: 2,
+  number,
+  kind: "puzzle",
+  game,
+  title,
+  equation,
+  puzzle: { goal: equation },
 });
 
 const array = (number: number, rows: number, cols: number): LevelDef => ({
@@ -73,7 +101,22 @@ const array = (number: number, rows: number, cols: number): LevelDef => ({
 export const LEVELS: Record<Grade, readonly LevelDef[]> = {
   // Grade 1 grows level by level with the KICD Grade 1 strands (addition, then subtraction, …).
   1: [tenFrame(1, 6), tenFrame(2, 7), quest(1, 3), tenFrame(4, 8), takeAway(5, 7, 2), quest(1, 6), tenFrame(7, 9), takeAway(8, 9, 4), quest(1, 9)],
-  2: [balance(1, 8, 14), balance(2, 9, 13), quest(2, 3), balance(4, 7, 12), balance(5, 8, 15), quest(2, 6)],
+  // Grade 2 covers every KICD Grade 2 sub-strand: numbers as puzzles, measurement and geometry as Move & Play
+  // tasks with real objects. The curriculum sub-strand each level teaches is noted beside it.
+  2: [
+    placeValue(1, "build", 34), // 1.1 place value, 1.2 counting forward in tens and ones
+    grade2Stub(2, "numberTrack", "Count back", "50, 49, 48 … count back from 50"), // 1.2 counting back from 50
+    quest(2, 3, "length"), // 2.1 length, non-standard units
+    placeValue(4, "add", 27, 5), // 1.3 2-digit + 1-digit with regrouping
+    placeValue(5, "sub", 32, 7), // 1.4 1-digit from 2-digit with regrouping
+    quest(2, 6, "massCapacity"), // 2.2 mass, 2.3 capacity
+    grade2Stub(7, "groups", "Groups of 2", "2 + 2 + 2 = 3 × 2 = 6"), // 1.5 multiplication as repeated addition
+    grade2Stub(8, "halves", "Share in half", "Half of 8 = 4"), // 1.6 fractions: halves
+    quest(2, 9, "money"), // 2.5 Kenyan money
+    placeValue(10, "sub", 45, 18), // 1.4 2-digit from 2-digit with regrouping
+    grade2Stub(11, "clock", "What time?", "3 o'clock"), // 2.4 time
+    quest(2, 12, "shapes"), // 3.1 lines, 3.2 shapes
+  ],
   3: [array(1, 3, 4), array(2, 2, 6), quest(3, 3), array(4, 3, 5), array(5, 4, 3), quest(3, 6)],
 };
 

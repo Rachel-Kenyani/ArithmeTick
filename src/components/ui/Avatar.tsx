@@ -20,7 +20,7 @@ export interface AvatarProps {
   title?: string;
 }
 
-/** The art fills this share of the square, leaving a little breathing room. */
+/** The art fills this share of the square, leaving a little breathing room like the old 120 box. */
 const ART_SCALE = 0.92;
 
 export default function Avatar({ kind, size = 96, style, title }: Readonly<AvatarProps>) {

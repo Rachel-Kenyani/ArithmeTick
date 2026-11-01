@@ -1,3 +1,7 @@
+/**
+ * setTimeout wrapper whose timers are all cleared on unmount.
+ */
+
 import { useCallback, useEffect, useRef } from "react";
 
 export function useScheduler() {

@@ -1,5 +1,6 @@
 /**
- * Move & Play (every 3rd level): the child makes 10 with real objects in two groups and shows a grown-up.
+ * Move & Play (every 3rd level): a task with real things, shown to a grown-up. Grade 1 makes 10 with real
+ * objects in two groups; Grade 2 measures, pays and finds shapes at home (`task`, see QUEST_TASKS).
  * The task is drawn, not just written: 10 bottle tops split into two coloured groups ("7 and 3 make 10") and three
  * illustrated steps, addressed to the child by name. Grown-up instructions use the plum grown-up voice. Finishing needs a grown-up: a 2-second press-and-hold, then a quick sum a young child can't
  * guess (e.g. 6 × 7). A wrong pick quietly swaps in a new sum — no reward, no error message.
@@ -9,6 +10,12 @@ import { useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
+  CoinsArt,
+  HandspanArt,
+  ScaleCupArt,
+  ShapesArt,
+} from "@/components/illustrations/QuestTaskArt";
+import {
   CapsStepArt,
   GroupsStepArt,
   GrownUpStepArt,
@@ -17,12 +24,14 @@ import GrownUpNote, { GROWN_UP } from "@/components/ui/GrownUpNote";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import { CapFace } from "@/features/play/games/ten-frame/components/CapFace";
 import { sfx } from "@/services/audio";
-import type { Grade } from "@/types/domain";
+import type { Grade, QuestTask } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";
 
 export interface PhysicalQuestOverlayProps {
   grade: Grade;
+  /** What to do with real things; default "groups" (make 10 in two groups). */
+  task?: QuestTask;
   /** The child's name, for the directions ("Amani, make 2 groups"). */
   childName: string;
   onConfirmed(): void;
@@ -39,6 +48,30 @@ const STEPS = [
   { Art: GroupsStepArt, text: "Make 2 groups" },
   { Art: GrownUpStepArt, text: "Show a grown-up" },
 ] as const;
+
+/** Grade 2 measurement and geometry tasks: one picture, one caption, three short steps. */
+const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanArt; caption: string; steps: readonly string[] }> = {
+  length: {
+    Art: HandspanArt,
+    caption: "How many handspans?",
+    steps: ["Spread your hand on a table", "Count handspans to the end", "Tell a grown-up the number"],
+  },
+  massCapacity: {
+    Art: ScaleCupArt,
+    caption: "Heavy, light and full",
+    steps: ["Hold two things: which is heavier?", "Fill a jug, one cup at a time", "Tell a grown-up how many cups"],
+  },
+  money: {
+    Art: CoinsArt,
+    caption: "Pay with shillings",
+    steps: ["Find some coins with a grown-up", "Count out 30 shillings", "Buy something together"],
+  },
+  shapes: {
+    Art: ShapesArt,
+    caption: "Find shapes and lines",
+    steps: ["Find a circle, a triangle and a square", "Find a straight line and a curved line", "Show a grown-up"],
+  },
+};
 
 interface GrownUpSum {
   a: number;
@@ -64,6 +97,7 @@ function newSum(): GrownUpSum {
 
 export default function PhysicalQuestOverlay({
   grade,
+  task = "groups",
   childName,
   onConfirmed,
 }: Readonly<PhysicalQuestOverlayProps>) {
@@ -95,60 +129,66 @@ export default function PhysicalQuestOverlay({
       contentContainerStyle={styles.panel}
       showsVerticalScrollIndicator={false}
     >
-      <View
-        style={styles.picture}
-        accessible
-        accessibilityLabel={`${first} and ${second} make 10`}
-      >
-        <View style={styles.groups}>
+      {task === "groups" ? (
+        <>
           <View
-            style={[
-              styles.group,
-              styles.groupA,
-              { maxWidth: groupWidth(first) },
-            ]}
+            style={styles.picture}
+            accessible
+            accessibilityLabel={`${first} and ${second} make 10`}
           >
-            {dots.filter(Boolean).map((_, i) => (
-              <View key={`a${i}`} style={styles.dot}>
-                <CapFace palette="teal" />
+            <View style={styles.groups}>
+              <View
+                style={[
+                  styles.group,
+                  styles.groupA,
+                  { maxWidth: groupWidth(first) },
+                ]}
+              >
+                {dots.filter(Boolean).map((_, i) => (
+                  <View key={`a${i}`} style={styles.dot}>
+                    <CapFace palette="teal" />
+                  </View>
+                ))}
+              </View>
+              <View
+                style={[
+                  styles.group,
+                  styles.groupB,
+                  { maxWidth: groupWidth(second) },
+                ]}
+              >
+                {dots
+                  .filter((d) => !d)
+                  .map((_, i) => (
+                    <View key={`b${i}`} style={styles.dot}>
+                      <CapFace palette="purple" />
+                    </View>
+                  ))}
+              </View>
+            </View>
+            <Text style={styles.split}>
+              <Text style={{ color: colors.atTeal }}>{first}</Text> and{" "}
+              <Text style={{ color: colors.atPurple }}>{second}</Text> make 10
+            </Text>
+          </View>
+
+          <Divider style={{ marginVertical: 4 }} />
+
+          <View style={styles.steps}>
+            {STEPS.map((s, i) => (
+              <View key={s.text} style={styles.step}>
+                <View style={styles.stepNum}>
+                  <Text style={styles.stepNumText}>{i + 1}</Text>
+                </View>
+                <s.Art size={56} />
+                <Text style={styles.stepText}>{s.text}</Text>
               </View>
             ))}
           </View>
-          <View
-            style={[
-              styles.group,
-              styles.groupB,
-              { maxWidth: groupWidth(second) },
-            ]}
-          >
-            {dots
-              .filter((d) => !d)
-              .map((_, i) => (
-                <View key={`b${i}`} style={styles.dot}>
-                  <CapFace palette="purple" />
-                </View>
-              ))}
-          </View>
-        </View>
-        <Text style={styles.split}>
-          <Text style={{ color: colors.atTeal }}>{first}</Text> and{" "}
-          <Text style={{ color: colors.atPurple }}>{second}</Text> make 10
-        </Text>
-      </View>
-
-      <Divider style={{ marginVertical: 4 }} />
-
-      <View style={styles.steps}>
-        {STEPS.map((s, i) => (
-          <View key={s.text} style={styles.step}>
-            <View style={styles.stepNum}>
-              <Text style={styles.stepNumText}>{i + 1}</Text>
-            </View>
-            <s.Art size={56} />
-            <Text style={styles.stepText}>{s.text}</Text>
-          </View>
-        ))}
-      </View>
+        </>
+      ) : (
+        <TaskCard task={task} />
+      )}
 
       {checking ? (
         <GrownUpNote>
@@ -178,6 +218,32 @@ export default function PhysicalQuestOverlay({
         />
       )}
     </ScrollView>
+  );
+}
+
+function TaskCard({ task }: Readonly<{ task: Exclude<QuestTask, "groups"> }>) {
+  const { Art, caption, steps } = QUEST_TASKS[task];
+  return (
+    <>
+      <View style={styles.picture} accessible accessibilityLabel={caption}>
+        <Art size={120} />
+        <Text style={styles.split}>{caption}</Text>
+      </View>
+
+      <Divider style={{ marginVertical: 4 }} />
+
+      <View style={styles.steps}>
+        {steps.map((text, i) => (
+          <View key={text} style={styles.step}>
+            <View style={styles.stepNum}>
+              <Text style={styles.stepNumText}>{i + 1}</Text>
+            </View>
+            {i === steps.length - 1 ? <GrownUpStepArt size={56} /> : null}
+            <Text style={styles.stepText}>{text}</Text>
+          </View>
+        ))}
+      </View>
+    </>
   );
 }
 

@@ -7,6 +7,10 @@ import type { SharedValue } from "react-native-reanimated";
 import { PART_DEFAULTS, type AnimKey, type Ease, type Part, type PartMotion, type Timing } from "./choreography";
 import { SCRIPT_LIST } from "./scripts";
 
+/* ------------------------------------------------------------------------------------------
+ * Worklet sampling
+ * ---------------------------------------------------------------------------------------- */
+
 function ease(kind: Ease, u: number): number {
   "worklet";
   if (kind === "o") return 1 - (1 - u) * (1 - u);

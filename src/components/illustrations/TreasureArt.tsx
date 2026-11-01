@@ -7,7 +7,7 @@ import Svg, { Circle, Ellipse, G, Path } from "react-native-svg";
 
 import { colors } from "@/theme";
 
-export type TreasureId = "mango" | "feather" | "shell" | "flower" | "banana" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato";
+export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato";
 
 const INK = "#1b1b1b";
 const W = 3;
@@ -58,14 +58,6 @@ function Art({ id }: Readonly<{ id: TreasureId }>) {
           ))}
           <Circle cx={32} cy={32} r={8} fill={colors.atYellow} stroke={INK} strokeWidth={W} />
           <Circle cx={29.5} cy={29.5} r={2.4} fill="#fff4c4" />
-        </G>
-      );
-    case "banana":
-      return (
-        <G>
-          <Path d="M12 22c4 18 18 30 38 26 4-1 4-5 0-6-14 2-26-6-30-22-1-4-9-4-8 2z" fill="#ffd84a" stroke={INK} strokeWidth={W} strokeLinejoin="round" />
-          <Path d="M20 24c4 10 12 16 22 18" stroke="#e8b400" strokeWidth={3} strokeLinecap="round" fill="none" />
-          <Path d="M12 22l-2-6 6-2 2 6" fill="#7a5a1e" stroke={INK} strokeWidth={W} strokeLinejoin="round" />
         </G>
       );
     case "nest":

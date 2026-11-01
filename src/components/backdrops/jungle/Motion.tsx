@@ -13,6 +13,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+/* ------------------------------------------------------------------------------------------------
+ * Motion — one shared value per layer, transforms on wrapping Animated.Views only
+ * ---------------------------------------------------------------------------------------------- */
+
 type MotionKind = "drift" | "sway" | "swing";
 const AMPLITUDE: Record<MotionKind, number> = { drift: 14, sway: 1.8, swing: 2.2 };
 

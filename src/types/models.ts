@@ -1,4 +1,4 @@
-/** Persisted data shapes. Pure types + constants — no React. */
+/** Persisted data shapes (see lib/store.ts). Pure types + constants — no React. */
 
 import type { Grade, LevelDraft } from "@/types/domain";
 
@@ -27,7 +27,7 @@ export interface ChildProfile {
   /** Levels finished, in order, per grade (0..levelCount). Level n is playable when n ≤ progress[grade] + 1. */
   progress: Record<Grade, number>;
   stars: number;
-  /** Earned badge ids (data/badges.ts), in the order they were earned. */
+  /** Earned badge ids (lib/badges.ts), in the order they were earned. */
   badges: string[];
   /** Real-world high-fives tapped on the celebration screen. */
   highFives: number;

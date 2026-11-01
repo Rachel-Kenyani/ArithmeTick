@@ -1,4 +1,7 @@
-/** One level, start to finish; its state lives in usePlaySession. */
+/**
+ * PlaySession — one level, start to finish: top bar, the mat card with the level content, the
+ * celebration, the High-Five Hero pop and the screen-time sheet. State lives in usePlaySession.
+ */
 
 import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
@@ -62,7 +65,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
       >
         {/* Same top bar and banner as Home, so the level screen feels like part of the map */}
         <AppTopBar backLabel="Back to map" onBack={goHome} stars={profile.stars} secondsLeft={secondsLeft} timePaused={isQuest} />
-        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} />
+        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} onReplay={story && !isQuest ? () => setStoryOpen(true) : undefined} />
 
         <View
           style={[
@@ -81,12 +84,12 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
           >
-            <LevelContent level={level} childName={profile.name} palActive={palActive} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
+            <LevelContent level={level} childName={profile.name} palActive={palActive} waiting={storyOpen} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
           </Animated.View>
         </View>
       </View>
 
-      {storyOpen && story ? <StoryIntro story={story} scene={sceneFor(story, level)} childName={profile.name} onStart={() => setStoryOpen(false)} /> : null}
+      {storyOpen && story ? <StoryIntro story={story} grade={level.grade} level={level.number} scene={sceneFor(story, level)} onStart={() => setStoryOpen(false)} /> : null}
 
       <LevelCelebrationModal
         childName={profile.name}

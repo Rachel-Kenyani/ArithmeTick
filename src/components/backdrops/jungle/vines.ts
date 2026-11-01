@@ -4,6 +4,10 @@
 
 import { leavesAlong, P, rng, type Pt } from "./geometry";
 
+/* ------------------------------------------------------------------------------------------------
+ * Canopy — vine loops along the top (3 interleaved layers so they sway out of phase)
+ * ---------------------------------------------------------------------------------------------- */
+
 export const VINE_W = 2000;
 export const VINE_H = 132;
 

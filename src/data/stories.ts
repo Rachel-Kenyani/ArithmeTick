@@ -2,8 +2,8 @@
  * The adventure, one story stop per level: Brijo asks for help ("The monkeys dropped the mangoes!"), the
  * puzzle is the help. Puzzle stops are missions, not rewards: the start names the job ("Put 6 mangoes back"),
  * the end shows it done for Brijo ("All 6 mangoes are back in the basket!") and Brijo says thank you, so the
- * story closes. Move & Play stops find a single treasure for the child. Copy is child-facing: one short line,
- * the child's name up front, no instructions (the board and the voice of the puzzle do that).
+ * story closes. Move & Play stops find a single treasure for the child. Copy is child-facing: one short line
+ * that matches the recording, no instructions (the board and the voice of the puzzle do that).
  */
 
 import type { CounterItem } from "@/features/play/components/CounterFace";
@@ -11,8 +11,8 @@ import type { LevelDef } from "@/data/levels";
 import type { Grade } from "@/types/domain";
 
 export interface StoryStop {
-  /** Brijo's line at the start: `name` is the child's name. */
-  ask: (name: string) => string;
+  /** Brijo's line at the start, word for word as recorded (docs/voice), so no child's name. */
+  ask: string;
   /** What the child counts with on the board, and what the celebration shows. */
   treasure: CounterItem;
   /** "a mango" — a single treasure (Move & Play). */
@@ -28,8 +28,7 @@ export interface StoryStop {
 const STORIES: Record<Grade, readonly StoryStop[]> = {
   1: [
     {
-      ask: (n) =>
-        `${n}, Brijo is collecting bottle tops for a game! Can you fill the white board with 6 bottle tops?`,
+      ask: "Brijo is collecting bottle tops for a game! Can you fill the white board with six bottle tops?",
       treasure: "cap",
       one: "a bottle top",
       many: "bottle tops",
@@ -37,8 +36,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} bottle tops are ready for the game!`,
     },
     {
-      ask: (n) =>
-        `${n}, the wind blew away 7 feathers. Help Brijo collect them!`,
+      ask: "The wind blew away seven feathers. Help Brijo collect them!",
       treasure: "feather",
       one: "a feather",
       many: "feathers",
@@ -46,7 +44,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} feathers are back in Brijo's nest!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -54,8 +52,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) =>
-        `${n}, the river washed up 8 shells. Let's collect all of them and put them on the white board!`,
+      ask: "The river washed up eight shells. Let's collect all of them and put them on the white board!",
       treasure: "shell",
       one: "a shell",
       many: "shells",
@@ -63,16 +60,15 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} shells are lined up on the sand!`,
     },
     {
-      ask: (n) =>
-        `${n}, Brijo had 7 bottle tops and put 2 in her basket! How many bottle tops are left?`,
+      ask: "Brijo had seven bottle tops and put two in her basket! How many bottle tops are left?",
       treasure: "cap",
       one: "a bottle top",
       many: "bottle tops",
-      mission: () => `Put 2 in the basket, count the rest`,
+      mission: () => `Count the bottle tops left`,
       done: (c) => `${c} bottle tops left to play with!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -80,7 +76,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) => `Brijo wants to plant 9 flowers, ${n}. Can you help?`,
+      ask: "Brijo wants to plant nine flowers. Can you help?",
       treasure: "flower",
       one: "a flower",
       many: "flowers",
@@ -88,16 +84,15 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} flowers are planted!`,
     },
     {
-      ask: (n) =>
-        `${n}, 9 tomatoes grow in the garden. Brijo picks 4 tomatoes for soup! How many tomatoes are left?`,
+      ask: "Nine tomatoes grow in the garden. Brijo picks four tomatoes for soup! How many tomatoes are left?",
       treasure: "tomato",
       one: "a tomato",
       many: "tomatoes",
-      mission: () => `Pick 4 in the basket, count the rest`,
+      mission: () => `Count the tomatoes left`,
       done: (c) => `${c} tomatoes still growing!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "This is the last stop! Show a grown-up and finish the adventure.",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
@@ -107,57 +102,105 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   2: [
     {
-      ask: (n) => `${n}, the elephant's scale won't balance! Can you fix it?`,
-      treasure: "banana",
-      one: "a banana",
-      many: "bananas",
-      mission: (c) => `Balance the scale`,
-      done: (c) => `The scale is balanced!`,
+      ask: "Brijo's garden grew thirty-four tomatoes! How many tomatoes make full crates of ten? How many are left?",
+      treasure: "tomato",
+      one: "a tomato",
+      many: "tomatoes",
+      mission: () => `Fill frames of 10`,
+      done: () => `Thirty-four tomatoes: three full frames and four left over!`,
     },
     {
-      ask: (n) => `Help the monkeys share their oranges fairly, ${n}!`,
+      ask: "Brijo is counting her mangoes backwards from fifty. Can you fill in the missing numbers?",
+      treasure: "mango",
+      one: "a mango",
+      many: "mangoes",
+      mission: () => `Count back from 50`,
+      done: () => `You counted all the way back from fifty!`,
+    },
+    {
+      ask: "Time to move! How many handspans long is your table?",
+      treasure: "leaf",
+      one: "a big leaf",
+      many: "leaves",
+      mission: () => `Measure with your hands`,
+      done: () => `You measured it with your hands!`,
+    },
+    {
+      ask: "Brijo picked twenty-seven tomatoes, then five more. How many tomatoes does she have now?",
+      treasure: "tomato",
+      one: "a tomato",
+      many: "tomatoes",
+      mission: () => `Add 5 and make a ten`,
+      done: () => `Thirty-two tomatoes for the market!`,
+    },
+    {
+      ask: "Brijo had thirty-two oranges and gave seven to the monkeys. How many oranges are left?",
       treasure: "orange",
       one: "an orange",
       many: "oranges",
-      mission: (c) => `Share the oranges`,
-      done: (c) => `The oranges are shared fairly!`,
+      mission: () => `Take away 7`,
+      done: () => `Twenty-five oranges left for Brijo!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
-      treasure: "pebble",
-      one: "a shiny pebble",
-      many: "pebbles",
-      mission: (c) => `Find a treasure`,
-      done: (c) => `You found a shiny pebble for Brijo!`,
+      ask: "Time to move! Find something heavy, something light, and see how many cups fill a jug.",
+      treasure: "shell",
+      one: "a shell",
+      many: "shells",
+      mission: () => `Heavy, light and full`,
+      done: () => `You found out what is heavy and what is full!`,
     },
     {
-      ask: (n) => `${n}, the market scale is wobbly. Balance it!`,
+      ask: "Brijo puts two seeds in each hole. There are three holes. How many seeds does she need?",
       treasure: "seed",
       one: "a seed",
       many: "seeds",
-      mission: (c) => `Plant the seeds in rows`,
-      done: (c) => `The seeds are in neat rows!`,
+      mission: () => `3 groups of 2`,
+      done: () => `Six seeds, two in every hole!`,
     },
     {
-      ask: (n) => `The drums need tuning, ${n}. Make both sides match!`,
+      ask: "Two monkeys want to share eight tomatoes fairly. Give each monkey half!",
+      treasure: "tomato",
+      one: "a tomato",
+      many: "tomatoes",
+      mission: () => `Share 8 in half`,
+      done: () => `Four tomatoes each, a fair half!`,
+    },
+    {
+      ask: "It's market day! Pay for something with shillings, together with a grown-up.",
       treasure: "drum",
       one: "a little drum",
       many: "drums",
-      mission: (c) => `Tune the drums`,
-      done: (c) => `The drums are all tuned up!`,
+      mission: () => `Pay with shillings`,
+      done: () => `You paid with shillings like a real shopper!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "Forty-five flowers grew in the garden. Brijo picked eighteen for her nest. How many flowers are left?",
+      treasure: "flower",
+      one: "a flower",
+      many: "flowers",
+      mission: () => `Take away 18`,
+      done: () => `Twenty-seven flowers still growing!`,
+    },
+    {
+      ask: "Brijo's friends are coming at three o'clock. Can you set the clock?",
+      treasure: "star",
+      one: "a golden star",
+      many: "stars",
+      mission: () => `Set the clock`,
+      done: () => `Three o'clock, just in time!`,
+    },
+    {
+      ask: "This is the last stop! Find shapes and lines around you and show a grown-up.",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
-      mission: (c) => `Find a treasure`,
-      done: (c) => `You found Brijo's nest!`,
+      mission: () => `Find shapes and lines`,
+      done: () => `You found Brijo's nest!`,
     },
   ],
   3: [
     {
-      ask: (n) => `${n}, Brijo is building a treehouse. Lay out the planks!`,
+      ask: "Brijo is building a treehouse. Lay out the planks!",
       treasure: "leaf",
       one: "a big leaf",
       many: "leaves",
@@ -165,7 +208,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The treehouse floor is ready!`,
     },
     {
-      ask: (n) => `Plant the garden in neat rows, ${n}!`,
+      ask: "Plant the garden in neat rows!",
       treasure: "seed",
       one: "a seed",
       many: "seeds",
@@ -173,7 +216,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The seeds are in neat rows!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -181,7 +224,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) => `${n}, stack the mangoes in rows for market day!`,
+      ask: "Stack the mangoes in rows for market day!",
       treasure: "mango",
       one: "a mango",
       many: "mangoes",
@@ -189,7 +232,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `${c} mangoes stacked for market day!`,
     },
     {
-      ask: (n) => `Bundle the sticks into tens, ${n}!`,
+      ask: "Bundle the sticks into tens!",
       treasure: "drum",
       one: "a little drum",
       many: "drums",
@@ -197,7 +240,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The sticks are bundled into a ten!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "This is the last stop! Show a grown-up and finish the adventure.",
       treasure: "star",
       one: "a golden star",
       many: "stars",
@@ -215,8 +258,11 @@ export function treasureCount(level: LevelDef): number {
       return level.game === "takeAway"
         ? level.puzzle.start - level.puzzle.away
         : level.puzzle.target;
-    case 2:
-      return level.puzzle.target - level.puzzle.start;
+    case 2: {
+      if (level.game !== "placeValue") return 1;
+      const { op, a, b } = level.puzzle;
+      return op === "add" ? a + b : op === "sub" ? a - b : a;
+    }
     case 3:
       return level.puzzle.rows * level.puzzle.cols;
   }
@@ -246,7 +292,12 @@ export function sceneFor(story: StoryStop, level: LevelDef): StoryScene {
     };
   }
   const n = treasureCount(level);
-  return { items: n, away: 0, caption: story.mission(n) };
+  // Grade 2 numbers run past 30: too many to draw, so the caption carries the story alone.
+  return {
+    items: level.grade === 2 ? 0 : n,
+    away: 0,
+    caption: story.mission(n),
+  };
 }
 
 export function storyFor(grade: Grade, level: number): StoryStop | null {

@@ -1,4 +1,6 @@
 /**
+ * JungleBackdrop (React Native port of arithmetick/components/ui/JungleBackdrop.tsx).
+ *
  * Layers, back to front (all decorative: pointerEvents none, hidden from accessibility):
  *   1. sky gradient (expo-linear-gradient, jg-* tokens)
  *   2. kitenge triangle lattice (SVG <Pattern>, masked so it grows stronger towards the bottom)
@@ -34,9 +36,13 @@ export interface JungleBackdropProps {
   grass?: boolean;
   /** Hanging vines + palm fronds along the top (default true). */
   canopy?: boolean;
-  /** Extra style for the content column wrapper (flex: 1 by default). */
+  /** Extra style for the content column wrapper (flex: 1 by default). Replaces the web `className`. */
   style?: StyleProp<ViewStyle>;
 }
+/* ------------------------------------------------------------------------------------------------
+ * Component
+ * ---------------------------------------------------------------------------------------------- */
+
 export default function JungleBackdrop({ children, grass = true, canopy = true, style }: Readonly<JungleBackdropProps>) {
   const uid = `jg${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const { width: W, height: H } = useWindowDimensions();

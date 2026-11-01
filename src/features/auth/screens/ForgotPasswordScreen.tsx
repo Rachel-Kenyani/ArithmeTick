@@ -1,5 +1,5 @@
 /**
- * Forgot Your Password?. The parent enters their email / phone, we "send" a code
+ * Forgot Your Password? (mockup 08). The parent enters their email / phone, we "send" a code
  * (auth.sendResetCode emails a code, actions.beginReset) → Verify Identity → Reset Password.
  */
 

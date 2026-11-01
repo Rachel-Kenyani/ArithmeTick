@@ -3171,6 +3171,11 @@ expo-server@^58.0.5:
   resolved "https://registry.yarnpkg.com/expo-server/-/expo-server-58.0.5.tgz#56ffd7b6a5bdba8492d4108e864966676376d657"
   integrity sha512-FHYecxfGOuAhacHcanR6qCN8Cln9S+FFulcYetLu3ddDg55ohuCsMZ9U4Egzwdm+A2o6N+MdSoJKquBC5F9NIg==
 
+expo-speech@~58.0.3:
+  version "58.0.3"
+  resolved "https://registry.yarnpkg.com/expo-speech/-/expo-speech-58.0.3.tgz#a9d20683f6d86f5829c2d3d2ffdf72eefa4a112f"
+  integrity sha512-jdMTqWL6ciDM8aVJe2/l2g6GTVaK7i/zBOVUhTq+l0Y+DOCz3Nh4HqNrMwmIKzXrlsxRv3ejmjSQPlX1lfOTOA==
+
 expo-splash-screen@~58.0.11:
   version "58.0.11"
   resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-58.0.11.tgz#77d3bb630fb24079c47a8d933930f304b57042d1"
@@ -4840,13 +4845,6 @@ react-devtools-core@^6.1.5:
     shell-quote "^1.6.1"
     ws "^7"
 
-react-dom@^19.2.3:
-  version "19.3.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.3.0.tgz#a0ff19161d7f4e9be5469a07278b0c06e00f9001"
-  integrity sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==
-  dependencies:
-    scheduler "^0.28.0"
-
 react-fast-compare@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
@@ -5154,7 +5152,7 @@ sax@>=0.6.0:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.6.1.tgz#4c23cf608c0b693ab54b4b5888e92cfe977b9843"
   integrity sha512-42tBVwLWnaQvW5zc4HbZrTuWccECCZfBi92FDuwtqxasH+JbPB3/FOKb1m222K42R4WxuxzzMsTswfzgtSu64Q==
 
-scheduler@0.28.0, scheduler@^0.28.0:
+scheduler@0.28.0:
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.28.0.tgz#03d3ca348aeaf8b7502f64468f217b27523f9695"
   integrity sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==

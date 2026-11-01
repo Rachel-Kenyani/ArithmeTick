@@ -71,7 +71,7 @@ export function useCapGesture({
       const ny = g.sy + e.translationY;
       mv.x.set(nx);
       mv.y.set(ny);
-      // hit-test the finger, not the cap centre
+      // hit-test the finger (not the cap centre), like the web's pointer point
       const isNear = isPointNear(nx + g.ox, ny + g.oy, drag.grid.get(), NEAR_PX);
       if (isNear !== drag.near.get()) {
         drag.near.set(isNear);

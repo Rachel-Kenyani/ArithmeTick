@@ -1,3 +1,7 @@
+/**
+ * React hooks for reading the store (re-rendering via useSyncExternalStore).
+ */
+
 import { useSyncExternalStore } from "react";
 
 import type { ChildProfile, AppState } from "@/types/models";

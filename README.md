@@ -62,11 +62,18 @@ expo-audio · expo-haptics · AsyncStorage
 ## Roadmap
 
 - [x] Grade 3 (Array Multiplication) board
-- [ ] Grade 2 (Balance Scale) board
+- [ ] Grade 2 boards: place value done; number track, groups, halves and clock still to build
 - [ ] Level celebration, physical quests, badge medallion
 - [ ] Badges and Leaderboard tabs
 - [ ] Native Google Sign-In and Sign in with Apple
 
 ## License
 
-See [MIT LICENSE](LICENSE).
+The source code is released under the [MIT License](LICENSE).
+
+### Voice recordings
+
+Brijo's voice recordings (`assets/voice/`) are **© Rachel Kenyani. All rights reserved.** They are not covered
+by the MIT License, are not included in this repository, and may not be copied, redistributed, modified or
+used in other projects without written permission. Forks and clones of this repository fall back to the
+phone's text-to-speech.

@@ -1,6 +1,6 @@
 // TEMPORARY stand-in — replaced when LevelCelebrationModal is ported (see README).
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import TreasureGroup from "@/features/play/components/TreasureGroup";
@@ -9,7 +9,10 @@ import BadgeMedallion from "@/features/play/components/BadgeMedallion";
 import RewardStars from "@/features/play/components/RewardStars";
 import Button from "@/components/ui/Button";
 import Panel from "@/components/ui/Panel";
+import SpokenText from "@/components/ui/SpokenText";
 import { sfx } from "@/services/audio";
+import { narration } from "@/services/narration";
+import { THANKS } from "@/services/voiceClips";
 import type { BadgeDef } from "@/data/badges";
 import type { Grade } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -46,7 +49,7 @@ export default function LevelCelebrationModal({ open, ...rest }: Readonly<LevelC
   return <Body {...rest} />;
 }
 
-function Body({ childName, treasure, treasureCount, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
+function Body({ childName, treasure, treasureCount, grade, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
   const claimedRef = useRef(false);
 
   // The pop-up opens with a clap sound: no button to find, it just happens (once per opening).
@@ -55,6 +58,20 @@ function Body({ childName, treasure, treasureCount, levelNumber, badge, starsEar
     sfx.clap();
     highFive.current?.();
   }, []);
+
+  // Brijo says the mission is done once the clap has landed.
+  const missionLine = treasure ? treasure.done(treasureCount) : null;
+  // The words on screen are the ones the thank-you clip says.
+  const [thanks] = useState(() => THANKS[Math.floor(Math.random() * THANKS.length)]);
+  const doneLine = missionLine ? `${missionLine} ${thanks.text}` : null;
+  useEffect(() => {
+    if (!missionLine) return;
+    const timer = setTimeout(() => narration.done(missionLine, thanks, grade, levelNumber), 700);
+    return () => {
+      clearTimeout(timer);
+      narration.stop();
+    };
+  }, [missionLine, thanks, grade, levelNumber]);
 
   const claim = () => {
     if (claimedRef.current) return;
@@ -79,9 +96,9 @@ function Body({ childName, treasure, treasureCount, levelNumber, badge, starsEar
         </Text>
 
         {treasure ? (
-          <View style={styles.hero} accessible accessibilityLabel={`${treasure.done(treasureCount)} Thank you, ${childName}!`}>
+          <View style={styles.hero} accessible accessibilityLabel={doneLine ?? undefined}>
             <TreasureGroup id={treasure.treasure} count={treasureCount} size={treasureCount > 10 ? 26 : 34} animate={!reduced} />
-            <Text style={styles.heroText}>{`${treasure.done(treasureCount)} Thank you, ${childName}!`}</Text>
+            {doneLine ? <SpokenText text={doneLine} style={styles.heroText} /> : null}
           </View>
         ) : null}
 

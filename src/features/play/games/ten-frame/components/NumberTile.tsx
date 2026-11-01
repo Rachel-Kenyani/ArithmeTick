@@ -25,7 +25,7 @@ const TILE_TONES: Record<TileTone, { border: string; bg: string; fg: string }> =
   ask: { border: "rgba(0,111,104,0.55)", bg: colors.atMint, fg: colors.atTeal },
 };
 
-/** A value change pops the new digit in. */
+/** A value change pops the new digit in (web: key={value}, scale .4 / y 6 → 1 / 0). */
 function TileDigit({ value, fontSize, color }: Readonly<{ value: number | string; fontSize: number; color: string }>) {
   const t = useSharedValue(0);
   useEffect(() => {

@@ -1,4 +1,4 @@
-// TEMPORARY stand-in — replaced when Grade2BalanceScale is ported (see README).
+// TEMPORARY stand-in for the Grade 2 boards still to build (number track, groups, halves, clock).
 
 import { useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -6,10 +6,10 @@ import { StyleSheet, Text, View } from "react-native";
 import Button from "@/components/ui/Button";
 import Panel from "@/components/ui/Panel";
 import { sfx } from "@/services/audio";
-import type { BalanceProps } from "@/types/domain";
+import type { Grade2StubProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
-export default function Grade2BalanceScale({ level, start = 8, target = 14, palActive, onStruggle, onSolved }: Readonly<BalanceProps>) {
+export default function Grade2Stub({ level, goal, palActive, onStruggle, onSolved }: Readonly<Grade2StubProps>) {
   const solvedRef = useRef(false);
   const solve = () => {
     if (solvedRef.current) return;
@@ -26,7 +26,7 @@ export default function Grade2BalanceScale({ level, start = 8, target = 14, palA
             <Text style={styles.chipText}>Help is on</Text>
           </View>
         ) : null}
-        <Text style={styles.title}>{`Balance ${start} + ? = ${target} — board coming soon`}</Text>
+        <Text style={styles.title}>{`${goal} — board coming soon`}</Text>
         {level ? <Text style={styles.sub}>Level {level}</Text> : null}
         <Button onPress={solve}>Solve</Button>
         <Button variant="white" onPress={onStruggle}>

@@ -11,7 +11,7 @@ export const STATUS_WORD: Record<LevelStatus, string> = { done: "done", current:
 export const FACE: Record<LevelStatus, { bg: string; border: string; text: string; edge: string; edgeH: number }> = {
   done: { bg: colors.jgSun, border: "#c99a1c", text: colors.jgOutline, edge: "#c99a1c", edgeH: 6 },
   current: { bg: colors.jgTeal, border: "#006a62", text: colors.white, edge: "#006a62", edgeH: 6 },
-  // Locked text/lock: #3f6b64 on #d4ece7 ≈ 5:1 (WCAG AA for text and icons).
+  // Locked text/lock: #3f6b64 on #d4ece7 ≈ 5:1 (WCAG AA for text and icons); it was #6e9a92 (≈ 2.6:1).
   locked: { bg: "#d4ece7", border: "#78a99f", text: "#3f6b64", edge: "#a5c9c2", edgeH: 5 },
 };
 

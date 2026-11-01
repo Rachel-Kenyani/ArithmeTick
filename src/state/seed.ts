@@ -26,7 +26,7 @@ export function makeProfile(input: Partial<ChildProfile> & Pick<ChildProfile, "n
   };
 }
 
-/** Demo children shown after "Log In" on a fresh device. */
+/** Demo children shown after "Log In" on a fresh device (matches the "Welcome Back!" mockup). */
 export function demoProfiles(): ChildProfile[] {
   const seeded = [
     makeProfile({ name: "Brijo", grade: 1, avatar: "owl" }),

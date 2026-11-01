@@ -1,11 +1,13 @@
 /**
  * InfoBanner — the card under the top bar that says where you are, built like a little name plate:
  * a purple tag sitting on the card's top edge ("Grade 1" / "Level 1"), the big name centred below
- * ("Ten-Frames" / "Count to 6"), and optional progress pips with a "2 of 6" count.
+ * ("Ten-Frames" / "Count to 6"), optional progress pips with a "2 of 6" count, and on a level an optional
+ * speaker button that replays the story.
  */
 
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
+import { SpeakerIcon } from "@/components/ui/icons";
 import { cardShadow, colors, fonts } from "@/theme";
 
 export interface InfoBannerProps {
@@ -17,6 +19,8 @@ export interface InfoBannerProps {
   spoken: string;
   /** Progress pips: `completed` of `total` levels done. */
   progress?: { completed: number; total: number };
+  /** Shows a speaker button that brings the level's story card back (and Brijo reads it again). */
+  onReplay?: () => void;
 }
 
 const TAG_H = 28;
@@ -43,6 +47,7 @@ export default function InfoBanner({
   title,
   spoken,
   progress,
+  onReplay,
 }: Readonly<InfoBannerProps>) {
   const { width } = useWindowDimensions();
   const tablet = width >= 640;
@@ -50,7 +55,7 @@ export default function InfoBanner({
   return (
     <View style={[styles.wrap, { paddingHorizontal: tablet ? 24 : 16 }]}>
       <View
-        style={[styles.card, cardShadow]}
+        style={[styles.card, cardShadow, onReplay ? styles.cardWithReplay : null]}
         accessible
         accessibilityRole="header"
         accessibilityLabel={spoken}
@@ -85,6 +90,20 @@ export default function InfoBanner({
           </View>
         ) : null}
       </View>
+      {onReplay ? (
+        // Outside the card: the card is one accessible element, which would swallow the button.
+        <View style={[styles.replayWrap, { right: (tablet ? 24 : 16) + 10 }]} pointerEvents="box-none">
+          <Pressable
+            onPress={onReplay}
+            hitSlop={8}
+            style={({ pressed }) => [styles.replay, pressed ? styles.replayPressed : null]}
+            accessibilityRole="button"
+            accessibilityLabel="Hear the story again"
+          >
+            <SpeakerIcon size={24} color={colors.white} />
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -123,6 +142,20 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     color: colors.white,
   },
+  // Room for the button on both sides keeps the title centred and clear of it.
+  cardWithReplay: { paddingHorizontal: 64 },
+  replayWrap: { position: "absolute", top: 12 + TAG_H / 2, bottom: 0, justifyContent: "center" },
+  replay: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.atPurple,
+    borderWidth: 3,
+    borderColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  replayPressed: { transform: [{ scale: 0.92 }] },
   title: {
     fontFamily: fonts.headingBold,
     fontSize: 26,

@@ -17,5 +17,6 @@ export const actions = {
   ...progressActions,
   ...screenTimeActions,
 
+  /* ---------------- reviewer tools ---------------- */
   ...reviewerActions,
 };

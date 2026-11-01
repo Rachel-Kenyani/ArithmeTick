@@ -10,6 +10,7 @@ import { colors, fonts } from "@/theme";
 import type { TileState } from "../utils/gridLayout";
 import Tile from "./Tile";
 
+/** The dashed "Add Profile" tile at the end of the grid. */
 export default function AddProfileTile({
   sm,
   ...tile

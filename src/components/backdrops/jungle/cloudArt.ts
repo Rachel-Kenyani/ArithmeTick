@@ -4,6 +4,10 @@
 
 import { r1 } from "./geometry";
 
+/* ------------------------------------------------------------------------------------------------
+ * Clouds
+ * ---------------------------------------------------------------------------------------------- */
+
 type Circle = readonly [cx: number, cy: number, r: number];
 type Capsule = readonly [x: number, y: number, w: number, h: number];
 export interface CloudDef {

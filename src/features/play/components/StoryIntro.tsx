@@ -70,7 +70,7 @@ export default function StoryIntro({
             <BrijoMascot mood="talk" size={112} />
           </View>
 
-          <Scene story={story} scene={scene} />
+          {scene.items ? <Scene story={story} scene={scene} /> : null}
 
           <Caption text={scene.caption} />
 

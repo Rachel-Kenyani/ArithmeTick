@@ -118,7 +118,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `You counted all the way back from fifty!`,
     },
     {
-      ask: "Time to move! How many handspans long is your table?",
+      ask: "Time to move! How many hands long is your table?",
       treasure: "leaf",
       one: "a big leaf",
       many: "leaves",

@@ -6,25 +6,67 @@
  *   ShapesArt   — a circle, triangle and square, a straight line and a curved line (shapes and lines)
  */
 
+import type { ReactElement } from "react";
 import { Circle, Ellipse, G, Path, Rect, Text as SvgText } from "react-native-svg";
 
 import { colors } from "@/theme";
 
 import { ArtFrame, ink, type ArtProps } from "./art";
 
-export function HandspanArt({ size = 64, title }: Readonly<ArtProps>) {
+const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
+  length: HandspanArt,
+  massCapacity: ScaleCupArt,
+  money: CoinsArt,
+};
+
+/**
+ * Move & Play tasks that don't find a treasure (measuring, weighing, buying): the celebration shows the same
+ * picture the child just worked from. Tasks that end with a find have none.
+ */
+export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
+
+export function QuestTaskPicture({ task, size }: Readonly<{ task: string; size: number }>) {
+  const Art = TASK_ART[task];
+  return Art ? <Art size={size} /> : null;
+}
+
+/** One small hand print, palm down, fingers pointing up; (x, y) is the bottom-left of the palm. */
+function HandPrint({ x, y, faded }: Readonly<{ x: number; y: number; faded?: boolean }>) {
   return (
-    <ArtFrame size={size} title={title}>
-      <Rect x="4" y="40" width="56" height="8" rx="2" fill="#c98b4e" {...ink} />
-      <Path d="M10 48v10M54 48v10" {...ink} />
-      {/* thumb to little finger, stretched wide */}
+    <G opacity={faded ? 0.45 : 1}>
       <Path
-        d="M12 38c-2-4 0-7 3-6l5 3 2-12c1-3 5-3 5 0l1 11 2-14c1-3 5-3 5 0l0 14 3-12c1-3 5-2 5 1l-2 13 4-7c2-3 6-1 5 2l-6 12c-2 3-5 4-9 4H20c-4 0-6-2-8-5z"
+        d={`M${x} ${y}v-7c0-2 1-3 2-3h8c1 0 2 1 2 3v7z
+            M${x + 1} ${y - 10}v-6a1.2 1.2 0 0 1 2.4 0v6
+            M${x + 4} ${y - 10}v-8a1.2 1.2 0 0 1 2.4 0v8
+            M${x + 7} ${y - 10}v-7a1.2 1.2 0 0 1 2.4 0v7
+            M${x + 10} ${y - 9}v-5a1.1 1.1 0 0 1 2.2 0v5
+            M${x - 1} ${y - 5}l-3-3a1.2 1.2 0 0 1 1.7-1.7l3 3`}
         fill="#f2b98a"
         {...ink}
+        strokeWidth={1.4}
       />
-      <Path d="M8 30h48" stroke={colors.atPurple} strokeWidth={2} strokeDasharray="3 3" />
-      <Path d="M8 27v6M56 27v6" stroke={colors.atPurple} strokeWidth={2} />
+    </G>
+  );
+}
+
+/** The same hand stepping along a table edge, counted 1, 2, 3: measuring is putting it down again and again. */
+export function HandspanArt({ size = 64, title }: Readonly<ArtProps>) {
+  const steps = [6, 22, 38] as const;
+  return (
+    <ArtFrame size={size} title={title}>
+      <Rect x="3" y="42" width="58" height="7" rx="2" fill="#c98b4e" {...ink} />
+      <Path d="M8 49v10M56 49v10" {...ink} />
+      {steps.map((x, i) => (
+        <HandPrint key={x} x={x} y={40} faded={i < steps.length - 1} />
+      ))}
+      {/* the move from one print to the next */}
+      <Path d="M12 14q8-6 16 0M28 14q8-6 16 0" stroke={colors.atPurple} strokeWidth={1.8} fill="none" strokeLinecap="round" />
+      <Path d="M26 12l2 2-2.6 1M42 12l2 2-2.6 1" stroke={colors.atPurple} strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {steps.map((x, i) => (
+        <SvgText key={x} x={x + 6} y={47.8} fontSize={6.5} fontWeight="bold" fill={colors.white} textAnchor="middle">
+          {i + 1}
+        </SvgText>
+      ))}
     </ArtFrame>
   );
 }

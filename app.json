@@ -20,9 +20,6 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.rachelkenyani.arithmetick"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "plugins": [
       "expo-router",
       "expo-font",

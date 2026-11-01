@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 
+import SpokenText from "@/components/ui/SpokenText";
 import { colors, fonts } from "@/theme";
 
 export const GROWN_UP = {
@@ -58,11 +59,19 @@ export function InfoIcon({
 
 export default function GrownUpNote({
   children,
+  spoken,
   style,
-}: Readonly<{ children: ReactNode; style?: StyleProp<ViewStyle> }>) {
+}: Readonly<{
+  children: ReactNode;
+  /** Light up the words as Brijo reads them (string children only). */
+  spoken?: boolean;
+  style?: StyleProp<ViewStyle>;
+}>) {
   return (
     <View style={[styles.note, style]} accessibilityRole="text">
-      {typeof children === "string" ? (
+      {typeof children === "string" && spoken ? (
+        <SpokenText text={children} style={styles.text} />
+      ) : typeof children === "string" ? (
         <Text style={styles.text}>{children}</Text>
       ) : (
         <View style={styles.body}>{children}</View>

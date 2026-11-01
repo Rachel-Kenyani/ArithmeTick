@@ -2,8 +2,8 @@
  * The adventure, one story stop per level: Brijo asks for help ("The monkeys dropped the mangoes!"), the
  * puzzle is the help. Puzzle stops are missions, not rewards: the start names the job ("Put 6 mangoes back"),
  * the end shows it done for Brijo ("All 6 mangoes are back in the basket!") and Brijo says thank you, so the
- * story closes. Move & Play stops find a single treasure for the child. Copy is child-facing: one short line,
- * the child's name up front, no instructions (the board and the voice of the puzzle do that).
+ * story closes. Move & Play stops find a single treasure for the child. Copy is child-facing: one short line
+ * that matches the recording, no instructions (the board and the voice of the puzzle do that).
  */
 
 import type { CounterItem } from "@/features/play/components/CounterFace";
@@ -11,8 +11,8 @@ import type { LevelDef } from "@/data/levels";
 import type { Grade } from "@/types/domain";
 
 export interface StoryStop {
-  /** Brijo's line at the start: `name` is the child's name. */
-  ask: (name: string) => string;
+  /** Brijo's line at the start, word for word as recorded (docs/voice), so no child's name. */
+  ask: string;
   /** What the child counts with on the board, and what the celebration shows. */
   treasure: CounterItem;
   /** "a mango" — a single treasure (Move & Play). */
@@ -28,8 +28,7 @@ export interface StoryStop {
 const STORIES: Record<Grade, readonly StoryStop[]> = {
   1: [
     {
-      ask: (n) =>
-        `${n}, Brijo is collecting bottle tops for a game! Can you fill the white board with 6 bottle tops?`,
+      ask: "Brijo is collecting bottle tops for a game! Can you fill the white board with six bottle tops?",
       treasure: "cap",
       one: "a bottle top",
       many: "bottle tops",
@@ -37,8 +36,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} bottle tops are ready for the game!`,
     },
     {
-      ask: (n) =>
-        `${n}, the wind blew away 7 feathers. Help Brijo collect them!`,
+      ask: "The wind blew away seven feathers. Help Brijo collect them!",
       treasure: "feather",
       one: "a feather",
       many: "feathers",
@@ -46,7 +44,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} feathers are back in Brijo's nest!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -54,8 +52,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) =>
-        `${n}, the river washed up 8 shells. Let's collect all of them and put them on the white board!`,
+      ask: "The river washed up eight shells. Let's collect all of them and put them on the white board!",
       treasure: "shell",
       one: "a shell",
       many: "shells",
@@ -63,8 +60,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} shells are lined up on the sand!`,
     },
     {
-      ask: (n) =>
-        `${n}, Brijo had 7 bottle tops and put 2 in her basket! How many bottle tops are left?`,
+      ask: "Brijo had seven bottle tops and put two in her basket! How many bottle tops are left?",
       treasure: "cap",
       one: "a bottle top",
       many: "bottle tops",
@@ -72,7 +68,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `${c} bottle tops left to play with!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -80,7 +76,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) => `Brijo wants to plant 9 flowers, ${n}. Can you help?`,
+      ask: "Brijo wants to plant nine flowers. Can you help?",
       treasure: "flower",
       one: "a flower",
       many: "flowers",
@@ -88,8 +84,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `All ${c} flowers are planted!`,
     },
     {
-      ask: (n) =>
-        `${n}, 9 tomatoes grow in the garden. Brijo picks 4 tomatoes for soup! How many tomatoes are left?`,
+      ask: "Nine tomatoes grow in the garden. Brijo picks four tomatoes for soup! How many tomatoes are left?",
       treasure: "tomato",
       one: "a tomato",
       many: "tomatoes",
@@ -97,7 +92,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `${c} tomatoes still growing!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "This is the last stop! Show a grown-up and finish the adventure.",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
@@ -107,7 +102,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   2: [
     {
-      ask: (n) => `${n}, the elephant's scale won't balance! Can you fix it?`,
+      ask: "The elephant's scale won't balance! Can you fix it?",
       treasure: "banana",
       one: "a banana",
       many: "bananas",
@@ -115,7 +110,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The scale is balanced!`,
     },
     {
-      ask: (n) => `Help the monkeys share their oranges fairly, ${n}!`,
+      ask: "Help the monkeys share their oranges fairly!",
       treasure: "orange",
       one: "an orange",
       many: "oranges",
@@ -123,7 +118,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The oranges are shared fairly!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -131,7 +126,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) => `${n}, the market scale is wobbly. Balance it!`,
+      ask: "The market scale is wobbly. Balance it!",
       treasure: "seed",
       one: "a seed",
       many: "seeds",
@@ -139,7 +134,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The seeds are in neat rows!`,
     },
     {
-      ask: (n) => `The drums need tuning, ${n}. Make both sides match!`,
+      ask: "The drums need tuning. Make both sides match!",
       treasure: "drum",
       one: "a little drum",
       many: "drums",
@@ -147,7 +142,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The drums are all tuned up!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "This is the last stop! Show a grown-up and finish the adventure.",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
@@ -157,7 +152,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   3: [
     {
-      ask: (n) => `${n}, Brijo is building a treehouse. Lay out the planks!`,
+      ask: "Brijo is building a treehouse. Lay out the planks!",
       treasure: "leaf",
       one: "a big leaf",
       many: "leaves",
@@ -165,7 +160,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The treehouse floor is ready!`,
     },
     {
-      ask: (n) => `Plant the garden in neat rows, ${n}!`,
+      ask: "Plant the garden in neat rows!",
       treasure: "seed",
       one: "a seed",
       many: "seeds",
@@ -173,7 +168,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The seeds are in neat rows!`,
     },
     {
-      ask: (n) => `Time to move, ${n}! Brijo wants to see real groups.`,
+      ask: "Time to move! Brijo wants to see real groups.",
       treasure: "pebble",
       one: "a shiny pebble",
       many: "pebbles",
@@ -181,7 +176,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `You found a shiny pebble for Brijo!`,
     },
     {
-      ask: (n) => `${n}, stack the mangoes in rows for market day!`,
+      ask: "Stack the mangoes in rows for market day!",
       treasure: "mango",
       one: "a mango",
       many: "mangoes",
@@ -189,7 +184,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `${c} mangoes stacked for market day!`,
     },
     {
-      ask: (n) => `Bundle the sticks into tens, ${n}!`,
+      ask: "Bundle the sticks into tens!",
       treasure: "drum",
       one: "a little drum",
       many: "drums",
@@ -197,7 +192,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: (c) => `The sticks are bundled into a ten!`,
     },
     {
-      ask: (n) => `This is the last stop, ${n}! Show a grown-up and finish the adventure.`,
+      ask: "This is the last stop! Show a grown-up and finish the adventure.",
       treasure: "star",
       one: "a golden star",
       many: "stars",

@@ -242,6 +242,10 @@ export const narration = {
       { id: thanks.id, from: split, to: wordsOf(text).length },
     ]);
   },
+  /** A board instruction ("How many full crates are there?"): its recorded clip, else the phone's voice. */
+  prompt(text: string, clipId: string) {
+    say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }]);
+  },
   stop: stopAll,
   /** Follow the word being read; called with null when nothing is. */
   subscribe(fn: (range: SpokenRange | null) => void) {

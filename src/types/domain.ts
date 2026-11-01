@@ -7,7 +7,6 @@ import type { CounterItem } from "@/features/play/components/CounterFace";
 
 export type Grade = 1 | 2 | 3;
 
-
 /** Props every grade module (Grade1TenFrame, Grade2BalanceScale, Grade3ArrayMultiplication) accepts. */
 export interface GradeModuleProps {
   /** Level number on the map (1-based, display / data attributes only — never changes behaviour). */
@@ -27,7 +26,11 @@ export interface GradeModuleProps {
    */
   onStruggle: () => void;
   /** The child checked an answer (right or wrong). Optional: modules without a "Done" step skip it. */
-  onAttempt?: (attempt: { target: number; answer: number; correct: boolean }) => void;
+  onAttempt?: (attempt: {
+    target: number;
+    answer: number;
+    correct: boolean;
+  }) => void;
   /** The puzzle is solved. Call exactly once, after the module's own "solved" flourish (~0.8–1.4s). */
   onSolved: () => void;
   /** What the child counts with: bottle tops ("cap") or the story's item. Default "cap". */
@@ -119,8 +122,6 @@ export const GRADE_META: Record<Grade, GradeMeta> = {
   },
 };
 
-
 /** Daily screen-time cap (seconds). */
 export const SESSION_CAP_SECONDS = 15 * 60;
-/** TESTING: false freezes the daily timer at the full 15:00 (no ticking, never "time's up"). Set back to true before release. */
-export const SCREEN_TIME_ENABLED = false;
+export const SCREEN_TIME_ENABLED = true;

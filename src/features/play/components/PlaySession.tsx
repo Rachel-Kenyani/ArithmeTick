@@ -84,7 +84,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
           >
-            <LevelContent level={level} childName={profile.name} palActive={palActive} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
+            <LevelContent level={level} childName={profile.name} palActive={palActive} waiting={storyOpen} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
           </Animated.View>
         </View>
       </View>

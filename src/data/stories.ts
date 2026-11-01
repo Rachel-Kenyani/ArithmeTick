@@ -64,7 +64,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       treasure: "cap",
       one: "a bottle top",
       many: "bottle tops",
-      mission: () => `Put 2 in the basket, count the rest`,
+      mission: () => `Count the bottle tops left`,
       done: (c) => `${c} bottle tops left to play with!`,
     },
     {
@@ -88,7 +88,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       treasure: "tomato",
       one: "a tomato",
       many: "tomatoes",
-      mission: () => `Pick 4 in the basket, count the rest`,
+      mission: () => `Count the tomatoes left`,
       done: (c) => `${c} tomatoes still growing!`,
     },
     {

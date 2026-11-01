@@ -9,6 +9,8 @@ export type Grade = 1 | 2 | 3;
 
 /** Props every grade module (Grade1TenFrame, Grade2BalanceScale, Grade3ArrayMultiplication) accepts. */
 export interface GradeModuleProps {
+  /** The story card is covering the board: hold anything that plays by itself until it closes. */
+  waiting?: boolean;
   /** Level number on the map (1-based, display / data attributes only — never changes behaviour). */
   level?: number;
   /**

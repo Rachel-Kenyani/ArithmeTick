@@ -7,6 +7,7 @@ import { memo } from "react";
 import { storyFor } from "@/data/stories";
 import Grade1TakeAway from "@/features/play/games/take-away/Grade1TakeAway";
 import Grade1TenFrame from "@/features/play/games/ten-frame/Grade1TenFrame";
+import Grade2NumberTrack from "@/features/play/games/number-track/Grade2NumberTrack";
 import Grade2PlaceValue from "@/features/play/games/place-value/Grade2PlaceValue";
 import Grade2Stub from "@/features/play/games/grade2/Grade2Stub";
 import Grade3ArrayMultiplication from "@/features/play/games/array-multiplication/Grade3ArrayMultiplication";
@@ -43,6 +44,7 @@ const LevelContent = memo(function LevelContent({ level, childName, palActive, w
       return <Grade1TenFrame key={key} {...shared} target={level.puzzle.target} />;
     case 2:
       if (level.game === "placeValue") return <Grade2PlaceValue key={key} {...shared} op={level.puzzle.op} a={level.puzzle.a} b={level.puzzle.b} />;
+      if (level.game === "numberTrack") return <Grade2NumberTrack key={key} {...shared} from={level.puzzle.from} gaps={level.puzzle.gaps} />;
       return <Grade2Stub key={key} {...shared} goal={level.puzzle.goal} />;
     case 3:
       return <Grade3ArrayMultiplication key={key} {...shared} rows={level.puzzle.rows} cols={level.puzzle.cols} />;

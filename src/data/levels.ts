@@ -4,7 +4,7 @@
  * Within each grade, puzzle difficulty rises with the level number.
  */
 
-import type { ArrayPuzzle, Grade, Grade2StubPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
+import type { ArrayPuzzle, Grade, Grade2StubPuzzle, NumberTrackPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
 
 interface LevelBase {
   grade: Grade;
@@ -20,7 +20,8 @@ export type LevelDef =
   | (LevelBase & { kind: "puzzle"; grade: 1; game: "tenFrame"; puzzle: TenFramePuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 1; game: "takeAway"; puzzle: TakeAwayPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 2; game: "placeValue"; puzzle: PlaceValuePuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "numberTrack" | "groups" | "halves" | "clock"; puzzle: Grade2StubPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "numberTrack"; puzzle: NumberTrackPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "groups" | "halves" | "clock"; puzzle: Grade2StubPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; puzzle: ArrayPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
@@ -79,7 +80,18 @@ const placeValue = (number: number, op: PlaceValuePuzzle["op"], a: number, b = 0
 });
 
 /** A Grade 2 level whose board isn't built yet: it plays as a stand-in until then. */
-const grade2Stub = (number: number, game: "numberTrack" | "groups" | "halves" | "clock", title: string, equation: string): LevelDef => ({
+/** Curriculum 1.2: count back from `from`, filling in the missing numbers. */
+const numberTrack = (number: number, from: number, gaps: number[]): LevelDef => ({
+  grade: 2,
+  number,
+  kind: "puzzle",
+  game: "numberTrack",
+  title: "Count back",
+  equation: `${from}, ${from - 1}, ${from - 2} … count back from ${from}`,
+  puzzle: { from, gaps },
+});
+
+const grade2Stub = (number: number, game: "groups" | "halves" | "clock", title: string, equation: string): LevelDef => ({
   grade: 2,
   number,
   kind: "puzzle",
@@ -105,7 +117,7 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
   // tasks with real objects. The curriculum sub-strand each level teaches is noted beside it.
   2: [
     placeValue(1, "build", 34), // 1.1 place value, 1.2 counting forward in tens and ones
-    grade2Stub(2, "numberTrack", "Count back", "50, 49, 48 … count back from 50"), // 1.2 counting back from 50
+    numberTrack(2, 50, [48, 46, 43, 41]), // 1.2 counting back from 50
     quest(2, 3, "length"), // 2.1 length, non-standard units
     placeValue(4, "add", 27, 5), // 1.3 2-digit + 1-digit with regrouping
     placeValue(5, "sub", 32, 7), // 1.4 1-digit from 2-digit with regrouping

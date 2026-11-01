@@ -62,7 +62,7 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000 }:
 const styles = StyleSheet.create({
   pill: {
     alignSelf: "center",
-    minHeight: 44,
+    minHeight: 48,
     justifyContent: "center",
     overflow: "hidden",
     borderRadius: 999,

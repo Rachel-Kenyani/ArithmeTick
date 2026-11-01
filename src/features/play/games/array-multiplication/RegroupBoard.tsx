@@ -1,5 +1,6 @@
 /**
- * Phase B — regroup. The finished array sits beside a place-value board (Tens | Ones). Each tapped tile
+ * Phase B — regroup. The finished array sits beside a place-value board (Tens | Ones), or above it on
+ * phones too narrow for 48 px tiles side by side (the board then lies flat: the rod runs left to right). Each tapped tile
  * lights up and fills one slot of the ten-rod; at 10 the picked tiles leave the array, the rod turns gold
  * and the leftovers drop into Ones: 1 ten + k ones. Plain views and entering/exiting layout animations
  * only — nothing animates per frame while the child is thinking.
@@ -23,6 +24,8 @@ export interface RegroupGeometry {
   pitch: number;
   /** Rod segment height (and ones tile size). */
   seg: number;
+  /** The board sits under the array, rod horizontal. */
+  stacked: boolean;
 }
 
 interface RegroupBoardProps {
@@ -35,13 +38,13 @@ interface RegroupBoardProps {
 }
 
 export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundled, palActive, onTap }: Readonly<RegroupBoardProps>) {
-  const { pitch, seg } = geo;
+  const { pitch, seg, stacked } = geo;
   const inset = Math.max(3, Math.round(pitch * 0.08));
   const tile = pitch - inset * 2;
   const leftovers = Array.from({ length: pz.count }, (_, i) => i).filter((i) => !picked.includes(i));
 
   return (
-    <View style={styles.row}>
+    <View style={stacked ? styles.stack : styles.row}>
       {bundled ? null : (
         <Animated.View exiting={FADE_OUT} style={{ width: pz.cols * pitch, height: pz.rows * pitch }}>
           {Array.from({ length: pz.count }, (_, i) => {
@@ -70,12 +73,15 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
         </Animated.View>
       )}
 
-      <View style={styles.board} accessible accessibilityLabel={bundled ? `1 ten and ${pz.ones} ones` : `Ten-rod, ${picked.length} of 10`}>
-        <View style={styles.col}>
+      <View style={[styles.board, stacked ? styles.boardFlat : null]} accessible accessibilityLabel={bundled ? `1 ten and ${pz.ones} ones` : `Ten-rod, ${picked.length} of 10`}>
+        <View style={[styles.col, stacked ? styles.colFlat : null]}>
           <Text style={styles.head}>Tens</Text>
-          <View style={[styles.rod, bundled ? styles.rodDone : null, { width: seg + 12 }]}>
+          <View style={[styles.rod, bundled ? styles.rodDone : null, stacked ? styles.rodFlat : { width: seg + 12 }]}>
             {SLOTS.map((s) => (
-              <View key={s} style={[styles.seg, { width: seg, height: seg - 2 }, s < picked.length ? (bundled ? styles.segGold : styles.segOn) : null]} />
+              <View
+                key={s}
+                style={[styles.seg, stacked ? { width: seg - 2, height: seg } : { width: seg, height: seg - 2 }, s < picked.length ? (bundled ? styles.segGold : styles.segOn) : null]}
+              />
             ))}
           </View>
           {bundled ? (
@@ -84,10 +90,10 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
             </Animated.Text>
           ) : null}
         </View>
-        <View style={styles.divider} />
-        <View style={styles.col}>
+        <View style={stacked ? styles.dividerFlat : styles.divider} />
+        <View style={[styles.col, stacked ? styles.colFlat : null]}>
           <Text style={styles.head}>Ones</Text>
-          <View style={[styles.ones, { width: seg * 2 + 18, minHeight: seg * 2 + 12 }]}>
+          <View style={[styles.ones, stacked ? { width: TEN * seg, minHeight: seg + 8 } : { width: seg * 2 + 18, minHeight: seg * 2 + 12 }]}>
             {bundled
               ? leftovers.map((i, k) => (
                   <Animated.View
@@ -109,25 +115,39 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
   );
 });
 
-/** Biggest array pitch / rod segment that fit the stage side by side. */
+/** Tiles are touch targets: never smaller than this. */
+const MIN_PITCH = 48;
+
+/** Biggest array pitch / rod segment that fit: side by side when tiles stay ≥ 48 px, else stacked. */
 export function regroupGeometry(w: number, h: number, pz: Puzzle): RegroupGeometry {
   // rod: 10 segments + header + count; board ≈ 2 columns of (2·seg + 18) + divider + padding
   const segByH = (h - 96) / TEN;
-  const pitchByH = h / pz.rows;
   // width: cols·p + gap 16 + board (≈ 4·seg + 70), with seg ≈ 0.6·p
   const pitchByW = (w - 86) / (pz.cols + 2.4);
-  const pitch = Math.max(28, Math.min(64, pitchByH, pitchByW));
-  const seg = Math.max(14, Math.min(36, segByH, pitch * 0.6));
-  return { pitch: Math.floor(pitch), seg: Math.floor(seg) };
+  const side = Math.min(64, h / pz.rows, pitchByW);
+  if (side >= MIN_PITCH) {
+    const seg = Math.max(14, Math.min(36, segByH, side * 0.6));
+    return { pitch: Math.floor(side), seg: Math.floor(seg), stacked: false };
+  }
+  // Stacked: the flat board is two rows (label + 10 segments) across the width, ≈ 2·seg + 50 tall. Tiles keep
+  // 48 px first; the board's segments (not tapped) shrink to fit what height is left.
+  const pitch = Math.max(MIN_PITCH, Math.min(64, w / pz.cols, (h - 16 - 110) / pz.rows));
+  const seg = Math.max(14, Math.min(30, (w - 90) / TEN, (h - 16 - pz.rows * pitch - 50) / 2));
+  return { pitch: Math.floor(pitch), seg: Math.floor(seg), stacked: true };
 }
 
 const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 16 },
+  stack: { alignItems: "center", justifyContent: "center", gap: 16 },
   tile: { position: "absolute", backgroundColor: colors.atTealLight, borderWidth: 2, borderColor: colors.atTeal, alignItems: "center", justifyContent: "center" },
   picked: { backgroundColor: colors.atYellow, borderColor: "#E0A800", borderWidth: 3 },
   order: { fontFamily: fonts.bodyBold, color: colors.atInk },
   board: { flexDirection: "row", backgroundColor: colors.atCream, borderRadius: 18, borderWidth: 3, borderColor: colors.atMintDeep, padding: 8 },
   col: { alignItems: "center", gap: 4 },
+  boardFlat: { flexDirection: "column", alignItems: "center" },
+  colFlat: { flexDirection: "row", gap: 8 },
+  dividerFlat: { height: 2, alignSelf: "stretch", backgroundColor: colors.atMintDeep, marginVertical: 6 },
+  rodFlat: { flexDirection: "row", paddingVertical: 0, paddingHorizontal: 4 },
   head: { fontFamily: fonts.headingBold, fontSize: 14, color: colors.atTeal },
   divider: { width: 2, backgroundColor: colors.atMintDeep, marginHorizontal: 8 },
   rod: { alignItems: "center", gap: 2, paddingVertical: 4, borderRadius: 10, borderWidth: 2, borderColor: "rgba(0,111,104,0.25)", backgroundColor: colors.white },

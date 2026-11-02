@@ -1,7 +1,3 @@
-/**
- * The status line under the OTP boxes: "Verified!", the expired alert, or the "Code Expires in" countdown.
- */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import { CheckIcon, ClockIcon } from "@/components/ui/icons";

@@ -1,7 +1,3 @@
-/**
- * Brijo's whole-body view layers: boop/pop, shadow, rig sway/hop and squash animated styles.
- */
-
 import { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
 
 import { val, type Rig } from "./sampling";

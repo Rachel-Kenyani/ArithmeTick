@@ -1,7 +1,3 @@
-/**
- * Brijo's head on /welcome: entrance, float, tilt, blink and tap-squish on the whole head.
- */
-
 import { useEffect } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -76,7 +72,6 @@ export default function BrijoHead({ size }: Readonly<{ size: number }>) {
 
   return (
     <Animated.View style={[{ width: size, height: size * HEAD_ASPECT, alignSelf: "center", flexShrink: 0 }, enterStyle]}>
-      {/* gentle float + tilt for the whole (cropped) head */}
       <Animated.View style={[styles.fill, { transformOrigin: "50% 70%" }, floatStyle]}>
         <Pressable
           onPressIn={() => squish(true)}

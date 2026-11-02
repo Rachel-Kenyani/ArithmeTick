@@ -1,7 +1,3 @@
-/**
- * The base text field: icon, input and trailing slot over the shared field face.
- */
-
 import { useState, type ReactNode, type Ref } from "react";
 import {
   StyleSheet,

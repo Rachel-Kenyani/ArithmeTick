@@ -1,7 +1,3 @@
-/**
- * ScreenTimeSheet — daily cap reached: a warm stop, never a punishment.
- */
-
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import Animated, {
   FadeIn,
@@ -54,7 +50,6 @@ export default function ScreenTimeSheet({
         }
         exiting={reduced ? FadeOut : SlideOutDown}
       >
-        {/* moon + twinkles behind a sleepy Brijo */}
         <View
           style={styles.moonStage}
           importantForAccessibility="no-hide-descendants"

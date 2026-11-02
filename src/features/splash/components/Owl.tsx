@@ -1,14 +1,9 @@
-/**
- * Splash intro — the small logo owl of frames 1–3.
- */
-
 import { type SharedValue, useAnimatedProps } from "react-native-reanimated";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 import { GOLD, LOGO_W, OWL_H, PURPLE, PURPLE_DARK, TEAL } from "../constants";
 import { AnimatedG } from "./AnimatedSvg";
 
-/** The owl (Logo-splash-2-&-3), viewBox 0 0 383 104. `pupils` carries the blink. */
 export default function Owl({
   width,
   pupilsOpacity,

@@ -1,11 +1,8 @@
-/** Springs its children in on mount (used by the unlocked platform face and the "Play" pill). */
-
 import { useEffect, type ReactNode } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from "react-native-reanimated";
 
 import { SPRING } from "@/features/home/components/level-node/constants";
 
-/** Springs in from `scale` / `y` on mount (or just fades when reduced). `animate=false` renders at rest. */
 export default function SpringIn({
   animate,
   reduce,
@@ -32,7 +29,6 @@ export default function SpringIn({
       scale.set(withDelay(delay, withSpring(1, SPRING)));
       y.set(withDelay(delay, withSpring(0, SPRING)));
     }
-    // mount only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const animated = useAnimatedStyle(() => ({

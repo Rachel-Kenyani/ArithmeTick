@@ -1,16 +1,7 @@
-/**
- * Kitenge triangle lattice layer for JungleBackdrop.
- */
-
 import { StyleSheet } from "react-native";
 import Svg, { Defs, G, LinearGradient as SvgLinearGradient, Mask, Path, Pattern, Rect, Stop } from "react-native-svg";
 
-/* ------------------------------------------------------------------------------------------------
- * Kitenge triangle pattern — a 36×64 tile, masked by a vertical opacity gradient
- * ---------------------------------------------------------------------------------------------- */
-
 export function TrianglePattern({ uid, width, height }: Readonly<{ uid: string; width: number; height: number }>) {
-  // web: background-position 50% 0 → centre a tile horizontally
   const offsetX = ((((width - 36) / 2) % 36) + 36) % 36;
   return (
     <Svg width={width} height={height} style={StyleSheet.absoluteFill}>

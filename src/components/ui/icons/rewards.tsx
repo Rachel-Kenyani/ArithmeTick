@@ -1,14 +1,7 @@
-/**
- * Reward icons — star, trophy, medal, users.
- */
-
 import { Circle, Path } from "react-native-svg";
 
 import { make } from "./make";
 
-/* ---------------------------------------------------------------- rewards */
-
-/** Rounded 5-point star (pass fill="currentColor" for the solid version). */
 export const StarIcon = make(
   "StarIcon",
   <Path d="M12 3.3l2.6 5.3 5.8.9a.4.4 0 0 1 .2.7l-4.2 4.1 1 5.8a.4.4 0 0 1-.6.4L12 17.8l-5.2 2.7a.4.4 0 0 1-.6-.4l1-5.8L3 10.2a.4.4 0 0 1 .2-.7l5.8-.9z" />,

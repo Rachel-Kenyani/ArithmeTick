@@ -1,20 +1,9 @@
-/**
- * "Continue with Google" for both Log In and Create Account. The native Google account picker returns an ID
- * token, which Supabase turns into a session (signInWithIdToken): the first time, that also creates the account.
- *
- * Needs a development build (`npx expo run:ios` / `run:android`): Expo Go has no native Google module, so the
- * library is loaded lazily and a friendly message is shown there. Without Supabase + the Google client IDs
- * configured, the offline prototype's sample identity is used instead.
- */
-
 import { isAuthConfigured, supabase } from "@/services/auth";
 
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
 
-/** Placeholder identity for the offline prototype. */
 const SAMPLE_IDENTITY = { email: "parent@gmail.com", name: null };
-/** A Supabase user whose first and latest sign-in are this close together has just been created. */
 const NEW_ACCOUNT_WINDOW_MS = 30_000;
 
 export type GoogleResult =
@@ -77,12 +66,10 @@ export async function continueWithGoogle(): Promise<GoogleResult> {
   }
 }
 
-/** Forget the Google account on log out, so the picker shows next time. */
 export async function signOutOfGoogle(): Promise<void> {
   if (!isGoogleConfigured || !googleModule) return;
   try {
     await googleModule.GoogleSignin.signOut();
   } catch {
-    // Logging out of ArithmeTick still goes ahead.
   }
 }

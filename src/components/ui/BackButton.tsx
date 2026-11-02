@@ -1,11 +1,3 @@
-/**
- * The sun-yellow back square that sits top-left above the card. 64×64, chunky sun edge.
- *
- *   <BackButton href={ROUTES.welcome} />          go to a route
- *   <BackButton />                                 router.back(), or `fallbackHref` when there is no history
- *   <BackButton onPress={close} label="Close" />   custom behaviour
- */
-
 import { router, type Href } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 

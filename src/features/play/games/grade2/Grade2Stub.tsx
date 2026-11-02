@@ -1,5 +1,3 @@
-// TEMPORARY stand-in for the Grade 2 boards still to build (number track, groups, halves, clock).
-
 import { useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 

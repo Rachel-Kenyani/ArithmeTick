@@ -1,8 +1,3 @@
-/**
- * Verify card logic: code / error state, countdown + expiry, resend toast, shake + haptic, and verify → next.
- * The code itself is checked by services/auth (Supabase, or any 8 digits offline).
- */
-
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -42,7 +37,6 @@ export function useVerifyFlow(
   const [checking, setChecking] = useState(false);
   const [sending, setSending] = useState(false);
   const { secondsLeft, restart } = useCountdown(CODE_LIFETIME_SECONDS);
-  /** Bumped on every resend: drives (and re-triggers) the "New code sent" toast. 0 = hidden. */
   const [toast, setToast] = useState(0);
   const otpRef = useRef<TextInputInstance>(null);
   const navTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -73,7 +67,6 @@ export function useVerifyFlow(
       );
   }, [expired]);
 
-  /** Gentle side-to-side shake of the boxes (skipped with reduced motion) and a light warning haptic. */
   const shake = () => {
     void Haptics.notificationAsync(
       Haptics.NotificationFeedbackType.Warning,
@@ -89,7 +82,6 @@ export function useVerifyFlow(
   const verify = (value: string) => {
     if (verified || checking) return;
     if (expired) {
-      // The status line already says the code expired: point at its action instead of adding a second error.
       setError(null);
       shake();
       if (!reduceMotion) {
@@ -134,7 +126,6 @@ export function useVerifyFlow(
     });
   };
 
-  /** Resend Code is muted until the clock ends (Supabase refuses sooner) and while a code is on its way. */
   const canResend = expired && !sending && !verified;
 
   const onChange = (next: string) => {

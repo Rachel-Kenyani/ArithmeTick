@@ -1,15 +1,3 @@
-/**
- * Grade 2, "Make 34" (KICD Grade 2, 1.1 place value): fill ten-crates, then name the tens and ones.
- *   1. Tap or drag a loose item and it lands on the crate (the Grade 1 white ten-crate).
- *   2. A full crate moves up to the "Full crates" shelf. After the first one is filled by hand, tapping an
- *      empty crate fills it by itself, counting 1 to 10.
- *   3. When fewer than ten are left they can't fill a crate: they are left over. The child answers "how many
- *      full crates?" and "how many left over?", and only then the equation names them: 34 = 3 tens + 4 ones.
- * The instructions never say "tens" or "ones" before the child has seen them: the words arrive with the answer.
- * Feedback (no error text): a wrong answer counts the crates aloud (1, 2, 3); a wrong ones answer
- * counts the loose ones.
- */
-
 import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
 import {
   Pressable,
@@ -53,7 +41,6 @@ const POP = ZoomIn.springify()
   .damping(20)
   .reduceMotion(ReduceMotion.System);
 
-/** Three answer tiles around `n` (never below 0). */
 const around = (n: number) => [
   ...new Set([n - 1, n, n + 1].filter((x) => x >= 0)),
 ];
@@ -74,9 +61,7 @@ export default function PackTens({
   const tensAnswer = Math.floor(a / 10);
   const onesAnswer = a % 10;
 
-  /** Loose items still on the table, by grid position (packed ones leave their spot empty). */
   const [packed, setPacked] = useState<number[]>([]);
-  /** Items on the open crate (0–10). */
   const [inCrate, setInCrate] = useState(0);
   const [shelf, setShelf] = useState(0);
   const [handFilled, setHandFilled] = useState(false);
@@ -87,7 +72,6 @@ export default function PackTens({
   const [bubbles, setBubbles] = useState<Partial<Record<string, Bubble>>>({});
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const closingRef = useRef(false);
-  /** Items on the open crate, kept in step with `inCrate` for the rising note during an auto-fill. */
   const crateRef = useRef(0);
   const doneRef = useRef(false);
 
@@ -106,7 +90,6 @@ export default function PackTens({
     setInCrate(crateRef.current);
   };
 
-  // A full crate goes up to the shelf of full crates.
   useEffect(() => {
     if (inCrate < 10 || closingRef.current) return;
     closingRef.current = true;
@@ -120,12 +103,10 @@ export default function PackTens({
     }, CLOSE_MS);
   }, [inCrate, schedule]);
 
-  // Too few left to fill the open crate: they go back to the table, and packing is over.
   useEffect(() => {
     if (step !== "pack" || closingRef.current) return;
     if (remaining + inCrate >= 10) return;
     if (inCrate > 0) {
-      // A short beat first, so the child sees the crate can't be filled before they hop back.
       closingRef.current = true;
       schedule(() => {
         setPacked((prev) => prev.slice(0, prev.length - inCrate));
@@ -140,7 +121,6 @@ export default function PackTens({
     schedule(() => setStep("tens"), 500);
   }, [step, remaining, inCrate, schedule]);
 
-  /** A dragged item counts when it is let go over the crate (with a little give around its edge). */
   const frameRef = useRef<ComponentRef<typeof View>>(null);
   const dropOnCrate = (slot: number, x: number, y: number) => {
     frameRef.current?.measureInWindow((fx, fy, fw, fh) => {
@@ -155,7 +135,6 @@ export default function PackTens({
     });
   };
 
-  /** Tap the open crate (after the first one is filled by hand): it fills itself, counting up. */
   const autoFill = () => {
     if (step !== "pack" || waiting || closingRef.current) return;
     if (!handFilled) {
@@ -170,7 +149,6 @@ export default function PackTens({
     next.forEach((slot, k) => schedule(() => pack(slot), k * AUTO_STEP_MS));
   };
 
-  /** Count aloud, one by one: the full crates (1, 2, 3) or the ones left over (1, 2, 3, 4). */
   const countAloud = (what: "tens" | "ones") => {
     const keys =
       what === "tens"
@@ -215,7 +193,6 @@ export default function PackTens({
     schedule(onSolved, SOLVED_HANDOFF_MS);
   };
 
-  /* ---- layout ---- */
   const onLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setSize((prev) =>
@@ -225,7 +202,6 @@ export default function PackTens({
     );
   };
   const crateCell = size ? Math.floor(Math.min(36, (size.w - 60) / 6)) : 30;
-  // Loose items: the most columns that keep each one near the 48 px touch size and fit the height left.
   const grid = useMemo(() => {
     if (!size) return { cols: 7, pitch: 44 };
     const avail = size.h - 58 - 44 - 46 - (crateCell * 2 + 24) - 40 - 40;
@@ -271,7 +247,6 @@ export default function PackTens({
 
           <Prompt text={prompt.replaceAll("tomato", itemWord(item))} clipId={promptClip} waiting={waiting} silent={step === "solved"} />
 
-          {/* Full crates: each is one ten */}
           <View
             style={[styles.shelf, step === "tens" ? styles.focus : null]}
             accessible
@@ -307,7 +282,6 @@ export default function PackTens({
             </View>
           ) : null}
 
-          {/* The table: loose items to pack; what's left is the ones */}
           <View style={[styles.table, step === "ones" ? styles.focus : null]}>
             {step !== "pack" ? (
               <Text style={partStyles.head}>Left over</Text>

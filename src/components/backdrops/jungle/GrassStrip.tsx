@@ -1,7 +1,3 @@
-/**
- * Bottom grass + rocks strip for JungleBackdrop.
- */
-
 import Svg, { G, Path } from "react-native-svg";
 
 import { GRASS, GRASS_H, GRASS_W } from "./grassArt";
@@ -16,7 +12,6 @@ export function GrassStrip({ width, height }: Readonly<{ width: number; height: 
       preserveAspectRatio="xMidYMax slice"
       style={{ position: "absolute", left: 0, bottom: 0 }}
     >
-      {/* dense low turf as one silhouette: a wide outline stroke under a plain fill */}
       <Path d={GRASS.turf} fill={C.bladeEdge} stroke={C.bladeEdge} strokeWidth={2.6} strokeLinejoin="round" />
       <Path d={GRASS.turf} fill={GRASS_TONES[0][0]} />
       <G stroke={C.bladeEdge} strokeWidth={1.3} strokeLinejoin="round">

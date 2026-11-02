@@ -1,11 +1,3 @@
-/**
- * Reset Password (mockup 10). Last step of Forgot → Verify Identity → here, or opened straight from the
- * "Reset password" link in the email (arithmetick://reset-password#…tokens). Needs a pending reset flow or a
- * valid link, otherwise → Forgot Password / Log In. The new password is only checked (≥ 8 characters, both entries match) —
- * it is never stored or logged. Save → actions.completeReset() → Log In, which shows a one-time
- * "Password updated" note (in-memory flag from @/lib/flash, no secrets).
- */
-
 import * as Linking from "expo-linking";
 import { router, useIsFocused } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -38,10 +30,8 @@ const ENTER = FadeInDown.springify().stiffness(260).damping(24).reduceMotion(Red
 export default function ResetPasswordScreen() {
   const hydrated = useHydrated();
   const { pending } = useAppState();
-  // completeReset() clears `pending` while we navigate to Log In — don't bounce meanwhile.
   const [saved, setSaved] = useState(false);
   const allowed = pending?.purpose === "reset" || saved;
-  // Opened from the email's link: turn it into a reset session first.
   const url = Linking.useURL();
   const fromLink = !allowed && !!url?.includes("reset-password") && /access_token|error/.test(url);
 
@@ -72,7 +62,6 @@ function ResetCard({ onSaved }: Readonly<{ onSaved: () => void }>) {
 
   const onPasswordChange = (next: string) => {
     setPassword(next);
-    // Reward early: notes clear as soon as they're fixed (new notes only appear on submit).
     setErrors((prev) => ({
       password: prev.password && !passwordProblem(next) ? null : prev.password,
       confirm: prev.confirm && confirm && !confirmProblem(next, confirm) ? null : prev.confirm,
@@ -100,7 +89,6 @@ function ResetCard({ onSaved }: Readonly<{ onSaved: () => void }>) {
       }
       markPasswordUpdated();
       onSaved();
-      // Go to Log In first (replacing this screen), then clear the finished reset flow.
       router.replace(ROUTES.login);
       actions.completeReset();
     });

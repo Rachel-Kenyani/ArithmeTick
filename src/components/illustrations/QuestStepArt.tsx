@@ -1,10 +1,3 @@
-/**
- * Step illustrations for the Move & Play (physical quest) overlay:
- *   CapsStepArt    — a little pile of 10 bottle tops
- *   GroupsStepArt  — two groups of caps
- *   GrownUpStepArt — a child showing a grown-up
- */
-
 import { Circle, Ellipse, G, Path, Rect } from "react-native-svg";
 
 import { colors } from "@/theme";
@@ -18,7 +11,6 @@ const CAP_COLOURS = [
   { top: colors.atPurpleLight, side: colors.atPurple },
 ] as const;
 
-/** A single bottle top seen at a slight angle: ridged side band, flat top, highlight. */
 function Cap({ x, y, r = 6, tone = 0 }: Readonly<{ x: number; y: number; r?: number; tone?: number }>) {
   const c = CAP_COLOURS[tone % CAP_COLOURS.length];
   return (
@@ -30,7 +22,6 @@ function Cap({ x, y, r = 6, tone = 0 }: Readonly<{ x: number; y: number; r?: num
   );
 }
 
-/** Ten caps: a 4-3-2-1 pyramid. */
 const PILE = [
   [11, 52], [24, 52], [37, 52], [50, 52],
   [17.5, 43], [30.5, 43], [43.5, 43],
@@ -73,7 +64,6 @@ export function GroupsStepArt({ size = 64, title }: Readonly<ArtProps>) {
 export function GrownUpStepArt({ size = 64, title }: Readonly<ArtProps>) {
   return (
     <ArtFrame size={size} title={title}>
-      {/* grown-up (right) */}
       <Path d="M36 62V40a10 10 0 0 1 20 0v22z" fill={colors.atPurple} {...ink} />
       <Path d="M40 42v18" stroke={colors.atPurpleLight} strokeWidth={3} strokeLinecap="round" />
       <Circle cx="46" cy="20" r="9" fill="#c98a5e" {...ink} />
@@ -81,18 +71,15 @@ export function GrownUpStepArt({ size = 64, title }: Readonly<ArtProps>) {
       <Circle cx="42.5" cy="21" r="1.1" fill={OUTLINE} />
       <Circle cx="49" cy="21" r="1.1" fill={OUTLINE} />
       <Path d="M43 25a3.5 3.5 0 0 0 5 0" fill="none" stroke={OUTLINE} strokeWidth={1.4} strokeLinecap="round" />
-      {/* child (left) */}
       <Path d="M8 62V48a8 8 0 0 1 16 0v14z" fill={colors.atTeal} {...ink} />
       <Circle cx="16" cy="34" r="7.5" fill="#f3b98a" {...ink} />
       <Path d="M8.6 33a7.5 7.5 0 0 1 14.8 0c-3 0-6-1-7.4-3-1.4 2-4 3-7.4 3z" fill="#5a3a24" {...ink} strokeWidth={1.6} />
       <Circle cx="14" cy="35" r="0.9" fill={OUTLINE} />
       <Circle cx="19" cy="35" r="0.9" fill={OUTLINE} />
       <Path d="M14.5 38a2.5 2.5 0 0 0 3.5 0" fill="none" stroke={OUTLINE} strokeWidth={1.2} strokeLinecap="round" />
-      {/* child holds up a cap toward the grown-up */}
       <Path d="M22 48l7-10" stroke={OUTLINE} strokeWidth={5} strokeLinecap="round" />
       <Path d="M22 48l7-10" stroke={colors.atTeal} strokeWidth={2.6} strokeLinecap="round" />
       <Cap x={30} y={34} r={4.8} tone={0} />
-      {/* sparkle */}
       <Path d="M30 22v4M28 24h4" stroke={colors.atYellow} strokeWidth={2} strokeLinecap="round" />
       <Rect x="0" y="62" width="64" height="2" fill={OUTLINE} />
     </ArtFrame>

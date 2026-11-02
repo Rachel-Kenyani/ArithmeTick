@@ -1,12 +1,3 @@
-/**
- * "Welcome Back! Who is playing today?" — choose a child (docs/APP-SHELL.md §2/§5, mockup 07).
- *
- * Title card on top, then the family as big pale-mint tiles (avatar, name in Quicksand teal, a tiny grade chip
- * and ★ stars) plus the dashed "Add Profile" tile. 2 columns on phones, 3 on tablets, 4 on wide screens; rows
- * are centred on wider screens. Tapping a child: chord + tile pop + avatar hop + sparkle burst, the other
- * tiles step back, then selectProfile → /home. A quiet press-and-hold "Grown-ups: Log out" sits underneath.
- */
-
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -47,7 +38,6 @@ export default function ProfilesScreen() {
     reduceMotion,
   });
 
-  // Breakpoints (web: sm 640, lg 1024).
   const sm = W >= 640;
   const { cols, gap, listMax } = gridLayout(W);
   const listW = Math.min(
@@ -99,7 +89,6 @@ export default function ProfilesScreen() {
           );
         })}
 
-        {/* A family has at most MAX_PROFILES explorers: the Add tile goes away once it's full. */}
         {canAdd ? (
           <AddProfileTile
             index={profiles.length}

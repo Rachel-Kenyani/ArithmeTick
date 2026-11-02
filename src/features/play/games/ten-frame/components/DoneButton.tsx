@@ -1,8 +1,3 @@
-/**
- * "Done" — the child decides when the frame shows the number, then checks. It sits where the
- * equation strip appears once the answer is right, so the board never shows a running count.
- */
-
 import Button from "@/components/ui/Button";
 import { CheckIcon } from "@/components/ui/icons";
 

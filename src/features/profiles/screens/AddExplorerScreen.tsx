@@ -1,13 +1,3 @@
-/**
- * "Almost Done!" — add a child profile (docs/APP-SHELL.md §2/§5, mockup 06).
- *
- * Parent-facing form on the mint card: the Explorer's name (with a live preview of the avatar the child
- * will get, popping in as soon as a name is typed), the grade select, and an optional 6-character school
- * invite code. "Let's Play →" → actions.addProfile → /profiles. Messages are friendly and only appear
- * after a submit attempt. The back button only exists when the family already has children.
- * A family has at most MAX_PROFILES children: arriving here with a full family goes back to /profiles.
- */
-
 import { StyleSheet } from "react-native";
 import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
 
@@ -74,15 +64,6 @@ export default function AddExplorerScreen() {
             error={errors.grade}
             style={styles.grade}
           />
-
-          {/* <SchoolCodeBlock
-            codeRef={codeRef}
-            length={CODE_LENGTH}
-            code={code}
-            error={errors.code}
-            codeReady={codeReady}
-            onChange={onCodeChange}
-          /> */}
 
           <Button trailing="arrow" loading={busy} onPress={submit} style={styles.submit}>
             Add Profile

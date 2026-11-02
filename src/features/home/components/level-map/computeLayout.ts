@@ -1,5 +1,3 @@
-/** Level-map geometry: stop positions, one continuous trail and the finish flag, in px. */
-
 import type { TrailPropKind } from "@/features/home/components/TrailArt";
 
 export interface Pt {
@@ -15,11 +13,8 @@ export interface MapLayout {
   currentNode: number;
   trail: number;
   nodes: Pt[];
-  /** segments[i] joins node i → node i + 1 */
   segments: string[];
-  /** The final leg runs from the last stop directly into the purple flag's pole. */
   finishSegment: string;
-  /** A single C1-continuous spline passing through every stop centre in order. */
   trailPath: string;
   flag: Pt;
   props: { kind: TrailPropKind; x: number; y: number; size: number }[];
@@ -31,8 +26,6 @@ export const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.ma
 const f = (n: number) => Math.round(n * 10) / 10;
 
 export function computeLayout(width: number, regionHeight: number, count: number): MapLayout {
-  // Tablet-sized stops (88px) whenever the column is tablet-wide and the map has a usable height — that includes
-  // tablets lying flat (1024×768), where the trail simply scrolls a little; phones held sideways stay compact.
   const big = width >= 460 && regionHeight >= 480;
   const node = big ? 88 : 76;
   const currentNode = node + 8;
@@ -49,7 +42,6 @@ export function computeLayout(width: number, regionHeight: number, count: number
     y: height - padBottom - i * step,
   }));
 
-  // Vertical tangents at every stop make this one smooth spline, rather than a set of crossing trail legs.
   const segments = nodes.slice(0, -1).map((a, i) => {
     const b = nodes[i + 1];
     return `M${f(a.x)} ${f(a.y)}C${f(a.x)} ${f(a.y - step * 0.42)} ${f(b.x)} ${f(b.y + step * 0.42)} ${f(b.x)} ${f(b.y)}`;
@@ -59,7 +51,6 @@ export function computeLayout(width: number, regionHeight: number, count: number
   const finishSegment = `M${f(last.x)} ${f(last.y)}C${f(last.x)} ${f(last.y - step * 0.3)} ${f(flag.x)} ${f(flag.y + step * 0.2)} ${f(flag.x)} ${f(flag.y)}`;
   const trailPath = `${segments[0] ?? ""}${segments.slice(1).map((segment) => segment.replace(/^M[^C]+/, "")).join("")}${finishSegment.replace(/^M[^C]+/, "")}`;
 
-  // Small props on the outer edge opposite each stop (that edge is empty at that height).
   const inset = big ? 46 : 30;
   const props = nodes.map((p, i) => ({
     kind: PROP_KINDS[i % PROP_KINDS.length],

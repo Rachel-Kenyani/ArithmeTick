@@ -1,7 +1,3 @@
-/**
- * A palm crown in a padded viewBox (optionally mirrored for the top-right corner).
- */
-
 import Svg, { G, Path } from "react-native-svg";
 
 import { C } from "./palette";

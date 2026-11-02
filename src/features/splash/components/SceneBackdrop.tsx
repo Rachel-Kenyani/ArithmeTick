@@ -1,15 +1,9 @@
-/**
- * Splash intro — the backdrop layers: the teal pattern, the sky pattern over it (frame 6), and the frames 10–12
- * background images, each faded in by its animated style.
- */
-
 import { Image, StyleSheet } from "react-native";
 import Animated, { type AnimatedStyle } from "react-native-reanimated";
 import type { ViewStyle } from "react-native";
 
 import TrianglePattern from "./TrianglePattern";
 
-/** Frames 10–12 backgrounds, exported from Figma at 3× (1284×2778). */
 const BG_10 = require("../../../../assets/splash/bg-10.jpg");
 const BG_11 = require("../../../../assets/splash/bg-11.jpg");
 const BG_12 = require("../../../../assets/splash/bg-12.jpg");

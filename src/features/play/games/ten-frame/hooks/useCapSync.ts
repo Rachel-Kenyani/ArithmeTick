@@ -1,7 +1,3 @@
-/**
- * Keeps every cap on its computed spot: shared drag values for the gestures + syncing caps to slots / tray dimples.
- */
-
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { useSharedValue } from "react-native-reanimated";
 
@@ -17,11 +13,6 @@ export function useCapSync(geo: Geometry, caps: CapMotion[], placed: number[], r
   const gridRect = useSharedValue<Rect4>(geo.grid);
   const drag = useMemo<DragShared>(() => ({ active: dragActive, near: dragNear, grid: gridRect }), [dragActive, dragNear, gridRect]);
 
-  /**
-   * Move every cap (except the one under a finger) to the centre of its slot / tray dimple,
-   * computed from the board geometry. "instant" = jump (first layout, resize), "spring" = animate caps
-   * whose target moved (plus `forceId`, e.g. a cap that was dropped far away and must fly home).
-   */
   const syncCaps = useCallback(
     (mode: "instant" | "spring", forceId?: number) => {
       const g = geoRef.current;
@@ -38,14 +29,12 @@ export function useCapSync(geo: Geometry, caps: CapMotion[], placed: number[], r
     [caps, draggingRef, flightRef, geoRef, placedRef, targetsRef],
   );
 
-  // New sizes → put every cap exactly on its spot (before paint).
   useLayoutEffect(() => {
     geoRef.current = geo;
     gridRect.set(geo.grid);
     syncCaps("instant");
   }, [geo, gridRect, syncCaps, geoRef]);
 
-  // Grid contents changed → spring the caps that have somewhere new to be.
   useLayoutEffect(() => {
     syncCaps("spring");
   }, [placed, syncCaps]);

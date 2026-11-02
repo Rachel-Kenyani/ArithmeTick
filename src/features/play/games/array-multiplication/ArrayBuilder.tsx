@@ -1,10 +1,3 @@
-/**
- * Phase A — stretch the array. Touching or dragging anywhere on the 5 × 6 guide makes the cell under the
- * finger the array's bottom-right corner; the corner handle follows. The drag maths runs on the UI
- * thread and only crosses to JS when the size actually changes, so it stays smooth on budget phones.
- * With help on, rows lock to the target, columns stop at it and each row is banded with a skip count.
- */
-
 import { memo, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
@@ -61,7 +54,6 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palAct
     onUpdate: (e) => follow(e.x, e.y),
   });
 
-  // The corner handle springs to the array's corner.
   const hx = useSharedValue(dims.cols * pitch);
   const hy = useSharedValue(dims.rows * pitch);
   useEffect(() => {

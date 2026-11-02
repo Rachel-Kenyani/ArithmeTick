@@ -1,10 +1,3 @@
-/**
- * BottomNav — the app's bottom icon dock (Map · Badges · Scores).
- *
- * - Descriptive icons give children quick visual targets; labels remain available to assistive technology.
- * - A compact dock keeps Map as the screen's focus. Only the selected item gets the chunky purple treatment.
- */
-
 import { Pressable, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 
@@ -33,14 +26,12 @@ const TABS: {
   { key: "settings", label: "Settings", href: ROUTES.settings, Icon: SettingsIcon },
 ];
 
-/** Teal on the pale dock and white on the purple selection both meet AA contrast. */
 const IDLE_TILE = "rgba(0,111,104,0.1)";
 const TILE = colors.atPurple;
 const TILE_EDGE = "#4a2a75";
 const EDGE = 6;
 const EDGE_PRESSED = 2;
 
-/** Switch tabs without stacking screens: "Map" returns to the existing /home, other tabs replace the current one. */
 export function navigateToTab(href: string) {
   if (href === ROUTES.home) router.dismissTo(ROUTES.home as never);
   else router.replace(href as never);

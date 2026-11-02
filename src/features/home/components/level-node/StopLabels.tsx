@@ -1,5 +1,3 @@
-/** The small lesson label and local Play cue below a reached stop. */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import PlayPill from "@/features/home/components/level-node/PlayPill";
@@ -14,7 +12,6 @@ export default function StopLabels({ status, height, title, reduceMotion }: Read
       style={[styles.below, { top: ABOVE + height + (status === "current" ? -12 : 8) }]}
     >
       {status === "current" ? <PlayPill reduceMotion={reduceMotion} /> : null}
-      {/* Titles only on reached stops: locked ones show just the lock + number (the title is still spoken). */}
       {status === "locked" ? null : (
         <View style={styles.title}>
           <Text numberOfLines={1} style={styles.titleText}>

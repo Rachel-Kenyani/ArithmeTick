@@ -1,7 +1,3 @@
-/**
- * Splash intro — frame 10's grass, rising along the bottom of the screen.
- */
-
 import Animated, { type AnimatedStyle } from "react-native-reanimated";
 import type { ViewStyle } from "react-native";
 import { SvgXml } from "react-native-svg";

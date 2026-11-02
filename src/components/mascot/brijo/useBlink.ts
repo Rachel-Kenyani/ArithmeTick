@@ -1,7 +1,3 @@
-/**
- * Brijo eyelids: a one-shot blink helper plus natural blinking on a random timer.
- */
-
 import { useCallback, useEffect } from "react";
 import { Easing, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
@@ -18,7 +14,6 @@ export function useBlink(canBlink: boolean) {
     },
     [lid],
   );
-  // Natural blinking every ~3–5s (sometimes a double blink).
   useEffect(() => {
     if (!canBlink) return;
     let timer: ReturnType<typeof setTimeout> | undefined;

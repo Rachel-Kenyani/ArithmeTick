@@ -1,7 +1,3 @@
-/**
- * A single cartoon cloud (halo, outline, shaded body, hatching).
- */
-
 import Svg, { ClipPath, Defs, G, Path, Rect } from "react-native-svg";
 
 import { cloudHatches, cloudPath, type CloudDef } from "./cloudArt";

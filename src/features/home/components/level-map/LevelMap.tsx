@@ -1,15 +1,3 @@
-/**
- * LevelMap — the winding jungle trail on the home screen (docs/APP-SHELL.md §5 "Home").
- *
- * - Six stops zig-zag up the screen (level 1 at the bottom, by the grass — the trail climbs like a jungle
- *   path) joined by one sandy SVG spline that terminates at the purple finish flag.
- * - Geometry is computed in px from the measured column width (onLayout) and the scroll region's height
- *   (`regionHeight`): on a typical phone (390×844) the whole trail fits; on short screens it scrolls and the
- *   home screen centres the stop to play on load (see `onFocusY`).
- * - `unlockLevel` (from state.justUnlocked) plays the unlock: the stop starts locked, its padlock pops off
- *   with a sparkle + sfx.groupPulse(), the walked pebbles reach it — then `onUnlockDone`.
- */
-
 import { useCallback, useMemo, useState } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
@@ -25,16 +13,9 @@ import { levelStatus, type LevelDef, type LevelStatus } from "@/data/levels";
 
 export interface LevelMapProps {
   levels: readonly LevelDef[];
-  /** Levels finished in this grade (0..6). */
   completed: number;
-  /** Height of the scroll region the map lives in (used for sizing). 0 until measured. */
   regionHeight: number;
-  /**
-   * Called once, when the map is first laid out, with the y (in map coordinates) of the centre of the stop to
-   * play — the screen scrolls it into view.
-   */
   onFocusY?: (y: number) => void;
-  /** Level that was just unlocked (play the unlock sequence once), or null. */
   unlockLevel: number | null;
   onUnlockDone: () => void;
   onPlay: (level: LevelDef) => void;
@@ -59,19 +40,18 @@ export default function LevelMap({ levels, completed, regionHeight, onFocusY, un
   const { unlock, unlockSegment, popTick } = useUnlockSequence({ unlockLevel, measured, reduceMotion, onUnlockDone });
 
   const allDone = completed >= count;
-  const currentIndex = allDone ? count - 1 : completed; // 0-based index of the stop to play (or the last one)
+  const currentIndex = allDone ? count - 1 : completed;
 
   const statusOf = (n: number): LevelStatus => {
     if (unlock?.level === n && unlock.phase === "waiting") return "locked";
     return levelStatus(n, completed);
   };
   const walked = (segmentIndex: number) => {
-    const to = segmentIndex + 2; // level number the segment leads to
+    const to = segmentIndex + 2;
     if (unlock?.level === to && unlock.phase !== "hop") return false;
     return to <= completed + 1;
   };
 
-  // First measured layout: report the stop to play so the screen can centre it (it scrolls to the top when complete).
   const focusIndex = unlock ? unlock.level - 1 : currentIndex;
   const focusY = layout ? layout.nodes[clamp(focusIndex, 0, count - 1)].y : null;
   useReportFocus(focusY, onFocusY);
@@ -82,13 +62,10 @@ export default function LevelMap({ levels, completed, regionHeight, onFocusY, un
     <View onLayout={handleLayout} style={{ width: "100%", height: layout?.height ?? 560 }}>
       {layout ? (
         <>
-          {/* Trail */}
           <MapTrail layout={layout} unlockSegment={unlockSegment} allDone={allDone} walked={walked} />
 
-          {/* Finish flag. (The bushes / flowers / rocks along the edges were dropped to declutter the map.) */}
           <MapFinishFlag layout={layout} />
 
-          {/* Stops */}
           {levels.map((level, i) => {
             const status = statusOf(level.number);
             const p = layout.nodes[i];
@@ -107,7 +84,6 @@ export default function LevelMap({ levels, completed, regionHeight, onFocusY, un
             );
           })}
 
-          {/* Unlock sparkle */}
           {unlock && unlock.phase !== "waiting" && !reduceMotion ? (
             <SparkleBurst
               key="burst"

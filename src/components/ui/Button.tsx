@@ -1,15 +1,3 @@
-/**
- * The chunky jungle button from the onboarding mockups.
- *
- *   <Button icon={<RouteIcon />} trailing="chevron" onPress={…}>I'm New Here!</Button>
- *   <Button variant="white" icon={<GoogleIcon />}>Continue with Google</Button>
- *   <Button trailing="arrow" loading={busy} onPress={submit}>Log In</Button>
- *
- * - Quicksand label, white on teal / purple, black on white / sun; icon + label + trailing glyph centred.
- * - A solid bottom "edge" that shrinks while pressed as the face sinks 4px.
- * - sfx.click() + a light haptic on every press. Disabled = faded; loading = spinner, not pressable.
- */
-
 import * as Haptics from "expo-haptics";
 import type { ReactNode } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
@@ -22,7 +10,6 @@ export type ButtonVariant = "teal" | "purple" | "white" | "sun";
 
 export interface ButtonProps {
   variant?: ButtonVariant;
-  /** lg = 64px tall full-width CTA (default); md = 52px */
   size?: "md" | "lg";
   icon?: ReactNode;
   trailing?: "chevron" | "arrow" | null;
@@ -87,7 +74,6 @@ export default function Button({
         const down = pressed && !inert;
         return (
           <>
-            {/* the chunky edge: a darker slab under the face */}
             <View style={[StyleSheet.absoluteFill, { top: EDGE, backgroundColor: face.edge, borderRadius: dim.radius }]} />
             <View
               style={[

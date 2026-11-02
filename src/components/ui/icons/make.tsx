@@ -1,7 +1,3 @@
-/**
- * Icon factory — shared props, a11y helper and the `make` wrapper every outline icon uses.
- */
-
 import type { ReactNode } from "react";
 import type { ColorValue, ViewStyle } from "react-native";
 import Svg from "react-native-svg";
@@ -9,17 +5,11 @@ import Svg from "react-native-svg";
 import { colors } from "@/theme";
 
 export interface IconProps {
-  /** px; default 24 */
   size?: number;
-  /** When set, the icon is announced (accessible image); otherwise hidden from assistive tech. */
   title?: string;
-  /** Tint; what "currentColor" resolves to. Default colors.jgOutline. */
   color?: ColorValue;
-  /** Default "none". Pass "currentColor" for the solid variant. */
   fill?: ColorValue;
-  /** Default "currentColor". */
   stroke?: ColorValue;
-  /** Default 2. */
   strokeWidth?: number;
   style?: ViewStyle;
 }

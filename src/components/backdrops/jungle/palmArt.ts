@@ -1,12 +1,4 @@
-/**
- * Palm frond art for JungleBackdrop corners — procedural crown paths and the two seeded palms.
- */
-
 import { cubic, deg, leaf, leavesAlong, P, rng, towards, type Pt } from "./geometry";
-
-/* ------------------------------------------------------------------------------------------------
- * Canopy — palm fronds in the corners (drawn for the top-left; the right one is mirrored)
- * ---------------------------------------------------------------------------------------------- */
 
 export const PALM_W = 220;
 export const PALM_H = 330;
@@ -23,10 +15,6 @@ export interface PalmArt {
 
 type FrondSpec = readonly [angleDeg: number, len: number];
 
-/**
- * A palm crown seen from below: a dark spiky fan at the hub, olive fronds arching out from it with long
- * narrow leaflets hanging from both sides (they read as a curtain along the screen edge), and two vines.
- */
 function makePalm(seed: number, hub: Pt, fronds: readonly FrondSpec[]): PalmArt {
   const rand = rng(seed);
   const art: PalmArt = {
@@ -51,7 +39,6 @@ function makePalm(seed: number, hub: Pt, fronds: readonly FrondSpec[]): PalmArt 
     for (let t = 0.1; t <= 0.98; t += 0.037) {
       const { at, angle } = cubic(p0, p1, p2, p3, t);
       for (const side of [1, -1]) {
-        // leaflets fan out from the midrib, then gravity pulls them into a hanging fringe
         const dir = towards(angle + side * deg(70 + rand() * 20), Math.PI / 2, 0.5 + rand() * 0.2);
         const l = (64 + rand() * 40) * (1 - 0.5 * t);
         art.fronds[Math.floor(rand() * 3)] += leaf(at, dir, l, 5.2, true);
@@ -59,7 +46,6 @@ function makePalm(seed: number, hub: Pt, fronds: readonly FrondSpec[]): PalmArt 
     }
   }
 
-  // dark fan-palm burst around the hub (drawn over the frond bases)
   const spikes = 34;
   for (let i = 0; i < spikes; i++) {
     const d = leaf(hub, deg((i * 360) / spikes + (rand() - 0.5) * 8), 42 + rand() * 28, 7, true);
@@ -67,7 +53,6 @@ function makePalm(seed: number, hub: Pt, fronds: readonly FrondSpec[]): PalmArt 
     else art.fanMid += d;
   }
 
-  // two vines dangling from the crown
   for (const [dx, len] of [
     [38, 150 + rand() * 30],
     [74, 196 + rand() * 40],
@@ -102,5 +87,4 @@ export const PALM_RIGHT = makePalm(11, [74, 16], [
   [2, 120],
 ]);
 
-/** The web palm SVG uses overflow: visible; RN SVG clips, so draw into a padded viewBox instead. */
 export const PALM_PAD = { l: 120, t: 40, r: 120, b: 40 } as const;

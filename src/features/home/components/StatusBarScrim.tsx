@@ -1,8 +1,3 @@
-/**
- * StatusBarScrim — adds only a light wash behind the clock / battery, so the meadow remains continuous under the
- * home controls. It sits above the backdrop and below everything else.
- */
-
 import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

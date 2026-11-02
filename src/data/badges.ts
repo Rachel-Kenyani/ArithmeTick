@@ -1,9 +1,3 @@
-/**
- * Badge catalogue. A badge is earned the first time its test passes after a level is finished
- * or a high-five is recorded. Order = display order AND celebration priority (when one level
- * earns several badges, the celebration shows the first one in this list).
- */
-
 import type { ChildProfile } from "@/types/models";
 import { levelCount } from "@/data/levels";
 import type { Grade } from "@/types/domain";
@@ -13,7 +7,6 @@ export type BadgeTone = "teal" | "purple" | "yellow" | "plum" | "leaf";
 export interface BadgeDef {
   id: string;
   name: string;
-  /** Short "how to earn" line, shown under locked badges (parent-readable, ≤ 5 words). */
   how: string;
   tone: BadgeTone;
   grade?: Grade;
@@ -39,7 +32,6 @@ export function getBadge(id: string): BadgeDef | null {
   return BADGES.find((b) => b.id === id) ?? null;
 }
 
-/** Ids of badges whose test passes for `p` but which `p` has not earned yet, in catalogue order. */
 export function newlyEarned(p: ChildProfile): string[] {
   return BADGES.filter((b) => !p.badges.includes(b.id) && b.test(p)).map((b) => b.id);
 }

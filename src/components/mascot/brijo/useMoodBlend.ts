@@ -1,7 +1,3 @@
-/**
- * Brijo mood cross-fade: springs `blend` 0→1 from the previous mood's pose, plus a springy pop.
- */
-
 import { useEffect, useRef } from "react";
 import { Easing, useSharedValue, withSequence, withSpring, withTiming, type SharedValue } from "react-native-reanimated";
 
@@ -17,7 +13,6 @@ export function useMoodBlend(
   const prevSV = useSharedValue(moodIdx);
   const blend = useSharedValue(1);
 
-  // Mood change: cross-fade from the old mood's pose, plus a springy pop.
   const lastMood = useRef(moodIdx);
   useEffect(() => {
     if (lastMood.current === moodIdx) return;

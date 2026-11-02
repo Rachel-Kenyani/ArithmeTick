@@ -1,7 +1,3 @@
-/**
- * Live preview of the avatar the new Explorer will get, popping in beside the name field.
- */
-
 import { StyleSheet } from "react-native";
 import Animated, { ReduceMotion, ZoomIn, ZoomOut } from "react-native-reanimated";
 

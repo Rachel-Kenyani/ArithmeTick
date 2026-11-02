@@ -1,18 +1,3 @@
-/**
- * Grade 2 — tens and ones (KICD Grade 2, 1.1 place value, 1.3 addition and 1.4 subtraction with regrouping).
- * A ten is a full crate (the Grade 1 white ten-frame). The ones always sit in one open crate, so 27 is two full
- * crates and an open crate holding 7: the child can see it is 3 short of 30.
- *   build — PackTens: fill crates, then say how many full crates and how many left over.
- *   add   — counting on, which is how a Grade 2 child adds: the `b` new items (purple) go into the open crate one
- *           by one (tap or drag), each showing the running total (28, 29, 30…). When the crate fills it joins the
- *           full crates (a ten is made: the regrouping) and the rest start a new open crate (31, 32).
- *   sub   — counting back: the child taps the open crate to give its items to Brijo one by one (31, 30…), or a
- *           full crate to give a whole ten. When the open crate is empty and more must go, tapping a full crate
- *           opens it: ten ones again (the regrouping, the other way).
- * Then the child answers. Feedback (no error text, as in Grade 1): a wrong answer counts the mat aloud, full
- * crates first (10, 20, 30, then 31, 32).
- */
-
 import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, { FadeIn, ReduceMotion, ZoomIn, ZoomOut } from "react-native-reanimated";
@@ -33,19 +18,16 @@ type Step = "move" | "answer" | "solved";
 
 const DRAFT_VERSION = 2;
 const SOLVED_HANDOFF_MS = 1400;
-/** A full crate joins the shelf after this beat, so the child sees it full first. */
 const FULL_BEAT_MS = 450;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 const OUT = ZoomOut.duration(200).reduceMotion(ReduceMotion.System);
 
-/** Three answer tiles: the answer, the classic regrouping slip (± 10) and a near miss, in order. */
 function choicesFor(answer: number, op: PlaceValueProps["op"]): number[] {
   const slip = op === "add" ? answer - 10 : answer + 10;
   const near = answer + (answer % 2 === 0 ? 1 : -1);
   return [...new Set([answer, slip, near].filter((n) => n >= 0))].sort((x, y) => x - y);
 }
 
-/** "tomatoes", "mangoes", "flowers", "bottle tops". */
 function plural(item: CounterItem): string {
   if (item === "cap") return "bottle tops";
   return item === "tomato" || item === "mango" ? `${item}es` : `${item}s`;
@@ -60,11 +42,8 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
   const schedule = useScheduler();
   const answer = op === "add" ? a + b : a - b;
   const [full, setFull] = useState(Math.floor(a / 10));
-  /** Items in the open crate (0–10): the ones. */
   const [open, setOpen] = useState(a % 10);
-  /** Addition: new items still to move in. */
   const [incoming, setIncoming] = useState(op === "add" ? b : 0);
-  /** Subtraction: how many have gone into Brijo's basket. */
   const [given, setGiven] = useState(0);
   const [step, setStep] = useState<Step>("move");
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
@@ -76,7 +55,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
   const bubbleN = useRef(0);
 
   const total = full * 10 + open;
-  // Subtraction plan: give `cratesToGive` whole tens, then the ones from the open crate.
   const cratesToGive = Math.floor(b / 10);
   const cratesGiven = Math.min(cratesToGive, Math.floor(given / 10));
   const onesToGive = b % 10;
@@ -88,7 +66,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     onDraft?.({ version: DRAFT_VERSION, misses });
   }, [onDraft, misses]);
 
-  /** Show the running total over one slot of the open crate, or over a full crate. */
   const show = (key: string, label: number) => {
     bubbleN.current += 1;
     const n = bubbleN.current;
@@ -100,7 +77,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     schedule(() => setStep("answer"), 600);
   };
 
-  /* ---- add: count on into the open crate ---- */
   const moveIn = () => {
     if (op !== "add" || step !== "move" || waiting || busyRef.current || incoming <= 0) return;
     const nowOpen = open + 1;
@@ -110,7 +86,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     setOpen(nowOpen);
     show(`open-${nowOpen - 1}`, full * 10 + nowOpen);
     if (nowOpen === 10) {
-      // A ten is made: the full crate joins the others, and a new open crate starts.
       busyRef.current = true;
       schedule(() => {
         sfx.bundle();
@@ -123,7 +98,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     }
     if (left === 0) finishMoving();
   };
-  /** A dragged item counts when it is let go over the open crate (with a little give around its edge). */
   const dropIn = (x: number, y: number) => {
     crateRef.current?.measureInWindow((fx, fy, fw, fh) => {
       const give = 24;
@@ -131,7 +105,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     });
   };
 
-  /* ---- sub: count back out of the open crate ---- */
   const giveOne = () => {
     if (op !== "sub" || step !== "move" || waiting || busyRef.current) return;
     if (giveCrate || open === 0 || onesGiven >= onesToGive) return sfx.nudge();
@@ -153,14 +126,12 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
       return;
     }
     if (!mustOpen) return sfx.nudge();
-    // Open a full crate: it becomes the open crate, ten ones again.
     sfx.bundle();
     setFull(full - 1);
     setOpen(10);
     show(`open-9`, total);
   };
 
-  /** Count the mat aloud: full crates first (10, 20, 30…), then the open crate's ones. Returns when it ends. */
   const countAloud = () => {
     const keys = [...Array.from({ length: full }, (_, i) => `full-${i}`), ...Array.from({ length: open }, (_, i) => `open-${i}`)];
     setBubbles((prev) => {
@@ -192,7 +163,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
     schedule(onSolved, end + SOLVED_HANDOFF_MS);
   };
 
-  /* ---- layout ---- */
   const onLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setSize((prev) => (prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1 ? prev : { w: width, h: height }));
@@ -221,7 +191,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
           <Equation op={op} a={a} b={b} answer={answer} solved={step === "solved"} />
           <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
 
-          {/* Full crates: each is one ten. In a subtraction, tap one to give it away or open it. */}
           <View style={styles.shelf}>
             <Text style={partStyles.head}>{"Full\ncrates"}</Text>
             <View style={styles.shelfCrates}>
@@ -242,7 +211,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
             </View>
           </View>
 
-          {/* The open crate holds the ones */}
           <View style={styles.openRow}>
             <Text style={partStyles.head}>Left over</Text>
             <Pressable
@@ -258,7 +226,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
             </Pressable>
           </View>
 
-          {/* Addition: the new items, waiting to be counted on */}
           {op === "add" && incoming > 0 ? (
             <View style={styles.incoming}>
               {Array.from({ length: incoming }, (_, i) => (
@@ -293,7 +260,6 @@ function AddSub({ level, op, a, b, item = "tomato", palActive, waiting = false, 
   );
 }
 
-/** The recording for each instruction; the "give" line names the level's number, so it is recorded per level. */
 function promptClipFor(step: Step, op: PlaceValueProps["op"], mustOpen: boolean, giveCrate: boolean, level: number): string {
   if (step === "move") {
     if (op === "add") return "pv-count-on";

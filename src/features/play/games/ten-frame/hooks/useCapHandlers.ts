@@ -1,7 +1,3 @@
-/**
- * Cap gesture / tap / screen-reader handlers: pick-up, near the grid, drop, tap to place / send back.
- */
-
 import { useCallback, type Dispatch, type SetStateAction } from "react";
 
 import { sfx } from "@/services/audio";
@@ -67,18 +63,15 @@ export function useCapHandlers({ refs, setDraggingId, setNear, fire, syncCaps, p
   const handleTap = useCallback(
     (id: number) => {
       if (solvedRef.current) return;
-      // Native only: a cap currently held by a finger can't also be tapped.
       if (draggingRef.current === id) return;
       const current = placedRef.current;
       const slot = current.indexOf(id);
       if (slot === -1) {
-        // Tap / screen-reader alternative to dragging: the cap hops into the next slot.
         sfx.pickup();
         if (!placeCap(id, "tap")) refuseCap(id);
         return;
       }
       if (palRef.current && slot < TARGET_TOP) {
-        // Locked 5-group: it can't leave, but it lights up together.
         sfx.groupPulse();
         fire(current.slice(0, TARGET_TOP), "pulse", (i) => i * 0.05);
         return;
@@ -88,7 +81,6 @@ export function useCapHandlers({ refs, setDraggingId, setNear, fire, syncCaps, p
     [fire, placeCap, refuseCap, removeCap, draggingRef, palRef, placedRef, solvedRef],
   );
 
-  /** Screen reader: activating the next empty slot sends the first tray cap there (same as tapping it). */
   const fillNext = useCallback(() => {
     const id = firstTrayCap(placedRef.current, draggingRef.current);
     if (id !== null) handleTap(id);

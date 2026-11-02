@@ -1,17 +1,3 @@
-/**
- * JungleBackdrop (React Native port of arithmetick/components/ui/JungleBackdrop.tsx).
- *
- * Layers, back to front (all decorative: pointerEvents none, hidden from accessibility):
- *   1. sky gradient (expo-linear-gradient, jg-* tokens)
- *   2. kitenge triangle lattice (SVG <Pattern>, masked so it grows stronger towards the bottom)
- *   3. cartoon clouds drifting slowly
- *   4. canopy (prop): hanging vine strip + palm fronds in both top corners
- *   5. grass (prop): two-tone grass blades + rocks along the bottom
- * Children render in a flex:1 View on top. Safe-area insets are NOT handled here (ScreenShell does that).
- *
- * The artwork geometry is computed ONCE at module load with a seeded PRNG. Motion animates transforms of
- * wrapping Animated.Views only (no per-path animatedProps), and is off under reduced motion.
- */
 import { useId, type ReactNode } from "react";
 import { StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -32,16 +18,10 @@ import { VINE_H, VINE_W, VINES } from "./jungle/vines";
 
 export interface JungleBackdropProps {
   children?: ReactNode;
-  /** Bottom grass + rocks strip (default true). Always behind content, not touchable. */
   grass?: boolean;
-  /** Hanging vines + palm fronds along the top (default true). */
   canopy?: boolean;
-  /** Extra style for the content column wrapper (flex: 1 by default). Replaces the web `className`. */
   style?: StyleProp<ViewStyle>;
 }
-/* ------------------------------------------------------------------------------------------------
- * Component
- * ---------------------------------------------------------------------------------------------- */
 
 export default function JungleBackdrop({ children, grass = true, canopy = true, style }: Readonly<JungleBackdropProps>) {
   const uid = `jg${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;

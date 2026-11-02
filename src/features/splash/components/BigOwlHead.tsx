@@ -1,8 +1,3 @@
-/**
- * Splash intro — the big owl's head (Logo-splash-4-6-7-&-8), drawn inside BigOwl's tilting head layer.
- * `pupils` carries the blink; `wink` closes the right eye in frame 14.
- */
-
 import { type SharedValue, useAnimatedProps } from "react-native-reanimated";
 import { Circle, Path, Rect } from "react-native-svg";
 

@@ -1,17 +1,3 @@
-/**
- * Supabase "Send SMS" auth hook → Africa's Talking.
- *
- * Supabase calls this with the phone number and the 8-digit code whenever it needs to text a code (sign-up,
- * resend, forgot password). We check the request really came from Supabase (Standard Webhooks signature),
- * then send the SMS. Sandbox by default: messages show in the Africa's Talking simulator, nothing is charged.
- *
- * Secrets (supabase secrets set …):
- *   SEND_SMS_HOOK_SECRET  the hook secret from Auth → Hooks, e.g. "v1,whsec_…"
- *   AT_USERNAME           "sandbox" while testing, your app's username when live
- *   AT_API_KEY            the API key for that username
- *   AT_SENDER_ID          optional, a registered sender ID / shortcode (live only)
- */
-
 import { Webhook } from "npm:standardwebhooks@1.0.0";
 
 interface SmsHookPayload {
@@ -46,7 +32,6 @@ Deno.serve(async (req) => {
     return hookError(401, "Invalid hook signature");
   }
 
-  // Supabase stores phones without "+"; Africa's Talking wants E.164.
   const to = payload.user.phone.startsWith("+") ? payload.user.phone : `+${payload.user.phone}`;
   const message = `Your ArithmeTick code is ${payload.sms.otp}. It expires soon. Don't share it with anyone.`;
 
@@ -62,7 +47,6 @@ Deno.serve(async (req) => {
 
   const result = await res.json();
   const recipient = result?.SMSMessageData?.Recipients?.[0];
-  // Shows in Edge Functions → send-sms → Logs (never the code itself), to match against Africa's Talking's outbox.
   console.log(
     `Africa's Talking (${USERNAME}): to ${to.slice(0, 7)}****${to.slice(-2)}, status ${recipient?.status ?? "none"}, ` +
       `messageId ${recipient?.messageId ?? "-"}, cost ${recipient?.cost ?? "-"}, note "${result?.SMSMessageData?.Message ?? ""}"`,

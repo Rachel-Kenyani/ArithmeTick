@@ -1,8 +1,3 @@
-/**
- * PlaySession — one level, start to finish: top bar, the mat card with the level content, the
- * celebration, the High-Five Hero pop and the screen-time sheet. State lives in usePlaySession.
- */
-
 import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
@@ -48,7 +43,6 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
 
   const meta = GRADE_META[profile.grade];
   const story = storyFor(level.grade, level.number);
-  // The story stop opens every puzzle level (Move & Play has its own card).
   const [storyOpen, setStoryOpen] = useState(!isQuest && story !== null);
   const inert = celebrating || timeUp;
   const sm = width >= 640;
@@ -56,14 +50,12 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
 
   return (
     <SplashBackdrop>
-      {/* inert behind the celebration / screen-time sheet: no stray taps or focus on the bar or the puzzle */}
       <View
         style={styles.shell}
         pointerEvents={inert ? "none" : "auto"}
         accessibilityElementsHidden={inert}
         importantForAccessibility={inert ? "no-hide-descendants" : "auto"}
       >
-        {/* Same top bar and banner as Home, so the level screen feels like part of the map */}
         <AppTopBar backLabel="Back to map" onBack={goHome} stars={profile.stars} secondsLeft={secondsLeft} timePaused={isQuest} />
         <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} onReplay={story && !isQuest ? () => setStoryOpen(true) : undefined} />
 

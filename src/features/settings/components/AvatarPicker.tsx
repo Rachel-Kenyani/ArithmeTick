@@ -1,5 +1,3 @@
-/** The four available explorer avatars, two big tiles per row; an avatar can be reused by different profiles. */
-
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Avatar from "@/components/ui/Avatar";

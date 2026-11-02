@@ -1,7 +1,3 @@
-/**
- * Splash intro — the shared values the timeline drives and the animated styles read.
- */
-
 import { useSharedValue } from "react-native-reanimated";
 
 export type SplashValues = ReturnType<typeof useSplashValues>;

@@ -1,14 +1,7 @@
-/**
- * Brand icons — the official Google "G".
- */
-
 import Svg, { Path } from "react-native-svg";
 
 import { a11y, type IconProps } from "./make";
 
-/* ---------------------------------------------------------------- brand */
-
-/** The official four-colour Google "G" (fills only — ignores color). */
 export function GoogleIcon({ size = 24, title, style }: Readonly<IconProps>) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size} style={style} {...a11y(title)}>

@@ -1,12 +1,6 @@
-/**
- * App-chrome and quest icons — home, speaker, pause/play, logout, leaf, hand.
- */
-
 import { Path, Rect } from "react-native-svg";
 
 import { make } from "./make";
-
-/* ---------------------------------------------------------------- app chrome */
 
 export const HomeIcon = make(
   "HomeIcon",
@@ -69,8 +63,6 @@ export const LogoutIcon = make(
   </>,
 );
 
-/* ---------------------------------------------------------------- quests */
-
 export const LeafIcon = make(
   "LeafIcon",
   <>
@@ -79,7 +71,6 @@ export const LeafIcon = make(
   </>,
 );
 
-/** Open hand — high-fives and hands-on Physical Quests. */
 export const HandIcon = make(
   "HandIcon",
   <Path d="M8 13V5.6a1.5 1.5 0 0 1 3 0V11.5M11 11.5V4a1.5 1.5 0 0 1 3 0v7.5M14 11.5V5.6a1.5 1.5 0 0 1 3 0v6.4M17 8.6a1.5 1.5 0 0 1 3 0v6.6a6.8 6.8 0 0 1-6.8 6.8h-1.4a6.6 6.6 0 0 1-5.5-3L3.5 15a1.7 1.7 0 0 1 2.6-2.1L8 15" />,

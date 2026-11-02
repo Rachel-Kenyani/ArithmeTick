@@ -1,7 +1,3 @@
-/**
- * The "5" badge that pops onto the full top row: big and purple so a child spots "that's 5" at a glance.
- */
-
 import { Text } from "react-native";
 
 import { colors } from "@/theme";
@@ -10,7 +6,6 @@ import { styles } from "../styles";
 import { SPRING_POP } from "../utils/motion";
 import { PopIn } from "./PopIn";
 
-/** "5" badge on the full top row. */
 export function FiveBadge({
   palActive,
   compact,

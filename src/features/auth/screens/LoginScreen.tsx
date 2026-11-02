@@ -1,9 +1,3 @@
-/**
- * Log In To Account (mockup 03). Returning parent: Google (services/googleAuth) or email/phone + password.
- * The password goes to services/auth (Supabase when configured, else the offline prototype) and is never
- * stored or logged. Log In → auth.logIn → actions.login(identifier) → "Who is playing today?".
- */
-
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown, ReduceMotion } from "react-native-reanimated";

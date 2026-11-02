@@ -1,8 +1,3 @@
-/**
- * Store core — the state container, subscribe/setState/getSnapshot, and AsyncStorage persistence +
- * hydration. Only the state/ modules use this directly; everything else goes through "@/state/store".
- */
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { AppState, ChildProfile } from "@/types/models";
@@ -19,10 +14,6 @@ export const DEFAULT_STATE: AppState = Object.freeze({
   screenTime: { day: "", usedSeconds: 0 },
   justUnlocked: null,
 }) as AppState;
-
-/* ------------------------------------------------------------------------------------------------
- * Core store
- * ---------------------------------------------------------------------------------------------- */
 
 let state: AppState = DEFAULT_STATE;
 let hydrated = false;
@@ -43,7 +34,6 @@ function parse(raw: string | null): AppState {
   }
 }
 
-/** Read the saved state once. Changes made before it finishes win over what was on disk. */
 const hydration = AsyncStorage.getItem(STORAGE_KEY)
   .then((raw) => {
     if (state === DEFAULT_STATE) state = parse(raw);
@@ -54,7 +44,6 @@ const hydration = AsyncStorage.getItem(STORAGE_KEY)
     emit();
   });
 
-/** Resolves once the saved state is loaded (e.g. to hold the native splash screen). */
 export function whenHydrated(): Promise<void> {
   return hydration;
 }
@@ -80,7 +69,6 @@ export function setState(update: (prev: AppState) => AppState) {
   if (next === prev) return;
   state = next;
   AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {
-    // Storage full / unavailable: the session still works in memory.
   });
   emit();
 }

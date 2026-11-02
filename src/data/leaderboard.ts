@@ -1,8 +1,3 @@
-/**
- * Mock leaderboard data. Framed as a friendly "Star Explorers" board with a shared team goal —
- * collective, encouraging, never a ranking of who is "last" (the child's own row is always shown).
- */
-
 import type { AvatarKind, ChildProfile } from "@/types/models";
 import { AVATARS } from "@/types/models";
 
@@ -20,9 +15,7 @@ export interface LeaderRow {
 export interface Leaderboard {
   scope: LeaderScope;
   rows: LeaderRow[];
-  /** The child's row (also inside `rows` when in the top list). */
   you: LeaderRow;
-  /** Stars the whole class/school collected this week, and the shared goal. */
   teamStars: number;
   teamGoal: number;
 }
@@ -32,14 +25,12 @@ const CLASSMATES = [
   "Zawadi", "Mumbua", "Chebet", "Juma", "Nafula", "Mwangi", "Akinyi", "Wekesa",
 ];
 
-/** Deterministic pseudo-random 0..1 from a string + salt (stable between renders). */
 function hash01(text: string, salt: number): number {
   let h = 2166136261 ^ salt;
   for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
   return ((h >>> 0) % 10000) / 10000;
 }
 
-/** Tie-break for equal stars: you first, then peers alphabetically. */
 function compareRowsAfterStars(a: { isYou: boolean; name: string }, b: { isYou: boolean; name: string }): number {
   if (a.isYou) return -1;
   if (b.isYou) return 1;

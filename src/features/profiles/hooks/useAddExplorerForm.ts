@@ -1,8 +1,3 @@
-/**
- * "Almost Done!" form state: name / grade / school code, friendly validation after a submit attempt,
- * actions.addProfile → /profiles, and the full-family redirect.
- */
-
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Keyboard, type TextInputInstance } from "react-native";
@@ -26,7 +21,6 @@ interface FormErrors {
 
 const NO_ERRORS: FormErrors = { name: null, grade: null, code: null };
 
-/** The avatar addProfile() will assign — the same rule as the store: first unused, else cycle. */
 function nextAvatar(profiles: readonly ChildProfile[]): AvatarKind {
   const used = new Set(profiles.map((p) => p.avatar));
   return AVATARS.find((a) => !used.has(a)) ?? AVATARS[profiles.length % AVATARS.length];
@@ -38,13 +32,11 @@ export function useAddExplorerForm(ready: boolean, profiles: readonly ChildProfi
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<FormErrors>(NO_ERRORS);
   const [busy, setBusy] = useState(false);
-  /** Children count frozen at submit, so the back button doesn't pop in while we navigate away. */
   const [frozenCount, setFrozenCount] = useState<number | null>(null);
 
   const nameRef = useRef<TextInputInstance>(null);
   const codeRef = useRef<TextInputInstance>(null);
 
-  // Full family (e.g. a stale deep link): nothing to add here. Not after our own submit, which navigates itself.
   const full = frozenCount === null && profiles.length >= MAX_PROFILES;
   useEffect(() => {
     if (ready && full) router.replace(ROUTES.profiles);
@@ -70,7 +62,6 @@ export function useAddExplorerForm(ready: boolean, profiles: readonly ChildProfi
       return;
     }
     if (!chosenGrade) {
-      // The grade sheet isn't a focusable field: drop the keyboard so the note shows.
       Keyboard.dismiss();
       return;
     }
@@ -86,7 +77,6 @@ export function useAddExplorerForm(ready: boolean, profiles: readonly ChildProfi
     router.push(ROUTES.profiles);
   };
 
-  // "Next" on the keyboard: move on to the grade picker instead of submitting a half-filled form.
   const onNameSubmit = () => {
     if (!grade) Keyboard.dismiss();
     else submit();

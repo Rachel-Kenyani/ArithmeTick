@@ -1,10 +1,3 @@
-/**
- * ComingSoonTab — a placeholder screen for a bottom-tab destination that isn't built yet (Badges, Score).
- *
- * Same shell as /home (meadow backdrop + bottom tab bar), a heading, Brijo and a short friendly note.
- * Switching tabs never stacks screens: "Map" returns to the existing /home, the other tab replaces this one.
- */
-
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -65,6 +58,5 @@ const styles = StyleSheet.create({
   },
   title: { fontFamily: fonts.headingBold, fontSize: 28, color: colors.atTeal, textAlign: "center" },
   soon: { fontFamily: fonts.bodyBold, fontSize: 20, color: colors.atPurple, textAlign: "center" },
-  // #3c3c3c on the mint card ≈ 10:1
   message: { fontFamily: fonts.bodyMedium, fontSize: 16, lineHeight: 22, color: "#3c3c3c", textAlign: "center" },
 });

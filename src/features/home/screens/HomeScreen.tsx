@@ -1,13 +1,3 @@
-/**
- * /home — the child's level map (docs/APP-SHELL.md §5 "Home").
- *
- * A fixed, full-height app shell over the jungle backdrop:
- *   top bar (profile switcher · stars · practical-break timer) → progress card → scrolling trail → bottom tab bar
- *   (Map · Badges · Score)
- * Only the trail scrolls, so the jungle, the header and the tab bar stay put, and the trail's last stops can never
- * slip behind the tab bar.
- */
-
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "expo-router";
@@ -30,10 +20,8 @@ import { actions, useActiveProfile, useScreenTimeRemaining } from "@/state/store
 import { GRADE_META } from "@/types/domain";
 import { useGuard } from "@/hooks/useGuard";
 
-/** Grades whose "You did them all!" pop-up was already shown this app session (profileId:grade). */
 const celebratedGrades = new Set<string>();
 
-/** Short landscape screens (a phone held sideways): the banner scrolls with the trail instead of eating its height. */
 const SHORT_SCREEN_MAX_HEIGHT = 520;
 
 export default function HomePage() {
@@ -62,7 +50,6 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
   const { unlockLevel, mapEpoch } = useMapUnlock(grade, completed, focused);
 
   const celebrateKey = `${profile.id}:${grade}`;
-  // Closing records the grade in the module-level set; the counter just re-renders.
   const [, setClosedCount] = useState(0);
   const showComplete = allDone && !celebratedGrades.has(celebrateKey);
   const closeComplete = useCallback(() => {
@@ -112,7 +99,6 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
           showsVerticalScrollIndicator={false}
         >
           <View accessibilityLabel="Level map" style={styles.section}>
-            {/* Short landscape screens: the banner scrolls with the trail instead of eating the map's height. */}
             {shortScreen ? banner : null}
             <View onLayout={handleMapLayout}>
               <LevelMap

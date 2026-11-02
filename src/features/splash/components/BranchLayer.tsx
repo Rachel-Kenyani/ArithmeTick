@@ -1,7 +1,3 @@
-/**
- * Splash intro — frame 10's branch, growing in under Brijo from the left.
- */
-
 import Animated, { type AnimatedStyle } from "react-native-reanimated";
 import type { ViewStyle } from "react-native";
 import { SvgXml } from "react-native-svg";

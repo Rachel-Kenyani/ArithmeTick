@@ -1,7 +1,3 @@
-/**
- * A Profiles grid tile: entrance / chosen pop / dimmed step-back, plus the press squish.
- */
-
 import { useEffect, type ReactNode } from "react";
 import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from "react-native";
 import Animated, {
@@ -16,7 +12,6 @@ import Animated, {
 import { easeOut } from "../utils/easing";
 import type { TileState } from "../utils/gridLayout";
 
-/** The tile's entrance / chosen pop / dimmed step-back, plus the press squish. */
 export default function Tile({
   index,
   state,

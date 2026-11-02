@@ -1,16 +1,3 @@
-/**
- * One stop on the home level map (docs/APP-SHELL.md §5 "Home").
- *
- *   done     sun-yellow platform, number, teal check badge, 3 tiny stars above
- *   current  teal platform, pulsing ring and a sun "Play" cue; the whole node starts the level
- *   locked   muted mint platform, padlock over a small number; announced disabled — a tap only wiggles + sfx.nudge()
- *   quest    rounded platform with a hand glyph and a leaf sprouting from its corner
- *
- * The whole stack (stars, platform, Play cue, title) is one Pressable, so the touch target is generous. (On native a
- * child drawn outside its parent's box can't be touched, so the Pressable's box spans the stars and labels.)
- * `pop` (a counter) plays the unlock bounce; the padlock flies off on its own when status leaves "locked".
- */
-
 import { Pressable, StyleSheet } from "react-native";
 import Animated, { useReducedMotion, withSpring } from "react-native-reanimated";
 
@@ -33,7 +20,6 @@ export default function LevelNode({ level, status, size, x, y, side, pop = 0, on
   const platformW = platformWidth(size);
   const platformH = platformHeight(size);
 
-  // Box geometry: the platform sits ABOVE px from the top, centred horizontally.
   const boxW = platformW + 44;
   const boxH = ABOVE + platformH + BELOW;
   const coinLeft = (boxW - platformW) / 2;
@@ -74,7 +60,6 @@ export default function LevelNode({ level, status, size, x, y, side, pop = 0, on
         style={StyleSheet.absoluteFill}
       >
         {status === "current" ? <CurrentRing left={coinLeft} width={platformW} height={platformH} radius={radius} reduceMotion={reduceMotion} /> : null}
-        {/* Three tiny stars above a finished level (part of the touch box, like the labels below) */}
         {status === "done" ? <DoneStars height={platformH} big={big} /> : null}
 
         <LevelCoin

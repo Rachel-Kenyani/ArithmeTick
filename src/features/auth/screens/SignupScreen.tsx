@@ -1,9 +1,3 @@
-/**
- * Create An Account (mockup 04). New parent: Google (services/googleAuth → "Almost Done!") or
- * email/phone + password → services/auth creates the account and emails a code → Verify Account.
- * The password (≥ 8 characters) goes straight to Supabase and is never stored or logged.
- */
-
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown, ReduceMotion } from "react-native-reanimated";

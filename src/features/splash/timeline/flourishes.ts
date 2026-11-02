@@ -1,8 +1,3 @@
-/**
- * Splash intro — the full-motion flourishes layered on the timeline: squash-and-stretch on each landing, the idle
- * breath, and frame 14's sparkle burst and wink.
- */
-
 import {
   withDelay,
   withRepeat,
@@ -16,7 +11,6 @@ import { AT, EASING, FINALE_AT, SQUASH_AT, SQUASH_MS } from "./timeline";
 
 export function startFlourishes(v: SplashValues) {
   const { squashX, squashY, breath, burst, wink } = v;
-  // Squash and stretch on each landing, then spring back
   const pulses = (peak: number) =>
     withSequence(
       ...SQUASH_AT.map((t, i) =>
@@ -31,7 +25,6 @@ export function startFlourishes(v: SplashValues) {
     );
   squashX.set(pulses(1.08));
   squashY.set(pulses(0.92));
-  // From frame 4 on, Brijo breathes whenever she's still
   breath.set(
     withDelay(
       AT[3],
@@ -44,7 +37,6 @@ export function startFlourishes(v: SplashValues) {
       ),
     ),
   );
-  // Frame 14's payoff: a sparkle burst and a wink (the wordmark letters schedule themselves)
   burst.set(
     withDelay(
       FINALE_AT,

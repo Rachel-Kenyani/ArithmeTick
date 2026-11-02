@@ -1,7 +1,3 @@
-/**
- * Splash intro — frame 14's sparkle burst stars.
- */
-
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -13,7 +9,6 @@ import { GOLD } from "../constants";
 export const BURST_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
 const STAR = "M9 0L11.2 6.8L18 9L11.2 11.2L9 18L6.8 11.2L0 9L6.8 6.8Z";
 
-/** One star of frame 14's sparkle burst: flies out from Brijo's head and fades. */
 export default function BurstStar({
   progress,
   angle,

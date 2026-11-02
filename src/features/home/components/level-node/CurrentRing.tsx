@@ -1,5 +1,3 @@
-/** The gentle focus ring around the level to play now. */
-
 import { View } from "react-native";
 
 import PulseRing from "@/features/home/components/level-node/PulseRing";

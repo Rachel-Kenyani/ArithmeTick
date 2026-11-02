@@ -1,7 +1,3 @@
-/**
- * Splash intro — the sound and haptic cue list: one entry per beat, as [ms from mount, cue].
- */
-
 import * as Haptics from "expo-haptics";
 
 import { sfx } from "@/services/audio";
@@ -9,12 +5,10 @@ import { sfx } from "@/services/audio";
 import { WORD_LETTERS } from "../art/wordmarkArt";
 import { AT, FINALE_AT, LETTER_STAGGER, SQUASH_AT } from "./timeline";
 
-/** A cue that fires one impact haptic, swallowing failures (e.g. haptics unavailable). */
 function hapticTap(style: Haptics.ImpactFeedbackStyle) {
   return () => void Haptics.impactAsync(style).catch(() => {});
 }
 
-/** Sound and haptics on each beat */
 export function splashCues(): [number, () => void][] {
   return [
     [AT[2], sfx.pickup],

@@ -1,8 +1,3 @@
-/**
- * Splash intro — schedules the whole intro once on mount: the animation timeline (full or reduced motion) and the
- * sound/haptic cues. Calls `onDone` when frame 14 has held; returns `skip` for a tap.
- */
-
 import { useEffect, useRef } from "react";
 import { scheduleOnRN } from "react-native-worklets";
 
@@ -34,7 +29,6 @@ export function useSplashTimeline({
     doneRef.current = onDone;
   }, [onDone]);
   const cueTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  // The timeline's end and a skip tap can both arrive; only the first one leaves.
   const leftRef = useRef(false);
   const leave = () => {
     if (leftRef.current) return;
@@ -60,7 +54,6 @@ export function useSplashTimeline({
     startFullTimeline(values, centreShift, frame7Y, frame8X, done);
     startFlourishes(values);
 
-    // Sound and haptics on each beat
     const cues = splashCues();
     const timers = cues.map(([t, cue]) => setTimeout(cue, t));
     cueTimers.current = timers;

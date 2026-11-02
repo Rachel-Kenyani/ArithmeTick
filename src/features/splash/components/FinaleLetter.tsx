@@ -1,7 +1,3 @@
-/**
- * Splash intro — one letter of frame 14's returning wordmark.
- */
-
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
@@ -17,7 +13,6 @@ import { WORD_DOT_Y, type WORD_LETTERS } from "../art/wordmarkArt";
 import { FINALE_LOGO, PURPLE, TEAL } from "../constants";
 import { LETTER_STAGGER, SPRING } from "../timeline/timeline";
 
-/** One wordmark letter dropping back in for frame 14 (a plain fade under reduced motion). */
 export default function FinaleLetter({
   letter,
   index,

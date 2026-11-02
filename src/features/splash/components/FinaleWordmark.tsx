@@ -1,7 +1,3 @@
-/**
- * Splash intro — frame 14's wordmark, returning letter by letter between the branch and the grass.
- */
-
 import { View } from "react-native";
 
 import { WORD_LETTERS } from "../art/wordmarkArt";

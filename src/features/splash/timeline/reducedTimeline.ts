@@ -1,7 +1,3 @@
-/**
- * Splash intro — the reduced-motion timeline: frame 1 → 4 → 9 → 10 → 11 → 12 as plain fades, no movement.
- */
-
 import { withDelay, withSequence, withTiming } from "react-native-reanimated";
 
 import type { SplashValues } from "../hooks/useSplashValues";
@@ -25,7 +21,6 @@ export function startReducedTimeline(
     bg11,
     bg12,
   } = v;
-  // frame 1 → frame 4 → frame 9, as plain fades
   wordOpacity.set(withDelay(T.hold1, withTiming(0, { duration: 250 })));
   smallOpacity.set(withDelay(T.hold1, withTiming(0, { duration: 250 })));
   bigOpacity.set(withDelay(T.hold1, withTiming(1, { duration: 250 })));

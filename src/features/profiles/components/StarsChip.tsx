@@ -1,13 +1,8 @@
-/**
- * The ★ stars chip on a child tile (or "New" for a brand-new explorer).
- */
-
 import { StyleSheet, Text, View, type TextStyle } from "react-native";
 
 import { SparkleIcon, StarIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
 
-/** Star count once an explorer has earned some, otherwise a cheerful "New" chip. */
 export default function StarsChip({
   stars,
   chipText,

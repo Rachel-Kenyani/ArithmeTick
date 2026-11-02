@@ -1,11 +1,8 @@
-/** Three tiny stars above a finished stop. */
-
 import { StyleSheet, View } from "react-native";
 
 import { StarIcon } from "@/components/ui/icons";
 import { ABOVE, starSize } from "@/features/home/components/level-node/constants";
 
-/** Three tiny stars above a finished level. */
 export default function DoneStars({ height, big }: Readonly<{ height: number; big: boolean }>) {
   return (
     <View pointerEvents="none" style={[styles.stars, { left: 0, right: 0, bottom: ABOVE + height + 4 }]}>

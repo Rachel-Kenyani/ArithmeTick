@@ -1,8 +1,3 @@
-/**
- * "Didn't Get The Code? Resend Code" footer on the Verify card. The link is muted (grey, not tappable) until the
- * countdown ends, then turns purple (and pulses if they try to verify an expired code).
- */
-
 import type { ComponentProps } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
@@ -64,7 +59,6 @@ const styles = StyleSheet.create({
   },
   footerLink: { paddingVertical: 12, marginVertical: -6, paddingHorizontal: 2 },
   link: { color: colors.jgPurple },
-  // Muted while waiting: still readable (≈ 4.6:1 on the mint card) but clearly not tappable
   linkMuted: { color: "#6B7F7D" },
   linkPressed: { color: "#6a3db8", textDecorationLine: "underline" },
 });

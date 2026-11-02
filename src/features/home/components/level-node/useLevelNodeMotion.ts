@@ -1,5 +1,3 @@
-/** A level stop's motion state: unlock bounce, flying padlock, press squish and the locked "not yet" nudge. */
-
 import { AccessibilityInfo } from "react-native";
 import { useEffect, useState } from "react";
 import { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
@@ -21,8 +19,6 @@ export function useLevelNodeMotion({
   const rot = useSharedValue(0);
   const shakeX = useSharedValue(0);
 
-  // Unlock bounce (driven by the map's unlock sequence). Only an increase plays it: the map hands back 0
-  // when the sequence ends, and that must not bounce the stop a second time.
   const [lastPop, setLastPop] = useState(pop);
   const [bounce, setBounce] = useState(0);
   if (pop !== lastPop) {
@@ -35,7 +31,6 @@ export function useLevelNodeMotion({
     scale.set(withSequence(seg(1.22), seg(0.93), seg(1.05), seg(1)));
   }, [bounce, scale]);
 
-  // Padlock flies off when the stop leaves "locked" (web: AnimatePresence exit).
   const [startedLocked] = useState(locked);
   const [prevLocked, setPrevLocked] = useState(locked);
   const [flying, setFlying] = useState(false);

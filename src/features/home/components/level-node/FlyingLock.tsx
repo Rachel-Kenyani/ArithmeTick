@@ -1,12 +1,9 @@
-/** The padlock that flies off a stop once it unlocks. */
-
 import { useEffect, type ReactNode } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { easeOut } from "@/features/home/components/level-node/constants";
 import { sharedStyles } from "@/features/home/components/level-node/sharedStyles";
 
-/** The padlock + number flying off the platform once, then `onDone`. */
 export default function FlyingLock({ size, reduce, onDone, children }: Readonly<{ size: number; reduce: boolean; onDone: () => void; children: ReactNode }>) {
   const t = useSharedValue(0);
   useEffect(() => {

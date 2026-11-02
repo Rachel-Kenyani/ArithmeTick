@@ -1,5 +1,3 @@
-/** Explorer settings (the Settings tab): a child can choose a name and any of the four animal avatars. */
-
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";

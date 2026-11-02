@@ -1,8 +1,3 @@
-/**
- * Forgot Your Password? (mockup 08). The parent enters their email / phone, we "send" a code
- * (auth.sendResetCode emails a code, actions.beginReset) → Verify Identity → Reset Password.
- */
-
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { StyleSheet, type TextInputInstance } from "react-native";
@@ -30,7 +25,6 @@ export default function ForgotPasswordScreen() {
 
   const onChange = (next: string) => {
     setIdentifier(next);
-    // Reward early: clear the note as soon as it's fixed (a new note only appears on submit).
     if (error && !identifierProblem(next)) setError(null);
   };
 

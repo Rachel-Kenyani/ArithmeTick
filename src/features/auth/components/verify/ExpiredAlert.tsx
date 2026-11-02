@@ -1,7 +1,3 @@
-/**
- * Inline "This code has expired" alert that replaces the Verify countdown at 00:00.
- */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import { AlertCircleIcon } from "@/components/ui/icons";

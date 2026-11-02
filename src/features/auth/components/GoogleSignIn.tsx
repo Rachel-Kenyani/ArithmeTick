@@ -1,7 +1,3 @@
-/**
- * "Continue with Google" button plus the "or" divider, shared by Log In and Sign Up.
- */
-
 import { StyleSheet } from "react-native";
 
 import Button from "@/components/ui/Button";

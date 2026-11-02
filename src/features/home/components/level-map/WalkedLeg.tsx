@@ -1,5 +1,3 @@
-/** The white pebbles fading in along the trail leg an unlock walks. */
-
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -7,7 +5,6 @@ import Svg, { Path } from "react-native-svg";
 
 import { WALKED } from "@/features/home/components/level-map/constants";
 
-/** The unlocking leg's white pebbles, in their own layer so the fade is a View opacity (no animated SVG nodes). */
 export default function WalkedLeg({
   width,
   height,

@@ -1,5 +1,3 @@
-/** A level stop's rounded platform: chunky edge slab, face, quest leaf and done check badge. */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import { CheckIcon, LockIcon } from "@/components/ui/icons";
@@ -109,12 +107,10 @@ export default function LevelCoin({
         ) : null}
       </View>
 
-      {/* Quest leaf ornament — only on stops the child can reach, to keep the locked part of the map quiet */}
       {isQuest && !locked ? (
         <QuestLeaf side={side} big={big} dimmed={locked} />
       ) : null}
 
-      {/* Done check badge */}
       {status === "done" ? (
         <View style={styles.check}>
           <CheckIcon size={17} strokeWidth={3.2} color={colors.white} />

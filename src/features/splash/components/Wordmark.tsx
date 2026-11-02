@@ -1,13 +1,8 @@
-/**
- * Splash intro — the frame-1 "arithmetick" wordmark under the owl.
- */
-
 import Svg, { Circle, G, Path } from "react-native-svg";
 
 import { WORD_DOT_Y, WORD_LETTERS } from "../art/wordmarkArt";
 import { LOGO_W, PURPLE, TEAL, WORD_H, WORD_TOP } from "../constants";
 
-/** "arithmetick" wordmark from Logo-splash-1 (y 104…165 of the artboard). */
 export default function Wordmark({ width }: Readonly<{ width: number }>) {
   return (
     <Svg

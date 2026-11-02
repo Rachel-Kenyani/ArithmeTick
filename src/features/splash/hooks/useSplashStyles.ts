@@ -1,7 +1,3 @@
-/**
- * Splash intro — the animated styles that turn the timeline's shared values into the layers' movement and fades.
- */
-
 import { interpolateColor, useAnimatedStyle } from "react-native-reanimated";
 
 import { BG, SKY_BASE } from "../constants";
@@ -44,7 +40,6 @@ export function useSplashStyles(v: SplashValues, W: number, grassH: number) {
     ],
   }));
   const skyStyle = useAnimatedStyle(() => ({ opacity: sky.value }));
-  // Frames 1–5 sit on BG; from frame 6 the screen's base colour is SKY_BASE (shows wherever art doesn't cover).
   const baseStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(sky.value, [0, 1], [BG, SKY_BASE]),
   }));
@@ -52,7 +47,6 @@ export function useSplashStyles(v: SplashValues, W: number, grassH: number) {
     opacity: Math.min(1, scene.value * 2),
     transform: [{ translateX: (scene.value - 1) * W * 0.6 }],
   }));
-  // Frame 10's background (sky + grass) settles in under the rising vector grass, which then gives way to frame 11's.
   const bg10Style = useAnimatedStyle(() => ({ opacity: scene.value }));
   const bg11Style = useAnimatedStyle(() => ({ opacity: bg11.value }));
   const bg12Style = useAnimatedStyle(() => ({ opacity: bg12.value }));

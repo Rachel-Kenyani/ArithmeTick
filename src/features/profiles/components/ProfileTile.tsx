@@ -1,7 +1,3 @@
-/**
- * A child's tile on the Profiles grid: halo, hopping avatar, name, grade chip and ★ stars.
- */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import type { ChildProfile } from "@/types/models";
@@ -13,7 +9,6 @@ import HoppingAvatar from "./HoppingAvatar";
 import StarsChip from "./StarsChip";
 import Tile from "./Tile";
 
-/** A brand-new explorer gets a cheerful "New" chip instead of "★ 0". */
 function starLabel(n: number) {
   if (n === 0) return "new explorer";
   return `${n} ${n === 1 ? "star" : "stars"}`;
@@ -56,7 +51,6 @@ export default function ProfileTile({
         { minHeight: sm ? 212 : 164, paddingVertical: sm ? 16 : 12 },
       ]}
     >
-      {/* halo ring (yellow when chosen) */}
       <View
         pointerEvents="none"
         style={[

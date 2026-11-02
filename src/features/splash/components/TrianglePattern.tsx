@@ -1,7 +1,3 @@
-/**
- * Splash intro — the teal triangle-pattern backdrop (frames 1–5), also drawn over the sky gradient (frame 6 on).
- */
-
 import { StyleSheet } from "react-native";
 import Svg, {
   Defs,
@@ -15,10 +11,6 @@ import Svg, {
 
 import { BG, TRI } from "../constants";
 
-/**
- * The repeating triangle tile shared by light-background.svg and sky-background.svg (one 33.9 × 34 cell; edge
- * shapes duplicated) over `sky` ? the sky gradient : the pale teal.
- */
 export default function TrianglePattern({ sky = false }: Readonly<{ sky?: boolean }>) {
   const id = sky ? "splash-tri-sky" : "splash-tri";
   const up =

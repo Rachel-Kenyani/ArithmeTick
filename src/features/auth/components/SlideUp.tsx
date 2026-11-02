@@ -1,7 +1,3 @@
-/**
- * Fade + slide-up entrance for the Welcome card.
- */
-
 import { useEffect, type ReactNode } from "react";
 import Animated, {
   useAnimatedStyle,

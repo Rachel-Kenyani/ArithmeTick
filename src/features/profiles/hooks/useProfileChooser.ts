@@ -1,8 +1,3 @@
-/**
- * Profiles choose/navigate state: pick a child (chord + selectProfile), let the pop play, then /home.
- * Also sends an empty family straight to "Almost Done!" and handles the Add Profile tap.
- */
-
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
 
@@ -23,12 +18,10 @@ export function useProfileChooser({
 }: Readonly<{ profileCount: number; empty: boolean; reduceMotion: boolean }>) {
   const [chosen, setChosen] = useState<string | null>(null);
 
-  // A family with no children yet goes straight to "Almost Done!".
   useEffect(() => {
     if (empty) router.replace(ROUTES.addExplorer as never);
   }, [empty]);
 
-  // Let the pop play, then head to the map.
   useEffect(() => {
     if (!chosen) return;
     const t = setTimeout(

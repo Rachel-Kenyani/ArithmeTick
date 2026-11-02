@@ -1,8 +1,3 @@
-/**
- * All store actions, grouped by domain and merged into the single `actions` object.
- * Call them from event handlers or effects — never during render.
- */
-
 import { accountActions } from "./account";
 import { profileActions } from "./profiles";
 import { progressActions } from "./progress";
@@ -17,6 +12,5 @@ export const actions = {
   ...progressActions,
   ...screenTimeActions,
 
-  /* ---------------- reviewer tools ---------------- */
   ...reviewerActions,
 };

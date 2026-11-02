@@ -1,7 +1,3 @@
-/**
- * "Password updated" pill shown in the back-button row of Log In after a reset.
- */
-
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeOutUp, ReduceMotion, ZoomIn } from "react-native-reanimated";
 
@@ -25,7 +21,6 @@ export default function PasswordUpdatedNote() {
 }
 
 const styles = StyleSheet.create({
-  // Centred in the back-button row (the shell puts the 70px back button + 20px gap above the content).
   noteWrap: { position: "absolute", top: -78, left: 80, right: 80, height: 64, alignItems: "center", justifyContent: "center", zIndex: 50 },
   note: {
     flexDirection: "row",

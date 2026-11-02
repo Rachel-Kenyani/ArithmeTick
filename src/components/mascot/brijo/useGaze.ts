@@ -1,7 +1,3 @@
-/**
- * Brijo idle gaze: pupils glance around now and then; other moods look straight ahead.
- */
-
 import { useEffect } from "react";
 import { useSharedValue, withSpring } from "react-native-reanimated";
 

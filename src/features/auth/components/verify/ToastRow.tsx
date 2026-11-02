@@ -1,7 +1,3 @@
-/**
- * Reserved row under the Verify footer where the "New code sent" toast appears.
- */
-
 import { StyleSheet, View } from "react-native";
 
 import Toast from "@/components/ui/Toast";

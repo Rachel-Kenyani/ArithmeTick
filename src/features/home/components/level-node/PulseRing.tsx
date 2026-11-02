@@ -1,5 +1,3 @@
-/** Expanding, low-key pulse used only for the current map node. */
-
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from "react-native-reanimated";
 import { useEffect } from "react";

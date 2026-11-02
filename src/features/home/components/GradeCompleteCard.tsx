@@ -1,8 +1,3 @@
-/**
- * "You did them all, <name>!" (with a trophy) — a pop-up over the map once every level of the grade are finished (once per
- * visit, so the trail keeps its space). Shows the grade's finishing time — the seed of a future leaderboard.
- */
-
 import { useEffect } from "react";
 import {
   Modal,
@@ -29,7 +24,6 @@ import TrophyArt from "@/components/illustrations/TrophyArt";
 import { StarIcon, StopwatchIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
 
-/** 412 → "6 min 52 s"; under a minute → "48 s". */
 export function formatFinishTime(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));
   const min = Math.floor(s / 60);
@@ -40,7 +34,6 @@ interface GradeCompleteCardProps {
   gradeLabel: string;
   childName: string;
   levelTotal: number;
-  /** Seconds it took to finish the grade the first time (missing for grades finished before it was tracked). */
   finishSeconds?: number;
   visible: boolean;
   onClose: () => void;
@@ -68,7 +61,6 @@ export default function GradeCompleteCard({
     scale.set(withDelay(150, withSpring(1, spring)));
     y.set(withDelay(150, withSpring(0, spring)));
 
-    // Trophy wiggle: [0, -8, 8, -4, 0] over 1.1s, first after 0.6s, then every 3.5s.
     const seg = 1100 / 4;
     rot.set(
       withDelay(

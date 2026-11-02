@@ -1,11 +1,3 @@
-/**
- * Flat, outlined jungle props for the home level map (same illustration language as JungleBackdrop:
- * flat fills, thick near-black outlines). All decorative: hidden from assistive tech, not touchable.
- *
- *   <TrailProp kind="bush" size={52} />   bush | flower | mushroom | rock
- *   <FinishFlag size={64} />               the purple pennant at the top of the trail
- */
-
 import type { ReactElement } from "react";
 import { View, type StyleProp, type ViewStyle } from "react-native";
 import Svg, { Circle, Ellipse, G, Path, Rect } from "react-native-svg";
@@ -83,7 +75,6 @@ function Rock() {
 
 const PROPS: Record<TrailPropKind, () => ReactElement> = { bush: Bush, flower: Flower, mushroom: Mushroom, rock: Rock };
 
-/** A little tuft of grass each prop stands on, so it reads as planted beside the trail rather than floating. */
 function Mound() {
   return (
     <G stroke={INK} strokeWidth={2.4} strokeLinejoin="round">
@@ -118,7 +109,6 @@ export function TrailProp({ kind, size, style }: Readonly<ArtProps & { kind: Tra
   );
 }
 
-/** The finish pennant at the end of the trail: wooden pole on a rock, purple flag with a sun star. */
 export function FinishFlag({ size, style }: Readonly<ArtProps>) {
   return (
     <Decor style={style}>

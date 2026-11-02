@@ -1,14 +1,9 @@
-/**
- * A floating sleep "z" for Brijo.
- */
-
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 
 import { C, Z_PATH } from "./geometry";
 import { val, type Rig } from "./sampling";
 
-/** One floating "z" (sleep only): an Animated.View box centred on the z's pivot. */
 const Z_BOX = 24;
 const Z_PIVOT = [165.5, 55.5] as const;
 export const Z_PARTS = ["z0", "z1", "z2"] as const;

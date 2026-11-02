@@ -1,7 +1,3 @@
-/**
- * Target card: the goal numeral and a mini ten-frame of dots that fills with the grid.
- */
-
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { ZoomIn, ZoomOut, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
@@ -32,7 +28,6 @@ const DOT_FILL: Record<PaletteKey, { bg: string; border: string }> = {
   teal: { bg: colors.atTeal, border: colors.atInk },
 };
 
-/** Fill colour of target dot `i`: none while its slot is empty, the group tone for a full top row, else the cap's own colour. */
 function dotTone(i: number, placed: readonly number[], topTone: GroupTone): PaletteKey | null {
   if (i >= placed.length) return null;
   if (i < ROW_SIZE && topTone) return topTone;
@@ -43,7 +38,6 @@ export function TargetCard({ variant, target, placed, topTone, solved, layout: L
   const side = variant === "side";
   const dot = L.dot;
   const dotGap = side ? 4 : 3;
-  // Two digits ("10") need a slightly smaller numeral to stay inside the side card.
   const numeral = target >= 10 && side ? Math.round(L.numeral * 0.85) : L.numeral;
 
   const nScale = useSharedValue(1);
@@ -66,7 +60,6 @@ export function TargetCard({ variant, target, placed, topTone, solved, layout: L
         solved ? styles.cardSolved : null,
       ]}
     >
-      {/* target-dot pattern on a mini ten-frame; dots fill as the real grid fills */}
       <View style={{ width: dot * 5 + dotGap * 4, flexDirection: "row", flexWrap: "wrap", gap: dotGap }}>
         {CAP_IDS.map((i) => {
           if (i >= target) {

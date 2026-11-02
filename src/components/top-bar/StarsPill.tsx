@@ -1,5 +1,3 @@
-/** The explorer's star count pill in the top bar. A button only when `onPress` is given (Home → Badges). */
-
 import { Pressable, StyleSheet, Text } from "react-native";
 
 import { StarIcon } from "@/components/ui/icons";
@@ -23,7 +21,6 @@ export default function StarsPill({ stars, onPress }: Readonly<{ stars: number; 
 }
 
 const styles = StyleSheet.create({
-  // minHeight (not height) so the pills grow with larger accessibility text sizes instead of clipping
   stars: {
     minHeight: 40,
     flexDirection: "row",

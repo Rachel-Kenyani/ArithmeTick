@@ -1,7 +1,3 @@
-/**
- * Brijo's head: temple arms, face, tufts, lenses + eyes, mouth and beak (rotates about the neck).
- */
-
 import type { SharedValue } from "react-native-reanimated";
 import { Ellipse, G, Path } from "react-native-svg";
 

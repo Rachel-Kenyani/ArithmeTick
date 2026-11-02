@@ -1,7 +1,3 @@
-/**
- * The ten-frame game state machine: grid contents, drag state, cap effects and every action wired together.
- */
-
 import { useCallback, useEffect, useState } from "react";
 import { makeMutable } from "react-native-reanimated";
 
@@ -25,7 +21,6 @@ interface TenFrameGameArgs {
   geo: Geometry;
   measured: boolean;
   reduced: boolean;
-  /** Resume: the board as the child left it. */
   draft?: LevelDraft;
   onDraft?: (draft: LevelDraft) => void;
 }
@@ -67,7 +62,6 @@ export function useTenFrameGame({ target, palActive, onSolved, onStruggle, onAtt
   return { placed, solved, revealAll: misses >= 2, draggingId, near, fx, caps, drag, checkAnswer, ...handlers };
 }
 
-/** A saved board, if it is a valid list of distinct cap ids (anything odd starts fresh). */
 function resumedPlaced(draft: LevelDraft | undefined): number[] {
   const placed = draft?.placed ?? [];
   const valid = placed.length <= CAP_IDS.length && new Set(placed).size === placed.length && placed.every((id) => CAP_IDS.includes(id));

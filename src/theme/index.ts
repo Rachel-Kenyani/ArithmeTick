@@ -1,11 +1,3 @@
-/**
- * ArithmeTick design tokens (ported from arithmetick/app/globals.css). Light-only by design:
- * children's shared devices must look the same whatever the OS theme.
- *
- * Fonts: in React Native every weight is its own family — use `fonts.body*` / `fonts.heading*`
- * (never fontWeight with a custom family). Loaded in src/app/_layout.tsx.
- */
-
 import type { ViewStyle } from "react-native";
 
 export const colors = {
@@ -52,7 +44,6 @@ export const fonts = {
   headingBold: "Quicksand_700Bold",
 } as const;
 
-/** The chunky solid bottom "edge" under buttons (web: box-shadow 0 6px 0 0 <edge>). Drawn as a View, see Button. */
 export const edges = {
   teal: "#006a62",
   purple: "#5a3596",
@@ -60,7 +51,6 @@ export const edges = {
   sun: "#c99a1c",
 } as const;
 
-/** The card's soft drop shadow (web: shadow-card); the white halo ring is drawn as a border in Panel. */
 export const cardShadow: ViewStyle = {
   shadowColor: "#003c5a",
   shadowOpacity: 0.3,

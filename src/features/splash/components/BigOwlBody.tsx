@@ -1,7 +1,3 @@
-/**
- * Splash intro — the big owl's wings, body and feet (Logo-splash-9), drawn inside BigOwl's fading body layer.
- */
-
 import { Path, Rect } from "react-native-svg";
 
 import { GOLD, PURPLE, PURPLE_DARK, TEAL } from "../constants";

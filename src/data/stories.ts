@@ -1,27 +1,13 @@
-/**
- * The adventure, one story stop per level: Brijo asks for help ("The monkeys dropped the mangoes!"), the
- * puzzle is the help. Puzzle stops are missions, not rewards: the start names the job ("Put 6 mangoes back"),
- * the end shows it done for Brijo ("All 6 mangoes are back in the basket!") and Brijo says thank you, so the
- * story closes. Move & Play stops find a single treasure for the child. Copy is child-facing: one short line
- * that matches the recording, no instructions (the board and the voice of the puzzle do that).
- */
-
 import type { CounterItem } from "@/features/play/components/CounterFace";
 import type { LevelDef } from "@/data/levels";
 import type { Grade } from "@/types/domain";
 
 export interface StoryStop {
-  /** Brijo's line at the start, word for word as recorded (docs/voice), so no child's name. */
   ask: string;
-  /** What the child counts with on the board, and what the celebration shows. */
   treasure: CounterItem;
-  /** "a mango" — a single treasure (Move & Play). */
   one: string;
-  /** "mangoes" — the counted treasures. */
   many: string;
-  /** The job, shown on the story card: "Put 6 mangoes back". */
   mission: (count: number) => string;
-  /** The job done, shown on the celebration: "All 6 mangoes are back in the basket!". */
   done: (count: number) => string;
 }
 
@@ -250,7 +236,6 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
 };
 
-/** How many treasures a level brings back: the number the child built (1 for Move & Play). */
 export function treasureCount(level: LevelDef): number {
   if (level.kind === "quest") return 1;
   switch (level.grade) {
@@ -268,10 +253,6 @@ export function treasureCount(level: LevelDef): number {
   }
 }
 
-/**
- * What the story card draws and says in big type (≤ 8 words): how many items, and for take-away levels how
- * many Brijo takes. The full sentence is spoken, not read.
- */
 export interface StoryScene {
   items: number;
   away: number;
@@ -292,7 +273,6 @@ export function sceneFor(story: StoryStop, level: LevelDef): StoryScene {
     };
   }
   const n = treasureCount(level);
-  // Grade 2 numbers run past 30: too many to draw, so the caption carries the story alone.
   return {
     items: level.grade === 2 ? 0 : n,
     away: 0,

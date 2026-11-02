@@ -1,5 +1,3 @@
-/** The level map's warm dirt trail, with a lighter walking lane and small stepping stones. */
-
 import { StyleSheet, View } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 
@@ -7,7 +5,6 @@ import WalkedLeg from "@/features/home/components/level-map/WalkedLeg";
 import { BLEED, PEBBLE, SAND, WALKED } from "@/features/home/components/level-map/constants";
 import type { MapLayout } from "@/features/home/components/level-map/computeLayout";
 
-/** One clean, continuous trail that finishes at the purple flag pole. */
 export default function MapTrail({
   layout,
   unlockSegment,
@@ -37,7 +34,6 @@ export default function MapTrail({
           <G stroke="#fff2cf" strokeOpacity={0.64} strokeWidth={layout.trail * 0.16} transform="translate(-1 -2)">
             <Path d={layout.trailPath} />
           </G>
-          {/* Stepping stones show the portion already travelled, including the finish when the world is complete. */}
           <G strokeWidth={layout.big ? 8 : 7} strokeDasharray={[0.1, 17]}>
             {layout.segments.map((d, i) => (
               <G key={d}>

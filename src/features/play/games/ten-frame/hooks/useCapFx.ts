@@ -1,7 +1,3 @@
-/**
- * A cap's one-shot effects: squash-pop on landing plus the wobble / pulse / bounce / invite the board requests.
- */
-
 import { useEffect } from "react";
 import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
@@ -13,12 +9,10 @@ export function useCapFx(fx: FxSignal | undefined, landed: number, reduced: bool
   const fxRot = useSharedValue(0);
   const fxY = useSharedValue(0);
 
-  // A little squash-pop when the cap lands in a slot.
   useEffect(() => {
     if (landed > 0) fxScale.set(keyframes([1, 1.16, 0.95, 1], 450, 140));
   }, [landed, fxScale]);
 
-  // One-shot effects requested by the board.
   useEffect(() => {
     if (!fx) return;
     const delay = fx.delay * 1000;

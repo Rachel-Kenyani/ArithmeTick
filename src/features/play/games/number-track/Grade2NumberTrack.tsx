@@ -1,13 +1,3 @@
-/**
- * Grade 2, "Count back" (KICD Grade 2, 1.2: counting backward from 50). Ten stepping stones from `from` down,
- * in two rows of 5 like the ten-frame, with some numbers missing. The next missing stone glows; the child picks
- * its number from three tiles. Brijo reads the instruction aloud.
- * Feedback (no error text, as in Grade 1), in tiers for each gap: a first wrong pick counts back aloud from the
- * first stone to the gap, each stone hopping in turn; a second shows the number faintly in the gap. The next gap
- * starts without a hint. The usual slip (counting forward
- * instead of back) is always one of the choices.
- */
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, { FadeIn, ReduceMotion, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue } from "react-native-reanimated";
@@ -22,13 +12,11 @@ import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { keyframes } from "../ten-frame/utils/motion";
 
 const STONES = 10;
-/** Slower than the Grade 1 count, so each number can be said aloud before the next stone hops. */
 const COUNT_STEP_MS = 1200;
 const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1400;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
-/** Three choices in counting-back order: the answer, one less, and the counting-forward slip (one more than the stone before). */
 function choicesFor(answer: number): number[] {
   return [answer + 2, answer, answer - 1];
 }
@@ -38,12 +26,10 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
   const reduced = useReducedMotion();
   const numbers = useMemo(() => Array.from({ length: STONES }, (_, i) => from - i), [from]);
   const missing = useMemo(() => numbers.filter((n) => gaps.includes(n)), [numbers, gaps]);
-  // Resume: the gaps already filled stay filled.
   const [filled, setFilled] = useState<number[]>(() =>
     draft?.version === DRAFT_VERSION ? (draft.picked ?? []).filter((n) => missing.includes(n)) : [],
   );
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
-  /** Misses on the gap being filled now: help is per gap, so the next gap starts without a hint. */
   const [missesHere, setMissesHere] = useState(0);
   const [hops, setHops] = useState<Partial<Record<number, { n: number; delayMs: number }>>>({});
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -56,7 +42,6 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
     onDraft?.({ version: DRAFT_VERSION, misses, picked: filled });
   }, [onDraft, misses, filled]);
 
-  /** Hop the stones from the first up to (not including) `until`, one by one, saying each number aloud. */
   const countBack = (until: number) => {
     const run = numbers.filter((n) => n > until);
     setHops((prev) => {
@@ -132,7 +117,6 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
             ))}
           </View>
 
-
           <View style={styles.actions}>
             {next !== undefined ? (
               <Animated.View key={next} entering={FadeIn.duration(220)} style={partStyles.choices}>
@@ -150,7 +134,6 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
   );
 }
 
-/** One stepping stone: its number, or a dashed "?" while missing (glowing when it's the one to fill). */
 function Stone({
   n,
   size,

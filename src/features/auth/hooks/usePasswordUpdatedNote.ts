@@ -1,14 +1,9 @@
-/**
- * One-time "Password updated" note after Reset Password (flag set there, consumed here).
- */
-
 import { useEffect, useState } from "react";
 import { AccessibilityInfo } from "react-native";
 
 import { consumePasswordUpdated } from "@/services/flash";
 
 export function usePasswordUpdatedNote() {
-  // One-time "Password updated" note after Reset Password (flag set there, consumed here).
   const [flagged] = useState(consumePasswordUpdated);
   const [passwordUpdated, setPasswordUpdated] = useState(false);
 

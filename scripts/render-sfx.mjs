@@ -1,15 +1,9 @@
-/**
- * Renders the web app's Web Audio recipes (arithmetick/lib/audio.ts) to 16-bit mono WAVs in assets/sfx/,
- * so the native app sounds identical. Re-run after changing a recipe:  node scripts/render-sfx.mjs
- * Then regenerate src/services/audio/sfxAssets.ts (this script writes it too).
- */
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const RATE = 44100;
 const MASTER = 0.55;
 const PENTA = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.51, 1567.98, 1760.0];
 
-/** Exponential ramp like AudioParam.exponentialRampToValueAtTime. */
 const expRamp = (a, b, t) => a * Math.pow(b / a, Math.min(1, Math.max(0, t)));
 
 function osc(type, phase) {

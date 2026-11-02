@@ -1,16 +1,8 @@
-/**
- * Grass blades + rocks for the JungleBackdrop bottom strip, generated once with a seeded PRNG.
- */
-
 import { P, Q, rng, type Pt } from "./geometry";
-
-/* ------------------------------------------------------------------------------------------------
- * Grass + rocks strip
- * ---------------------------------------------------------------------------------------------- */
 
 export const GRASS_W = 2000;
 export const GRASS_H = 150;
-const GROUND = GRASS_H + 3; // blade bases sit just below the bottom edge
+const GROUND = GRASS_H + 3;
 
 type GrassLayer = 0 | 1 | 2;
 
@@ -23,12 +15,9 @@ interface Blade {
 function blade(x0: number, h: number, w: number, dx: number, layer: GrassLayer): Blade {
   const b = GROUND;
   const tip: Pt = [x0 + dx, b - h];
-  // centre line x = x0 + dx·t², y = b − h·t (as a cubic: x controls 0, 0, dx/3, dx); the blade stays wide and
-  // then tapers to a point over the last third
   const L: [Pt, Pt, Pt] = [[x0 - w, b], [x0 - w, b - h / 3], [x0 + dx / 3 - w * 0.72, b - (2 * h) / 3]];
   const R: [Pt, Pt, Pt] = [[x0 + w, b], [x0 + w, b - h / 3], [x0 + dx / 3 + w * 0.72, b - (2 * h) / 3]];
   const body = `M${Q(L[0])}C${Q(L[1])} ${Q(L[2])} ${Q(tip)}C${Q(R[2])} ${Q(R[1])} ${Q(R[0])}Z`;
-  // the lit half is the outside of the curve; its inner edge doubles as the blade's crease line
   const s = dx >= 0 ? -1 : 1;
   const E = s < 0 ? L : R;
   const V: [Pt, Pt, Pt] = [[x0 + s * w * 0.15, b], [x0 + s * w * 0.15, b - h / 3], [x0 + dx / 3 + s * w * 0.1, b - (2 * h) / 3]];
@@ -59,14 +48,13 @@ function makeGrass(seed: number) {
   const blades: Blade[] = [];
   const rocks: Rock[] = [];
 
-  // fanned clumps: deep green at the back, then the tall middle layer, then short bright tufts in front
   const clumps = (layer: 0 | 1 | 2, step: [number, number], count: [number, number], hRange: [number, number], wRange: [number, number]) => {
     let x = -30 + rand() * step[0];
     while (x < GRASS_W + 30) {
       const n = count[0] + Math.floor(rand() * (count[1] - count[0] + 1));
       const tallest = hRange[0] + rand() * (hRange[1] - hRange[0]);
       for (let i = 0; i < n; i++) {
-        const f = n === 1 ? 0.5 : i / (n - 1); // 0 → leans left, 1 → leans right
+        const f = n === 1 ? 0.5 : i / (n - 1);
         const h = tallest * (0.66 + 0.34 * Math.sin(Math.PI * (0.15 + 0.7 * f))) * (0.86 + rand() * 0.18);
         const dx = (f - 0.5) * h * (1 + rand() * 0.45) + (rand() - 0.5) * 14;
         const w = wRange[0] + rand() * (wRange[1] - wRange[0]);
@@ -82,7 +70,6 @@ function makeGrass(seed: number) {
   const split = blades.length;
   clumps(2, [120, 200], [2, 3], [44, 82], [6, 8.5]);
 
-  // grey rock clusters sitting in front
   let x = 20 + rand() * 60;
   while (x < GRASS_W) {
     const n = 1 + Math.floor(rand() * 3);

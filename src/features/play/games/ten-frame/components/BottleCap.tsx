@@ -1,8 +1,3 @@
-/**
- * A draggable / tappable bottle cap: springs between computed spots, pops, wobbles and glows.
- * Under PAL, a cap past the target ("extra") hops on the spot until it is tapped back to the tray.
- */
-
 import { memo, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
@@ -22,7 +17,6 @@ import { ToneOverlay } from "./CapFace";
 import { CountBubble } from "./CountBubble";
 
 interface BottleCapProps {
-  /** What the cap is drawn as: a bottle top, or the story's item (feathers, shells…). */
   item: CounterItem;
   id: number;
   size: number;
@@ -82,15 +76,12 @@ export const BottleCap = memo(function BottleCap({
   const [landed, setLanded] = useState(0);
   const [tones, setTones] = useState<PaletteKey[]>([]);
 
-  // Render-time bookkeeping (React's "adjust state on prop change" pattern):
-  // landing in a slot triggers the squash-pop; tone overlays mount the first time they're needed.
   if (prevSlot !== slot) {
     setPrevSlot(slot);
     if (prevSlot === null && slot !== null) setLanded(landed + 1);
   }
   if (group && !tones.includes(group)) setTones([...tones, group]);
 
-  // Pop in once the board has its real size.
   useEffect(() => {
     appear.set(withDelay(visible ? 50 + id * 35 : 0, withSpring(visible ? 1 : 0, SPRING_POP), RM));
   }, [visible, id, appear]);
@@ -138,11 +129,8 @@ export const BottleCap = memo(function BottleCap({
         pointerEvents={visible ? "auto" : "none"}
         style={[styles.cap, { width: size, height: size }, outerStyle]}
       >
-        {/* lift layer: grows while held / dragged */}
         <Animated.View style={[StyleSheet.absoluteFill, liftStyle]}>
-          {/* chunky shadow that drops away when lifted */}
           <Animated.View style={[StyleSheet.absoluteFill, styles.capShadow, { borderRadius: size / 2 }, shadowStyle]} />
-          {/* fx layer: pops, wobbles, bounces */}
           <Animated.View style={[StyleSheet.absoluteFill, fxStyle]}>
             <CounterFace item={item} palette={color} size={size * 0.92} />
             {item === "cap" && tones.map((t) => (

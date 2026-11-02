@@ -1,5 +1,3 @@
-/** A visual Play cue; its parent node remains the single, large tap target. */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import { PlayIcon } from "@/components/ui/icons";

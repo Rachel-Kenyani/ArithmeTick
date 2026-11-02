@@ -1,8 +1,3 @@
-/**
- * The level's treasures drawn as a group in rows of 5 (the ten-frame layout), so 6 reads as 5 + 1 at a
- * glance and matches the 6 items the child just placed.
- */
-
 import { StyleSheet, View } from "react-native";
 import Animated, { ReduceMotion, ZoomIn } from "react-native-reanimated";
 

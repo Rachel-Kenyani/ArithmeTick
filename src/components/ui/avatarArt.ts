@@ -1,8 +1,3 @@
-/**
- * Avatar artwork from Figma (Owl.svg, Cheetah.svg, Bear.svg, Fox.svg), as SVG markup for SvgXml.
- * Each keeps its own viewBox; Avatar fits it centred in a square.
- */
-
 import type { AvatarKind } from "@/types/models";
 
 export const AVATAR_XML: Record<AvatarKind, string> = {

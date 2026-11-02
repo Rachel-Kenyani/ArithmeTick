@@ -1,7 +1,3 @@
-/**
- * Email-or-phone + password fields, shared by Log In and Sign Up.
- */
-
 import type { RefObject } from "react";
 import { StyleSheet, View, type TextInputInstance } from "react-native";
 

@@ -1,5 +1,3 @@
-/** Reports the stop to play to the screen once, on the map's first measured layout. */
-
 import { useEffect, useRef } from "react";
 
 export function useReportFocus(focusY: number | null, onFocusY: ((y: number) => void) | undefined) {

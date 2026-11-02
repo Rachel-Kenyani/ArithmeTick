@@ -1,14 +1,7 @@
-/**
- * Form-field icons (mail, key, eye, smile, grad cap, phone).
- */
-
 import { Circle, Path, Rect } from "react-native-svg";
 
 import { make } from "./make";
 
-/* ---------------------------------------------------------------- forms */
-
-/** Inbox tray — the mockups' "Enter Email or Phone Number" glyph. */
 export const MailIcon = make(
   "MailIcon",
   <>
@@ -17,7 +10,6 @@ export const MailIcon = make(
   </>,
 );
 
-/** Round-headed key (password fields, "Back? Log In"). */
 export const KeyIcon = make(
   "KeyIcon",
   <>
@@ -43,7 +35,6 @@ export const EyeOffIcon = make(
   </>,
 );
 
-/** "What's your Explorer's name?" */
 export const SmileIcon = make(
   "SmileIcon",
   <>
@@ -53,7 +44,6 @@ export const SmileIcon = make(
   </>,
 );
 
-/** Mortarboard — "Choose their Grade / Class". */
 export const GradCapIcon = make(
   "GradCapIcon",
   <>

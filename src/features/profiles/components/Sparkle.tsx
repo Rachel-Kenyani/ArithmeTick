@@ -1,7 +1,3 @@
-/**
- * One star of the sparkle burst around the chosen avatar.
- */
-
 import { useEffect } from "react";
 import Animated, {
   useAnimatedStyle,
@@ -15,7 +11,6 @@ import { StarIcon } from "@/components/ui/icons";
 
 import { easeOut } from "../utils/easing";
 
-/** Sparkle burst around the chosen avatar: fixed directions (no randomness during render). */
 export const SPARKLES = [
   { x: 0, y: -66, color: "#FFC107", size: 18 },
   { x: 56, y: -34, color: "#00968a", size: 14 },

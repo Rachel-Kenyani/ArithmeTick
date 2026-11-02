@@ -1,25 +1,13 @@
-/**
- * InfoBanner — the card under the top bar that says where you are, built like a little name plate:
- * a purple tag sitting on the card's top edge ("Grade 1" / "Level 1"), the big name centred below
- * ("Ten-Frames" / "Count to 6"), optional progress pips with a "2 of 6" count, and on a level an optional
- * speaker button that replays the story.
- */
-
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
 import { SpeakerIcon } from "@/components/ui/icons";
 import { cardShadow, colors, fonts } from "@/theme";
 
 export interface InfoBannerProps {
-  /** Small tag on the top edge, e.g. "Level 1". */
   tag: string;
-  /** The big centred name, e.g. "Count to 6". */
   title: string;
-  /** Screen-reader sentence for the whole card. */
   spoken: string;
-  /** Progress pips: `completed` of `total` levels done. */
   progress?: { completed: number; total: number };
-  /** Shows a speaker button that brings the level's story card back (and Brijo reads it again). */
   onReplay?: () => void;
 }
 
@@ -91,7 +79,6 @@ export default function InfoBanner({
         ) : null}
       </View>
       {onReplay ? (
-        // Outside the card: the card is one accessible element, which would swallow the button.
         <View style={[styles.replayWrap, { right: (tablet ? 24 : 16) + 10 }]} pointerEvents="box-none">
           <Pressable
             onPress={onReplay}
@@ -109,7 +96,6 @@ export default function InfoBanner({
 }
 
 const styles = StyleSheet.create({
-  // Extra top room so the tag can sit half above the card's edge
   wrap: {
     width: "100%",
     maxWidth: 512,
@@ -142,7 +128,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     color: colors.white,
   },
-  // Room for the button on both sides keeps the title centred and clear of it.
   cardWithReplay: { paddingHorizontal: 64 },
   replayWrap: { position: "absolute", top: 12 + TAG_H / 2, bottom: 0, justifyContent: "center" },
   replay: {
@@ -180,7 +165,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderColor: colors.jgField,
   },
-  // #006f68 on the mint card ≈ 6:1
   count: {
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,

@@ -1,8 +1,3 @@
-/**
- * Panel — the pale-mint card every onboarding screen sits on, with the soft translucent white halo ring.
- * `variant="pill"` is the smaller rounded banner from the splash ("Welcome Explorer!").
- */
-
 import type { ReactNode } from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 
@@ -10,7 +5,6 @@ import { cardShadow, colors } from "@/theme";
 
 export interface PanelProps {
   variant?: "card" | "pill";
-  /** Set false where a single clean card is clearer than the decorative outer halo. */
   halo?: boolean;
   style?: StyleProp<ViewStyle>;
   children: ReactNode;

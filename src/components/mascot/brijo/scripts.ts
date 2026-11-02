@@ -1,7 +1,3 @@
-/**
- * Brijo mood scripts — keyframe loops and rest poses for every mood.
- */
-
 import { MOODS, type Keyframes, type MoodScript, type Timing } from "./choreography";
 import type { BrijoMood } from "./types";
 
@@ -19,10 +15,6 @@ const Z_LOOP: Keyframes = {
   opacity: [0, 1, 1, 0],
 };
 
-/*
- * Tufts keep each mood's static rest tilt; the web's small ear-twitch loops are dropped to keep
- * the number of animated SVG nodes down (they were barely visible at most sizes).
- */
 export const SCRIPTS: Record<BrijoMood, MoodScript> = {
   idle: {
     rig: { loop: { y: [0, -2.5, 0] }, t: loopT(3.4) },
@@ -116,5 +108,4 @@ export const SCRIPTS: Record<BrijoMood, MoodScript> = {
   },
 };
 
-/** Indexed by mood index so worklets can look scripts up from a shared number. */
 export const SCRIPT_LIST: MoodScript[] = MOODS.map((m) => SCRIPTS[m]);

@@ -1,9 +1,3 @@
-/**
- * TimePill — today's play time left, shown as a clock and "m:ss" (no words for little readers to decode).
- * Warms to soft amber in the last two minutes (never red, never ticking) and reads "Paused" while the
- * clock is stopped, e.g. during a Move & Play level.
- */
-
 import { StyleSheet, Text, View } from "react-native";
 
 import { ClockIcon } from "@/components/ui/icons";
@@ -32,7 +26,6 @@ export default function TimePill({ secondsLeft, paused = false }: Readonly<{ sec
 }
 
 const styles = StyleSheet.create({
-  // minHeight (not height) so the pill grows with larger accessibility text sizes instead of clipping
   time: {
     minHeight: 38,
     flexDirection: "row",

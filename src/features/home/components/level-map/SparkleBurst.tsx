@@ -1,5 +1,3 @@
-/** The sparkle burst + white flash played over a stop as it unlocks. */
-
 import { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
@@ -14,7 +12,6 @@ import Animated, {
 import { SparkleIcon } from "@/components/ui/icons";
 
 const BURST_COLORS = ["#ffd54a", "#ffffff", "#7ff0c9", "#9b75cc", "#ffd54a", "#ffffff", "#2fa79e", "#ffe58a"];
-/** One entry per sparkle slot around the burst ring; the slot (its angle) is the sparkle's identity. */
 const BURST_SLOTS = BURST_COLORS.map((_, i) => ({ id: `slot-${i}`, i }));
 const easeOut = Easing.out(Easing.ease);
 

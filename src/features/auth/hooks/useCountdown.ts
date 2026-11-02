@@ -1,15 +1,9 @@
-/**
- * Code-expiry countdown for the Verify screen; restart() begins a new round (fresh clock).
- */
-
 import { useEffect, useState } from "react";
 
 export function useCountdown(lifetimeSeconds: number) {
   const [secondsLeft, setSecondsLeft] = useState(lifetimeSeconds);
-  /** Which code we're on: 0 = the first one, bumped by every "Resend Code" (restarts the clock). */
   const [round, setRound] = useState(0);
 
-  // Countdown against a deadline (honest even when timers are throttled); stops at 00:00.
   useEffect(() => {
     const deadline = Date.now() + lifetimeSeconds * 1000;
     const id = setInterval(() => {

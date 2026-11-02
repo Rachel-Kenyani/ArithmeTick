@@ -1,7 +1,3 @@
-/**
- * Sparkles that burst around the equation strip when the puzzle is solved.
- */
-
 import { useEffect } from "react";
 import Animated, { FadeOut, useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";

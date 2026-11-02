@@ -1,10 +1,3 @@
-/**
- * Grown-up voice: anything addressed to a parent / tutor (not the child) is plum text on a light plum
- * panel with an "i" badge, so the child learns it isn't for them and the grown-up spots it at a glance.
- *
- *   <GrownUpNote>Hold the button once they show you.</GrownUpNote>
- */
-
 import type { ReactNode } from "react";
 import {
   StyleSheet,
@@ -25,7 +18,6 @@ export const GROWN_UP = {
   fill: "rgba(168,50,110,0.22)",
 } as const;
 
-/** A plum "i" in a ring. */
 export function InfoIcon({
   size = 20,
   color = GROWN_UP.ink,
@@ -63,7 +55,6 @@ export default function GrownUpNote({
   style,
 }: Readonly<{
   children: ReactNode;
-  /** Light up the words as Brijo reads them (string children only). */
   spoken?: boolean;
   style?: StyleProp<ViewStyle>;
 }>) {

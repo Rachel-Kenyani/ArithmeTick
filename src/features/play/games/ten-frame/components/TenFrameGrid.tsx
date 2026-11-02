@@ -1,7 +1,3 @@
-/**
- * The ten-frame itself: frame, top-row halo, PAL locked chunk and the ten wells.
- */
-
 import { View } from "react-native";
 
 import { colors } from "@/theme";
@@ -53,7 +49,6 @@ export function TenFrameGrid({
   const { cellRadius, haloInset, frameEdge } = frameChrome(L);
   const rowWidth = L.cell * ROW_SIZE + L.gap * (ROW_SIZE - 1);
   const showTopHalo = palActive || topFull;
-  /** Top-left of the wells (inside the frame border + padding), board coordinates. */
   const wellsX = g.x + L.frameBorder + L.framePad;
   const wellsY = g.y + L.frameBorder + L.framePad;
 
@@ -78,7 +73,6 @@ export function TenFrameGrid({
         ]}
       />
 
-      {/* 5-group halo (purple) / PAL locked row glow (mint) */}
       {showTopHalo ? (
         <TopRowHalo
           palActive={palActive}

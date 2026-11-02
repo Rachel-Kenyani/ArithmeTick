@@ -1,7 +1,3 @@
-/**
- * TextField with a show/hide-password eye toggle.
- */
-
 import { useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 
@@ -22,7 +18,6 @@ export function PasswordField(props: Readonly<PasswordFieldProps>) {
       autoCapitalize="none"
       autoCorrect={false}
       spellCheck={false}
-      // Everything else (value, onChangeText, placeholder, autofill hints, submit) passes straight through.
       {...props}
       secureTextEntry={!show}
       trailing={

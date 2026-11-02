@@ -1,7 +1,3 @@
-/**
- * Slide-in wrapper for the Profiles title card.
- */
-
 import { useEffect, type ReactNode } from "react";
 import Animated, {
   useAnimatedStyle,

@@ -1,14 +1,3 @@
-/**
- * Toast — a short, friendly confirmation pill ("New code sent"), shown in place near what triggered it.
- *
- *   {toastId ? <Toast key={toastId} message="New code sent" /> : null}
- *
- * - For success / info only: errors stay inline next to the field (FieldMessage), never in a toast.
- * - The caller owns how long it stays (≈2–4 s) and re-keys it to replay; only one shows at a time.
- * - On mount: a light haptic and a screen-reader announcement. Pops in with a spring; a plain fade under
- *   reduced motion.
- */
-
 import * as Haptics from "expo-haptics";
 import { useEffect } from "react";
 import { AccessibilityInfo, StyleSheet, Text } from "react-native";

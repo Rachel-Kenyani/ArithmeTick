@@ -1,5 +1,3 @@
-/** /leaderboard — placeholder until the leaderboard is built. */
-
 import ComingSoonTab from "@/features/home/components/ComingSoonTab";
 import { TrophyIcon } from "@/components/ui/icons";
 import { colors } from "@/theme";

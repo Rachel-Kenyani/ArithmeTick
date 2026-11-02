@@ -1,5 +1,3 @@
-// TEMPORARY stand-in — replaced when LevelCelebrationModal is ported (see README).
-
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -19,30 +17,20 @@ import type { Grade } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
 export interface LevelCelebrationModalProps {
-  /** The child's name: "You did it, Amani!" */
   childName: string;
-  /** The level's story stop: its treasure is shown as found. */
   treasure: StoryStop | null;
-  /** How many treasures the level brings back (the number the child built). */
   treasureCount: number;
   open: boolean;
   grade: Grade;
-  /** 1-based level number on the grade map. */
   levelNumber: number;
-  /** The level's child-facing map title, e.g. "Count to 6" (data/levels.ts). */
   levelTitle: string;
   isQuest: boolean;
-  /** A Move & Play task with its own picture (measuring, weighing, buying): shown instead of the treasure. */
   questTask?: string;
-  /** Newly earned badge to feature, or null → a "Level n complete!" card. */
   badge: BadgeDef | null;
-  /** Stars this level just added (3 the first time, 0 on a replay; already saved), and the new total. */
   starsEarned: number;
   starsTotal: number;
   reduced: boolean;
-  /** The celebration's high-five, counted automatically once per opening (feeds the High-Five Hero badge). */
   onHighFive?: () => void;
-  /** Label for the main button: "Next level", or "Back to map" after the grade's last level. */
   nextLabel: string;
   onClaim: () => void;
 }
@@ -55,16 +43,13 @@ export default function LevelCelebrationModal({ open, ...rest }: Readonly<LevelC
 function Body({ childName, treasure, treasureCount, questTask, grade, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
   const claimedRef = useRef(false);
 
-  // The pop-up opens with a clap sound: no button to find, it just happens (once per opening).
   const highFive = useRef(onHighFive);
   useEffect(() => {
     sfx.clap();
     highFive.current?.();
   }, []);
 
-  // Brijo says the mission is done once the clap has landed.
   const missionLine = treasure ? treasure.done(treasureCount) : null;
-  // The words on screen are the ones the thank-you clip says.
   const [thanks] = useState(() => THANKS[Math.floor(Math.random() * THANKS.length)]);
   const doneLine = missionLine ? `${missionLine} ${thanks.text}` : null;
   useEffect(() => {
@@ -86,10 +71,6 @@ function Body({ childName, treasure, treasureCount, questTask, grade, levelNumbe
   return (
     <View style={[StyleSheet.absoluteFill, styles.overlay]} accessibilityViewIsModal>
       <View style={[StyleSheet.absoluteFill, styles.scrim]} />
-      {/*
-        Hierarchy: who + what (title) → the story payoff (hero card) → rewards (stars, badge) → next step.
-        Each group sits in its own band so nothing floats.
-      */}
       <Panel style={styles.panel}>
         <View style={styles.tag}>
           <Text style={styles.tagText}>{`Level ${levelNumber} done`}</Text>

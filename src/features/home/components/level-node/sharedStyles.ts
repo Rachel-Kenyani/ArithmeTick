@@ -1,5 +1,3 @@
-/** Styles shared by several level-stop pieces (rings, platform face content, numbers). */
-
 import { StyleSheet } from "react-native";
 
 import { fonts } from "@/theme";

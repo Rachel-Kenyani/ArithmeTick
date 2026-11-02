@@ -1,7 +1,3 @@
-/**
- * Game actions (gesture callbacks / timers only): solve, place, remove, refuse and check an answer.
- */
-
 import { useCallback, useRef, type Dispatch, type SetStateAction } from "react";
 
 import { sfx } from "@/services/audio";
@@ -15,9 +11,7 @@ interface CapActionsArgs {
   refs: GameRefs;
   setPlaced: Dispatch<SetStateAction<number[]>>;
   setSolved: Dispatch<SetStateAction<boolean>>;
-  /** Wrong "Done" presses so far: help reveals every missing slot only from the second one. */
   setMisses: Dispatch<SetStateAction<number>>;
-  /** Misses carried over from a resumed level. */
   initialMisses: number;
   schedule: (fn: () => void, ms: number) => void;
   fire: (ids: readonly number[], kind: FxKind, delayFor?: (index: number) => number, labelFor?: (index: number) => number) => void;
@@ -43,12 +37,9 @@ export function useCapActions({ target, refs, setPlaced, setSolved, setMisses, i
     [fire, schedule, cbRef, placedRef, setSolved, solvedCalledRef, solvedRef],
   );
 
-  /** Put `id` into the next empty slot. Returns false when the grid refuses it. */
   const placeCap = useCallback(
     (id: number, source: "drag" | "tap" | "auto"): boolean => {
       const current = placedRef.current;
-      // The child decides when to stop, so all 10 slots are open. Only after a second miss do the
-      // slots past the target lock and an extra cap bounce home (sooner would give the answer away).
       const limit = palRef.current && missesRef.current >= 2 ? target : CAP_COUNT;
       if (solvedRef.current || current.includes(id) || current.length >= limit) return false;
       const slot = current.length;
@@ -57,7 +48,6 @@ export function useCapActions({ target, refs, setPlaced, setSolved, setMisses, i
       placedRef.current = next;
       setPlaced(next);
 
-      // A dropped cap is right at the grid: click now. A flying cap clicks when it lands.
       const landMs = source === "drag" ? 0 : 240;
       if (landMs === 0) sfx.snap(slot);
       else schedule(() => sfx.snap(slot), landMs);
@@ -84,7 +74,6 @@ export function useCapActions({ target, refs, setPlaced, setSolved, setMisses, i
     if (removalsRef.current >= STRUGGLE_REMOVALS && !palRef.current) cbRef.current.onStruggle();
   }, [cbRef, flightRef, palRef, placedRef, removalsRef, setPlaced]);
 
-  /** The grid can't take another cap: it bounces home with a playful wobble (no text). */
   const refuseCap = useCallback(
     (id: number) => {
       sfx.release();
@@ -96,12 +85,6 @@ export function useCapActions({ target, refs, setPlaced, setSolved, setMisses, i
     [fire, syncCaps, cbRef, flightRef, solvedRef],
   );
 
-  /**
-   * "Done": right → the solved flourish. Wrong → count along: the caps hop up one by one with a rising
-   * note and the count stops at the target. Extra caps are left out of the count (then hop until sent
-   * back). From the second miss, if caps ran out first, the count carries on into ghost caps in the empty
-   * slots — the first miss only counts what they built, so the help doesn't give the answer away. No error text.
-   */
   const checkAnswer = useCallback(() => {
     const current = placedRef.current;
     if (solvedRef.current || current.length === 0) return;
@@ -116,7 +99,6 @@ export function useCapActions({ target, refs, setPlaced, setSolved, setMisses, i
     for (let k = 0; k < counted; k += 1) schedule(() => sfx.snap(k), k * COUNT_STEP_MS);
     const countEnd = counted * COUNT_STEP_MS;
     if (current.length > target) schedule(() => fire(current.slice(target), "wobble"), countEnd);
-    // PAL steps in when the count stops: extras start hopping, or ghost caps appear and the count carries on.
     schedule(() => cbRef.current.onStruggle(), countEnd);
     missesRef.current += 1;
     setMisses(missesRef.current);

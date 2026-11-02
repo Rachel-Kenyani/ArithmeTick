@@ -1,15 +1,3 @@
-/**
- * Grade 3 — "Array Multiplication & Place-Value Regrouping" (native port of arithmetick/components/Grade3ArrayMultiplication.tsx)
- * Puzzle `rows × cols` (default 3 × 4 = 12 → 1 ten + 2 ones; levels use 3×4, 2×6, 3×5, 4×3).
- *
- * Phase A (build):   stretch the array from its corner, then tap Done to check it. A wrong size lets
- *                    Stealth PAL step in (rows lock, columns stop at the target, rows band with skip counts).
- * Phase B (regroup): tap 10 tiles; each fills one slot of the ten-rod. At 10 they bundle into 1 ten and the
- *                    rest drop into Ones. With help on, the first tap in a row grabs the whole row.
- *
- * Built for budget phones: no shadows, no per-tile animated values, the drag maths stays on the UI thread.
- */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, { FadeIn, ReduceMotion, useReducedMotion } from "react-native-reanimated";
@@ -41,7 +29,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   const reduced = useReducedMotion();
   const schedule = useScheduler();
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
-  // Resume: carry on building at the saved size, or picking with the saved tiles.
   const [resumed] = useState(() => resumeArray(draft, pz.count));
   const [phase, setPhase] = useState<Phase>(resumed.regrouping ? "regroup" : "build");
   const [childDims, setChildDims] = useState<Dims>(resumed.dims);
@@ -52,7 +39,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   const bundleRef = useRef(0);
   const doneRef = useRef(false);
 
-  // Help never resets progress: it is a constraint applied on top of the child's size.
   const dims = phase === "build" ? constrain(childDims, dimLimits(pz, palActive)) : { rows: pz.rows, cols: pz.cols };
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
@@ -98,7 +84,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
       if (grew) sfx.snap(result.picked.length - 1);
       else sfx.release();
 
-      // Reaching 10 bundles after a short beat — unless a tile goes back first.
       bundleRef.current += 1;
       if (result.picked.length !== TEN) return;
       const ticket = bundleRef.current;
@@ -118,8 +103,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
     const regrouping = phase !== "build" && phase !== "locked";
     onDraft?.(regrouping ? { misses: missesRef.current, regrouping, picked } : { misses: missesRef.current, rows: childDims.rows, cols: childDims.cols });
   }, [onDraft, phase, picked, childDims]);
-
-  /* ─────────────── layout ─────────────── */
 
   const building = phase === "build" || phase === "locked";
   const stageW = size ? size.w - 24 : 0;
@@ -168,7 +151,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   );
 }
 
-/** "Build 3 × 4" while building, then "Make a ten" — one short line, never a paragraph. */
 function GoalPill({ rows, cols, phase }: Readonly<{ rows: number; cols: number; phase: Phase }>) {
   const building = phase === "build" || phase === "locked";
   const label = building ? `Build ${rows} rows of ${cols}` : phase === "bundled" ? "1 ten!" : "Tap 10 to make a ten";
@@ -186,7 +168,6 @@ function GoalPill({ rows, cols, phase }: Readonly<{ rows: number; cols: number; 
   );
 }
 
-/** "3 × 4 = ?" → "3 × 4 = 12" once the array is right → "12 = 1 ten + 2 ones" once it is bundled. */
 function Equation({ pz, phase }: Readonly<{ pz: ReturnType<typeof normalizePuzzle>; phase: Phase }>) {
   const known = phase !== "build";
   const tile = 42;
@@ -232,7 +213,6 @@ const styles = StyleSheet.create({
   word: { fontFamily: fonts.bodyBold, fontSize: 20, color: colors.atInk },
 });
 
-/** A saved Grade 3 board, checked against the puzzle (anything odd starts fresh). */
 function resumeArray(draft: LevelDraft | undefined, count: number): { regrouping: boolean; dims: Dims; picked: number[] } {
   const picked = (draft?.picked ?? []).filter((t, i, all) => Number.isInteger(t) && t >= 0 && t < count && all.indexOf(t) === i).slice(0, TEN - 1);
   const rows = Math.min(MAX_ROWS, Math.max(1, Math.round(draft?.rows ?? 1)));

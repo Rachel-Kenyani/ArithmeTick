@@ -1,7 +1,3 @@
-/**
- * The Verify card: heading, OTP boxes, status line, CTA, resend footer and toast row.
- */
-
 import { StyleSheet, Text } from "react-native";
 import Animated, { FadeInDown, ReduceMotion } from "react-native-reanimated";
 
@@ -46,7 +42,6 @@ export default function VerifyCard({
             title={copy.title}
             subtitle={
               flow.purpose === "reset" ? (
-                // Same words whether or not the account exists, so nobody can check who's registered.
                 <>
                   If <Text style={styles.purple}>{maskIdentifier(flow.identifier)}</Text> has an account, we’ve sent
                   a <Text style={styles.purple}>{CODE_LENGTH}-digit code</Text>. Enter it below.
@@ -99,7 +94,6 @@ export default function VerifyCard({
             disabled={!canResend}
           />
 
-          {/* The demo hint steps aside for a moment while the "New code sent" toast shows in its place. */}
           <ToastRow toast={toast} />
         </Panel>
       </Animated.View>

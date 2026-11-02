@@ -1,11 +1,3 @@
-/**
- * Brijo palette + artwork geometry (200×200 viewBox, identical to web) and rig pivots.
- */
-
-/* ------------------------------------------------------------------------------------------
- * Palette + geometry (identical to web)
- * ---------------------------------------------------------------------------------------- */
-
 export const C = {
   outline: "#1B1B1B",
   teal: "#009088",
@@ -66,7 +58,6 @@ export function inkFor(size: number): number {
   return Math.min(1.45, Math.max(1, 96 / Math.max(size, 1)));
 }
 
-/** Pivots — fixed points in artwork space. */
 export const PIVOT = {
   boop: [100, 196],
   shadow: [100, 196.8],

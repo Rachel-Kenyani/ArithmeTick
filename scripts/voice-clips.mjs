@@ -1,13 +1,3 @@
-/**
- * Writes assets/voice/clips.ts (gitignored, like the recordings) from the files in assets/voice/en: the clip
- * map, plus when each spoken word starts, so the app can highlight the words as Brijo reads them.
- * Word timings come from whisper.cpp, offline. Re-run after adding or re-recording clips:
- *
- *   brew install ffmpeg whisper-cpp
- *   WHISPER_MODEL=/path/to/ggml-base.en.bin node scripts/voice-clips.mjs
- *
- * Without a model the clip map is still written, and lines without timings are highlighted as a whole.
- */
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -20,7 +10,6 @@ const ids = readdirSync(join(DIR, "en"))
   .map((f) => f.slice(0, -4))
   .sort();
 
-/** [word, start in ms] for each word whisper hears in the clip. */
 function wordTimes(id, work) {
   const wav = join(work, `${id}.wav`);
   execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", join(DIR, "en", `${id}.m4a`), "-ar", "16000", "-ac", "1", wav]);

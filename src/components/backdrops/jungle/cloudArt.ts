@@ -1,12 +1,4 @@
-/**
- * Cloud shapes for JungleBackdrop — puff/base definitions and their silhouette + hatch paths.
- */
-
 import { r1 } from "./geometry";
-
-/* ------------------------------------------------------------------------------------------------
- * Clouds
- * ---------------------------------------------------------------------------------------------- */
 
 type Circle = readonly [cx: number, cy: number, r: number];
 type Capsule = readonly [x: number, y: number, w: number, h: number];
@@ -17,7 +9,6 @@ export interface CloudDef {
   bases: Capsule[];
 }
 
-/** Scalloped bottom edge: little bumps along each base capsule. */
 function scallops(bases: Capsule[]): Circle[] {
   const out: Circle[] = [];
   for (const [x, y, w, h] of bases) {
@@ -36,7 +27,6 @@ export const CLOUD_BIG: CloudDef = {
     [96, 42, 32],
     [132, 58, 23],
     [152, 70, 15],
-    // two little bubble clouds trailing to the right
     [180, 30, 8],
     [192, 24, 10],
     [204, 31, 7],
@@ -78,7 +68,6 @@ export const CLOUD_SMALL: CloudDef = {
   bases: [[14, 48, 120, 22]],
 };
 
-/** The cloud silhouette as ONE path: circles + capsules, all wound clockwise, so nonzero fill = their union. */
 export function cloudPath(def: CloudDef) {
   let d = "";
   for (const [cx, cy, r] of [...def.puffs, ...scallops(def.bases)]) {

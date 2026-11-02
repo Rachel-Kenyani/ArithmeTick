@@ -1,22 +1,3 @@
-/**
- * Brijo the Owl — ArithmeTick's mascot (React Native port of components/BrijoMascot.tsx).
- *
- * Same artwork as the web: a 200×200 viewBox drawn with react-native-svg, scaled to `size`.
- *
- * Animation model (react-native-reanimated v4, everything on the UI thread)
- * -------------------------------------------------------------------------
- * - One frame-callback clock (`clock`, seconds) drives every mood loop. Each part's value is
- *   sampled from the mood's keyframe script by a worklet, so the React tree never re-renders to
- *   animate.
- * - Mood changes cross-fade from the previous mood's sampled pose into the new one with a spring
- *   (`blend` 0→1), so switching moods never snaps; plus a small springy "pop".
- * - Whole-body layers (boop/pop, shadow, rig sway/hop, squash) are RN `Animated.View` transforms.
- *   Only parts that must move independently inside an SVG are animated SVG groups (via the
- *   native `matrix` prop): wings ×2, head, beak, mouth, gaze, upper + lower lids (both eyes
- *   share one node each), feet ×2.
- * - Blink and idle gaze are fired from effect-owned timers. Tapping Brijo plays a "boop".
- * - Reduced motion (`useReducedMotion`): the clock never starts and every part shows its rest pose.
- */
 import { memo, useCallback, useId } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, { Easing, useReducedMotion, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
@@ -42,10 +23,6 @@ import { useMoodBlend } from "./brijo/useMoodBlend";
 
 export type { BrijoMascotProps, BrijoMood } from "./brijo/types";
 
-/* ------------------------------------------------------------------------------------------
- * Component
- * ---------------------------------------------------------------------------------------- */
-
 function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotProps>) {
   const reduceMotion = useReducedMotion();
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -54,22 +31,18 @@ function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotPr
   const ink = inkFor(size);
   const k = size / 200;
 
-  // One clock for every loop; never started under reduced motion.
   const clock = useBrijoClock(reduceMotion);
   const popX = useSharedValue(1);
   const popY = useSharedValue(1);
-  // Mood change: cross-fade from the old mood's pose, plus a springy pop.
   const { moodSV, prevSV, blend } = useMoodBlend(moodIdx, reduceMotion, popX, popY);
   const rig: Rig = { clock, mood: moodSV, prev: prevSV, blend, still: reduceMotion };
 
   const canBlink = eyes === "open" && !reduceMotion;
   const { lid, blinkOnce } = useBlink(canBlink);
 
-  // Idle curiosity: pupils glance around now and then; other moods look straight ahead.
   const canGaze = mood === "idle" && !reduceMotion;
   const { gazeX, gazeY } = useGaze(eyes, canGaze, reduceMotion);
 
-  // Tap Brijo: squishy boop + blink + soft "boop" note. Purely decorative.
   const handleBoop = useCallback(() => {
     sfx.pickup();
     if (reduceMotion) return;
@@ -79,12 +52,10 @@ function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotPr
     if (eyes === "open") blinkOnce(false);
   }, [reduceMotion, popX, popY, eyes, blinkOnce]);
 
-  /* ---- View layers ---- */
   const origin = (p: readonly [number, number]) => [p[0] * k, p[1] * k, 0] as [number, number, number];
 
   const { boopStyle, shadowStyle, rigStyle, squashStyle } = useLayerStyles(rig, popX, popY, k);
 
-  // Tufts: static per-mood tilt (no loop), so a plain transform string is enough.
   const tuftL = SCRIPTS[mood].tuftL?.rest?.rotate ?? 0;
   const tuftR = SCRIPTS[mood].tuftR?.rest?.rotate ?? 0;
 
@@ -127,7 +98,6 @@ function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotPr
             </Body>
           </Animated.View>
 
-          {/* toes stay planted (outside the squash) and sit in front of the chest's tip */}
           <View style={layer}>
             <Feet rig={rig} ink={ink} />
           </View>

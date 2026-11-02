@@ -1,14 +1,3 @@
-/**
- * One-box-per-character code entry ("Verify Account").
- *
- *   <OtpInput length={5} value={code} onChange={setCode} onComplete={verify} label="5-digit verification code" autoFocus />
- *
- * Native pattern: one invisible TextInput stretched over the drawn boxes holds the whole code, so typing,
- * backspace, paste and SMS autofill (iOS oneTimeCode / Android sms-otp) all just work. Tapping any box
- * focuses it; the next empty box shows the "you are here" border.
- * `onComplete` fires once each time the code becomes complete (never twice for the same code).
- */
-
 import { useEffect, useRef, useState, type Ref } from "react";
 import { StyleSheet, Text, TextInput, View, type StyleProp, type ViewStyle, type TextInputInstance } from "react-native";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
@@ -26,7 +15,6 @@ export interface OtpInputProps {
   onComplete?: (value: string) => void;
   size?: "md" | "sm";
   style?: StyleProp<ViewStyle>;
-  /** The hidden input that holds the code — call .focus() to bring up the keyboard on the next empty box. */
   ref?: Ref<TextInputInstance>;
 }
 
@@ -77,7 +65,6 @@ export default function OtpInput({
   const lastCompleted = useRef<string | null>(null);
   const [focused, setFocused] = useState(false);
   const [rowWidth, setRowWidth] = useState(0);
-  // Shrink the boxes (and digits) when they'd overflow the card, e.g. 6 boxes on a narrow phone.
   const base = SIZES[size];
   const fit = rowWidth ? Math.floor((rowWidth - base.gap * (length - 1)) / length) : base.box;
   const box = Math.min(base.box, fit);
@@ -138,7 +125,6 @@ const styles = StyleSheet.create({
   active: { borderColor: colors.jgTeal, borderWidth: 3 },
   invalid: { borderColor: colors.atPlum, backgroundColor: "rgba(168,50,110,0.04)" },
   char: { fontFamily: fonts.bodySemiBold, color: colors.atInk },
-  // Covers the boxes so a tap anywhere focuses it; transparent text so only the boxes show.
   hidden: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, color: "transparent", backgroundColor: "transparent", fontSize: 1 },
 });
 

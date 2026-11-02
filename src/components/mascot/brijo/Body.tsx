@@ -1,7 +1,3 @@
-/**
- * Brijo's squashable body SVG: body, flapping wings and kitenge chest, with the head as children.
- */
-
 import type { ReactNode } from "react";
 import Svg, { G, Path } from "react-native-svg";
 

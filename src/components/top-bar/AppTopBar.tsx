@@ -1,8 +1,3 @@
-/**
- * AppTopBar — the one top bar shared by Home and the level screen: a back button on the left, then the
- * explorer's stars and play time on the right, on a soft teal band under the status bar.
- */
-
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -11,14 +6,11 @@ import StarsPill from "@/components/top-bar/StarsPill";
 import TimePill from "@/components/top-bar/TimePill";
 
 export interface AppTopBarProps {
-  /** Spoken name of the back button, e.g. "Back to map". */
   backLabel: string;
   onBack: () => void;
   stars: number;
   secondsLeft: number;
-  /** Optional: makes the stars pill a button (Home opens Badges). */
   onStarsPress?: () => void;
-  /** The clock is paused (e.g. during a Move & Play level). */
   timePaused?: boolean;
 }
 

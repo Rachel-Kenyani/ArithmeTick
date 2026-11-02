@@ -1,9 +1,3 @@
-/**
- * HoldToConfirm — a quiet grown-up action that only fires after a press-and-hold (2s by default),
- * so a child can't trigger it by tapping. A fill sweeps across the pill while it is held; letting go
- * early resets it. Screen-reader users (who can't hold) confirm with a double tap.
- */
-
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -73,6 +67,5 @@ const styles = StyleSheet.create({
   },
   fill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: GROWN_UP.fill },
   content: { flexDirection: "row", alignItems: "center", gap: 8 },
-  // grown-up voice: plum on light plum (≈ 5.6:1)
   label: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: GROWN_UP.ink },
 });

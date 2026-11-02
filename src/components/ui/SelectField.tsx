@@ -1,8 +1,3 @@
-/**
- * A select that looks exactly like TextField ("Choose their Grade / Class"): purple icon, the chosen
- * label (or placeholder), teal chevron. Tapping opens a bottom sheet of big, kid-proof options.
- */
-
 import { useState, type ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

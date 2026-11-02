@@ -1,7 +1,3 @@
-/**
- * Brijo's planted feet (outside the squash), each tapping/rotating about its own pivot.
- */
-
 import Svg from "react-native-svg";
 
 import { AnimatedG, useMatrixProps } from "./AnimatedG";

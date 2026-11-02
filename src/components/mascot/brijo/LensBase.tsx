@@ -1,7 +1,3 @@
-/**
- * Brijo lens rims, rings and eye base (static, both lenses).
- */
-
 import { Circle, G, Path } from "react-native-svg";
 
 import { EYE_X, type EyeKind } from "./eyeConfig";

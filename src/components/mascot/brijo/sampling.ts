@@ -1,15 +1,7 @@
-/**
- * Brijo worklet sampling — keyframe easing, cross-faded part values and SVG matrices.
- */
-
 import type { SharedValue } from "react-native-reanimated";
 
 import { PART_DEFAULTS, type AnimKey, type Ease, type Part, type PartMotion, type Timing } from "./choreography";
 import { SCRIPT_LIST } from "./scripts";
-
-/* ------------------------------------------------------------------------------------------
- * Worklet sampling
- * ---------------------------------------------------------------------------------------- */
 
 function ease(kind: Ease, u: number): number {
   "worklet";
@@ -18,14 +10,12 @@ function ease(kind: Ease, u: number): number {
   return u * u * (3 - 2 * u);
 }
 
-/** Resting value of `key` on `part` when the script has none. */
 function restValue(script: PartMotion | undefined, part: Part, key: AnimKey): number {
   "worklet";
   const fallback = key.startsWith("scale") || key === "opacity" ? 1 : 0;
   return script?.rest?.[key] ?? PART_DEFAULTS[part][key] ?? fallback;
 }
 
-/** Easing for keyframe segment `i` (defaults to "io"). */
 function segmentEase(e: Timing["ease"], i: number): Ease {
   "worklet";
   if (e === undefined) return "io";
@@ -33,7 +23,6 @@ function segmentEase(e: Timing["ease"], i: number): Ease {
   return e[i] ?? "io";
 }
 
-/** Value of `key` on `part` for mood index `m` at clock `time` (seconds). */
 function sample(m: number, part: Part, key: AnimKey, time: number, still: boolean): number {
   "worklet";
   const script = SCRIPT_LIST[m][part];
@@ -74,7 +63,6 @@ export function val(r: Rig, part: Part, key: AnimKey): number {
   return before + (now - before) * b;
 }
 
-/** SVG matrix [a b c d e f] for translate(tx,ty) · rotate(deg) · scale(sx,sy) about pivot (px,py). */
 export function matrix(px: number, py: number, deg: number, tx: number, ty: number, sx: number, sy: number): number[] {
   "worklet";
   const rad = (deg * Math.PI) / 180;

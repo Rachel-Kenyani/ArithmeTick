@@ -1,8 +1,3 @@
-/**
- * Brijo's head from Logo-splash-4.svg (the splash's frame-4 owl), cropped to the art. `blink` (0–1) hides the
- * pupils; drive it with a shared value for a blink.
- */
-
 import Animated, {
   useAnimatedProps,
   type SharedValue,
@@ -11,7 +6,6 @@ import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 
 const AnimatedG = Animated.createAnimatedComponent(G);
 
-/** The artboard area the head occupies (Logo-splash-4 is 428×181; strokes included). */
 export const HEAD_VIEW = { x: 116, y: 11, w: 196, h: 171 } as const;
 
 const TEAL = "#009088";

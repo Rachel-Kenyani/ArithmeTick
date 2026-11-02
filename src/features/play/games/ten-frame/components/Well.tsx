@@ -1,7 +1,3 @@
-/**
- * A ten-frame well (slot): PAL modes (a pulsing ghost cap where a cap is still missing), idle hint dimple and the drop preview.
- */
-
 import { memo } from "react";
 import { Text, View, type ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
@@ -29,7 +25,6 @@ interface WellProps {
   onFillNext: () => void;
 }
 
-/** Border / fill of a well for its PAL mode and whether a cap sits in it. */
 function wellModeStyle(mode: WellMode, filled: boolean): ViewStyle {
   if (mode === "palTop") return { borderColor: colors.atGlow, backgroundColor: "rgba(127,240,201,0.4)" };
   if (mode === "palDrop" && !filled) return { borderColor: "rgba(0,111,104,0.55)", backgroundColor: colors.white };
@@ -77,7 +72,6 @@ export const Well = memo(function Well({
     >
       {ghost ? (
         <Animated.View style={[styles.ghost, styles.center, { width: capSize * 0.86, height: capSize * 0.86, borderRadius: capSize }, ghostStyle]}>
-          {/* The count carries on into the ghosts: "5, 6" */}
           <Text style={[styles.ghostNumber, { fontSize: Math.round(capSize * 0.36) }]}>{index + 1}</Text>
         </Animated.View>
       ) : (
@@ -88,13 +82,11 @@ export const Well = memo(function Well({
   );
 });
 
-/** The glowing ring + pulsing ghost cap on the well a held cap will land in. */
 function WellPreview({ radius, capSize, reduced }: Readonly<{ radius: number; capSize: number; reduced: boolean }>) {
   const ghost = useBreath(!reduced, 0.92, 1.02, 1, 1100);
   const ghostStyle = useAnimatedStyle(() => ({ transform: [{ scale: ghost.get() }] }));
   return (
     <PopIn from={0.82} style={[styles.preview, { borderRadius: radius + 6 }]}>
-      {/* ghost of the cap that is about to land here */}
       <Animated.View style={[styles.ghost, { width: capSize * 0.86, height: capSize * 0.86, borderRadius: capSize }, ghostStyle]} />
     </PopIn>
   );

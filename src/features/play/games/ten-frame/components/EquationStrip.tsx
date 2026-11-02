@@ -1,9 +1,3 @@
-/**
- * The question as an equation, shown from the start: "5 + ? = 7" (the sum last, the way Grade 1 reads it). The 5 lights up purple when the top
- * row is full (matching the "5" badge); while help is on, the "?" gently pulses as the part to work out.
- * A right answer turns "?" into the missing number and the strip goes gold. It never counts along.
- */
-
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
@@ -27,7 +21,6 @@ interface EquationStripProps {
 
 export function EquationStrip({ target, topFull, palActive, solved, layout: L, reduced }: Readonly<EquationStripProps>) {
   const missing = target - TARGET_TOP;
-  // Room inside the pill: the 4px border plus ~10px of breathing space above and below the tiles
   const tile = L.eqH - 28;
   const fontSize = L.eqFont;
 

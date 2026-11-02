@@ -1,9 +1,3 @@
-/**
- * Idle invitation: an untouched tray cap hops now and then. If the board is still empty after
- * DEMO_AFTER_MS, the first tray cap shows how to play — it glides most of the way to the first
- * empty slot (which is already glowing as the hint slot) and springs back home.
- */
-
 import { useEffect, type RefObject } from "react";
 import { withDelay, withSequence, withSpring, withTiming } from "react-native-reanimated";
 
@@ -12,7 +6,6 @@ import { firstTrayCap } from "../logic/caps";
 import type { CapMotion, FxKind, Pt } from "../types";
 import { EASE_IN_OUT, SPRING_RETURN } from "../utils/motion";
 
-/** How far along the way to the slot the demo cap travels (it never "places" itself). */
 const DEMO_REACH = 0.8;
 
 export function useIdleInvite(

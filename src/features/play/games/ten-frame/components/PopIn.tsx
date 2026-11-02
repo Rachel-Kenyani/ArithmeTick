@@ -1,7 +1,3 @@
-/**
- * Mount-pop wrapper used by the halo, badge, tick and drop preview.
- */
-
 import { useEffect, type ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import Animated, { FadeOut, useAnimatedStyle, useSharedValue, withDelay, withSpring } from "react-native-reanimated";
@@ -10,7 +6,6 @@ import type { SpringCfg } from "../types";
 import { clamp } from "../utils/math";
 import { RM, SPRING_UI } from "../utils/motion";
 
-/** Mount pop (web: initial → animate with a spring) + soft fade on unmount. */
 export function PopIn({
   from = 0,
   rotateFrom = 0,

@@ -1,11 +1,3 @@
-/**
- * Move & Play (every 3rd level): a task with real things, shown to a grown-up. Grade 1 makes 10 with real
- * objects in two groups; Grade 2 measures, pays and finds shapes at home (`task`, see QUEST_TASKS).
- * The task is drawn, not just written: 10 bottle tops split into two coloured groups ("7 and 3 make 10") and three
- * illustrated steps, addressed to the child by name. Grown-up instructions use the plum grown-up voice. Finishing needs a grown-up: a 2-second press-and-hold, then a quick sum a young child can't
- * guess (e.g. 6 × 7). A wrong pick quietly swaps in a new sum — no reward, no error message.
- */
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -34,18 +26,13 @@ import Divider from "@/components/ui/Divider";
 
 export interface PhysicalQuestOverlayProps {
   grade: Grade;
-  /** What to do with real things; default "groups" (make 10 in two groups). */
   task?: QuestTask;
-  /** The child's name, for the directions ("Amani, make 2 groups"). */
   childName: string;
-  /** Brijo's story line for this stop ("Time to move! …"), read aloud before the steps. */
   story?: string;
-  /** For the recorded story line's file name. */
   levelNumber?: number;
   onConfirmed(): void;
 }
 
-/** The example split drawn on the card, per grade: [first group, second group]. */
 const SPLITS: Record<Grade, readonly [number, number]> = {
   1: [7, 3],
   2: [8, 2],
@@ -57,7 +44,6 @@ const STEPS = [
   { Art: GrownUpStepArt, text: "Show a grown-up" },
 ] as const;
 
-/** Grade 2 measurement and geometry tasks: one picture, one caption, three short steps. */
 const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanArt; caption: string; steps: readonly string[] }> = {
   length: {
     Art: HandspanArt,
@@ -88,11 +74,9 @@ interface GrownUpSum {
 }
 
 const DOT = 56;
-/** Up to 4 dots per row inside a group (dots + gaps + padding + border). */
 const groupWidth = (n: number) =>
   Math.min(n, 4) * DOT + (Math.min(n, 4) - 1) * 6 + 40;
 
-/** A times-table sum (6–9 × 6–9) with two near-miss choices, shuffled. */
 function newSum(): GrownUpSum {
   const a = 6 + Math.floor(Math.random() * 4);
   const b = 6 + Math.floor(Math.random() * 4);
@@ -112,7 +96,6 @@ export default function PhysicalQuestOverlay({
   onConfirmed,
 }: Readonly<PhysicalQuestOverlayProps>) {
   const [first, second] = SPLITS[grade];
-  // Brijo reads the story line and then the steps as one line, so each step lights up as she reaches it.
   const stepTexts: readonly string[] = task === "groups" ? STEPS.map((s) => s.text) : QUEST_TASKS[task].steps;
   const stepsLine = stepTexts.map((t) => (/[.!?]$/.test(t) ? t : `${t}.`)).join(" ");
   const line = story ? `${story} ${stepsLine}` : stepsLine;
@@ -121,7 +104,6 @@ export default function PhysicalQuestOverlay({
     narration.quest(story, stepsLine, grade, levelNumber, task);
     return () => narration.stop();
   }, [story, stepsLine, grade, levelNumber, task]);
-  /** Where each step's words start in `line`. */
   const stepOffsets = stepTexts.map((_, i) => wordsOf(story).length + stepTexts.slice(0, i).reduce((n, t) => n + wordsOf(t).length, 0));
   const [checking, setChecking] = useState(false);
   const [sum, setSum] = useState(newSum);
@@ -144,7 +126,6 @@ export default function PhysicalQuestOverlay({
   );
 
   return (
-    // Scrolls on short phones so the grown-up check below the steps is always reachable.
     <ScrollView
       style={styles.scroll}
       contentContainerStyle={styles.panel}
@@ -281,7 +262,6 @@ function TaskCard({ task, line, offsets }: Readonly<{ task: Exclude<QuestTask, "
 }
 
 const styles = StyleSheet.create({
-  // Phone-width card, centred on tablets.
   scroll: { flex: 1, width: "100%", maxWidth: 440, alignSelf: "center" },
   panel: {
     gap: 14,

@@ -1,7 +1,3 @@
-/**
- * Board size → responsive layout + geometry (measured with onLayout, computed with pure maths).
- */
-
 import { useCallback, useMemo, useState } from "react";
 import type { LayoutChangeEvent } from "react-native";
 

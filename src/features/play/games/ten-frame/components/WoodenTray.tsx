@@ -1,7 +1,3 @@
-/**
- * Wooden tray of vifuniko (decorative; the caps themselves are the accessible elements).
- */
-
 import { View } from "react-native";
 
 import { CAP_IDS } from "../constants";

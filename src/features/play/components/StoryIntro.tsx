@@ -1,13 +1,3 @@
-/**
- * The level's story stop, built for children who can't read yet (KICD Grade 1: voice and pictures over text):
- *   1. Brijo says the line aloud as the card opens, lighting up each word (tap Repeat to hear it again).
- *   2. The story is drawn: the items in rows of 5, and on take-away levels the ones Brijo takes, heading for
- *      his basket.
- *   3. One short caption (≤ 8 words) with the numbers big and coloured.
- *   4. The full sentence sits in the plum grown-up note, to read aloud together.
- * "Let's go!" opens the puzzle.
- */
-
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -97,7 +87,6 @@ export default function StoryIntro({
   );
 }
 
-/** The story as a picture: the items in rows of 5; the ones Brijo takes float above, by her basket. */
 function Scene({
   story,
   scene,
@@ -150,7 +139,6 @@ function Scene({
   );
 }
 
-/** The caption with every number big and coloured, so the numbers lead even before the words can be read. */
 function Caption({ text }: Readonly<{ text: string }>) {
   const parts = text.split(/(\d+)/);
   return (
@@ -189,7 +177,6 @@ const styles = StyleSheet.create({
   },
   basketRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   basket: { width: 72, height: 40 },
-  // rows of 5, like the ten-frame
   items: {
     flexDirection: "row",
     flexWrap: "wrap",

@@ -1,8 +1,3 @@
-/**
- * A loose item the child can tap or drag. Tap = place it; drag = carry it and let go over the target
- * (`onDrop` gets the release point in window coordinates and decides). A drop that misses springs back.
- */
-
 import type { ReactNode } from "react";
 import { GestureDetector, useCompetingGestures, usePanGesture, useTapGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";

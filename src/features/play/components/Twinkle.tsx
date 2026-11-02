@@ -1,7 +1,3 @@
-/**
- * Twinkle — a softly pulsing star dot behind the sleepy Brijo on the screen-time sheet.
- */
-
 import { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {

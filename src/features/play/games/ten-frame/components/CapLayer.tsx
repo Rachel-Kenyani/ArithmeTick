@@ -1,7 +1,3 @@
-/**
- * The single overlay layer every cap lives in; caps spring between computed spots inside it.
- */
-
 import type { CounterItem } from "@/features/play/components/CounterFace";
 import { StyleSheet, View } from "react-native";
 
@@ -20,7 +16,6 @@ interface CapLayerProps
   item: CounterItem;
   rowTone: GroupTone;
   palActive: boolean;
-  /** Under PAL, caps in slots at or past this index are extras that hop. */
   target: number;
   measured: boolean;
   reduced: boolean;

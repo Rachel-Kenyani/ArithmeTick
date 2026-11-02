@@ -1,12 +1,4 @@
-/**
- * Brijo choreography types, mood order and per-part rest defaults (plain data so worklets can read it).
- */
-
 import type { BrijoMood } from "./types";
-
-/* ------------------------------------------------------------------------------------------
- * Mood choreography (plain data so worklets can read it)
- * ---------------------------------------------------------------------------------------- */
 
 export type Part =
   | "shadow" | "rig" | "squash" | "head" | "tuftL" | "tuftR" | "wingL" | "wingR"
@@ -14,11 +6,9 @@ export type Part =
 export type AnimKey = "x" | "y" | "rotate" | "scale" | "scaleX" | "scaleY" | "opacity";
 export type Pose = Partial<Record<AnimKey, number>>;
 export type Keyframes = Partial<Record<AnimKey, number[]>>;
-/** "io" easeInOut, "o" easeOut, "i" easeIn. */
 export type Ease = "io" | "o" | "i";
 
 export interface Timing {
-  /** seconds */
   d: number;
   times?: number[];
   delay?: number;

@@ -1,17 +1,9 @@
-/**
- * Error / hint line shown under a form field.
- */
-
 import { useEffect, type ReactNode } from "react";
 import { AccessibilityInfo, StyleSheet, Text, View } from "react-native";
 
 import { AlertCircleIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
 
-/**
- * Friendly message / hint line under a field. An error gets an alert icon (so it isn't told by colour alone) and is
- * announced to screen readers when it appears or changes (live region on Android, an announcement on iOS).
- */
 export function FieldMessage({
   error,
   hint,

@@ -1,7 +1,3 @@
-/**
- * Brijo open eyes — gaze-tracking irises and blinking lids.
- */
-
 import type { SharedValue } from "react-native-reanimated";
 import { Circle, ClipPath, Defs, G, Path, Rect } from "react-native-svg";
 
@@ -17,7 +13,6 @@ interface OpenEyesProps {
   gazeY: SharedValue<number>;
 }
 
-/** Irises + eyelids for both eyes: three animated nodes total, clipped to the two eye discs. */
 export function OpenEyes({ ink, clipId, lid, gazeX, gazeY }: Readonly<OpenEyesProps>) {
   const y = FACE_Y;
   const gazeProps = useMatrixProps(() => {

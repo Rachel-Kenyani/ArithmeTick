@@ -1,8 +1,3 @@
-/**
- * Treasures Brijo collects along the trail (one per level, see data/stories.ts). Flat fills, a highlight
- * and the chunky #1b1b1b outline, on a 64×64 viewBox — cheap to draw on budget phones.
- */
-
 import Svg, { Circle, Ellipse, G, Path } from "react-native-svg";
 
 import { colors } from "@/theme";

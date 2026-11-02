@@ -1,12 +1,7 @@
-/**
- * Shared field "face" styles + placeholder colour (TextField, PasswordField, SelectField).
- */
-
 import { StyleSheet } from "react-native";
 
 import { colors, fonts } from "@/theme";
 
-/** Shared look of the field "face" — also used by SelectField so both read as one family. */
 export const fieldStyles = StyleSheet.create({
   face: {
     minHeight: 64,

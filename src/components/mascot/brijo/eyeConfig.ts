@@ -1,7 +1,3 @@
-/**
- * Brijo eye config — per-mood eye kind, lid travel, gaze spots/springs and eye x positions.
- */
-
 import { EYE, LENS } from "./geometry";
 import type { BrijoMood } from "./types";
 

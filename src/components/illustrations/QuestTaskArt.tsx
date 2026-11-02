@@ -1,11 +1,3 @@
-/**
- * Hero pictures for the Grade 2 Move & Play tasks (measurement and geometry with real things at home):
- *   HandspanArt — a hand stretched along a table edge (length)
- *   ScaleCupArt — a balance tipping to the heavy side, beside a cup and a jug (mass and capacity)
- *   CoinsArt    — Kenyan shilling coins and a note (money)
- *   ShapesArt   — a circle, triangle and square, a straight line and a curved line (shapes and lines)
- */
-
 import type { ReactElement } from "react";
 import { Circle, Ellipse, G, Path, Rect, Text as SvgText } from "react-native-svg";
 
@@ -19,10 +11,6 @@ const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
   money: CoinsArt,
 };
 
-/**
- * Move & Play tasks that don't find a treasure (measuring, weighing, buying): the celebration shows the same
- * picture the child just worked from. Tasks that end with a find have none.
- */
 export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
 
 export function QuestTaskPicture({ task, size }: Readonly<{ task: string; size: number }>) {
@@ -30,7 +18,6 @@ export function QuestTaskPicture({ task, size }: Readonly<{ task: string; size: 
   return Art ? <Art size={size} /> : null;
 }
 
-/** One small hand print, palm down, fingers pointing up; (x, y) is the bottom-left of the palm. */
 function HandPrint({ x, y, faded }: Readonly<{ x: number; y: number; faded?: boolean }>) {
   return (
     <G opacity={faded ? 0.45 : 1}>
@@ -49,7 +36,6 @@ function HandPrint({ x, y, faded }: Readonly<{ x: number; y: number; faded?: boo
   );
 }
 
-/** The same hand stepping along a table edge, counted 1, 2, 3: measuring is putting it down again and again. */
 export function HandspanArt({ size = 64, title }: Readonly<ArtProps>) {
   const steps = [6, 22, 38] as const;
   return (
@@ -59,7 +45,6 @@ export function HandspanArt({ size = 64, title }: Readonly<ArtProps>) {
       {steps.map((x, i) => (
         <HandPrint key={x} x={x} y={40} faded={i < steps.length - 1} />
       ))}
-      {/* the move from one print to the next */}
       <Path d="M12 14q8-6 16 0M28 14q8-6 16 0" stroke={colors.atPurple} strokeWidth={1.8} fill="none" strokeLinecap="round" />
       <Path d="M26 12l2 2-2.6 1M42 12l2 2-2.6 1" stroke={colors.atPurple} strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
       {steps.map((x, i) => (
@@ -75,7 +60,6 @@ export function ScaleCupArt({ size = 64, title }: Readonly<ArtProps>) {
   return (
     <ArtFrame size={size} title={title}>
       <Path d="M18 58h10M23 58V22" {...ink} />
-      {/* beam tipped down to the heavy (left) side */}
       <Path d="M8 26l30-8" {...ink} />
       <Path d="M8 26l-4 9h8zM38 18l-4 9h8z" fill={colors.atMint} {...ink} />
       <Circle cx="8" cy="31" r="3.5" fill="#7a5a3a" {...ink} />

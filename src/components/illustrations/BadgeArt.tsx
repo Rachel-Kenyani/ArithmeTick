@@ -1,10 +1,3 @@
-/**
- * One hand-drawn illustration per badge id (see src/data/badges.ts). 64×64 viewBox, warm flat
- * fills with 2–4 shades, a highlight and the chunky dark outline.
- *
- *   <BadgeArt id="balance-master" size={48} />
- */
-
 import type { ReactNode } from "react";
 import { Circle, Ellipse, G, Line, Path, Rect, Text as SvgText } from "react-native-svg";
 
@@ -67,10 +60,8 @@ function Crane() {
   }
   return (
     <>
-      {/* mast */}
       <Rect x="8" y="10" width="7" height="48" fill={colors.atYellow} {...ink} />
       <Path d="M8 18l7 8M15 26l-7 8M8 34l7 8M15 42l-7 8" stroke={OUTLINE} strokeWidth={1.4} fill="none" />
-      {/* jib */}
       <Rect x="4" y="6" width="54" height="5" rx="1.5" fill={colors.atYellow} {...ink} />
       <Rect x="2" y="11" width="8" height="6" rx="1" fill={colors.atPlum} {...ink} strokeWidth={1.8} />
       <Line x1="46" y1="11" x2="46" y2="24" stroke={OUTLINE} strokeWidth={1.6} />
@@ -84,11 +75,9 @@ function Crane() {
 function LeafHand() {
   return (
     <>
-      {/* leaf */}
       <Path d="M32 34C18 30 14 16 22 4c12 6 18 18 10 30z" fill={LEAF} {...ink} />
       <Path d="M22 4c4 10 8 20 10 30" fill="none" stroke={LEAF_DARK} strokeWidth={1.8} strokeLinecap="round" />
       <Path d="M24 12c-2 3-2 7 0 10" fill="none" stroke={LEAF_LIGHT} strokeWidth={2.4} strokeLinecap="round" />
-      {/* open hand cupped below */}
       <Path
         d="M8 42c4-2 8 0 11 3l7 2c4 1 4 6 0 6h-8l14 1 12-8c3-2 6 1 4 4l-12 10H18c-5 0-8-2-10-4z"
         fill={SKIN}
@@ -191,7 +180,6 @@ const ART: Record<string, () => ReactNode> = {
 const CHAMPION_TONE = { "grade-1-champion": "teal", "grade-2-champion": "purple", "grade-3-champion": "yellow" } as const;
 
 export interface BadgeArtProps extends ArtProps {
-  /** Badge id from src/data/badges.ts. Unknown ids fall back to the star burst. */
   id: string;
 }
 

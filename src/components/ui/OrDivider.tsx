@@ -1,5 +1,3 @@
-/** Thin teal rules with a word in the middle — "Continue with Google ── or ── email". */
-
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 
 import { colors, fonts } from "@/theme";

@@ -1,12 +1,4 @@
-/**
- * JungleBackdrop palette — art-only colours, grass tones, sky gradient stops and a clamp helper.
- */
-
 import { colors } from "@/theme";
-
-/* ------------------------------------------------------------------------------------------------
- * Palette (art-only colours with no theme token; sky stops use the jg-* tokens)
- * ---------------------------------------------------------------------------------------------- */
 
 export const C = {
   cloudEdge: "#2e5d96",
@@ -28,13 +20,11 @@ export const C = {
   rockDark: "#4b4b4b",
 } as const;
 
-/** Grass layers, back → front: [blade body, lit half]. Deep green at the back, bright lime at the front. */
 export const GRASS_TONES = [
   ["#3c8611", "#4a9915"],
   ["#4c9c13", "#64b51a"],
   ["#58a814", "#8ad61e"],
 ] as const;
-
 
 export const SKY = [colors.jgSkyTop, colors.jgSky, colors.jgHaze, colors.jgGround] as const;
 export const SKY_STOPS = [0, 0.36, 0.72, 1] as const;

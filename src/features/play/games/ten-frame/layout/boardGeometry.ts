@@ -1,7 +1,3 @@
-/**
- * Board geometry: where the card, grid, equation, Done button, tray, slots and tray dimples sit (pure maths).
- */
-
 import { CAP_IDS, DONE_GAP, DONE_H, ROW_SIZE } from "../constants";
 import type { BoardLayout, Chrome, Geometry, Rect4 } from "../types";
 import { equationWidth, pillWidth, sideCardFor } from "./chrome";
@@ -19,12 +15,10 @@ export function boardGeometry(L: BoardLayout, W: number, H: number): Geometry {
   const eqW = equationWidth(chrome, L.compact);
   const sg = L.sectionGap;
   const mid = W / 2;
-  /** The equation with the Done button under it. */
   const eqBlock = L.eqH + DONE_GAP + DONE_H;
 
   const innerTop = L.pad;
   const innerH = Math.max(0, H - L.pad * 2);
-  // main column (flex-1, centred) above the tray
   const mainH = innerH - trayH - sg;
 
   let contentH: number;

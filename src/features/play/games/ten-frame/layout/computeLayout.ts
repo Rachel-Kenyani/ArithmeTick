@@ -1,27 +1,13 @@
-/**
- * Responsive sizing: picks the arrangement and well / cap sizes that fit the board.
- */
-
 import { CAP_RATIO, DONE_GAP, DONE_H, MAX_CAP, MAX_CELL, MIN_CAP, MIN_CELL } from "../constants";
 import type { Arrangement, BoardLayout, Chrome } from "../types";
 import { clamp } from "../utils/math";
 import { chromeFor, equationWidth, pillWidth, sideCardFor } from "./chrome";
 
 const ROOM_STEPS: readonly number[] = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0];
-/** Below this much height, use the compact metrics even on wide canvases. */
 const SHORT_CANVAS_H = 420;
-/** The rail needs this much width to stand beside a usable grid. */
 const RAIL_MIN_WIDTH = 560;
-/** Tie-break when arrangements give the same wells: the familiar ones first. */
 const ARRANGEMENT_PREFERENCE: readonly Arrangement[] = ["side", "stack", "rail"];
 
-/**
- * Pick sizes that fit the module width and height (identical maths to web):
- *  1. the biggest wells first (up to MAX_CELL), trying each arrangement that suits the canvas;
- *     the one that fits with the biggest wells wins (if none fits, the shortest one);
- *  2. then any height still spare grows the target card, equation and spacing.
- * Pure: on native `availH` is simply the board container's own height (onLayout).
- */
 export function computeLayout(width: number, availH: number): BoardLayout {
   const compact = width < 480 || availH < SHORT_CANVAS_H;
   const wide = width >= 720;
@@ -40,7 +26,6 @@ export function computeLayout(width: number, availH: number): BoardLayout {
   const trayExtra = 2 * (trayBorder + trayPad);
   const trayCapMax = Math.floor((inner - trayExtra - trayGap * 4) / 5);
 
-  /** Caps keep their snug ratio to the wells: one row of 10 when it fits, else two rows of 5. */
   const trayFor = (cell: number): { cap: number; cols: 5 | 10 } => {
     const cap = clamp(Math.round(cell * CAP_RATIO), MIN_CAP, MAX_CAP);
     if (cap * 10 + trayGap * 9 + trayExtra <= inner) return { cap, cols: 10 };
@@ -65,7 +50,6 @@ export function computeLayout(width: number, availH: number): BoardLayout {
     return pad * 2 + c.cardH + gridH + eqBlock + trayH + c.sectionGap * 3;
   };
 
-  /** Biggest wells for one arrangement: as wide as fits, then shrink (not below MIN_CELL) to fit the height. */
   const plan = (arrangement: Arrangement) => {
     const snug = (cell: number) => chromeFor(compact, 0, cell);
     let widest = Math.min(MAX_CELL, Math.floor((inner - frameExtra - gap * 4) / 5));
@@ -80,7 +64,6 @@ export function computeLayout(width: number, availH: number): BoardLayout {
   const plans = [plan("stack")];
   if (wide) plans.push(plan("side"));
   if (width >= RAIL_MIN_WIDTH) plans.push(plan("rail"));
-  // Arrangements beside the grid are only worth it when the wells stay a decent size.
   const usable = plans.filter((p) => p.arrangement === "stack" || p.cell >= MIN_CELL);
   const fitting = usable.filter((p) => p.fits);
   const rank = (a: Arrangement) => ARRANGEMENT_PREFERENCE.indexOf(a);
@@ -122,5 +105,4 @@ export function computeLayout(width: number, availH: number): BoardLayout {
   };
 }
 
-/** First render (before onLayout): a typical 360px phone. */
 export const DEFAULT_LAYOUT: BoardLayout = { ...computeLayout(328, 520), measured: false };

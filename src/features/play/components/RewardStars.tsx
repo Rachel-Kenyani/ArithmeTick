@@ -1,10 +1,3 @@
-/**
- * RewardStars — the stars a level just earned, popping in one by one (a rising "snap" note each), with the
- * explorer's star total counting up beside them. No tap needed: the stars are already saved when the
- * level is solved; this only shows it. Under reduced motion everything appears at once, without sounds.
- * On a replay (earned 0) the 3 stars show as already won and the total stays the same.
- */
-
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { ZoomIn } from "react-native-reanimated";
@@ -13,7 +6,6 @@ import { StarIcon } from "@/components/ui/icons";
 import { sfx } from "@/services/audio";
 import { colors, fonts } from "@/theme";
 
-/** First pop after the card has settled, then one star every STEP_MS. */
 const FIRST_MS = 350;
 const STEP_MS = 320;
 const STAR_IDS = ["s1", "s2", "s3"] as const;
@@ -65,7 +57,6 @@ const styles = StyleSheet.create({
   wrap: { alignItems: "center", gap: 10 },
   row: { flexDirection: "row", gap: 8 },
   slot: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
-  // Same purple pill as the top bar's star counter, so kids see where the stars went
   totalPill: {
     minHeight: 36,
     flexDirection: "row",

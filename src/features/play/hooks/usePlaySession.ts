@@ -1,8 +1,3 @@
-/**
- * usePlaySession — one level's state and effects: stealth PAL, quest chime, completion (recorded once),
- * the High-Five Hero pop, leaving for the map and the daily screen-time tick.
- */
-
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AppState } from "react-native";
 
@@ -17,15 +12,10 @@ import { actions, draftKey, useScreenTimeRemaining, type LevelCompletion } from 
 const HIGH_FIVE_HERO = "high-five-hero";
 const HERO_POP_MS = 3200;
 
-/* ------------------------------------------------------------------------------------------------
- * Small external stores (mute lives in lib/audio; foreground state in AppState)
- * ---------------------------------------------------------------------------------------------- */
-
 function subscribeAppState(onChange: () => void) {
   const sub = AppState.addEventListener("change", onChange);
   return () => sub.remove();
 }
-/** Web paused on document visibilitychange; native pauses whenever the app is not in the foreground. */
 const isBackgrounded = () => AppState.currentState !== "active" && AppState.currentState != null;
 
 export function usePlaySession(profile: ChildProfile, level: LevelDef) {
@@ -37,15 +27,12 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   const profileId = profile.id;
   const levelNumber = level.number;
 
-  /* ---- resume: the board as the child left it last time (read once), saved again when they leave ---- */
   const key = draftKey(level.grade, level.number);
   const [saved] = useState(() => profile.drafts?.[key]);
 
-  /* ---- stealth PAL: off at the start of a fresh level (on again when resuming one that had help); flips true once and stays true ---- */
   const [palActive, setPalActive] = useState(saved?.pal ?? false);
   const engagePal = useCallback(() => setPalActive(true), []);
 
-  /* ---- every "Done" press is saved on the phone (time since the level opened, PAL on or off) ---- */
   const openedAt = useRef(0);
   useEffect(() => {
     openedAt.current = Date.now();
@@ -66,7 +53,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     if (palActive) sfx.palShimmer();
   }, [palActive]);
 
-  /* ---- a Physical Quest opens with the soft "screen time paused" chime ---- */
   const questChimeRef = useRef(false);
   useEffect(() => {
     if (!isQuest || questChimeRef.current) return;
@@ -79,7 +65,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     boardRef.current = board;
   }, []);
 
-  /* ---- completion: record exactly once, then celebrate ---- */
   const completedRef = useRef(false);
   const [completion, setCompletion] = useState<LevelCompletion | null>(null);
   const handleComplete = useCallback(() => {
@@ -107,8 +92,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     goToMap();
   }, [goToMap]);
 
-  // Save on leaving the level or backgrounding the app (one write, not one per cap). An empty board
-  // forgets the draft; a finished level is cleared by completeLevel.
   const persistDraft = useCallback(() => {
     const board = boardRef.current;
     if (completedRef.current || !board) return;
@@ -120,7 +103,6 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   }, [backgrounded, persistDraft]);
   useEffect(() => persistDraft, [persistDraft]);
 
-  /* ---- daily screen time ---- */
   const celebrating = completion !== null;
   const timeUp = secondsLeft <= 0 && !celebrating;
   const ticking = !isQuest && !celebrating && !backgrounded && secondsLeft > 0;

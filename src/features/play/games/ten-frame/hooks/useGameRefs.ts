@@ -1,7 +1,3 @@
-/**
- * Mirrors of game state for gesture callbacks / timers (always the latest values).
- */
-
 import { useEffect, useMemo, useRef } from "react";
 
 import type { GradeModuleProps } from "@/types/domain";
@@ -12,7 +8,6 @@ import type { Flight, Geometry, Pt } from "../types";
 type OnAttempt = NonNullable<GradeModuleProps["onAttempt"]>;
 
 export function useGameRefs(geo: Geometry, palActive: boolean, onSolved: () => void, onStruggle: () => void, onAttempt?: OnAttempt, initialPlaced: number[] = []) {
-  // Mirrors of state for gesture callbacks / timers (always the latest values).
   const geoRef = useRef<Geometry>(geo);
   const placedRef = useRef<number[]>(initialPlaced);
   const solvedRef = useRef(false);

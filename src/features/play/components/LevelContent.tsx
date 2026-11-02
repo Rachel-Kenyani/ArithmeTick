@@ -1,7 +1,3 @@
-/**
- * LevelContent — the canvas content: the grade module (with its puzzle params) or the Physical Quest.
- */
-
 import { memo } from "react";
 
 import { storyFor } from "@/data/stories";
@@ -27,11 +23,6 @@ interface LevelContentProps {
   onDraft: NonNullable<GradeModuleProps["onDraft"]>;
 }
 
-/**
- * Memoised: the screen re-renders every second while screen time ticks, but every prop here is
- * stable (level comes from the LEVELS table, callbacks are useCallback'd), so the grade module is
- * left alone mid-drag.
- */
 const LevelContent = memo(function LevelContent({ level, childName, palActive, waiting, onStruggle, onAttempt, onDone, draft, onDraft }: Readonly<LevelContentProps>) {
   const key = `g${level.grade}-l${level.number}`;
   if (level.kind === "quest") return <PhysicalQuestOverlay key={key} grade={level.grade} task={level.task} childName={childName} story={storyFor(level.grade, level.number)?.ask} levelNumber={level.number} onConfirmed={onDone} />;

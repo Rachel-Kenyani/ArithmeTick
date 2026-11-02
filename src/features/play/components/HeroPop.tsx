@@ -1,7 +1,3 @@
-/**
- * HeroPop — "+ High-Five Hero!" pop (above the celebration modal).
- */
-
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, withSpring, withTiming, type EntryExitAnimationFunction } from "react-native-reanimated";
 
@@ -9,7 +5,6 @@ import BadgeMedallion from "@/features/play/components/BadgeMedallion";
 import type { BadgeDef } from "@/data/badges";
 import { colors, fonts } from "@/theme";
 
-/** Web: spring 480 / 18 from opacity 0, y −30, scale 0.6. */
 const heroEntering: EntryExitAnimationFunction = () => {
   "worklet";
   const spring = { stiffness: 480, damping: 18 };

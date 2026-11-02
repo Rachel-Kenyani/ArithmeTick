@@ -1,7 +1,3 @@
-/**
- * Bottle-cap artwork: crown-cap palettes, the crimped silhouette and the fading group-tone overlay.
- */
-
 import { memo, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
@@ -20,7 +16,6 @@ const PALETTES: Record<
   mint: { light: "#E6FFF7", base: "#7FF0C9", dark: "#2DBE93", stroke: "#11765B", discIn: "#C6FCEA", discOut: "#5BE0B3" },
 };
 
-/** Crown-cap silhouette: 21 rounded crimps (real crown caps have 21 flutes). */
 function crimpPath(teeth = 21, rOuter = 48.5, rInner = 44, c = 50): string {
   const n = teeth * 2;
   const pts = Array.from({ length: n }, (_, i) => {
@@ -40,7 +35,6 @@ function crimpPath(teeth = 21, rOuter = 48.5, rInner = 44, c = 50): string {
 }
 const CRIMP_PATH = crimpPath();
 
-/** Static artwork (never animated itself — the Animated.Views around it move). */
 export const CapFace = memo(function CapFace({ palette }: Readonly<{ palette: PaletteKey }>) {
   const p = PALETTES[palette];
   const rim = `rim-${palette}`;
@@ -58,22 +52,16 @@ export const CapFace = memo(function CapFace({ palette }: Readonly<{ palette: Pa
           <Stop offset="1" stopColor={p.discOut} />
         </RadialGradient>
       </Defs>
-      {/* crimped skirt */}
       <Path d={CRIMP_PATH} fill={`url(#${rim})`} stroke={p.stroke} strokeWidth={2.6} strokeLinejoin="round" />
-      {/* inner lip shadow */}
       <Circle cx="50" cy="50" r="37.5" fill={p.dark} opacity={0.5} />
-      {/* top disc */}
       <Circle cx="50" cy="51" r="34" fill={`url(#${disc})`} stroke={p.stroke} strokeOpacity={0.35} strokeWidth={1.5} />
-      {/* embossed ring */}
       <Circle cx="50" cy="51" r="24.5" fill="none" stroke="#fff" strokeOpacity={0.24} strokeWidth={2.6} />
-      {/* gloss */}
       <Path d="M26 42 A26 26 0 0 1 46 25" fill="none" stroke="#fff" strokeOpacity={0.62} strokeWidth={5.5} strokeLinecap="round" />
       <Circle cx="57" cy="24.5" r="2.6" fill="#fff" fillOpacity={0.72} />
     </Svg>
   );
 });
 
-/** A group-tone face laid over the cap; fades in/out (web: AnimatePresence, 0.35s, staggered by slot). */
 export function ToneOverlay({ tone, on, delayMs }: Readonly<{ tone: PaletteKey; on: boolean; delayMs: number }>) {
   const o = useSharedValue(0);
   useEffect(() => {

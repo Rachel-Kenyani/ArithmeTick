@@ -1,9 +1,3 @@
-/**
- * The white ten-frame of the Grade 1 Count and Take-away levels (2 rows of 5 mint slots, dark edge underneath).
- * Grade 2 uses the same frame as "a ten", so the child sees one picture of ten throughout. Draws at any cell
- * size: full size on a board, small on the Grade 2 shelf of full frames.
- */
-
 import type { ReactNode } from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 
@@ -24,13 +18,10 @@ export function WhiteTenFrame({
   cell: number;
   gap: number;
   pad: number;
-  /** Gold edge: the frame is complete. */
   win?: boolean;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
-  /** What sits in each slot (an item, or nothing). */
   renderSlot: (slot: number) => ReactNode;
-  /** Drawn over the frame (a count bubble). */
   children?: ReactNode;
 }>) {
   const radius = Math.min(24, Math.round(cell * 0.6));

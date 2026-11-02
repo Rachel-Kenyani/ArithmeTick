@@ -1,11 +1,3 @@
-/**
- * Phase B — regroup. The finished array sits beside a place-value board (Tens | Ones), or above it on
- * phones too narrow for 48 px tiles side by side (the board then lies flat: the rod runs left to right). Each tapped tile
- * lights up and fills one slot of the ten-rod; at 10 the picked tiles leave the array, the rod turns gold
- * and the leftovers drop into Ones: 1 ten + k ones. Plain views and entering/exiting layout animations
- * only — nothing animates per frame while the child is thinking.
- */
-
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, ReduceMotion, ZoomIn } from "react-native-reanimated";
@@ -20,11 +12,8 @@ const FADE_OUT = FadeOut.duration(220).reduceMotion(ReduceMotion.System);
 const SLOTS = Array.from({ length: TEN }, (_, i) => i);
 
 export interface RegroupGeometry {
-  /** Array tile pitch. */
   pitch: number;
-  /** Rod segment height (and ones tile size). */
   seg: number;
-  /** The board sits under the array, rod horizontal. */
   stacked: boolean;
 }
 
@@ -115,22 +104,16 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
   );
 });
 
-/** Tiles are touch targets: never smaller than this. */
 const MIN_PITCH = 48;
 
-/** Biggest array pitch / rod segment that fit: side by side when tiles stay ≥ 48 px, else stacked. */
 export function regroupGeometry(w: number, h: number, pz: Puzzle): RegroupGeometry {
-  // rod: 10 segments + header + count; board ≈ 2 columns of (2·seg + 18) + divider + padding
   const segByH = (h - 96) / TEN;
-  // width: cols·p + gap 16 + board (≈ 4·seg + 70), with seg ≈ 0.6·p
   const pitchByW = (w - 86) / (pz.cols + 2.4);
   const side = Math.min(64, h / pz.rows, pitchByW);
   if (side >= MIN_PITCH) {
     const seg = Math.max(14, Math.min(36, segByH, side * 0.6));
     return { pitch: Math.floor(side), seg: Math.floor(seg), stacked: false };
   }
-  // Stacked: the flat board is two rows (label + 10 segments) across the width, ≈ 2·seg + 50 tall. Tiles keep
-  // 48 px first; the board's segments (not tapped) shrink to fit what height is left.
   const pitch = Math.max(MIN_PITCH, Math.min(64, w / pz.cols, (h - 16 - 110) / pz.rows));
   const seg = Math.max(14, Math.min(30, (w - 90) / TEN, (h - 16 - pz.rows * pitch - 50) / 2));
   return { pitch: Math.floor(pitch), seg: Math.floor(seg), stacked: true };

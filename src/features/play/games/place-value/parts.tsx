@@ -1,8 +1,3 @@
-/**
- * Shared pieces of the Grade 2 tens-and-ones boards. A ten is a full ten-frame, the same white frame as Grade 1,
- * so "a ten" is always something the child has seen filled.
- */
-
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -16,17 +11,14 @@ import { CountBubble } from "../ten-frame/components/CountBubble";
 import { NumberTile } from "../ten-frame/components/NumberTile";
 import { WhiteTenFrame } from "../ten-frame/components/WhiteTenFrame";
 
-/** 48 px minimum touch target. */
 export const TARGET = 48;
 
-/** A count-along bubble on one piece. */
 export interface Bubble {
   label: number;
   delayMs: number;
   n: number;
 }
 
-/** A ten: the Grade 1 white ten-frame, `filled` of its slots holding an item. */
 export function Crate({
   item,
   cell,
@@ -41,9 +33,7 @@ export function Crate({
   filled?: number;
   bubble?: Bubble;
   glow?: boolean;
-  /** Pop a count bubble (1–10) over the item just placed, as on the Grade 1 frame. */
   countLast?: boolean;
-  /** A count bubble over a given slot, filled or just emptied (running totals while adding and subtracting). */
   countAt?: (slot: number) => Bubble | undefined;
 }>) {
   return (
@@ -69,7 +59,6 @@ export function Crate({
   );
 }
 
-/** One loose item (a one). `fresh` = just added (an addition's second number), ringed in purple. */
 export function Loose({ item, size, fresh, bubble }: Readonly<{ item: CounterItem; size: number; fresh?: boolean; bubble?: Bubble }>) {
   return (
     <View style={[{ width: size, height: size, borderRadius: size }, fresh ? styles.fresh : null]}>
@@ -79,11 +68,6 @@ export function Loose({ item, size, fresh, bubble }: Readonly<{ item: CounterIte
   );
 }
 
-/**
- * The board's instruction, read aloud by Brijo each time it changes (the words light up as she says them).
- * `clipId` names the recording (docs/voice/grade-2-recording-script.md); without one, the phone's voice reads
- * it. Silent while the story card is open, and for `silent` lines (the celebration says those).
- */
 export function Prompt({ text, clipId, waiting, silent }: Readonly<{ text: string; clipId: string; waiting?: boolean; silent?: boolean }>) {
   useEffect(() => {
     if (waiting || silent) return;
@@ -97,7 +81,6 @@ export function Prompt({ text, clipId, waiting, silent }: Readonly<{ text: strin
   );
 }
 
-/** "34 = ? tens ? ones", "27 + 5 = ?" or "32 − 7 = ?"; known parts filled in, gold once solved. */
 export function Equation({
   op,
   a,

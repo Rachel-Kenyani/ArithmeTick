@@ -1,7 +1,3 @@
-/**
- * Pan (drag on the UI thread) + tap gestures of one bottle cap; JS only hears pick-up, near / far and the drop.
- */
-
 import { useCompetingGestures, usePanGesture, useTapGesture } from "react-native-gesture-handler";
 import { cancelAnimation, useSharedValue, withSpring, type SharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -42,13 +38,11 @@ export function useCapGesture({
   onDragEnd,
   onTap,
 }: Readonly<CapGestureArgs>) {
-  /** finger offset from the cap centre + the cap centre the drag started from */
   const grab = useSharedValue({ ox: 0, oy: 0, sx: 0, sy: 0 });
 
   const pan = usePanGesture({
     enabled: canDrag,
     maxPointers: 1,
-    // A real fingertip wobbles a few px on a tap; below this it stays a tap (cap hops into the next slot).
     minDistance: 10,
     onBegin: () => {
       lift.set(withSpring(1.06, SPRING_UI));
@@ -71,7 +65,6 @@ export function useCapGesture({
       const ny = g.sy + e.translationY;
       mv.x.set(nx);
       mv.y.set(ny);
-      // hit-test the finger (not the cap centre), like the web's pointer point
       const isNear = isPointNear(nx + g.ox, ny + g.oy, drag.grid.get(), NEAR_PX);
       if (isNear !== drag.near.get()) {
         drag.near.set(isNear);

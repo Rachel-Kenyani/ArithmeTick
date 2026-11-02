@@ -1,14 +1,3 @@
-/**
- * Grade 1 — "Take away" (KICD Grade 1, 1.6 Subtraction: subtraction as removal, then count what is left).
- * Puzzle: `start` items sit on the ten-frame. Once the story card closes, Brijo puts `away` of them in her
- * basket herself, one by one with a count bubble, exactly as the story says. The child answers the story's
- * question, "how many are left?", and can tap the items still on the frame to count them first.
- *
- * Top to bottom: Brijo's basket, the equation, the answer tiles, then the ten-frame.
- * Feedback (no error text, same as Level 1): a wrong answer counts the items left on the frame aloud — they
- * hop with a white number bubble and a rising note, every time.
- */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -45,21 +34,17 @@ interface Fx {
   label?: number;
 }
 
-/** Bump when the saved board's meaning changes; older drafts start fresh (all items on the frame). */
 const DRAFT_VERSION = 3;
 const SLOTS = Array.from({ length: 10 }, (_, i) => i);
 const SOLVED_HANDOFF_MS = 1400;
-/** Brijo takes one item every this many ms (a little slower than a count, so each one can be followed). */
 const TAKE_STEP_MS = 700;
 const TAKE_START_MS = 500;
 const POP_IN = ZoomIn.springify()
   .stiffness(380)
   .damping(20)
   .reduceMotion(ReduceMotion.System);
-/** Caps alternate teal / purple like the tray, so each one is easy to tell apart. */
 const paletteFor = (i: number) => (i % 3 === 2 ? "purple" : "teal");
 
-/** Three answer tiles around the right one (never below 0), in a stable order. */
 function choicesFor(left: number, start: number): number[] {
   const set = new Set([
     left,
@@ -88,29 +73,23 @@ export default function Grade1TakeAway({
   const schedule = useScheduler();
   const reduced = useReducedMotion();
 
-  // Brijo takes the last `away` items, the same ones the story card shows leaving.
   const awaySlots = useMemo(() => SLOTS.slice(start - away, start), [start, away]);
-  // Resume: once Brijo has taken hers, a returning child goes straight to the question.
   const resumed = draft?.version === DRAFT_VERSION && draft.regrouping === true;
   const [taken, setTaken] = useState<number[]>(() => (resumed ? awaySlots : []));
   const [step, setStep] = useState<Step>(resumed ? "count" : "watch");
   const [misses, setMisses] = useState(resumed ? (draft?.misses ?? 0) : 0);
-  /** Frame items the child has tapped to count, in order. */
   const [, setTallied] = useState<number[]>([]);
   const [fx, setFx] = useState<Partial<Record<number, Fx>>>({});
-  // Same sizes and spacing as the Count levels (cap size, section gap, equation height).
   const { layout: L, onLayout } = useBoardLayout();
   const cell = L.cap;
   const sg = L.sectionGap;
   const doneRef = useRef(false);
-  // While the count-along hint plays on the frame, the frame shows at full strength.
   const [hinting, setHinting] = useState(false);
 
   useEffect(() => {
     onDraft?.({ version: DRAFT_VERSION, misses, regrouping: step !== "watch" });
   }, [onDraft, misses, step]);
 
-  /** Ask items (by frame slot) to hop / wobble; `labelFor` adds a count bubble. */
   const fire = useCallback(
     (
       ids: readonly number[],
@@ -134,7 +113,6 @@ export default function Grade1TakeAway({
     [],
   );
 
-  /** Count `ids` aloud (hop + white bubble + rising note), one every COUNT_STEP_MS. Returns when it ends. */
   const countAlong = useCallback(
     (ids: readonly number[], from = 0) => {
       fire(
@@ -151,9 +129,6 @@ export default function Grade1TakeAway({
     [fire, schedule],
   );
 
-  // Brijo takes hers once the story card is out of the way. Each beat sets the whole basket (not "add one"),
-  // and the timers belong to this effect: if it re-runs midway, it simply starts the beats again, so the
-  // board always ends with exactly `left` items on it.
   useEffect(() => {
     if (step !== "watch" || waiting) return;
     const timers = awaySlots.map((slot, k) =>
@@ -173,7 +148,6 @@ export default function Grade1TakeAway({
     return () => timers.forEach(clearTimeout);
   }, [step, waiting, awaySlots, away, fire]);
 
-  /** Counting on the frame: each item tapped gets the next number. */
   const tally = useCallback(
     (slot: number) => {
       if (step !== "count") return;
@@ -195,7 +169,6 @@ export default function Grade1TakeAway({
     const correct = n === left;
     onAttempt?.({ target: left, answer: n, correct });
     if (!correct) {
-      // Every wrong pick counts what is left on the frame again.
       setMisses((m) => m + 1);
       setTallied([]);
       sfx.nudge();
@@ -220,7 +193,6 @@ export default function Grade1TakeAway({
       onLayout={onLayout}
       testID={`g1-takeaway-l${level ?? 0}-${start}-${away}`}
     >
-      {/* Brijo's basket at the top: drag items up into it */}
       <View
         style={[
           styles.basket,
@@ -274,13 +246,11 @@ export default function Grade1TakeAway({
       </View>
 
       <View style={{ height: sg }} />
-      {/* the white ten-frame of the Count levels (dark edge underneath), at the bottom */}
       <WhiteTenFrame
         cell={L.cell}
         gap={L.gap}
         pad={L.framePad}
         win={step === "solved"}
-        // While Brijo takes hers, the frame steps back so the basket leads.
         style={step === "watch" && !hinting ? styles.muted : null}
         accessibilityLabel={`Board with ${remaining.length} left`}
         renderSlot={(slot) =>
@@ -310,12 +280,10 @@ interface CounterProps {
   size: number;
   fx?: Fx;
   reduced: boolean;
-  /** Tap to count it (frame items, while answering). */
   onPress?: (slot: number) => void;
   label: string;
 }
 
-/** One item: hops with a count bubble when counted, by Brijo or by the child's tap. */
 function Counter({
   item,
   slot,
@@ -365,7 +333,6 @@ function Counter({
   );
 }
 
-/** "7 − ? = ?" → "7 − 2 = ?" once Brijo has taken hers → "7 − 2 = 5" (gold) when answered. */
 function Equation({
   start,
   away,

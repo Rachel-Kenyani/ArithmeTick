@@ -1,5 +1,3 @@
-// TEMPORARY stand-in — replaced when BadgeMedallion is ported (see README).
-
 import { StyleSheet, View, type ViewStyle } from "react-native";
 
 import BadgeArt from "@/components/illustrations/BadgeArt";
@@ -8,11 +6,8 @@ import { colors } from "@/theme";
 
 export interface BadgeMedallionProps {
   badge: BadgeDef;
-  /** false → muted silhouette with a padlock (default true). */
   earned?: boolean;
-  /** px diameter of the medallion (default 96). */
   size?: number;
-  /** Gentle shine / twinkle loop (celebration use). */
   shine?: boolean;
   style?: ViewStyle;
 }

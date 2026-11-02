@@ -1,9 +1,3 @@
-/**
- * Launcher. First launch on a device → fun splash. Otherwise straight to where the family left off:
- * no grown-up signed in → "Get a Grown-up"; no child chosen → "Who is playing today?"; else the map.
- * The root layout only renders once the saved state is loaded, so this decides synchronously.
- */
-
 import { Redirect } from "expo-router";
 
 import { ROUTES } from "@/constants/routes";

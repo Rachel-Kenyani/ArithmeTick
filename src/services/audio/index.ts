@@ -1,13 +1,3 @@
-/**
- * Sound effects — the web app's Web Audio recipes pre-rendered to WAVs (scripts/render-sfx.mjs).
- *
- * Usage:   import { sfx } from "@/services/audio";   sfx.snap(3);
- *
- * - Same API as the web version, so screens port unchanged.
- * - One player per sound, created on first use and rewound on each play.
- * - Sounds are deliberately soft and warm. There is NO buzzer / "wrong" sound.
- */
-
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from "expo-audio";
 
 import { HOLD_STEPS, SFX_ASSETS, type SfxName } from "@/services/audio/sfxAssets";
@@ -21,7 +11,6 @@ function play(name: SfxName) {
   if (muted) return;
   if (!modeSet) {
     modeSet = true;
-    // Kids' tablets are often on silent; the game sounds are part of the feedback.
     void setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
   }
   try {
@@ -33,7 +22,6 @@ function play(name: SfxName) {
     void p.seekTo(0);
     p.play();
   } catch {
-    // Audio unavailable: the game works silently.
   }
 }
 
@@ -42,7 +30,6 @@ const PENTA_STEPS = 10;
 export const sfx = {
   click: () => play("click"),
   pickup: () => play("pickup"),
-  /** Pass the 0-based slot index so successive snaps climb a pentatonic scale. */
   snap: (slotIndex = 0) => play(`snap${Math.max(0, slotIndex) % PENTA_STEPS}` as SfxName),
   release: () => play("release"),
   boing: () => play("boing"),
@@ -54,7 +41,6 @@ export const sfx = {
   celebrate: () => play("celebrate"),
   sparkle: () => play("sparkle"),
   clap: () => play("clap"),
-  /** Long-press progress tick (adult verification). progress 0..1 raises the pitch. */
   holdTick: (progress: number) => {
     const p = Math.min(1, Math.max(0, progress));
     play(`holdTick${Math.round(p * (HOLD_STEPS - 1))}` as SfxName);
@@ -78,5 +64,4 @@ export function subscribeMuted(fn: (muted: boolean) => void) {
   };
 }
 
-/** Kept for API parity with the web app (no warm-up needed on native). */
 export function unlockAudio() {}

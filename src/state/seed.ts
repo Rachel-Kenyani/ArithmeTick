@@ -1,7 +1,3 @@
-/**
- * Profile seeding — new ids, blank child profiles, and the demo children shown on a fresh device.
- */
-
 import { newlyEarned } from "@/data/badges";
 import type { ChildProfile } from "@/types/models";
 import type { Grade } from "@/types/domain";
@@ -26,7 +22,6 @@ export function makeProfile(input: Partial<ChildProfile> & Pick<ChildProfile, "n
   };
 }
 
-/** Demo children shown after "Log In" on a fresh device (matches the "Welcome Back!" mockup). */
 export function demoProfiles(): ChildProfile[] {
   const seeded = [
     makeProfile({ name: "Brijo", grade: 1, avatar: "owl" }),

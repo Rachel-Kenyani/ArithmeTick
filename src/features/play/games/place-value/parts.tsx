@@ -34,6 +34,7 @@ export function Crate({
   bubble,
   glow,
   countLast,
+  countAt,
 }: Readonly<{
   item: CounterItem;
   cell: number;
@@ -42,6 +43,8 @@ export function Crate({
   glow?: boolean;
   /** Pop a count bubble (1–10) over the item just placed, as on the Grade 1 frame. */
   countLast?: boolean;
+  /** A count bubble over a given slot, filled or just emptied (running totals while adding and subtracting). */
+  countAt?: (slot: number) => Bubble | undefined;
 }>) {
   return (
     <WhiteTenFrame
@@ -50,14 +53,16 @@ export function Crate({
       pad={Math.max(2, Math.round(cell * 0.18))}
       win={filled === 10}
       style={glow ? styles.glow : null}
-      renderSlot={(slot) =>
-        slot < filled ? (
+      renderSlot={(slot) => {
+        const at = countAt?.(slot);
+        return (
           <>
-            <CounterFace item={item} palette="teal" size={cell * 0.92} />
+            {slot < filled ? <CounterFace item={item} palette="teal" size={cell * 0.92} /> : null}
             {countLast && slot === filled - 1 ? <CountBubble key={filled} label={filled} delayMs={0} size={cell} /> : null}
+            {at ? <CountBubble key={at.n} label={at.label} delayMs={at.delayMs} size={cell} /> : null}
           </>
-        ) : null
-      }
+        );
+      }}
     >
       {bubble ? <CountBubble key={bubble.n} label={bubble.label} delayMs={bubble.delayMs} size={cell * 5} /> : null}
     </WhiteTenFrame>

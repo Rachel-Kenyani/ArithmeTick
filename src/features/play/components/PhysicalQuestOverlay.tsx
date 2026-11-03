@@ -58,7 +58,7 @@ const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanAr
   money: {
     Art: CoinsArt,
     caption: "Pay with shillings",
-    steps: ["Find some coins with a grown-up", "Count out 30 shillings", "Buy something together"],
+    steps: ["Find some coins with a grown-up.", "Pick out the ten-shilling coins.", "Count three of them: ten, twenty, thirty.", "Play shop. Pay a grown-up thirty shillings."],
   },
   shapes: {
     Art: ShapesArt,

@@ -8,6 +8,12 @@ import { getSnapshot, setState, updateProfile } from "../core";
 export const STARS_PER_LEVEL = 3;
 const MAX_LEVEL_SECONDS = 15 * 60;
 const MAX_ATTEMPTS = 200;
+const MAX_DAYS = 30;
+
+function today(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
 
 export interface LevelCompletion {
   starsEarned: number;
@@ -18,7 +24,7 @@ export interface LevelCompletion {
 export const draftKey = (grade: number, level: number) => `g${grade}-l${level}`;
 
 export const progressActions = {
-  completeLevel(profileId: string, levelNumber: number, seconds = 0): LevelCompletion {
+  completeLevel(profileId: string, levelNumber: number, seconds = 0, outcome?: { misses: number; helped: boolean }): LevelCompletion {
     const profile = getSnapshot().profiles.find((p) => p.id === profileId);
     if (!profile) return { starsEarned: 0, firstTime: false, newBadges: [] };
     const grade = profile.grade;
@@ -35,6 +41,12 @@ export const progressActions = {
         ? { ...profile.gradeSeconds, [grade]: (profile.gradeSeconds?.[grade] ?? 0) + Math.min(MAX_LEVEL_SECONDS, Math.max(0, Math.round(seconds))) }
         : profile.gradeSeconds,
       questsDone: profile.questsDone + (level?.kind === "quest" ? 1 : 0),
+      cleanSolves:
+        firstTime && outcome && outcome.misses === 0 && !outcome.helped
+          ? { ...profile.cleanSolves, [grade]: (profile.cleanSolves?.[grade] ?? 0) + 1 }
+          : profile.cleanSolves,
+      helpedSolves: (profile.helpedSolves ?? 0) + (firstTime && outcome?.helped ? 1 : 0),
+      daysPlayed: profile.daysPlayed?.includes(today()) ? profile.daysPlayed : [...(profile.daysPlayed ?? []), today()].slice(-MAX_DAYS),
     };
     if (next.drafts?.[draftKey(grade, levelNumber)]) {
       next.drafts = { ...next.drafts };

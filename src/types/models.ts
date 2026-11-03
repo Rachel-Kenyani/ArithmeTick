@@ -24,6 +24,9 @@ export interface ChildProfile {
   badges: string[];
   highFives: number;
   questsDone: number;
+  cleanSolves?: Partial<Record<Grade, number>>;
+  helpedSolves?: number;
+  daysPlayed?: string[];
   attempts?: AttemptLog[];
   gradeSeconds?: Partial<Record<Grade, number>>;
   drafts?: Record<string, { pal: boolean; board: LevelDraft }>;

@@ -152,7 +152,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `Four tomatoes each, a fair half!`,
     },
     {
-      ask: "It's market day! Pay for something with shillings, together with a grown-up.",
+      ask: "Time to move! It's market day. Can you pay thirty shillings?",
       treasure: "drum",
       one: "a little drum",
       many: "drums",
@@ -176,12 +176,12 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `Three o'clock, just in time!`,
     },
     {
-      ask: "This is the last stop! Find shapes and lines around you and show a grown-up.",
+      ask: "Time to move! The wind blew Brijo's nest away. Can you build her a house out of shapes?",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
-      mission: () => `Find shapes and lines`,
-      done: () => `You found Brijo's nest!`,
+      mission: () => `Build a shape house`,
+      done: () => `Brijo has a shape house to sleep in!`,
     },
   ],
   3: [

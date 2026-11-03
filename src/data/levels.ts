@@ -1,4 +1,4 @@
-import type { ArrayPuzzle, Grade, Grade2StubPuzzle, NumberTrackPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
+import type { ArrayPuzzle, Grade, ClockPuzzle, GroupsPuzzle, HalvesPuzzle, NumberTrackPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
 
 interface LevelBase {
   grade: Grade;
@@ -12,7 +12,9 @@ export type LevelDef =
   | (LevelBase & { kind: "puzzle"; grade: 1; game: "takeAway"; puzzle: TakeAwayPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 2; game: "placeValue"; puzzle: PlaceValuePuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 2; game: "numberTrack"; puzzle: NumberTrackPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "groups" | "halves" | "clock"; puzzle: Grade2StubPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "groups"; puzzle: GroupsPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "halves"; puzzle: HalvesPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 2; game: "clock"; puzzle: ClockPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; puzzle: ArrayPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
@@ -21,7 +23,7 @@ const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: { title: "Heavy or Full", equation: "Compare mass and capacity" },
   money: { title: "Market Day", equation: "Pay with shillings" },
-  shapes: { title: "Shape Hunt", equation: "Find shapes and lines" },
+  shapes: { title: "Shape House", equation: "Build a house with shapes" },
 };
 
 const quest = (grade: Grade, number: number, task: QuestTask = "groups"): LevelDef => ({
@@ -78,14 +80,34 @@ const numberTrack = (number: number, from: number, gaps: number[]): LevelDef => 
   puzzle: { from, gaps },
 });
 
-const grade2Stub = (number: number, game: "groups" | "halves" | "clock", title: string, equation: string): LevelDef => ({
+const groupsOf = (number: number, groups: number, each: number): LevelDef => ({
   grade: 2,
   number,
   kind: "puzzle",
-  game,
-  title,
-  equation,
-  puzzle: { goal: equation },
+  game: "groups",
+  title: `Groups of ${each}`,
+  equation: `${Array.from({ length: groups }, () => each).join(" + ")} = ${groups} × ${each} = ${groups * each}`,
+  puzzle: { groups, each },
+});
+
+const halfOf = (number: number, total: number): LevelDef => ({
+  grade: 2,
+  number,
+  kind: "puzzle",
+  game: "halves",
+  title: "Share in half",
+  equation: `Half of ${total} = ${total / 2}`,
+  puzzle: { total },
+});
+
+const clockAt = (number: number, hour: number): LevelDef => ({
+  grade: 2,
+  number,
+  kind: "puzzle",
+  game: "clock",
+  title: "What time?",
+  equation: `${hour} o'clock`,
+  puzzle: { hour },
 });
 
 const array = (number: number, rows: number, cols: number): LevelDef => ({
@@ -106,11 +128,11 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
     placeValue(4, "add", 27, 5),
     placeValue(5, "sub", 32, 7),
     quest(2, 6, "massCapacity"),
-    grade2Stub(7, "groups", "Groups of 2", "2 + 2 + 2 = 3 × 2 = 6"),
-    grade2Stub(8, "halves", "Share in half", "Half of 8 = 4"),
+    groupsOf(7, 3, 2),
+    halfOf(8, 8),
     quest(2, 9, "money"),
     placeValue(10, "sub", 45, 18),
-    grade2Stub(11, "clock", "What time?", "3 o'clock"),
+    clockAt(11, 3),
     quest(2, 12, "shapes"),
   ],
   3: [array(1, 3, 4), array(2, 2, 6), quest(3, 3), array(4, 3, 5), array(5, 4, 3), quest(3, 6)],

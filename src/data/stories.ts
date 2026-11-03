@@ -176,12 +176,12 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `Three o'clock, just in time!`,
     },
     {
-      ask: "This is the last stop! Find shapes and lines around you and show a grown-up.",
+      ask: "Time to move! The wind blew Brijo's nest away. Can you build her a house out of shapes?",
       treasure: "nest",
       one: "Brijo's nest",
       many: "nests",
-      mission: () => `Find shapes and lines`,
-      done: () => `You found Brijo's nest!`,
+      mission: () => `Build a shape house`,
+      done: () => `Brijo has a shape house to sleep in!`,
     },
   ],
   3: [

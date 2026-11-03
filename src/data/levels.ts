@@ -23,7 +23,7 @@ const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: { title: "Heavy or Full", equation: "Compare mass and capacity" },
   money: { title: "Market Day", equation: "Pay with shillings" },
-  shapes: { title: "Shape Hunt", equation: "Find shapes and lines" },
+  shapes: { title: "Shape House", equation: "Build a house with shapes" },
 };
 
 const quest = (grade: Grade, number: number, task: QuestTask = "groups"): LevelDef => ({

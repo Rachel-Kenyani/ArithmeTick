@@ -62,8 +62,8 @@ const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanAr
   },
   shapes: {
     Art: ShapesArt,
-    caption: "Find shapes and lines",
-    steps: ["Find a circle, a triangle and a square", "Find a straight line and a curved line", "Show a grown-up"],
+    caption: "Build a shape house",
+    steps: ["Lay a book on the floor. It's a rectangle: the walls.", "Fold a paper from corner to corner. It's a triangle: the roof.", "Find a round lid. It's a circle: the sun.", "Lay a pencil under the house. It's a straight line: the ground.", "Bend a shoelace up to the door. It's a curved line: the path. Show a grown-up!"],
   },
 };
 

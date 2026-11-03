@@ -48,8 +48,17 @@ export interface NumberTrackPuzzle {
   gaps: number[];
 }
 
-export interface Grade2StubPuzzle {
-  goal: string;
+export interface GroupsPuzzle {
+  groups: number;
+  each: number;
+}
+
+export interface HalvesPuzzle {
+  total: number;
+}
+
+export interface ClockPuzzle {
+  hour: number;
 }
 
 export type QuestTask = "groups" | "length" | "massCapacity" | "money" | "shapes";
@@ -62,7 +71,9 @@ export interface ArrayPuzzle {
 export type TenFrameProps = GradeModuleProps & Partial<TenFramePuzzle>;
 export type TakeAwayProps = GradeModuleProps & TakeAwayPuzzle;
 export type PlaceValueProps = GradeModuleProps & PlaceValuePuzzle;
-export type Grade2StubProps = GradeModuleProps & Grade2StubPuzzle;
+export type GroupsProps = GradeModuleProps & GroupsPuzzle;
+export type HalvesProps = GradeModuleProps & HalvesPuzzle;
+export type ClockProps = GradeModuleProps & ClockPuzzle;
 export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle;
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 

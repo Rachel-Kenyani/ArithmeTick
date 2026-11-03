@@ -9,6 +9,7 @@ const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
   length: HandspanArt,
   massCapacity: ScaleCupArt,
   money: CoinsArt,
+  shapes: ShapesArt,
 };
 
 export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
@@ -101,11 +102,12 @@ export function CoinsArt({ size = 64, title }: Readonly<ArtProps>) {
 export function ShapesArt({ size = 64, title }: Readonly<ArtProps>) {
   return (
     <ArtFrame size={size} title={title}>
-      <Circle cx="15" cy="16" r="10" fill={colors.atYellow} {...ink} />
-      <Path d="M44 6l12 20H32z" fill={colors.atPurpleLight} {...ink} />
-      <Rect x="6" y="34" width="20" height="20" rx="2" fill={colors.atTealLight} {...ink} />
-      <Path d="M34 38h24" {...ink} />
-      <Path d="M34 52c6-8 12 8 18 0s6-4 6-4" fill="none" {...ink} />
+      <Circle cx="52" cy="12" r="7" fill={colors.atYellow} {...ink} />
+      <Path d="M10 30L30 10l20 20z" fill={colors.atPurpleLight} {...ink} />
+      <Rect x="14" y="30" width="32" height="22" rx="2" fill={colors.atTealLight} {...ink} />
+      <Rect x="26" y="38" width="8" height="14" rx="1" fill={colors.white} {...ink} />
+      <Path d="M4 56h56" {...ink} />
+      <Path d="M30 52c2 6 12 2 16 6s10 2 14 0" fill="none" stroke="#a86f33" strokeWidth={3} strokeLinecap="round" />
     </ArtFrame>
   );
 }

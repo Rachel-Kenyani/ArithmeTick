@@ -152,7 +152,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `Four tomatoes each, a fair half!`,
     },
     {
-      ask: "It's market day! Pay for something with shillings, together with a grown-up.",
+      ask: "Time to move! It's market day. Can you pay thirty shillings?",
       treasure: "drum",
       one: "a little drum",
       many: "drums",

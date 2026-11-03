@@ -38,8 +38,10 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     openedAt.current = Date.now();
   }, []);
   const palRef = useRef(palActive);
+  const helpedRef = useRef(palActive);
   useEffect(() => {
     palRef.current = palActive;
+    if (palActive) helpedRef.current = true;
   }, [palActive]);
   const grade = level.grade;
   const handleAttempt = useCallback(
@@ -70,7 +72,7 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   const handleComplete = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
-    setCompletion(actions.completeLevel(profileId, levelNumber, (Date.now() - openedAt.current) / 1000));
+    setCompletion(actions.completeLevel(profileId, levelNumber, (Date.now() - openedAt.current) / 1000, boardRef.current ? { misses: boardRef.current.misses, helped: helpedRef.current } : undefined));
   }, [profileId, levelNumber]);
 
   const [heroPop, setHeroPop] = useState<BadgeDef | null>(null);

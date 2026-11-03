@@ -165,9 +165,284 @@ function Stars() {
   );
 }
 
+function Feather() {
+  return (
+    <>
+      <Path d="M48 6C30 8 16 24 14 46l4 4c22-2 38-16 40-34z" fill={colors.atTealLight} {...ink} />
+      <Path d="M8 58L44 16" stroke={OUTLINE} strokeWidth={2.6} strokeLinecap="round" />
+      <Path d="M22 34l10 2M28 26l10 2M18 42l8 2" stroke={colors.atTeal} strokeWidth={2} strokeLinecap="round" />
+      <Path d="M46 12c-4 2-6 4-8 7" stroke="#fff" strokeWidth={2.4} strokeLinecap="round" fill="none" />
+    </>
+  );
+}
+
+function Shell() {
+  return (
+    <>
+      <Path d="M32 8C16 8 6 24 8 44l10 10h28l10-10C58 24 48 8 32 8z" fill="#f6c9a8" {...ink} />
+      <Path d="M32 54V12M22 54L16 18M42 54l6-36M14 50L9 32M50 50l5-18" stroke="#d9925f" strokeWidth={1.8} strokeLinecap="round" fill="none" />
+      <Rect x="24" y="52" width="16" height="7" rx="3" fill="#f6c9a8" {...ink} />
+      <Path d="M20 16c-3 3-5 7-6 11" stroke="#fff" strokeWidth={2.4} strokeLinecap="round" fill="none" />
+    </>
+  );
+}
+
+function TwoGroups() {
+  const dots = (cx: number, fill: string) =>
+    [0, 1, 2].map((i) => <Circle key={`${cx}-${i}`} cx={cx + (i % 2 ? 6 : -6)} cy={22 + i * 10} r="5" fill={fill} {...ink} strokeWidth={1.6} />);
+  return (
+    <>
+      <Ellipse cx="18" cy="32" rx="14" ry="22" fill={colors.atCream} {...ink} />
+      <Ellipse cx="46" cy="32" rx="14" ry="22" fill={colors.atCream} {...ink} />
+      {dots(18, colors.atTeal)}
+      {dots(46, colors.atPurple)}
+    </>
+  );
+}
+
+function Flower() {
+  return (
+    <>
+      <Path d="M18 44h28l-4 16H22z" fill={WOOD} {...ink} />
+      <Rect x="15" y="40" width="34" height="6" rx="2" fill={WOOD_DARK} {...ink} />
+      <Path d="M32 40V24" stroke={LEAF_DARK} strokeWidth={3} strokeLinecap="round" />
+      <Path d="M32 34c-6 0-10-4-10-8 6 0 10 4 10 8z" fill={LEAF} {...ink} strokeWidth={1.6} />
+      {[0, 72, 144, 216, 288].map((a) => (
+        <Ellipse key={a} cx="32" cy="9" rx="5" ry="7" fill={colors.atPlum} {...ink} strokeWidth={1.6} transform={`rotate(${a} 32 16)`} />
+      ))}
+      <Circle cx="32" cy="16" r="5" fill={colors.jgSun} {...ink} strokeWidth={1.6} />
+    </>
+  );
+}
+
+function SoupPot() {
+  return (
+    <>
+      <Path d="M24 14c0-4 4-4 4-8M34 14c0-4 4-4 4-8" stroke="#9aa8a6" strokeWidth={2.4} strokeLinecap="round" fill="none" />
+      <Rect x="4" y="26" width="8" height="5" rx="2" fill={colors.atInk} />
+      <Rect x="52" y="26" width="8" height="5" rx="2" fill={colors.atInk} />
+      <Path d="M10 22h44v24c0 8-6 12-12 12H22c-6 0-12-4-12-12z" fill={colors.atTeal} {...ink} />
+      <Ellipse cx="32" cy="22" rx="22" ry="5" fill="#e0533c" {...ink} />
+      <Circle cx="24" cy="21" r="4" fill="#ff7a5c" {...ink} strokeWidth={1.4} />
+      <Circle cx="38" cy="22" r="3.5" fill="#ff7a5c" {...ink} strokeWidth={1.4} />
+      <Path d="M16 30v10" stroke={colors.atTealLight} strokeWidth={3} strokeLinecap="round" />
+    </>
+  );
+}
+
+function Target() {
+  return (
+    <>
+      <Circle cx="30" cy="34" r="24" fill="#fff" {...ink} />
+      <Circle cx="30" cy="34" r="17" fill={colors.atPlum} {...ink} strokeWidth={1.8} />
+      <Circle cx="30" cy="34" r="10" fill="#fff" {...ink} strokeWidth={1.8} />
+      <Circle cx="30" cy="34" r="4" fill={colors.jgSun} {...ink} strokeWidth={1.6} />
+      <Path d="M30 34L56 8" stroke={OUTLINE} strokeWidth={2.6} strokeLinecap="round" />
+      <Path d="M52 6l6-2-2 6-4 2z" fill={colors.atTeal} {...ink} strokeWidth={1.6} />
+    </>
+  );
+}
+
+function NumberStones() {
+  const stones = [
+    { x: 6, y: 44, n: "50" },
+    { x: 24, y: 34, n: "49" },
+    { x: 42, y: 22, n: "48" },
+  ];
+  return (
+    <>
+      {stones.map((st) => (
+        <G key={st.n}>
+          <Ellipse cx={st.x + 8} cy={st.y + 8} rx="10" ry="8" fill={colors.atPurpleLight} {...ink} />
+          <SvgText x={st.x + 8} y={st.y + 12} fontSize="10" fontWeight="bold" fill={OUTLINE} textAnchor="middle">
+            {st.n}
+          </SvgText>
+        </G>
+      ))}
+      <Path d="M14 40c2-8 8-10 14-8M32 30c2-8 8-10 14-8" fill="none" stroke={colors.atPurple} strokeWidth={2} strokeDasharray="3 3" strokeLinecap="round" />
+    </>
+  );
+}
+
+function HandRuler() {
+  return (
+    <>
+      <Rect x="4" y="44" width="56" height="12" rx="2" fill={colors.jgSun} {...ink} />
+      {[12, 20, 28, 36, 44, 52].map((x) => (
+        <Line key={x} x1={x} y1="44" x2={x} y2={x % 16 === 12 ? 52 : 49} stroke={OUTLINE} strokeWidth={1.4} />
+      ))}
+      <Path d="M18 42V20c0-3 4-3 4 0v12V14c0-3 4-3 4 0v18V16c0-3 4-3 4 0v16V20c0-3 4-3 4 0v14l5-6c2-2 5 0 4 2l-7 12z" fill={SKIN} {...ink} />
+    </>
+  );
+}
+
+function CrateUp() {
+  const cells: ReactNode[] = [];
+  for (let i = 0; i < 10; i++) {
+    cells.push(<Circle key={i} cx={10 + (i % 5) * 9} cy={i < 5 ? 40 : 50} r="3.6" fill={i < 7 ? colors.atTeal : colors.atPurple} stroke={OUTLINE} strokeWidth={1.2} />);
+  }
+  return (
+    <>
+      <Rect x="3" y="33" width="50" height="24" rx="3" fill="#fff" {...ink} />
+      {cells}
+      <Path d="M56 30V8M50 14l6-6 6 6" fill="none" stroke={colors.atPurple} strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
+      <SvgText x="26" y="24" fontSize="14" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">+1</SvgText>
+    </>
+  );
+}
+
+function SeedHoles() {
+  return (
+    <>
+      <Path d="M2 34h60v24H2z" fill="#8A5A33" {...ink} />
+      {[12, 32, 52].map((x) => (
+        <G key={x}>
+          <Ellipse cx={x} cy="44" rx="9" ry="5" fill="#5E3B1E" {...ink} strokeWidth={1.6} />
+          <Ellipse cx={x - 3} cy="43" rx="2.4" ry="1.6" fill={colors.jgSun} />
+          <Ellipse cx={x + 3} cy="43" rx="2.4" ry="1.6" fill={colors.jgSun} />
+        </G>
+      ))}
+      <Path d="M32 32V14" stroke={LEAF_DARK} strokeWidth={3} strokeLinecap="round" />
+      <Path d="M32 20c-8 0-12-6-12-10 8 0 12 6 12 10zM32 18c6 0 10-5 10-8-6 0-10 5-10 8z" fill={LEAF} {...ink} strokeWidth={1.6} />
+    </>
+  );
+}
+
+function FairPlates() {
+  const plate = (cx: number) => (
+    <G key={cx}>
+      <Ellipse cx={cx} cy="44" rx="14" ry="6" fill="#fff" {...ink} />
+      {[-5, 5].map((dx) => [-1, 1].map((r) => <Circle key={`${dx}${r}`} cx={cx + dx} cy={r < 0 ? 34 : 40} r="4" fill="#e0533c" stroke={OUTLINE} strokeWidth={1.4} />))}
+    </G>
+  );
+  return (
+    <>
+      {plate(16)}
+      {plate(48)}
+      <SvgText x="32" y="20" fontSize="16" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">=</SvgText>
+      <Path d="M8 56h48" stroke={OUTLINE} strokeWidth={2} strokeLinecap="round" />
+    </>
+  );
+}
+
+function TenCoins() {
+  return (
+    <>
+      {[46, 36, 26].map((y, i) => (
+        <G key={y}>
+          <Ellipse cx="32" cy={y + 6} rx="20" ry="7" fill="#b8892f" {...ink} />
+          <Ellipse cx="32" cy={y} rx="20" ry="7" fill={i === 2 ? colors.jgSun : "#e3c25a"} {...ink} />
+        </G>
+      ))}
+      <SvgText x="32" y="30" fontSize="9" fontWeight="bold" fill={OUTLINE} textAnchor="middle">10</SvgText>
+      <SvgText x="32" y="14" fontSize="11" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">30</SvgText>
+    </>
+  );
+}
+
+function ThreeOClock() {
+  return (
+    <>
+      <Circle cx="32" cy="32" r="26" fill="#fff" {...ink} strokeWidth={3} />
+      {Array.from({ length: 12 }, (_, i) => (
+        <Line key={i} x1="32" y1="9" x2="32" y2={i % 3 === 0 ? 14 : 12} stroke={OUTLINE} strokeWidth={i % 3 === 0 ? 2.4 : 1.4} transform={`rotate(${i * 30} 32 32)`} />
+      ))}
+      <Path d="M32 32V12" stroke={colors.atTeal} strokeWidth={3} strokeLinecap="round" />
+      <Path d="M32 32h14" stroke={colors.atPurple} strokeWidth={4.4} strokeLinecap="round" />
+      <Circle cx="32" cy="32" r="3" fill={OUTLINE} />
+    </>
+  );
+}
+
+function ShapeHouse() {
+  return (
+    <>
+      <Circle cx="52" cy="12" r="7" fill={colors.jgSun} {...ink} />
+      <Path d="M8 30L30 8l22 22z" fill={colors.atPurpleLight} {...ink} />
+      <Rect x="12" y="30" width="36" height="22" rx="2" fill={colors.atTealLight} {...ink} />
+      <Rect x="25" y="38" width="10" height="14" rx="1" fill="#fff" {...ink} />
+      <Path d="M4 56h56" {...ink} />
+      <Path d="M30 54c2 4 10 2 14 4s8 0 14-2" fill="none" stroke={WOOD} strokeWidth={3} strokeLinecap="round" />
+    </>
+  );
+}
+
+function Mountain() {
+  return (
+    <>
+      <Path d="M2 58L24 20l10 14 8-10 20 34z" fill={colors.atPurpleLight} {...ink} />
+      <Path d="M24 20l-6 10 6-2 4 4z" fill="#fff" {...ink} strokeWidth={1.6} />
+      <Path d="M42 24V4" stroke={OUTLINE} strokeWidth={2.4} strokeLinecap="round" />
+      <Path d="M42 4l14 5-14 5z" fill={colors.atPlum} {...ink} strokeWidth={1.8} />
+      <Path d="M8 52c8-6 14-2 20-8s12-4 16-10" fill="none" stroke={colors.jgSun} strokeWidth={2.4} strokeDasharray="3 3" strokeLinecap="round" />
+    </>
+  );
+}
+
+function Bee() {
+  return (
+    <>
+      <Ellipse cx="22" cy="20" rx="10" ry="13" fill="#e8f6ff" {...ink} transform="rotate(-25 22 20)" />
+      <Ellipse cx="40" cy="18" rx="10" ry="13" fill="#e8f6ff" {...ink} transform="rotate(25 40 18)" />
+      <Ellipse cx="32" cy="38" rx="20" ry="15" fill={colors.jgSun} {...ink} />
+      <Path d="M24 25v26M34 23v30" stroke={OUTLINE} strokeWidth={4} />
+      <Circle cx="46" cy="34" r="2.4" fill={OUTLINE} />
+      <Path d="M12 40l-8 2" stroke={OUTLINE} strokeWidth={2.4} strokeLinecap="round" />
+      <Path d="M48 24l6-8M52 26l8-4" stroke={OUTLINE} strokeWidth={1.8} strokeLinecap="round" />
+    </>
+  );
+}
+
+function Footprints() {
+  const foot = (x: number, y: number, r: number) => (
+    <G key={`${x}-${y}`} transform={`rotate(${r} ${x} ${y})`}>
+      <Ellipse cx={x} cy={y} rx="6" ry="9" fill={LEAF} {...ink} />
+      {[-4, -1, 2, 5].map((dx, i) => (
+        <Circle key={dx} cx={x + dx} cy={y - 12 + Math.abs(i - 1.5)} r="1.8" fill={LEAF} stroke={OUTLINE} strokeWidth={1.2} />
+      ))}
+    </G>
+  );
+  return (
+    <>
+      {foot(16, 48, -12)}
+      {foot(32, 32, 12)}
+      {foot(48, 18, -12)}
+    </>
+  );
+}
+
+function SuperStar() {
+  return (
+    <>
+      <Path d={starPath(32, 34, 26)} fill={colors.jgSun} {...ink} />
+      <Path d="M22 6l5 7 5-9 5 9 5-7v10H22z" fill={colors.atPlum} {...ink} strokeWidth={1.8} />
+      <SvgText x="32" y="42" fontSize="14" fontWeight="bold" fill={OUTLINE} textAnchor="middle">60</SvgText>
+    </>
+  );
+}
+
 const ART: Record<string, () => ReactNode> = {
   "ten-frame-explorer": Compass,
-  "balance-master": BalanceScale,
+  "place-value-pro": BalanceScale,
+  "feather-finder": Feather,
+  "shell-seeker": Shell,
+  "groups-guru": TwoGroups,
+  "flower-planter": Flower,
+  "soup-helper": SoupPot,
+  "first-try-1": Target,
+  "first-try-2": Target,
+  "countdown-captain": NumberStones,
+  "hand-measurer": HandRuler,
+  "count-on-climber": CrateUp,
+  "seed-sower": SeedHoles,
+  "fair-sharer": FairPlates,
+  "market-shopper": TenCoins,
+  "time-keeper": ThreeOClock,
+  "shape-builder": ShapeHouse,
+  "never-give-up": Mountain,
+  "busy-bee": Bee,
+  "move-master": Footprints,
+  "super-star": SuperStar,
   "array-architect": Crane,
   "hands-on-hero": LeafHand,
   "number-builder": Puzzle,

@@ -49,11 +49,11 @@ export function GroupsStepArt({ size = 64, title }: Readonly<ArtProps>) {
     <ArtFrame size={size} title={title}>
       <Ellipse cx="16" cy="44" rx="14.5" ry="13" fill={colors.atMint} {...ink} strokeWidth={1.8} strokeDasharray="3 4" />
       <Ellipse cx="48" cy="44" rx="14.5" ry="13" fill={colors.atYellowSoft} {...ink} strokeWidth={1.8} strokeDasharray="3 4" />
-      {GROUP.map(([dx, dy], i) => (
-        <Cap key={`a${i}`} x={6 + dx} y={48 + dy} r={4.6} tone={1} />
+      {GROUP.map(([dx, dy]) => (
+        <Cap key={`a-${dx}-${dy}`} x={6 + dx} y={48 + dy} r={4.6} tone={1} />
       ))}
-      {GROUP.map(([dx, dy], i) => (
-        <Cap key={`b${i}`} x={38 + dx} y={48 + dy} r={4.6} tone={2} />
+      {GROUP.map(([dx, dy]) => (
+        <Cap key={`b-${dx}-${dy}`} x={38 + dx} y={48 + dy} r={4.6} tone={2} />
       ))}
       <Path d="M24 14h16M34 9l6 5-6 5" fill="none" stroke={colors.atPlum} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
       <Path d="M30 22h4" stroke={OUTLINE} strokeWidth={2.4} strokeLinecap="round" />

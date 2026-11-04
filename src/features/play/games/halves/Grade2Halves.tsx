@@ -17,8 +17,11 @@ type Step = "share" | "answer" | "solved";
 
 const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1400;
-const SHARES = 2;
-const MONKEY_TONES = ["#8a5a33", "#6b4a2e"];
+const MONKEYS = [
+  { id: "monkey-1", tone: "#8a5a33" },
+  { id: "monkey-2", tone: "#6b4a2e" },
+] as const;
+const SHARES = MONKEYS.length;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
 const around = (n: number) => [n - 1, n, n + 1].filter((x) => x >= 0);
@@ -136,19 +139,19 @@ export default function Grade2Halves({ level, total, item = "tomato", waiting = 
           <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
 
           <View style={styles.monkeys}>
-            {onPlate.map((n, plate) => (
-              <View key={`monkey-${plate}`} style={styles.monkey}>
-                <MonkeyArt size={64} tone={MONKEY_TONES[plate]} title={`Monkey ${plate + 1}`} />
+            {MONKEYS.map((monkey, plate) => (
+              <View key={monkey.id} style={styles.monkey}>
+                <MonkeyArt size={64} tone={monkey.tone} title={`Monkey ${plate + 1}`} />
                 <View
                   ref={(r) => {
                     plateRefs.current[plate] = r;
                   }}
                   collapsable={false}
                   accessible
-                  accessibilityLabel={`Monkey ${plate + 1} has ${n}`}
-                  style={[styles.plate, { width: plateW, minHeight: Math.ceil(half / perRow) * (cell + 10) + 22 }, n === half ? styles.plateFull : null]}
+                  accessibilityLabel={`Monkey ${plate + 1} has ${onPlate[plate]}`}
+                  style={[styles.plate, { width: plateW, minHeight: Math.ceil(half / perRow) * (cell + 10) + 22 }, onPlate[plate] === half ? styles.plateFull : null]}
                 >
-                  {Array.from({ length: n }, (_, i) => (
+                  {Array.from({ length: onPlate[plate] }, (_, i) => (
                     <Animated.View key={`p-${plate}-${i}`} entering={POP}>
                       <Loose item={item} size={cell} bubble={bubbles[`${plate}-${i}`]} />
                     </Animated.View>

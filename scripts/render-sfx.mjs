@@ -16,6 +16,12 @@ function osc(type, phase) {
   }
 }
 
+function envelope(t, peak, attack, duration) {
+  if (t < attack) return expRamp(0.0001, peak, t / attack);
+  if (t < duration) return expRamp(peak, 0.0001, (t - attack) / (duration - attack));
+  return 0;
+}
+
 function render(tones) {
   const end = Math.max(...tones.map((t) => (t.delay ?? 0) + t.duration + 0.05));
   const out = new Float32Array(Math.ceil(end * RATE));
@@ -28,7 +34,7 @@ function render(tones) {
       const f = toFreq ? expRamp(freq, Math.max(20, toFreq), t / duration) : freq;
       phase += f / RATE;
       const v = Math.max(0.0002, volume);
-      const g = t < attack ? expRamp(0.0001, v, t / attack) : t < duration ? expRamp(v, 0.0001, (t - attack) / (duration - attack)) : 0;
+      const g = envelope(t, v, attack, duration);
       out[start + i] += osc(type, phase) * g * MASTER;
     }
   }

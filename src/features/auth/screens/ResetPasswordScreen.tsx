@@ -32,7 +32,7 @@ export default function ResetPasswordScreen() {
   const { pending } = useAppState();
   const [saved, setSaved] = useState(false);
   const allowed = pending?.purpose === "reset" || saved;
-  const url = Linking.useURL();
+  const url = Linking.useLinkingURL();
   const fromLink = !allowed && !!url?.includes("reset-password") && /access_token|error/.test(url);
 
   const focused = useIsFocused();

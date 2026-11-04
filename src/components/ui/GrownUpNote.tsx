@@ -58,15 +58,17 @@ export default function GrownUpNote({
   spoken?: boolean;
   style?: StyleProp<ViewStyle>;
 }>) {
+  let content: ReactNode = <View style={styles.body}>{children}</View>;
+  if (typeof children === "string") {
+    content = spoken ? (
+      <SpokenText text={children} style={styles.text} />
+    ) : (
+      <Text style={styles.text}>{children}</Text>
+    );
+  }
   return (
     <View style={[styles.note, style]} accessibilityRole="text">
-      {typeof children === "string" && spoken ? (
-        <SpokenText text={children} style={styles.text} />
-      ) : typeof children === "string" ? (
-        <Text style={styles.text}>{children}</Text>
-      ) : (
-        <View style={styles.body}>{children}</View>
-      )}
+      {content}
     </View>
   );
 }

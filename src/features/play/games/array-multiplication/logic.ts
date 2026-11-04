@@ -70,5 +70,5 @@ export function pickTile(picked: readonly number[], tile: number, cols: number, 
   if (!palActive || rowStarted) return { picked: [...picked, tile], refused: false };
   const rest = Array.from({ length: cols }, (_, c) => row * cols + c).filter((t) => !picked.includes(t));
   const ordered = [tile, ...rest.filter((t) => t !== tile)].slice(0, room);
-  return { picked: [...picked, ...ordered.sort((a, b) => a - b)], refused: false };
+  return { picked: [...picked, ...ordered.toSorted((a, b) => a - b)], refused: false };
 }

@@ -42,7 +42,7 @@ export const progressActions = {
         : profile.gradeSeconds,
       questsDone: profile.questsDone + (level?.kind === "quest" ? 1 : 0),
       cleanSolves:
-        firstTime && outcome && outcome.misses === 0 && !outcome.helped
+        firstTime && outcome?.misses === 0 && !outcome.helped
           ? { ...profile.cleanSolves, [grade]: (profile.cleanSolves?.[grade] ?? 0) + 1 }
           : profile.cleanSolves,
       helpedSolves: (profile.helpedSolves ?? 0) + (firstTime && outcome?.helped ? 1 : 0),

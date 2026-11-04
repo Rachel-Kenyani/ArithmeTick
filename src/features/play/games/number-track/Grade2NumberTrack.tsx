@@ -84,7 +84,12 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
   const stone = size ? Math.floor(Math.max(TARGET, Math.min(72, (size.w - 24 - 4 * 10) / 5, (size.h - 260) / 2.6))) : 56;
   const choices = next === undefined ? [] : choicesFor(next);
 
-  const prompt = solved ? `You counted back from ${from}!` : filled.length ? "What number comes next?" : `Count back from ${from}. Which number is missing?`;
+  let prompt = `Count back from ${from}. Which number is missing?`;
+  if (solved) {
+    prompt = `You counted back from ${from}!`;
+  } else if (filled.length) {
+    prompt = "What number comes next?";
+  }
   const promptClip = filled.length ? "nt-next" : `g2-l${String(level ?? 0).padStart(2, "0")}-missing`;
 
   return (
@@ -162,6 +167,10 @@ function Stone({
   }, [hop, reduced, y]);
   const st = useAnimatedStyle(() => ({ transform: [{ translateY: y.get() }] }));
 
+  let label = String(n);
+  if (gap) {
+    label = active ? "Missing number, fill this one" : "Missing number";
+  }
   return (
     <Animated.View
       style={[
@@ -174,7 +183,7 @@ function Stone({
         st,
       ]}
       accessible
-      accessibilityLabel={gap ? (active ? "Missing number, fill this one" : "Missing number") : String(n)}
+      accessibilityLabel={label}
     >
       {gap ? (
         <Text style={[styles.num, styles.ask, { fontSize: size * 0.42 }, hint ? styles.ghost : null]}>{hint ? n : "?"}</Text>

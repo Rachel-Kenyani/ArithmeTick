@@ -2,7 +2,12 @@ import { createAudioPlayer } from "expo-audio";
 import * as Speech from "expo-speech";
 
 import { isMuted } from "@/services/audio";
-import { OPENERS, VOICE_CLIPS, VOICE_WORDS, levelClip } from "@/services/voiceClips";
+import {
+  OPENERS,
+  VOICE_CLIPS,
+  VOICE_WORDS,
+  levelClip,
+} from "@/services/voiceClips";
 
 export interface SpokenRange {
   text: string;
@@ -24,11 +29,19 @@ let run = 0;
 let spoken: SpokenRange | null = null;
 const listeners = new Set<(range: SpokenRange | null) => void>();
 
-const pick = (ids: readonly string[]) => ids[Math.floor(Math.random() * ids.length)];
+const pick = (ids: readonly string[]) =>
+  ids[Math.floor(Math.random() * ids.length)];
 export const wordsOf = (text: string) => text.split(/\s+/).filter(Boolean);
 
 function publish(range: SpokenRange | null) {
-  if (range === spoken || (range && spoken && range.text === spoken.text && range.from === spoken.from && range.to === spoken.to)) return;
+  if (
+    range === spoken ||
+    (range &&
+      range.text === spoken?.text &&
+      range.from === spoken.from &&
+      range.to === spoken.to)
+  )
+    return;
   spoken = range;
   listeners.forEach((fn) => fn(range));
 }
@@ -43,7 +56,19 @@ function stopAll() {
   publish(null);
 }
 
-const NUMBERS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const NUMBERS = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+];
 function norm(word: string) {
   const w = word.toLowerCase().replace(/[^a-z0-9]/g, "");
   const n = NUMBERS.indexOf(w);
@@ -57,7 +82,10 @@ function wordStarts(shown: string[], heard: [string, number][]): number[] {
   lcs.push(new Array<number>(b.length + 1).fill(0));
   for (let i = a.length - 1; i >= 0; i--) {
     for (let j = b.length - 1; j >= 0; j--) {
-      lcs[i][j] = a[i] === b[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+      lcs[i][j] =
+        a[i] === b[j]
+          ? lcs[i + 1][j + 1] + 1
+          : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
     }
   }
   const starts: (number | null)[] = shown.map(() => null);
@@ -88,18 +116,24 @@ const HOLD_LAST_MS = 450;
 
 function fitStarts(starts: number[], durationMs: number): number[] {
   if (!durationMs) return starts;
-  return starts.map((ms, i) => Math.max(0, Math.min(ms, durationMs - (starts.length - i) * MIN_WORD_MS)));
+  return starts.map((ms, i) =>
+    Math.max(0, Math.min(ms, durationMs - (starts.length - i) * MIN_WORD_MS)),
+  );
 }
 
 function playParts(text: string, parts: Part[], ticket: number) {
   const shown = wordsOf(text);
-  const players = parts.map((p) => (VOICE_CLIPS[p.id] === undefined ? null : createAudioPlayer(VOICE_CLIPS[p.id] as number)));
-  const release = () => players.forEach((p) => {
-    try {
-      p?.remove();
-    } catch {
-    }
-  });
+  const players = parts.map((p) =>
+    VOICE_CLIPS[p.id] === undefined
+      ? null
+      : createAudioPlayer(VOICE_CLIPS[p.id] as number),
+  );
+  const release = () =>
+    players.forEach((p) => {
+      try {
+        p?.remove();
+      } catch {}
+    });
   stopSequence = release;
 
   const start = (index: number) => {
@@ -118,7 +152,13 @@ function playParts(text: string, parts: Part[], ticket: number) {
     const read: number[] = [];
     for (let i = part.from; i < part.to; i++) read.push(i);
     const heard = VOICE_WORDS[part.id];
-    const aligned = heard?.length && read.length ? wordStarts(read.map((i) => shown[i]), heard) : null;
+    const aligned =
+      heard?.length && read.length
+        ? wordStarts(
+            read.map((i) => shown[i]),
+            heard,
+          )
+        : null;
     let starts: number[] | null = null;
     let begun = false;
     let finished = false;
@@ -127,7 +167,13 @@ function playParts(text: string, parts: Part[], ticket: number) {
       if (begun || ticket !== run) return;
       begun = true;
       starts = aligned ? fitStarts(aligned, next.duration * 1000) : null;
-      publish(starts ? { text, from: read[0], to: read[0] + 1 } : read.length ? { text, from: part.from, to: part.to } : null);
+      let first: SpokenRange | null = null;
+      if (starts) {
+        first = { text, from: read[0], to: read[0] + 1 };
+      } else if (read.length) {
+        first = { text, from: part.from, to: part.to };
+      }
+      publish(first);
       if (starts) {
         const times = starts;
         ticker = setInterval(() => {
@@ -148,20 +194,34 @@ function playParts(text: string, parts: Part[], ticket: number) {
       finished = true;
       if (ticker) clearInterval(ticker);
       ticker = null;
-      if (read.length) publish({ text, from: read.at(-1) as number, to: (read.at(-1) as number) + 1 });
+      if (read.length)
+        publish({
+          text,
+          from: read.at(-1) as number,
+          to: (read.at(-1) as number) + 1,
+        });
       const last = index === parts.length - 1;
-      setTimeout(() => {
-        if (ticket !== run) return;
-        if (last) publish(null);
-        start(index + 1);
-      }, last ? HOLD_LAST_MS : 0);
+      setTimeout(
+        () => {
+          if (ticket !== run) return;
+          if (last) publish(null);
+          start(index + 1);
+        },
+        last ? HOLD_LAST_MS : 0,
+      );
     });
     if (next.isLoaded) go();
   };
   start(0);
 }
 
-function speak(text: string, ticket: number, from = 0, to = wordsOf(text).length, then?: () => void) {
+function speak(
+  text: string,
+  ticket: number,
+  from = 0,
+  to = wordsOf(text).length,
+  then?: () => void,
+) {
   const words = wordsOf(text).slice(from, to);
   const line = words.join(" ");
   const offsets: number[] = [];
@@ -198,14 +258,15 @@ function say(text: string, parts: Part[]) {
   if (isMuted()) return;
   stopAll();
   try {
-    const playable = parts.filter((p) => VOICE_CLIPS[p.id] !== undefined || p.to > p.from);
+    const playable = parts.filter(
+      (p) => VOICE_CLIPS[p.id] !== undefined || p.to > p.from,
+    );
     if (playable.some((p) => VOICE_CLIPS[p.id] !== undefined)) {
       playParts(text, playable, run);
     } else {
       speak(text, run);
     }
-  } catch {
-  }
+  } catch {}
 }
 
 export const narration = {
@@ -215,7 +276,12 @@ export const narration = {
       { id: levelClip(grade, level, "ask"), from: 0, to: wordsOf(text).length },
     ]);
   },
-  done(line: string, thanks: { id: string; text: string }, grade: number, level: number) {
+  done(
+    line: string,
+    thanks: { id: string; text: string },
+    grade: number,
+    level: number,
+  ) {
     const split = wordsOf(line).length;
     const text = `${line} ${thanks.text}`;
     say(text, [
@@ -229,7 +295,13 @@ export const narration = {
   number(n: number) {
     say(String(n), [{ id: `num-${n}`, from: 0, to: 1 }]);
   },
-  quest(story: string, steps: string, grade: number, level: number, task: string) {
+  quest(
+    story: string,
+    steps: string,
+    grade: number,
+    level: number,
+    task: string,
+  ) {
     const split = wordsOf(story).length;
     const text = `${story} ${steps}`;
     say(text, [

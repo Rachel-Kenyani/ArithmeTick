@@ -4,6 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const DIR = "assets/voice";
+const FFMPEG = "/opt/homebrew/bin/ffmpeg";
+const WHISPER = "/opt/homebrew/bin/whisper-cli";
 const model = process.env.WHISPER_MODEL;
 const ids = readdirSync(join(DIR, "en"))
   .filter((f) => f.endsWith(".m4a"))
@@ -12,8 +14,8 @@ const ids = readdirSync(join(DIR, "en"))
 
 function wordTimes(id, work) {
   const wav = join(work, `${id}.wav`);
-  execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", join(DIR, "en", `${id}.m4a`), "-ar", "16000", "-ac", "1", wav]);
-  execFileSync("whisper-cli", ["-m", model, "-f", wav, "-ml", "1", "-sow", "-oj", "-np", "-of", join(work, id)], { stdio: "ignore" });
+  execFileSync(FFMPEG, ["-loglevel", "error", "-y", "-i", join(DIR, "en", `${id}.m4a`), "-ar", "16000", "-ac", "1", wav]);
+  execFileSync(WHISPER, ["-m", model, "-f", wav, "-ml", "1", "-sow", "-oj", "-np", "-of", join(work, id)], { stdio: "ignore" });
   const { transcription } = JSON.parse(readFileSync(join(work, `${id}.json`), "utf8"));
   return transcription
     .map((s) => [s.text.trim(), s.offsets.from])

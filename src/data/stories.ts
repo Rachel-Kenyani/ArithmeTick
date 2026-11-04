@@ -246,7 +246,9 @@ export function treasureCount(level: LevelDef): number {
     case 2: {
       if (level.game !== "placeValue") return 1;
       const { op, a, b } = level.puzzle;
-      return op === "add" ? a + b : op === "sub" ? a - b : a;
+      if (op === "add") return a + b;
+      if (op === "sub") return a - b;
+      return a;
     }
     case 3:
       return level.puzzle.rows * level.puzzle.cols;

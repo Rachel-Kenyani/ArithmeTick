@@ -53,3 +53,4 @@ coverage/
 AGENTS.md
 docs/
 assets/voice
+sonar-project.properties

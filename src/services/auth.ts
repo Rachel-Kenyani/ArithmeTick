@@ -97,7 +97,7 @@ export const auth = {
 
   verifyCode(flow: PendingVerification, code: string): Promise<AuthResult> {
     const wrong: AuthResult = { ok: false, message: "That code didn’t match. Check it and try again." };
-    if (!isAuthConfigured) return Promise.resolve(new RegExp(`^\\d{${CODE_LENGTH}}$`).test(code) ? OK : wrong);
+    if (!isAuthConfigured) return Promise.resolve(new RegExp(String.raw`^\d{${CODE_LENGTH}}$`).test(code) ? OK : wrong);
     return safely(async () => {
       if (!isEmail(flow.identifier)) {
         const { error } = await supabase().auth.verifyOtp({ phone: flow.identifier, token: code, type: "sms" });

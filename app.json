@@ -35,7 +35,7 @@
       "expo-asset",
       "expo-status-bar",
       [
-        "@react-native-google-signin/google-signin",
+        "@react-native-google-signin/google-signin/app.plugin.js",
         {
           "iosUrlScheme": "com.googleusercontent.apps.957971466473-p693gq9usus5q1ea93nlib0umq9fu3p1"
         }

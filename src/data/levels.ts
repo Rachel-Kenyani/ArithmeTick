@@ -1,4 +1,15 @@
-import type { ArrayPuzzle, Grade, ClockPuzzle, GroupsPuzzle, HalvesPuzzle, NumberTrackPuzzle, PlaceValuePuzzle, QuestTask, TakeAwayPuzzle, TenFramePuzzle } from "@/types/domain";
+import type {
+  ArrayPuzzle,
+  Grade,
+  ClockPuzzle,
+  GroupsPuzzle,
+  HalvesPuzzle,
+  NumberTrackPuzzle,
+  PlaceValuePuzzle,
+  QuestTask,
+  TakeAwayPuzzle,
+  TenFramePuzzle,
+} from "@/types/domain";
 
 interface LevelBase {
   grade: Grade;
@@ -8,25 +19,67 @@ interface LevelBase {
 }
 
 export type LevelDef =
-  | (LevelBase & { kind: "puzzle"; grade: 1; game: "tenFrame"; puzzle: TenFramePuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 1; game: "takeAway"; puzzle: TakeAwayPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "placeValue"; puzzle: PlaceValuePuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "numberTrack"; puzzle: NumberTrackPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "groups"; puzzle: GroupsPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "halves"; puzzle: HalvesPuzzle })
-  | (LevelBase & { kind: "puzzle"; grade: 2; game: "clock"; puzzle: ClockPuzzle })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 1;
+      game: "tenFrame";
+      puzzle: TenFramePuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 1;
+      game: "takeAway";
+      puzzle: TakeAwayPuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 2;
+      game: "placeValue";
+      puzzle: PlaceValuePuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 2;
+      game: "numberTrack";
+      puzzle: NumberTrackPuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 2;
+      game: "groups";
+      puzzle: GroupsPuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 2;
+      game: "halves";
+      puzzle: HalvesPuzzle;
+    })
+  | (LevelBase & {
+      kind: "puzzle";
+      grade: 2;
+      game: "clock";
+      puzzle: ClockPuzzle;
+    })
   | (LevelBase & { kind: "puzzle"; grade: 3; puzzle: ArrayPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   groups: { title: "Move & Play", equation: "2 groups make 10" },
   length: { title: "Measure It", equation: "Measure with your hands" },
-  massCapacity: { title: "Heavy or Full", equation: "Compare mass and capacity" },
+  massCapacity: {
+    title: "Heavy or Full",
+    equation: "Compare mass and capacity",
+  },
   money: { title: "Market Day", equation: "Pay with shillings" },
   shapes: { title: "Shape House", equation: "Build a house with shapes" },
 };
 
-const quest = (grade: Grade, number: number, task: QuestTask = "groups"): LevelDef => ({
+const quest = (
+  grade: Grade,
+  number: number,
+  task: QuestTask = "groups",
+): LevelDef => ({
   grade,
   number,
   kind: "quest",
@@ -54,23 +107,44 @@ const takeAway = (number: number, start: number, away: number): LevelDef => ({
   puzzle: { start, away },
 });
 
-const PLACE_VALUE_TITLES: Record<PlaceValuePuzzle["op"], (a: number, b: number) => string> = {
+const PLACE_VALUE_TITLES: Record<
+  PlaceValuePuzzle["op"],
+  (a: number, b: number) => string
+> = {
   build: (a) => `Make ${a}`,
   add: (a, b) => `${a} + ${b}`,
   sub: (a, b) => `${a} − ${b}`,
 };
 
-const placeValue = (number: number, op: PlaceValuePuzzle["op"], a: number, b = 0): LevelDef => ({
+const PLACE_VALUE_EQUATIONS: Record<
+  PlaceValuePuzzle["op"],
+  (a: number, b: number) => string
+> = {
+  build: (a) => `${a} = ${Math.floor(a / 10)} tens + ${a % 10} ones`,
+  add: (a, b) => `${a} + ${b} = ${a + b}`,
+  sub: (a, b) => `${a} − ${b} = ${a - b}`,
+};
+
+const placeValue = (
+  number: number,
+  op: PlaceValuePuzzle["op"],
+  a: number,
+  b = 0,
+): LevelDef => ({
   grade: 2,
   number,
   kind: "puzzle",
   game: "placeValue",
   title: PLACE_VALUE_TITLES[op](a, b),
-  equation: op === "build" ? `${a} = ${Math.floor(a / 10)} tens + ${a % 10} ones` : op === "add" ? `${a} + ${b} = ${a + b}` : `${a} − ${b} = ${a - b}`,
+  equation: PLACE_VALUE_EQUATIONS[op](a, b),
   puzzle: { op, a, b },
 });
 
-const numberTrack = (number: number, from: number, gaps: number[]): LevelDef => ({
+const numberTrack = (
+  number: number,
+  from: number,
+  gaps: number[],
+): LevelDef => ({
   grade: 2,
   number,
   kind: "puzzle",
@@ -120,7 +194,17 @@ const array = (number: number, rows: number, cols: number): LevelDef => ({
 });
 
 export const LEVELS: Record<Grade, readonly LevelDef[]> = {
-  1: [tenFrame(1, 6), tenFrame(2, 7), quest(1, 3), tenFrame(4, 8), takeAway(5, 7, 2), quest(1, 6), tenFrame(7, 9), takeAway(8, 9, 4), quest(1, 9)],
+  1: [
+    tenFrame(1, 6),
+    tenFrame(2, 7),
+    quest(1, 3),
+    tenFrame(4, 8),
+    takeAway(5, 7, 2),
+    quest(1, 6),
+    tenFrame(7, 9),
+    takeAway(8, 9, 4),
+    quest(1, 9),
+  ],
   2: [
     placeValue(1, "build", 34),
     numberTrack(2, 50, [48, 46, 43, 41]),
@@ -135,7 +219,14 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
     clockAt(11, 3),
     quest(2, 12, "shapes"),
   ],
-  3: [array(1, 3, 4), array(2, 2, 6), quest(3, 3), array(4, 3, 5), array(5, 4, 3), quest(3, 6)],
+  3: [
+    array(1, 3, 4),
+    array(2, 2, 6),
+    quest(3, 3),
+    array(4, 3, 5),
+    array(5, 4, 3),
+    quest(3, 6),
+  ],
 };
 
 export function levelCount(grade: Grade): number {
@@ -158,6 +249,10 @@ export function levelStatus(number: number, completed: number): LevelStatus {
   return "locked";
 }
 
-export function isPlayable(grade: Grade, number: number, completed: number): boolean {
+export function isPlayable(
+  grade: Grade,
+  number: number,
+  completed: number,
+): boolean {
   return number >= 1 && number <= Math.min(completed + 1, levelCount(grade));
 }

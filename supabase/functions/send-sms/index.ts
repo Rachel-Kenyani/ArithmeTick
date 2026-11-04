@@ -1,4 +1,4 @@
-import { Webhook } from "npm:standardwebhooks@1.0.0";
+import { Webhook } from "standardwebhooks";
 
 interface SmsHookPayload {
   user: { phone: string };
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     `Africa's Talking (${USERNAME}): to ${to.slice(0, 7)}****${to.slice(-2)}, status ${recipient?.status ?? "none"}, ` +
       `messageId ${recipient?.messageId ?? "-"}, cost ${recipient?.cost ?? "-"}, note "${result?.SMSMessageData?.Message ?? ""}"`,
   );
-  if (!recipient || recipient.status !== "Success") {
+  if (recipient?.status !== "Success") {
     return hookError(502, `SMS not sent: ${recipient?.status ?? result?.SMSMessageData?.Message ?? "unknown"}`);
   }
   return new Response(JSON.stringify({}), { status: 200, headers: { "Content-Type": "application/json" } });

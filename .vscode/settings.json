@@ -1,0 +1,9 @@
+{
+  "sonarlint.analysisExcludesStandalone": "supabase/templates/**",
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.lint": true,
+  "deno.path": "/opt/homebrew/bin/deno",
+  "js/ts.experimental.useTsgo": false
+}

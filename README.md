@@ -6,9 +6,11 @@ unlocking levels by solving hands-on number puzzles: ten-frames, balance scales 
 Built with **Expo SDK 58**, **React Native 0.88**, **TypeScript** and **Reanimated 4**.
 A mobile port of the ArithmeTick web app.
 
+<!-- markdownlint-disable MD033 -->
 <p align="center">
   <img src="assets/splash-icon.png" width="320" alt="ArithmeTick logo" />
 </p>
+<!-- markdownlint-enable MD033 -->
 
 ## Features
 

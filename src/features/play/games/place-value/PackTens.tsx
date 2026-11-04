@@ -1,36 +1,16 @@
 import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type LayoutChangeEvent,
-} from "react-native";
-import Animated, {
-  FadeIn,
-  ReduceMotion,
-  ZoomIn,
-} from "react-native-reanimated";
+import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
+import Animated, { ReduceMotion, ZoomIn } from "react-native-reanimated";
 
-import type { CounterItem } from "@/features/play/components/CounterFace";
 import { sfx } from "@/services/audio";
 import type { GradeModuleProps } from "@/types/domain";
 import { colors } from "@/theme";
 
 import { COUNT_STEP_MS } from "../ten-frame/constants";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
-import { DragItem } from "./DragItem";
-import {
-  Crate,
-  Equation,
-  Loose,
-  Prompt,
-  TARGET,
-  partStyles,
-  type Bubble,
-} from "./parts";
-
-type Step = "pack" | "tens" | "ones" | "solved";
+import { Crate, Equation, Prompt, partStyles, type Bubble } from "./parts";
+import { clipFor, gridFor, inside, itemWord, promptFor, sameSize, type Step } from "./packTensLogic";
+import { Choices, LooseSlot, PackCrate } from "./PackTensParts";
 
 const DRAFT_VERSION = 1;
 const CLOSE_MS = 450;
@@ -40,10 +20,6 @@ const POP = ZoomIn.springify()
   .stiffness(380)
   .damping(20)
   .reduceMotion(ReduceMotion.System);
-
-const around = (n: number) => [
-  ...new Set([n - 1, n, n + 1].filter((x) => x >= 0)),
-];
 
 export default function PackTens({
   level,
@@ -124,14 +100,7 @@ export default function PackTens({
   const frameRef = useRef<ComponentRef<typeof View>>(null);
   const dropOnCrate = (slot: number, x: number, y: number) => {
     frameRef.current?.measureInWindow((fx, fy, fw, fh) => {
-      const give = 24;
-      if (
-        x >= fx - give &&
-        x <= fx + fw + give &&
-        y >= fy - give &&
-        y <= fy + fh + give
-      )
-        pack(slot);
+      if (inside(x, y, fx, fy, fw, fh)) pack(slot);
     });
   };
 
@@ -149,13 +118,16 @@ export default function PackTens({
     next.forEach((slot, k) => schedule(() => pack(slot), k * AUTO_STEP_MS));
   };
 
+  const looseKeys = () =>
+    Array.from({ length: a }, (_, i) => i)
+      .filter((i) => !packed.includes(i))
+      .map((i) => `o${i}`);
+
   const countAloud = (what: "tens" | "ones") => {
     const keys =
       what === "tens"
         ? Array.from({ length: shelf }, (_, i) => `t${i}`)
-        : Array.from({ length: a }, (_, i) => i)
-            .filter((i) => !packed.includes(i))
-            .map((i) => `o${i}`);
+        : looseKeys();
     setBubbles((prev) => {
       const next = { ...prev };
       keys.forEach((k, i) => {
@@ -171,6 +143,13 @@ export default function PackTens({
     return keys.length * COUNT_STEP_MS;
   };
 
+  const finish = () => {
+    doneRef.current = true;
+    setStep("solved");
+    schedule(() => sfx.solved(), 300);
+    schedule(onSolved, SOLVED_HANDOFF_MS);
+  };
+
   const answer = (n: number) => {
     if (doneRef.current || (step !== "tens" && step !== "ones")) return;
     const target = step === "tens" ? tensAnswer : onesAnswer;
@@ -183,173 +162,107 @@ export default function PackTens({
       return;
     }
     sfx.groupPulse();
-    if (step === "tens") {
-      setStep("ones");
-      return;
-    }
-    doneRef.current = true;
-    setStep("solved");
-    schedule(() => sfx.solved(), 300);
-    schedule(onSolved, SOLVED_HANDOFF_MS);
+    if (step === "tens") setStep("ones");
+    else finish();
   };
 
   const onLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setSize((prev) =>
-      prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1
-        ? prev
-        : { w: width, h: height },
+      sameSize(prev, width, height) ? prev : { w: width, h: height },
     );
   };
   const crateCell = size ? Math.floor(Math.min(36, (size.w - 60) / 6)) : 30;
-  const grid = useMemo(() => {
-    if (!size) return { cols: 7, pitch: 44 };
-    const avail = size.h - 58 - 44 - 46 - (crateCell * 2 + 24) - 40 - 40;
-    let best = { cols: 7, pitch: 0 };
-    for (let cols = 5; cols <= 8; cols++) {
-      const rows = Math.ceil(a / cols);
-      const pitch = Math.min(56, (size.w - 24) / cols, avail / rows);
-      if (pitch > best.pitch) best = { cols, pitch };
-    }
-    return { cols: best.cols, pitch: Math.floor(best.pitch) };
-  }, [size, a, crateCell]);
+  const grid = useMemo(() => gridFor(size, a, crateCell), [size, a, crateCell]);
   const itemSize = grid.pitch - 4;
 
-  const prompt =
-    step === "pack"
-      ? handFilled
-        ? "A full crate holds 10. Tap the empty crate to fill it!"
-        : "Tap or drag a tomato to put it on the crate"
-      : step === "tens"
-        ? "How many full ten crates are there?"
-        : step === "ones"
-          ? "How many tomatoes are left over?"
-          : `${tensAnswer} full crates and ${onesAnswer} left over make ${a}!`;
-  const promptClip = step === "pack" ? (handFilled ? "pv-fill" : "pv-pack") : step === "tens" ? "pv-crates" : "pv-leftover";
+  const prompt = promptFor(step, handFilled, tensAnswer, onesAnswer, a);
+  const promptClip = clipFor(step, handFilled);
+  const asking = step === "tens" || step === "ones";
+
+  const testID = `g2-pack-l${level ?? 0}-${a}`;
+  if (!size)
+    return <View style={styles.root} onLayout={onLayout} testID={testID} />;
 
   return (
-    <View
-      style={styles.root}
-      onLayout={onLayout}
-      testID={`g2-pack-l${level ?? 0}-${a}`}
-    >
-      {size ? (
-        <>
-          <Equation
-            op="build"
-            a={a}
-            b={0}
-            answer={a}
-            solved={step === "solved"}
-            tens={step === "ones" || step === "solved" ? tensAnswer : undefined}
-            ones={step === "solved" ? onesAnswer : undefined}
-          />
+    <View style={styles.root} onLayout={onLayout} testID={testID}>
+      <Equation
+        op="build"
+        a={a}
+        b={0}
+        answer={a}
+        solved={step === "solved"}
+        tens={step === "ones" || step === "solved" ? tensAnswer : undefined}
+        ones={step === "solved" ? onesAnswer : undefined}
+      />
 
-          <Prompt text={prompt.replaceAll("tomato", itemWord(item))} clipId={promptClip} waiting={waiting} silent={step === "solved"} />
+      <Prompt
+        text={prompt.replaceAll("tomato", itemWord(item))}
+        clipId={promptClip}
+        waiting={waiting}
+        silent={step === "solved"}
+      />
 
-          <View
-            style={[styles.shelf, step === "tens" ? styles.focus : null]}
-            accessible
-            accessibilityLabel={`${shelf} full crates`}
-          >
-            <View style={styles.shelfCrates}>
-              {Array.from({ length: shelf }, (_, i) => (
-                <Animated.View key={i} entering={POP}>
-                  <Crate item={item} cell={9} bubble={bubbles[`t${i}`]} />
-                </Animated.View>
-              ))}
-            </View>
-          </View>
-
-          {step === "pack" ? (
-            <View ref={frameRef} collapsable={false}>
-              <Pressable
-                onPress={autoFill}
-                accessibilityRole="button"
-                accessibilityLabel={`Crate, ${inCrate} of 10${handFilled ? ". Tap to fill it" : ""}`}
-                style={({ pressed }) => [
-                  pressed && handFilled ? styles.pressed : null,
-                ]}
-              >
-                <Crate
-                  item={item}
-                  cell={crateCell}
-                  filled={inCrate}
-                  glow={handFilled || palActive}
-                  countLast
-                />
-              </Pressable>
-            </View>
-          ) : null}
-
-          <View style={[styles.table, step === "ones" ? styles.focus : null]}>
-            {step !== "pack" ? (
-              <Text style={partStyles.head}>Left over</Text>
-            ) : null}
-            <View style={[styles.loose, { width: grid.cols * grid.pitch }]}>
-              {Array.from({ length: a }, (_, slot) => (
-                <View
-                  key={slot}
-                  style={{
-                    width: grid.pitch,
-                    height: grid.pitch,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {packed.includes(slot) ? null : (
-                    <DragItem
-                      enabled={step === "pack"}
-                      onTap={() => pack(slot)}
-                      onDrop={(x, y) => dropOnCrate(slot, x, y)}
-                      hitSlop={Math.max(
-                        0,
-                        Math.ceil((TARGET - grid.pitch) / 2),
-                      )}
-                      label={
-                        step === "pack"
-                          ? `${itemWord(item)}. Tap or drag it onto the crate`
-                          : itemWord(item)
-                      }
-                    >
-                      <Loose
-                        item={item}
-                        size={itemSize}
-                        bubble={bubbles[`o${slot}`]}
-                      />
-                    </DragItem>
-                  )}
-                </View>
-              ))}
-            </View>
-          </View>
-
-          {step === "tens" || step === "ones" ? (
-            <Animated.View
-              key={step}
-              entering={FadeIn.duration(220)}
-              style={partStyles.choices}
-            >
-              {around(step === "tens" ? tensAnswer : onesAnswer).map((n) => (
-                <Pressable
-                  key={n}
-                  onPress={() => answer(n)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${n} ${step}`}
-                  style={partStyles.choice}
-                >
-                  <Text style={partStyles.choiceText}>{n}</Text>
-                </Pressable>
-              ))}
+      <View
+        style={[styles.shelf, step === "tens" ? styles.focus : null]}
+        accessible
+        accessibilityLabel={`${shelf} full crates`}
+      >
+        <View style={styles.shelfCrates}>
+          {Array.from({ length: shelf }, (_, i) => (
+            <Animated.View key={i} entering={POP}>
+              <Crate item={item} cell={9} bubble={bubbles[`t${i}`]} />
             </Animated.View>
-          ) : null}
-        </>
+          ))}
+        </View>
+      </View>
+
+      {step === "pack" ? (
+        <View ref={frameRef} collapsable={false}>
+          <PackCrate
+            item={item}
+            cell={crateCell}
+            inCrate={inCrate}
+            handFilled={handFilled}
+            glow={handFilled || !!palActive}
+            onPress={autoFill}
+          />
+        </View>
+      ) : null}
+
+      <View style={[styles.table, step === "ones" ? styles.focus : null]}>
+        {step !== "pack" ? (
+          <Text style={partStyles.head}>Left over</Text>
+        ) : null}
+        <View style={[styles.loose, { width: grid.cols * grid.pitch }]}>
+          {Array.from({ length: a }, (_, slot) => (
+            <LooseSlot
+              key={`slot-${slot}`}
+              item={item}
+              pitch={grid.pitch}
+              size={itemSize}
+              packed={packed.includes(slot)}
+              packing={step === "pack"}
+              bubble={bubbles[`o${slot}`]}
+              onTap={() => pack(slot)}
+              onDrop={(x, y) => dropOnCrate(slot, x, y)}
+            />
+          ))}
+        </View>
+      </View>
+
+      {asking ? (
+        <Choices
+          key={step}
+          unit={step}
+          target={step === "tens" ? tensAnswer : onesAnswer}
+          onPick={answer}
+        />
       ) : null}
     </View>
   );
 }
 
-const itemWord = (item: CounterItem) => (item === "cap" ? "bottle top" : item);
 
 const styles = StyleSheet.create({
   root: {
@@ -385,5 +298,4 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,229,138,0.25)",
   },
   loose: { flexDirection: "row", flexWrap: "wrap" },
-  pressed: { transform: [{ scale: 0.97 }] },
 });

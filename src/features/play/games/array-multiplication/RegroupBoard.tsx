@@ -32,6 +32,7 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
   const tile = pitch - inset * 2;
   const leftovers = Array.from({ length: pz.count }, (_, i) => i).filter((i) => !picked.includes(i));
 
+  const filledSeg = bundled ? styles.segGold : styles.segOn;
   return (
     <View style={stacked ? styles.stack : styles.row}>
       {bundled ? null : (
@@ -69,7 +70,7 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
             {SLOTS.map((s) => (
               <View
                 key={s}
-                style={[styles.seg, stacked ? { width: seg - 2, height: seg } : { width: seg, height: seg - 2 }, s < picked.length ? (bundled ? styles.segGold : styles.segOn) : null]}
+                style={[styles.seg, stacked ? { width: seg - 2, height: seg } : { width: seg, height: seg - 2 }, s < picked.length ? filledSeg : null]}
               />
             ))}
           </View>

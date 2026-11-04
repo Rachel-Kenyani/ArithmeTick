@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentRef } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, { FadeIn, ReduceMotion, ZoomIn } from "react-native-reanimated";
 
@@ -33,6 +33,7 @@ export default function Grade2Groups({ level, groups, each, item = "seed", waiti
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
   const [bubbles, setBubbles] = useState<Partial<Record<number, Bubble>>>({});
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  const holeIds = useMemo(() => Array.from({ length: groups }, (_, i) => `hole-${i + 1}`), [groups]);
   const holeRefs = useRef<(ComponentRef<typeof View> | null)[]>([]);
   const bubbleN = useRef(0);
   const doneRef = useRef(false);
@@ -147,11 +148,12 @@ export default function Grade2Groups({ level, groups, each, item = "seed", waiti
           <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
 
           <View style={styles.holes}>
-            {inHole.map((n, hole) => {
+            {holeIds.map((holeId, hole) => {
+              const n = inHole[hole];
               const tappable = step === "count" && hole === counted;
               return (
                 <Pressable
-                  key={`hole-${hole}`}
+                  key={holeId}
                   ref={(r) => {
                     holeRefs.current[hole] = r;
                   }}

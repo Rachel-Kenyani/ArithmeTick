@@ -28,7 +28,8 @@ export function slotMarkers(
   isDragging: boolean,
   near: boolean,
 ): { nextSlot: number; previewSlot: number; hintSlot: number } {
-  const nextSlot = count < (palActive && revealAll ? target : CAP_COUNT) ? count : -1;
+  const limit = palActive && revealAll ? target : CAP_COUNT;
+  const nextSlot = count < limit ? count : -1;
   return {
     nextSlot,
     previewSlot: isDragging && near && !solved ? nextSlot : -1,

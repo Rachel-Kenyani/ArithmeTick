@@ -50,11 +50,11 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
   const { unlockLevel, mapEpoch } = useMapUnlock(grade, completed, focused);
 
   const celebrateKey = `${profile.id}:${grade}`;
-  const [, setClosedCount] = useState(0);
-  const showComplete = allDone && !celebratedGrades.has(celebrateKey);
+  const [closedKey, setClosedKey] = useState<string | null>(null);
+  const showComplete = allDone && closedKey !== celebrateKey && !celebratedGrades.has(celebrateKey);
   const closeComplete = useCallback(() => {
     celebratedGrades.add(celebrateKey);
-    setClosedCount((n) => n + 1);
+    setClosedKey(celebrateKey);
   }, [celebrateKey]);
 
   const go = useNavigateOnce();

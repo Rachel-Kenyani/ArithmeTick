@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
 
-import { narration, wordsOf } from "@/services/narration";
+import { narration } from "@/services/narration";
 import { colors } from "@/theme";
 
 export default function SpokenText({
@@ -12,15 +12,15 @@ export default function SpokenText({
 }: Readonly<{ text: string; style?: StyleProp<TextStyle>; source?: string; offset?: number }>) {
   const spoken = useSyncExternalStore(narration.subscribe, narration.current);
   const range = spoken?.text === source ? spoken : null;
-  const words = wordsOf(text);
+  const words = [...text.matchAll(/\S+/g)].map((m) => ({ word: m[0], at: m.index }));
   return (
     <Text style={style} accessibilityLabel={text}>
-      {words.map((w, i) => {
+      {words.map(({ word, at }, i) => {
         const lit = range !== null && i + offset >= range.from && i + offset < range.to;
         return (
-          <Text key={i}>
+          <Text key={at}>
             {i > 0 ? " " : ""}
-            <Text style={lit ? styles.lit : null}>{w}</Text>
+            <Text style={lit ? styles.lit : null}>{word}</Text>
           </Text>
         );
       })}

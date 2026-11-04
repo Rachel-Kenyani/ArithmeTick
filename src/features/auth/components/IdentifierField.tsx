@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, type TextInputFocusEvent } from "react-native";
+import { StyleSheet, Text, View, type BlurEvent } from "react-native";
 
 import { TextField, type TextFieldProps } from "@/components/ui/TextField";
 import { MailIcon } from "@/components/ui/icons";
@@ -20,7 +20,7 @@ export default function IdentifierField({
 }: Readonly<Omit<TextFieldProps, "label" | "icon" | "placeholder">>) {
   const phone = looksLikePhone(value ?? "");
 
-  const handleBlur = (e: TextInputFocusEvent) => {
+  const handleBlur = (e: BlurEvent) => {
     const e164 = phone ? normalizePhone(value ?? "") : null;
     if (e164) onChangeText?.(localPart(e164));
     onBlur?.(e);

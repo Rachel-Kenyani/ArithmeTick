@@ -136,7 +136,11 @@ function CountOn({ level, a, b, item = "tomato", palActive, waiting = false, onS
   const smallCell = Math.max(8, Math.round(cell * 0.3));
   const choices = useMemo(() => choicesFor(answer), [answer]);
   const many = plural(item);
-  const prompt = step === "move" ? `Put the new ${many} in the crate. Count on!` : step === "answer" ? `How many ${many} are there altogether?` : `${answer}!`;
+  const prompt = {
+    move: `Put the new ${many} in the crate. Count on!`,
+    answer: `How many ${many} are there altogether?`,
+    solved: `${answer}!`,
+  }[step];
   const clip = step === "move" ? "pv-count-on" : "pv-altogether";
 
   return (

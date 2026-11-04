@@ -31,7 +31,6 @@ function plural(item: CounterItem, n = 2): string {
   return item === "tomato" || item === "mango" ? `${item}es` : `${item}s`;
 }
 
-/** The first step: whole tens to give, then a crate to open if the ones run short, then the ones. */
 function firstStep(a: number, b: number): Step {
   if (Math.floor(b / 10) > 0) return "giveCrates";
   return a % 10 < b % 10 ? "open" : "giveOnes";
@@ -168,8 +167,9 @@ export default function TakeFromTens({ level, a, b, item = "orange", waiting = f
   const many = plural(item);
   const id = `g2-l${String(level ?? 0).padStart(2, "0")}`;
 
+  const cratesWord = cratesToGive === 1 ? "full crate" : "full crates";
   const prompt = {
-    giveCrates: `Give Brijo ${cratesToGive === 1 ? "1 full crate" : `${cratesToGive} full crates`}. Tap a full crate.`,
+    giveCrates: `Give Brijo ${cratesToGive} ${cratesWord}. Tap a full crate.`,
     open: `Brijo needs ${onesToGive} ${many}. There ${loose === 1 ? "is" : "are"} only ${loose} left over. Open a full crate!`,
     giveOnes: `Tap ${onesToGive} ${plural(item, onesToGive)} to give to Brijo.`,
     tens: "How many full crates are left?",
@@ -178,87 +178,92 @@ export default function TakeFromTens({ level, a, b, item = "orange", waiting = f
   }[step];
   const clip = { giveCrates: `${id}-crates`, open: `${id}-open`, giveOnes: `${id}-give`, tens: "pv-crates-left", ones: `${id}-leftover`, solved: "" }[step];
   const cratesTappable = step === "giveCrates" || (step === "open" && shortCounted);
+  let crateLabel = "Full crate";
+  if (step === "open") {
+    crateLabel = "Full crate. Tap to open it";
+  } else if (step === "giveCrates") {
+    crateLabel = "Full crate. Tap to give it to Brijo";
+  }
+
+  const testID = `g2-takefromtens-l${level ?? 0}-${a}-${b}`;
+  if (!size) return <View style={styles.root} onLayout={onLayout} testID={testID} />;
 
   return (
-    <View style={styles.root} onLayout={onLayout} testID={`g2-takefromtens-l${level ?? 0}-${a}-${b}`}>
-      {size ? (
-        <>
-          <Equation op="sub" a={a} b={b} answer={answer} solved={step === "solved"} />
-          <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
+    <View style={styles.root} onLayout={onLayout} testID={testID}>
+      <Equation op="sub" a={a} b={b} answer={answer} solved={step === "solved"} />
+      <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
 
-          <View style={styles.basket} accessible accessibilityLabel={`${cratesGiven * 10 + onesGiven} in Brijo's basket`}>
-            <View style={styles.basketArt}>
-              <BasketArt />
-            </View>
-            <View style={styles.basketItems}>
-              {Array.from({ length: cratesGiven }, (_, i) => (
-                <Animated.View key={`bc-${i}`} entering={POP}>
-                  <Crate item={item} cell={6} />
-                </Animated.View>
-              ))}
-              {Array.from({ length: onesGiven }, (_, i) => (
-                <Animated.View key={`bo-${i}`} entering={POP}>
-                  <View>
-                    <Loose item={item} size={22} />
-                    <CountBubble key={`b-${i}`} label={i + 1} delayMs={0} size={22} />
-                  </View>
-                </Animated.View>
-              ))}
-            </View>
-          </View>
+      <View style={styles.basket} accessible accessibilityLabel={`${cratesGiven * 10 + onesGiven} in Brijo's basket`}>
+        <View style={styles.basketArt}>
+          <BasketArt />
+        </View>
+        <View style={styles.basketItems}>
+          {Array.from({ length: cratesGiven }, (_, i) => (
+            <Animated.View key={`bc-${i}`} entering={POP}>
+              <Crate item={item} cell={6} />
+            </Animated.View>
+          ))}
+          {Array.from({ length: onesGiven }, (_, i) => (
+            <Animated.View key={`bo-${i}`} entering={POP}>
+              <View>
+                <Loose item={item} size={22} />
+                <CountBubble key={`b-${i}`} label={i + 1} delayMs={0} size={22} />
+              </View>
+            </Animated.View>
+          ))}
+        </View>
+      </View>
 
-          <View style={[styles.shelf, step === "tens" ? styles.focus : null]}>
-            <Text style={partStyles.head}>{"Full\ncrates"}</Text>
-            <View style={styles.shelfCrates}>
-              {Array.from({ length: full }, (_, i) => (
-                <Animated.View key={`full-${i}`} entering={POP} exiting={OUT}>
-                  <Pressable
-                    onPress={step === "open" ? openCrate : giveCrate}
-                    disabled={!cratesTappable}
-                    hitSlop={8}
-                    accessibilityRole={cratesTappable ? "button" : "image"}
-                    accessibilityLabel={step === "open" ? "Full crate. Tap to open it" : step === "giveCrates" ? "Full crate. Tap to give it to Brijo" : "Full crate"}
-                    style={[styles.crateTap, cratesTappable ? styles.tapOn : null]}
-                  >
-                    <Crate item={item} cell={9} bubble={bubbles[`full-${i}`]} />
-                  </Pressable>
-                </Animated.View>
-              ))}
-            </View>
-          </View>
+      <View style={[styles.shelf, step === "tens" ? styles.focus : null]}>
+        <Text style={partStyles.head}>{"Full\ncrates"}</Text>
+        <View style={styles.shelfCrates}>
+          {Array.from({ length: full }, (_, i) => (
+            <Animated.View key={`full-${i}`} entering={POP} exiting={OUT}>
+              <Pressable
+                onPress={step === "open" ? openCrate : giveCrate}
+                disabled={!cratesTappable}
+                hitSlop={8}
+                accessibilityRole={cratesTappable ? "button" : "image"}
+                accessibilityLabel={crateLabel}
+                style={[styles.crateTap, cratesTappable ? styles.tapOn : null]}
+              >
+                <Crate item={item} cell={9} bubble={bubbles[`full-${i}`]} />
+              </Pressable>
+            </Animated.View>
+          ))}
+        </View>
+      </View>
 
-          <View style={[styles.table, step === "ones" ? styles.focus : null]}>
-            <Text style={partStyles.head}>Left over</Text>
-            <View style={[styles.loose, { width: 5 * (cell + 6) }]}>
-              {Array.from({ length: loose }, (_, i) => (
-                <Animated.View key={`loose-${a}-${i}`} entering={POP} exiting={OUT} style={{ width: cell + 6, height: cell + 6, alignItems: "center", justifyContent: "center" }}>
-                  <Pressable
-                    onPress={giveOne}
-                    disabled={step !== "giveOnes"}
-                    hitSlop={Math.max(0, Math.ceil((TARGET - cell) / 2))}
-                    accessibilityRole={step === "giveOnes" ? "button" : "image"}
-                    accessibilityLabel={step === "giveOnes" ? `${plural(item, 1)}. Tap to give it to Brijo` : plural(item, 1)}
-                  >
-                    <Loose item={item} size={cell} bubble={bubbles[`loose-${i}`]} />
-                  </Pressable>
-                </Animated.View>
-              ))}
-            </View>
-          </View>
+      <View style={[styles.table, step === "ones" ? styles.focus : null]}>
+        <Text style={partStyles.head}>Left over</Text>
+        <View style={[styles.loose, { width: 5 * (cell + 6) }]}>
+          {Array.from({ length: loose }, (_, i) => (
+            <Animated.View key={`loose-${a}-${i}`} entering={POP} exiting={OUT} style={{ width: cell + 6, height: cell + 6, alignItems: "center", justifyContent: "center" }}>
+              <Pressable
+                onPress={giveOne}
+                disabled={step !== "giveOnes"}
+                hitSlop={Math.max(0, Math.ceil((TARGET - cell) / 2))}
+                accessibilityRole={step === "giveOnes" ? "button" : "image"}
+                accessibilityLabel={step === "giveOnes" ? `${plural(item, 1)}. Tap to give it to Brijo` : plural(item, 1)}
+              >
+                <Loose item={item} size={cell} bubble={bubbles[`loose-${i}`]} />
+              </Pressable>
+            </Animated.View>
+          ))}
+        </View>
+      </View>
 
-          <View style={styles.actions}>
-            {step === "tens" || step === "ones" ? (
-              <Animated.View key={step} entering={FadeIn.duration(220)} style={partStyles.choices}>
-                {around(step === "tens" ? full : loose).map((n) => (
-                  <Pressable key={n} onPress={() => pick(n)} accessibilityRole="button" accessibilityLabel={String(n)} style={partStyles.choice}>
-                    <Text style={partStyles.choiceText}>{n}</Text>
-                  </Pressable>
-                ))}
-              </Animated.View>
-            ) : null}
-          </View>
-        </>
-      ) : null}
+      <View style={styles.actions}>
+        {step === "tens" || step === "ones" ? (
+          <Animated.View key={step} entering={FadeIn.duration(220)} style={partStyles.choices}>
+            {around(step === "tens" ? full : loose).map((n) => (
+              <Pressable key={n} onPress={() => pick(n)} accessibilityRole="button" accessibilityLabel={String(n)} style={partStyles.choice}>
+                <Text style={partStyles.choiceText}>{n}</Text>
+              </Pressable>
+            ))}
+          </Animated.View>
+        ) : null}
+      </View>
     </View>
   );
 }

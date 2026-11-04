@@ -44,6 +44,11 @@ function capLabel(colorName: string, slot: number | null, locked: boolean, extra
     : `${colorName} bottle cap in slot ${slot + 1}, tap to send back`;
 }
 
+function colorNameFor(item: CounterItem, color: string): string {
+  if (item !== "cap") return item;
+  return color === "teal" ? "Teal" : "Purple";
+}
+
 export const BottleCap = memo(function BottleCap({
   id,
   size,
@@ -111,8 +116,7 @@ export const BottleCap = memo(function BottleCap({
     };
   });
 
-  const colorName = item === "cap" ? (color === "teal" ? "Teal" : "Purple") : item;
-  const label = capLabel(colorName, slot, locked, extra);
+  const label = capLabel(colorNameFor(item, color), slot, locked, extra);
 
   return (
     <GestureDetector gesture={gesture}>

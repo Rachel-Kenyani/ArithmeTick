@@ -153,7 +153,12 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
 
 function GoalPill({ rows, cols, phase }: Readonly<{ rows: number; cols: number; phase: Phase }>) {
   const building = phase === "build" || phase === "locked";
-  const label = building ? `Build ${rows} rows of ${cols}` : phase === "bundled" ? "1 ten!" : "Tap 10 to make a ten";
+  let label = "Tap 10 to make a ten";
+  if (building) {
+    label = `Build ${rows} rows of ${cols}`;
+  } else if (phase === "bundled") {
+    label = "1 ten!";
+  }
   return (
     <View style={styles.pill} accessibilityLiveRegion="polite">
       {building ? (

@@ -78,7 +78,7 @@ export default function Grade1TakeAway({
   const [taken, setTaken] = useState<number[]>(() => (resumed ? awaySlots : []));
   const [step, setStep] = useState<Step>(resumed ? "count" : "watch");
   const [misses, setMisses] = useState(resumed ? (draft?.misses ?? 0) : 0);
-  const [, setTallied] = useState<number[]>([]);
+  const talliedRef = useRef<number[]>([]);
   const [fx, setFx] = useState<Partial<Record<number, Fx>>>({});
   const { layout: L, onLayout } = useBoardLayout();
   const cell = L.cap;
@@ -151,13 +151,11 @@ export default function Grade1TakeAway({
   const tally = useCallback(
     (slot: number) => {
       if (step !== "count") return;
-      setTallied((prev) => {
-        if (prev.includes(slot)) return prev;
-        const next = [...prev, slot];
-        fire([slot], "count", () => 0, () => next.length);
-        sfx.snap(next.length - 1);
-        return next;
-      });
+      if (talliedRef.current.includes(slot)) return;
+      const next = [...talliedRef.current, slot];
+      talliedRef.current = next;
+      fire([slot], "count", () => 0, () => next.length);
+      sfx.snap(next.length - 1);
     },
     [step, fire],
   );
@@ -170,7 +168,7 @@ export default function Grade1TakeAway({
     onAttempt?.({ target: left, answer: n, correct });
     if (!correct) {
       setMisses((m) => m + 1);
-      setTallied([]);
+      talliedRef.current = [];
       sfx.nudge();
       setHinting(true);
       const end = countAlong(remaining);
@@ -342,6 +340,7 @@ function Equation({
   const tile = 46;
   const font = 26;
   const awayKnown = step !== "watch";
+  const awayWord = awayKnown ? away : "what";
   const solved = step === "solved";
   const op = (s: string) => <Text style={styles.op}>{s}</Text>;
   return (
@@ -351,7 +350,7 @@ function Equation({
       accessibilityLabel={
         solved
           ? `${start} take away ${away} equals ${left}`
-          : `${start} take away ${awayKnown ? away : "what"} equals what?`
+          : `${start} take away ${awayWord} equals what?`
       }
     >
       <NumberTile value={start} tone="total" size={tile} fontSize={font} />

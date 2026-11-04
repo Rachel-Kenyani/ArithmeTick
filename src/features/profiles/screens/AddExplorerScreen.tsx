@@ -6,7 +6,9 @@ import { GradCapIcon, SmileIcon } from "@/components/ui/icons";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
-import SplashBackdrop, { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
+import SplashBackdrop, {
+  SPLASH_BACKGROUND,
+} from "@/components/backdrops/SplashBackdrop";
 import SelectField from "@/components/ui/SelectField";
 import { TextField } from "@/components/ui/TextField";
 import { ROUTES } from "@/constants/routes";
@@ -15,22 +17,42 @@ import { useGuard } from "@/hooks/useGuard";
 import { colors } from "@/theme";
 
 import AvatarPreview from "../components/AvatarPreview";
-import SchoolCodeBlock from "../components/SchoolCodeBlock";
-import { CODE_LENGTH, GRADE_OPTIONS, NAME_MAX, useAddExplorerForm } from "../hooks/useAddExplorerForm";
+import {
+  GRADE_OPTIONS,
+  NAME_MAX,
+  useAddExplorerForm,
+} from "../hooks/useAddExplorerForm";
 
-const ENTER = FadeIn.springify().stiffness(320).damping(28).reduceMotion(ReduceMotion.System);
+const ENTER = FadeIn.springify()
+  .stiffness(320)
+  .damping(28)
+  .reduceMotion(ReduceMotion.System);
 
 export default function AddExplorerScreen() {
   const ready = useGuard("account");
   const { profiles } = useAppState();
   const {
-    avatar, busy, code, codeReady, codeRef, errors, grade, hasName, name, nameRef, onCodeChange, onGradeChange, onNameChange, onNameSubmit, showBack, submit,
+    avatar,
+    busy,
+    errors,
+    grade,
+    hasName,
+    name,
+    nameRef,
+    onGradeChange,
+    onNameChange,
+    onNameSubmit,
+    showBack,
+    submit,
   } = useAddExplorerForm(ready, profiles);
 
   if (!ready) return <SplashBackdrop />;
 
   return (
-    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={showBack ? ROUTES.profiles : undefined}>
+    <ScreenShell
+      backgroundImage={SPLASH_BACKGROUND}
+      back={showBack ? ROUTES.profiles : undefined}
+    >
       <Animated.View entering={ENTER}>
         <Panel>
           <ScreenHeading title="Almost Done!" style={styles.heading} />
@@ -65,7 +87,12 @@ export default function AddExplorerScreen() {
             style={styles.grade}
           />
 
-          <Button trailing="arrow" loading={busy} onPress={submit} style={styles.submit}>
+          <Button
+            trailing="arrow"
+            loading={busy}
+            onPress={submit}
+            style={styles.submit}
+          >
             Add Profile
           </Button>
         </Panel>

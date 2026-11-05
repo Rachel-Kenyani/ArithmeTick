@@ -63,6 +63,10 @@ export interface ClockPuzzle {
 
 export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "length" | "massCapacity" | "money" | "shapes";
 
+export interface HundredsPuzzle {
+  a: number;
+}
+
 export interface ArrayPuzzle {
   rows: number;
   cols: number;
@@ -76,6 +80,7 @@ export type HalvesProps = GradeModuleProps & HalvesPuzzle;
 export type ClockProps = GradeModuleProps & ClockPuzzle;
 export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle;
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
+export type HundredsProps = GradeModuleProps & HundredsPuzzle;
 
 export interface GradeMeta {
   grade: Grade;

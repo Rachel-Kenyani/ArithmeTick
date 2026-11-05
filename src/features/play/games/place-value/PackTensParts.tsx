@@ -79,7 +79,7 @@ export function Choices({
   target,
   onPick,
 }: Readonly<{
-  unit: "tens" | "ones";
+  unit: "hundreds" | "tens" | "ones";
   target: number;
   onPick: (n: number) => void;
 }>) {

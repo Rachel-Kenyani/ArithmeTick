@@ -278,15 +278,15 @@ export const narration = {
   },
   done(
     line: string,
-    thanks: { id: string; text: string },
+    cheer: { id: string; text: string },
     grade: number,
     level: number,
   ) {
     const split = wordsOf(line).length;
-    const text = `${line} ${thanks.text}`;
+    const text = `${line} ${cheer.text}`;
     say(text, [
       { id: levelClip(grade, level, "done"), from: 0, to: split },
-      { id: thanks.id, from: split, to: wordsOf(text).length },
+      { id: cheer.id, from: split, to: wordsOf(text).length },
     ]);
   },
   prompt(text: string, clipId: string) {

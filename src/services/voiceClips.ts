@@ -15,10 +15,10 @@ export const VOICE_CLIPS = loaded.clips;
 export const VOICE_WORDS = loaded.words;
 
 export const OPENERS = ["opener-1", "opener-2", "opener-3", "opener-4"];
-export const THANKS = [
-  { id: "thanks-1", text: "Thank you!" },
-  { id: "thanks-2", text: "Asante sana!" },
-  { id: "thanks-3", text: "You're amazing!" },
+export const CHEERS = [
+  { id: "cheer-1", text: "Well done!" },
+  { id: "cheer-2", text: "Hongera!" },
+  { id: "cheer-3", text: "You did it!" },
 ] as const;
 
 export const levelClip = (grade: number, level: number, part: "ask" | "done") =>

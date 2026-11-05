@@ -11,7 +11,7 @@ import Panel from "@/components/ui/Panel";
 import SpokenText from "@/components/ui/SpokenText";
 import { sfx } from "@/services/audio";
 import { narration } from "@/services/narration";
-import { THANKS } from "@/services/voiceClips";
+import { CHEERS } from "@/services/voiceClips";
 import type { BadgeDef } from "@/data/badges";
 import type { Grade } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -50,16 +50,16 @@ function Body({ childName, treasure, treasureCount, questTask, grade, levelNumbe
   }, []);
 
   const missionLine = treasure ? treasure.done(treasureCount) : null;
-  const [thanks] = useState(() => THANKS[Math.floor(Math.random() * THANKS.length)]);
-  const doneLine = missionLine ? `${missionLine} ${thanks.text}` : null;
+  const [cheer] = useState(() => CHEERS[Math.floor(Math.random() * CHEERS.length)]);
+  const doneLine = missionLine ? `${missionLine} ${cheer.text}` : null;
   useEffect(() => {
     if (!missionLine) return;
-    const timer = setTimeout(() => narration.done(missionLine, thanks, grade, levelNumber), 700);
+    const timer = setTimeout(() => narration.done(missionLine, cheer, grade, levelNumber), 700);
     return () => {
       clearTimeout(timer);
       narration.stop();
     };
-  }, [missionLine, thanks, grade, levelNumber]);
+  }, [missionLine, cheer, grade, levelNumber]);
 
   const claim = () => {
     if (claimedRef.current) return;

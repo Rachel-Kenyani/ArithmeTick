@@ -11,7 +11,7 @@ const CAP_COLOURS = [
   { top: colors.atPurpleLight, side: colors.atPurple },
 ] as const;
 
-function Cap({ x, y, r = 6, tone = 0 }: Readonly<{ x: number; y: number; r?: number; tone?: number }>) {
+export function Cap({ x, y, r = 6, tone = 0 }: Readonly<{ x: number; y: number; r?: number; tone?: number }>) {
   const c = CAP_COLOURS[tone % CAP_COLOURS.length];
   return (
     <G>

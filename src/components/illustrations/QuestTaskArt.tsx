@@ -4,12 +4,16 @@ import { Circle, Ellipse, G, Path, Rect, Text as SvgText } from "react-native-sv
 import { colors } from "@/theme";
 
 import { ArtFrame, ink, type ArtProps } from "./art";
+import { Cap } from "./QuestStepArt";
 
 const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
   length: HandspanArt,
   massCapacity: ScaleCupArt,
   money: CoinsArt,
   shapes: ShapesArt,
+  findIt: FindItArt,
+  hideGuess: HideGuessArt,
+  fingers: FingersArt,
 };
 
 export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
@@ -108,6 +112,74 @@ export function ShapesArt({ size = 64, title }: Readonly<ArtProps>) {
       <Rect x="26" y="38" width="8" height="14" rx="1" fill={colors.white} {...ink} />
       <Path d="M4 56h56" {...ink} />
       <Path d="M30 52c2 6 12 2 16 6s10 2 14 0" fill="none" stroke="#a86f33" strokeWidth={3} strokeLinecap="round" />
+    </ArtFrame>
+  );
+}
+
+function Spoon({ x }: Readonly<{ x: number }>) {
+  return (
+    <G>
+      <Ellipse cx={x} cy={42} rx={3.6} ry={5} fill="#d9dde3" {...ink} strokeWidth={1.8} />
+      <Path d={`M${x} 47v11`} {...ink} strokeWidth={2.6} />
+    </G>
+  );
+}
+
+export function FindItArt({ size = 64, title }: Readonly<ArtProps>) {
+  const spoons = [7, 17, 27, 37, 47, 57] as const;
+  return (
+    <ArtFrame size={size} title={title}>
+      {spoons.map((x) => (
+        <Spoon key={x} x={x} />
+      ))}
+      <Circle cx="24" cy="17" r="11" fill={colors.atCream} {...ink} />
+      <Circle cx="24" cy="17" r="7" fill="none" stroke={colors.atTealLight} strokeWidth={2} />
+      <Path d="M32 25l9 9" {...ink} strokeWidth={4.5} />
+      <Path d="M32 25l9 9" stroke="#7a5a3a" strokeWidth={2} strokeLinecap="round" />
+      <SvgText x="52" y="22" fontSize="14" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">
+        6
+      </SvgText>
+    </ArtFrame>
+  );
+}
+
+export function HideGuessArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <Path d="M4 56h56" {...ink} />
+      <Cap x={10} y={50} r={5} tone={0} />
+      <Cap x={22} y={50} r={5} tone={1} />
+      <Cap x={10} y={41} r={5} tone={2} />
+      <Path d="M30 54l4-26h22l4 26z" fill={colors.atPurpleLight} {...ink} />
+      <Path d="M33 33h24" stroke={colors.atPurple} strokeWidth={2} />
+      <SvgText x="45" y="50" fontSize="16" fontWeight="bold" fill={colors.white} textAnchor="middle">
+        ?
+      </SvgText>
+    </ArtFrame>
+  );
+}
+
+function Hand({ x, fingers }: Readonly<{ x: number; fingers: number }>) {
+  const tips = [0, 5, 10, 15].slice(0, Math.min(4, fingers));
+  return (
+    <G>
+      {tips.map((dx, i) => (
+        <Rect key={dx} x={x + dx} y={i === 0 || i === 3 ? 18 : 12} width={4.6} height={22} rx={2.3} fill="#c58b5c" {...ink} strokeWidth={1.8} />
+      ))}
+      {fingers === 5 ? <Rect x={x - 1} y={30} width={4.6} height={16} rx={2.3} fill="#c58b5c" {...ink} strokeWidth={1.8} transform={`rotate(-28 ${x + 1} 44)`} /> : null}
+      <Rect x={x - 2} y={32} width={23} height={22} rx={8} fill="#c58b5c" {...ink} />
+    </G>
+  );
+}
+
+export function FingersArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <Hand x={10} fingers={5} />
+      <Hand x={40} fingers={4} />
+      <SvgText x="32" y="10" fontSize="9" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">
+        5 + 4
+      </SvgText>
     </ArtFrame>
   );
 }

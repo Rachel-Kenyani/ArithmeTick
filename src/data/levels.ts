@@ -3,6 +3,7 @@ import type {
   Grade,
   ClockPuzzle,
   GroupsPuzzle,
+  HundredsPuzzle,
   HalvesPuzzle,
   NumberTrackPuzzle,
   PlaceValuePuzzle,
@@ -61,7 +62,8 @@ export type LevelDef =
       game: "clock";
       puzzle: ClockPuzzle;
     })
-  | (LevelBase & { kind: "puzzle"; grade: 3; puzzle: ArrayPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 3; game: "array"; puzzle: ArrayPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 3; game: "hundreds"; puzzle: HundredsPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
@@ -191,9 +193,20 @@ const array = (number: number, rows: number, cols: number): LevelDef => ({
   grade: 3,
   number,
   kind: "puzzle",
+  game: "array",
   title: `Build ${rows} × ${cols}`,
   equation: `${rows} × ${cols} = ${rows * cols}`,
   puzzle: { rows, cols },
+});
+
+const hundreds = (number: number, a: number): LevelDef => ({
+  grade: 3,
+  number,
+  kind: "puzzle",
+  game: "hundreds",
+  title: `Make ${a}`,
+  equation: `${a} = ${Math.floor(a / 100)} hundreds + ${Math.floor(a / 10) % 10} tens + ${a % 10} ones`,
+  puzzle: { a },
 });
 
 export const LEVELS: Record<Grade, readonly LevelDef[]> = {
@@ -223,7 +236,7 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
     quest(2, 12, "shapes"),
   ],
   3: [
-    array(1, 3, 4),
+    hundreds(1, 243),
     array(2, 2, 6),
     quest(3, 3),
     array(4, 3, 5),

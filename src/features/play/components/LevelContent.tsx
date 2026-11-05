@@ -8,6 +8,7 @@ import Grade2PlaceValue from "@/features/play/games/place-value/Grade2PlaceValue
 import Grade2Groups from "@/features/play/games/groups/Grade2Groups";
 import Grade2Halves from "@/features/play/games/halves/Grade2Halves";
 import Grade2Clock from "@/features/play/games/clock/Grade2Clock";
+import Grade3Hundreds from "@/features/play/games/place-value/Grade3Hundreds";
 import Grade3ArrayMultiplication from "@/features/play/games/array-multiplication/Grade3ArrayMultiplication";
 import PhysicalQuestOverlay from "@/features/play/components/PhysicalQuestOverlay";
 import type { LevelDef } from "@/data/levels";
@@ -42,6 +43,7 @@ const LevelContent = memo(function LevelContent({ level, childName, palActive, w
       if (level.game === "halves") return <Grade2Halves key={key} {...shared} total={level.puzzle.total} />;
       return <Grade2Clock key={key} {...shared} hour={level.puzzle.hour} />;
     case 3:
+      if (level.game === "hundreds") return <Grade3Hundreds key={key} {...shared} a={level.puzzle.a} />;
       return <Grade3ArrayMultiplication key={key} {...shared} rows={level.puzzle.rows} cols={level.puzzle.cols} />;
   }
 });

@@ -186,12 +186,12 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   3: [
     {
-      ask: "Brijo is building a treehouse. Lay out the planks!",
-      treasure: "leaf",
-      one: "a big leaf",
-      many: "leaves",
-      mission: (c) => `Lay out the planks`,
-      done: (c) => `The treehouse floor is ready!`,
+      ask: "Brijo's farm grew two hundred and forty-three mangoes! Pack ten crates into each big box. How many hundreds, tens and ones?",
+      treasure: "mango",
+      one: "a mango",
+      many: "mangoes",
+      mission: () => `Pack crates into hundreds`,
+      done: () => `Two hundreds, four tens and three ones make two hundred and forty-three!`,
     },
     {
       ask: "Plant the garden in neat rows!",
@@ -251,6 +251,7 @@ export function treasureCount(level: LevelDef): number {
       return a;
     }
     case 3:
+      if (level.game === "hundreds") return level.puzzle.a;
       return level.puzzle.rows * level.puzzle.cols;
   }
 }
@@ -276,7 +277,7 @@ export function sceneFor(story: StoryStop, level: LevelDef): StoryScene {
   }
   const n = treasureCount(level);
   return {
-    items: level.grade === 2 ? 0 : n,
+    items: level.grade === 2 || n > 20 ? 0 : n,
     away: 0,
     caption: story.mission(n),
   };

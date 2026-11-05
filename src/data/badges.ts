@@ -40,7 +40,7 @@ export const BADGES: readonly BadgeDef[] = [
   { id: "first-try-2", name: "First Try", how: "Solve 3 Grade 2 levels with no wrong answers", about: "You worked carefully and got it right the first time.", tone: "plum", grade: 2, test: (p) => (p.cleanSolves?.[2] ?? 0) >= 3 },
   { id: "grade-2-champion", name: "Grade 2 Champion", how: "Finish Grade 2", about: "You finished every Grade 2 stop on Brijo's map.", tone: "purple", grade: 2, test: reached(2, levelCount(2)) },
 
-  { id: "array-architect", name: "Array Architect", how: "Grade 3 · Level 1", about: "You built your first array of rows and columns.", tone: "yellow", grade: 3, test: reached(3, 1) },
+  { id: "array-architect", name: "Array Architect", how: "Grade 3 · Level 2", about: "You built your first array of rows and columns.", tone: "yellow", grade: 3, test: reached(3, 2) },
   { id: "regroup-ranger", name: "Regroup Ranger", how: "Grade 3 · Level 5", about: "You swapped tens and ones to solve a tricky sum.", tone: "yellow", grade: 3, test: reached(3, 5) },
   { id: "grade-3-champion", name: "Grade 3 Champion", how: "Finish Grade 3", about: "You finished every Grade 3 stop on Brijo's map.", tone: "yellow", grade: 3, test: reached(3, levelCount(3)) },
 

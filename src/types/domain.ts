@@ -61,7 +61,7 @@ export interface ClockPuzzle {
   hour: number;
 }
 
-export type QuestTask = "groups" | "length" | "massCapacity" | "money" | "shapes";
+export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "length" | "massCapacity" | "money" | "shapes";
 
 export interface ArrayPuzzle {
   rows: number;

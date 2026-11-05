@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react
 import Animated, { FadeIn, ReduceMotion, ZoomIn, ZoomOut } from "react-native-reanimated";
 
 import BasketArt from "@/components/illustrations/BasketArt";
-import type { CounterItem } from "@/features/play/components/CounterFace";
 import { sfx } from "@/services/audio";
 import { narration } from "@/services/narration";
 import type { PlaceValueProps } from "@/types/domain";
@@ -12,6 +11,7 @@ import { colors } from "@/theme";
 import { CountBubble } from "../ten-frame/components/CountBubble";
 import { COUNT_STEP_MS } from "../ten-frame/constants";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
+import { plural } from "./packTensLogic";
 import { Crate, Equation, Loose, Prompt, TARGET, partStyles, type Bubble } from "./parts";
 
 type Step = "giveCrates" | "open" | "giveOnes" | "tens" | "ones" | "solved";
@@ -24,12 +24,6 @@ const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMot
 const OUT = ZoomOut.duration(200).reduceMotion(ReduceMotion.System);
 
 const around = (n: number) => [...new Set([n - 1, n, n + 1].filter((x) => x >= 0))];
-
-function plural(item: CounterItem, n = 2): string {
-  if (item === "cap") return n === 1 ? "bottle top" : "bottle tops";
-  if (n === 1) return item;
-  return item === "tomato" || item === "mango" ? `${item}es` : `${item}s`;
-}
 
 function firstStep(a: number, b: number): Step {
   if (Math.floor(b / 10) > 0) return "giveCrates";

@@ -68,6 +68,12 @@ export function gridFor(
 }
 
 
+export function plural(item: CounterItem, n = 2): string {
+  if (item === "cap") return n === 1 ? "bottle top" : "bottle tops";
+  if (n === 1) return item;
+  return item === "tomato" || item === "mango" ? `${item}es` : `${item}s`;
+}
+
 export const itemWord = (item: CounterItem) => (item === "cap" ? "bottle top" : item);
 
 export const sameSize = (

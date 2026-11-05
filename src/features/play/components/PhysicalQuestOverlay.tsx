@@ -3,7 +3,10 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
   CoinsArt,
+  FindItArt,
+  FingersArt,
   HandspanArt,
+  HideGuessArt,
   ScaleCupArt,
   ShapesArt,
 } from "@/components/illustrations/QuestTaskArt";
@@ -45,6 +48,21 @@ const STEPS = [
 ] as const;
 
 const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanArt; caption: string; steps: readonly string[] }> = {
+  findIt: {
+    Art: FindItArt,
+    caption: "Find 6 objects",
+    steps: ["Find six objects that are the same, like spoons or shoes.", "Line them up.", "Touch each one and count: one, two, three, four, five, six!", "Show a grown-up."],
+  },
+  hideGuess: {
+    Art: HideGuessArt,
+    caption: "How many are hiding?",
+    steps: ["Put seven bottle tops on the table.", "Close your eyes. A grown-up hides some under a cup.", "Open your eyes. How many are hiding?", "Lift the cup and check with the grown-up!"],
+  },
+  fingers: {
+    Art: FingersArt,
+    caption: "Count your fingers",
+    steps: ["Show five fingers on one hand.", "Show four more on the other hand.", "Count them all. How many?", "Now swap! A grown-up shows fingers, and you say how many."],
+  },
   length: {
     Art: HandspanArt,
     caption: "How many hands long?",

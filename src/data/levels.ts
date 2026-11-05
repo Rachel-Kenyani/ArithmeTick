@@ -66,6 +66,9 @@ export type LevelDef =
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   groups: { title: "Move & Play", equation: "2 groups make 10" },
+  findIt: { title: "Find It", equation: "Find 6 objects at home" },
+  hideGuess: { title: "Hide and Guess", equation: "How many are hiding?" },
+  fingers: { title: "Finger Maths", equation: "5 + 4 = 9" },
   length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: {
     title: "Heavy or Full",
@@ -197,13 +200,13 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
   1: [
     tenFrame(1, 6),
     tenFrame(2, 7),
-    quest(1, 3),
+    quest(1, 3, "findIt"),
     tenFrame(4, 8),
     takeAway(5, 7, 2),
-    quest(1, 6),
+    quest(1, 6, "hideGuess"),
     tenFrame(7, 9),
     takeAway(8, 9, 4),
-    quest(1, 9),
+    quest(1, 9, "fingers"),
   ],
   2: [
     placeValue(1, "build", 34),

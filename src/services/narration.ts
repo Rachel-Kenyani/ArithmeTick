@@ -8,6 +8,7 @@ import {
   VOICE_WORDS,
   levelClip,
 } from "@/services/voiceClips";
+import { joinSpokenNumbers, numberWord } from "./spokenNumbers";
 
 export interface SpokenRange {
   text: string;
@@ -56,26 +57,14 @@ function stopAll() {
   publish(null);
 }
 
-const NUMBERS = [
-  "zero",
-  "one",
-  "two",
-  "three",
-  "four",
-  "five",
-  "six",
-  "seven",
-  "eight",
-  "nine",
-  "ten",
-];
+/** Lower-case and strip punctuation, writing any number word as a numeral so "eleven" matches "11". */
 function norm(word: string) {
-  const w = word.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const n = NUMBERS.indexOf(w);
-  return n >= 0 ? String(n) : w;
+  const n = word.toLowerCase() === "zero" ? 0 : numberWord(word);
+  return n === null ? word.toLowerCase().replace(/[^a-z0-9]/g, "") : String(n);
 }
 
-function wordStarts(shown: string[], heard: [string, number][]): number[] {
+function wordStarts(shown: string[], spoken: [string, number][]): number[] {
+  const heard = joinSpokenNumbers(spoken);
   const a = shown.map(norm);
   const b = heard.map(([w]) => norm(w));
   const lcs = a.map(() => new Array<number>(b.length + 1).fill(0));

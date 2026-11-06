@@ -8,7 +8,8 @@ import { colors } from "@/theme";
 
 import { COUNT_STEP_MS } from "../ten-frame/constants";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
-import { Crate, Equation, Prompt, partStyles, type Bubble } from "./parts";
+import PlaceValueChart from "./PlaceValueChart";
+import { Crate, Prompt, partStyles, type Bubble } from "./parts";
 import { clipFor, gridFor, inside, itemWord, promptFor, sameSize, type Step } from "./packTensLogic";
 import { Choices, LooseSlot, PackCrate } from "./PackTensParts";
 
@@ -186,14 +187,14 @@ export default function PackTens({
 
   return (
     <View style={styles.root} onLayout={onLayout} testID={testID}>
-      <Equation
-        op="build"
-        a={a}
-        b={0}
-        answer={a}
+      <PlaceValueChart
+        total={a}
+        places={["tens", "ones"]}
+        digits={{
+          tens: step === "ones" || step === "solved" ? tensAnswer : undefined,
+          ones: step === "solved" ? onesAnswer : undefined,
+        }}
         solved={step === "solved"}
-        tens={step === "ones" || step === "solved" ? tensAnswer : undefined}
-        ones={step === "solved" ? onesAnswer : undefined}
       />
 
       <Prompt

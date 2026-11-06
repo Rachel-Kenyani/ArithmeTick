@@ -8,14 +8,14 @@ import type { HundredsProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
 import { CountBubble } from "../ten-frame/components/CountBubble";
-import { NumberTile } from "../ten-frame/components/NumberTile";
 import { COUNT_STEP_MS } from "../ten-frame/constants";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { DragItem } from "./DragItem";
 import { Choices } from "./PackTensParts";
+import PlaceValueChart from "./PlaceValueChart";
 import { Crate, Loose, Prompt, TARGET, partStyles, type Bubble } from "./parts";
 import { inside, sameSize } from "./packTensLogic";
-import { CRATES_PER_BOX, crateLayout, hundredsClip, hundredsPrompt, nextAsk, splitHundreds, type AskStep, type HundredsStep } from "./hundredsLogic";
+import { CRATE_GAP, CRATES_PER_BOX, crateLayout, crateSlot, hundredsClip, hundredsPrompt, nextAsk, splitHundreds, type AskStep, type HundredsStep } from "./hundredsLogic";
 
 const DRAFT_VERSION = 1;
 const CLOSE_MS = 450;
@@ -138,22 +138,24 @@ export default function Grade3Hundreds({ level, a, item = "mango", palActive, wa
   const testID = `g3-hundreds-l${level ?? 0}-${a}`;
   if (!size) return <View style={styles.root} onLayout={onLayout} testID={testID} />;
 
-  const layout = crateLayout(size, answers.crates);
+  const layout = crateLayout(size, answers.crates, step === "pack");
   const shown = (s: AskStep) => ["hundreds", "tens", "ones", "solved"].indexOf(step) > ["hundreds", "tens", "ones"].indexOf(s);
 
   return (
     <View style={styles.root} onLayout={onLayout} testID={testID}>
-      <HundredsEquation a={a} hundreds={shown("hundreds") ? answers.hundreds : undefined} tens={shown("tens") ? answers.tens : undefined} ones={shown("ones") ? answers.ones : undefined} solved={step === "solved"} />
+      <PlaceValueChart total={a} places={["hundreds", "tens", "ones"]} digits={{ hundreds: shown("hundreds") ? answers.hundreds : undefined, tens: shown("tens") ? answers.tens : undefined, ones: shown("ones") ? answers.ones : undefined }} solved={step === "solved"} />
 
       <Prompt text={hundredsPrompt(step, handFilled, item, a)} clipId={hundredsClip(step, handFilled)} waiting={waiting} silent={step === "solved"} />
 
-      <View style={[styles.shelf, step === "hundreds" ? styles.focus : null]} accessible accessibilityLabel={`${boxes} full boxes of one hundred`}>
-        {Array.from({ length: boxes }, (_, i) => (
-          <Animated.View key={i} entering={POP}>
-            <ClosedBox bubble={bubbles[`b${i}`]} />
-          </Animated.View>
-        ))}
-      </View>
+      {boxes > 0 ? (
+        <View style={[styles.shelf, step === "hundreds" ? styles.focus : null]} accessible accessibilityLabel={`${boxes} full boxes of one hundred`}>
+          {Array.from({ length: boxes }, (_, i) => (
+            <Animated.View key={`box-${i + 1}`} entering={POP}>
+              <ClosedBox bubble={bubbles[`b${i}`]} />
+            </Animated.View>
+          ))}
+        </View>
+      ) : null}
 
       {step === "pack" ? (
         <View ref={frameRef} collapsable={false}>
@@ -163,11 +165,11 @@ export default function Grade3Hundreds({ level, a, item = "mango", palActive, wa
 
       <View style={[styles.table, step === "tens" ? styles.focus : null]}>
         {step === "pack" ? null : <Text style={partStyles.head}>Crates of ten</Text>}
-        <View style={[styles.crates, { width: layout.cols * (layout.cell * 6.6) }]}>
+        <View style={[styles.crates, { width: layout.cols * crateSlot(layout.cell).w + (layout.cols - 1) * CRATE_GAP }]}>
           {Array.from({ length: answers.crates }, (_, crate) => (
-            <View key={crate} style={{ width: layout.cell * 6.6, height: layout.cell * 3.1, alignItems: "center", justifyContent: "center" }}>
+            <View key={`crate-${crate}`} style={{ ...crateSlot(layout.cell), alignItems: "center", justifyContent: "center" }}>
               {packed.includes(crate) ? null : (
-                <DragItem enabled={step === "pack"} onTap={() => pack(crate)} onDrop={(x, y) => dropOnBox(crate, x, y)} hitSlop={Math.max(0, Math.ceil((TARGET - layout.cell * 3) / 2))} label={step === "pack" ? "Crate of ten. Tap or drag it into the box" : "Crate of ten"}>
+                <DragItem enabled={step === "pack"} onTap={() => pack(crate)} onDrop={(x, y) => dropOnBox(crate, x, y)} hitSlop={Math.max(0, Math.ceil((TARGET - crateSlot(layout.cell).h) / 2))} label={step === "pack" ? "Crate of ten. Tap or drag it into the box" : "Crate of ten"}>
                   <Crate item={item} cell={layout.cell} bubble={bubbles[`c${crate}`]} />
                 </DragItem>
               )}
@@ -213,26 +215,6 @@ function ClosedBox({ bubble }: Readonly<{ bubble?: Bubble }>) {
   );
 }
 
-function HundredsEquation({ a, hundreds, tens, ones, solved }: Readonly<{ a: number; hundreds?: number; tens?: number; ones?: number; solved: boolean }>) {
-  const tile = 40;
-  const font = 22;
-  const part = (value: number | undefined, word: string) => (
-    <>
-      <NumberTile value={value ?? "?"} tone={value === undefined ? "ask" : "win"} size={tile} fontSize={font} />
-      <Text style={styles.word}>{word}</Text>
-    </>
-  );
-  return (
-    <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`${a} equals ${hundreds ?? "how many"} hundreds, ${tens ?? "how many"} tens and ${ones ?? "how many"} ones`}>
-      <NumberTile value={a} tone="total" size={tile + 8} fontSize={font} />
-      <Text style={styles.op}>=</Text>
-      {part(hundreds, "H")}
-      {part(tens, "T")}
-      {part(ones, "O")}
-    </View>
-  );
-}
-
 const WOOD = "#c98b4e";
 const WOOD_DARK = "#8a5a2b";
 
@@ -242,10 +224,10 @@ const styles = StyleSheet.create({
   table: { alignItems: "center", gap: 4, borderRadius: 14, borderWidth: 2, borderColor: "transparent", padding: 4 },
   onesRow: { flexDirection: "row", gap: 6, minHeight: 44 },
   focus: { borderColor: colors.atYellow, backgroundColor: "rgba(255,229,138,0.25)" },
-  crates: { flexDirection: "row", flexWrap: "wrap" },
+  crates: { flexDirection: "row", flexWrap: "wrap", gap: CRATE_GAP },
   box: { alignItems: "center", gap: 2, padding: 6, borderRadius: 12, backgroundColor: WOOD, borderWidth: 3, borderColor: WOOD_DARK },
   boxGlow: { shadowColor: colors.atYellow, shadowOpacity: 0.9, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
-  boxGrid: { flexDirection: "row", flexWrap: "wrap", width: 5 * 36, gap: 0 },
+  boxGrid: { flexDirection: "row", flexWrap: "wrap", width: 5 * 38 },
   boxSlot: { width: 36, height: 20, margin: 1, borderRadius: 4, backgroundColor: "rgba(0,0,0,0.18)", alignItems: "center", justifyContent: "center" },
   boxLabel: { fontFamily: fonts.headingBold, fontSize: 16, color: colors.white },
   closed: { width: 52, height: 40, borderRadius: 8, backgroundColor: WOOD, borderWidth: 3, borderColor: WOOD_DARK, alignItems: "center", justifyContent: "center" },

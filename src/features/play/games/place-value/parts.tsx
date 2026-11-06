@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import SpokenText from "@/components/ui/SpokenText";
+import { ArrowRightIcon, ReplayIcon } from "@/components/ui/icons";
 import { narration } from "@/services/narration";
 import type { PlaceValuePuzzle } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -87,24 +88,10 @@ export function Equation({
   b,
   answer,
   solved,
-  tens,
-  ones,
-}: Readonly<{ op: PlaceValuePuzzle["op"]; a: number; b: number; answer: number; solved: boolean; tens?: number; ones?: number }>) {
+}: Readonly<{ op: Exclude<PlaceValuePuzzle["op"], "build">; a: number; b: number; answer: number; solved: boolean }>) {
   const tile = 46;
   const font = 24;
   const sign = (s: string) => <Text style={styles.op}>{s}</Text>;
-  if (op === "build") {
-    return (
-      <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`${a} equals ${tens ?? "how many"} tens and ${ones ?? "how many"} ones`}>
-        <NumberTile value={a} tone="total" size={tile} fontSize={font} />
-        {sign("=")}
-        <NumberTile value={tens ?? "?"} tone={tens === undefined ? "ask" : "win"} size={tile} fontSize={font} />
-        <Text style={styles.word}>tens</Text>
-        <NumberTile value={ones ?? "?"} tone={ones === undefined ? "ask" : "win"} size={tile} fontSize={font} />
-        <Text style={styles.word}>ones</Text>
-      </View>
-    );
-  }
   return (
     <View
       style={[styles.strip, solved ? styles.stripWin : null]}
@@ -163,4 +150,24 @@ const styles = StyleSheet.create({
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
   op: { fontFamily: fonts.bodyBold, fontSize: 24, color: colors.atInk },
   word: { fontFamily: fonts.bodyBold, fontSize: 18, color: colors.atInk },
+  replayRow: { flexDirection: "row", gap: 12 },
+  replay: { flexDirection: "row", gap: 6, paddingHorizontal: 16 },
+  replayText: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.atTeal },
+  next: { flexDirection: "row", gap: 6, paddingHorizontal: 22, backgroundColor: colors.atTeal, borderColor: colors.atTeal },
+  nextText: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.white },
 });
+
+export function ReplayOrNext({ onReplay, onNext }: Readonly<{ onReplay: () => void; onNext: () => void }>) {
+  return (
+    <View style={styles.replayRow}>
+      <Pressable onPress={onReplay} accessibilityRole="button" accessibilityLabel="Show me again" style={[partStyles.choice, styles.replay]}>
+        <ReplayIcon size={26} color={colors.atTeal} strokeWidth={2.6} />
+        <Text style={styles.replayText}>Again</Text>
+      </Pressable>
+      <Pressable onPress={onNext} accessibilityRole="button" accessibilityLabel="Next" style={[partStyles.choice, styles.next]}>
+        <Text style={styles.nextText}>Next</Text>
+        <ArrowRightIcon size={28} color={colors.white} strokeWidth={2.8} />
+      </Pressable>
+    </View>
+  );
+}

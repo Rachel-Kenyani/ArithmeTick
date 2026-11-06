@@ -186,7 +186,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   3: [
     {
-      ask: "Brijo's farm grew two hundred and forty-three mangoes! Pack ten crates into each big box. How many hundreds, tens and ones?",
+      ask: "Brijo's farm grew two hundred and forty-three mangoes! Pack ten crates into each big box. How many hundreds, tens and ones are there?",
       treasure: "mango",
       one: "a mango",
       many: "mangoes",

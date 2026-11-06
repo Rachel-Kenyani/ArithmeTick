@@ -14,6 +14,8 @@ const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
   findIt: FindItArt,
   hideGuess: HideGuessArt,
   fingers: FingersArt,
+  raceDay: RaceDayArt,
+  waterDay: WaterDayArt,
 };
 
 export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
@@ -180,6 +182,52 @@ export function FingersArt({ size = 64, title }: Readonly<ArtProps>) {
       <SvgText x="32" y="10" fontSize="9" fontWeight="bold" fill={colors.atPurple} textAnchor="middle">
         5 + 4
       </SvgText>
+    </ArtFrame>
+  );
+}
+
+const PODIUM = [
+  { place: "2nd", x: 4, top: 34, fill: "#cfd8dc" },
+  { place: "1st", x: 23, top: 24, fill: colors.atYellow },
+  { place: "3rd", x: 42, top: 42, fill: "#e0a878" },
+] as const;
+
+export function RaceDayArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <Path d="M38 24V3" {...ink} strokeWidth={2} />
+      <Path d="M38 3h12l-3 4 3 4H38z" fill={colors.atPurple} {...ink} strokeWidth={1.6} />
+      {PODIUM.map(({ place, x, top, fill }) => (
+        <G key={place}>
+          <Rect x={x} y={top} width={18} height={58 - top} rx={2} fill={fill} {...ink} />
+          <SvgText x={x + 9} y={top + 11} fontSize="8" fontWeight="bold" fill={colors.atInk} textAnchor="middle">
+            {place}
+          </SvgText>
+        </G>
+      ))}
+      <Circle cx="13" cy="28" r="4.5" fill={colors.atTealLight} {...ink} strokeWidth={1.6} />
+      <Circle cx="29" cy="18" r="4.5" fill={colors.atPurpleLight} {...ink} strokeWidth={1.6} />
+      <Circle cx="51" cy="36" r="4.5" fill="#f4a259" {...ink} strokeWidth={1.6} />
+      <Path d="M2 58h60" {...ink} />
+    </ArtFrame>
+  );
+}
+
+export function WaterDayArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <G transform="rotate(55 20 20)">
+        <Rect x="12" y="10" width="16" height="26" rx="4" fill="#d6eef8" {...ink} />
+        <Rect x="16" y="4" width="8" height="7" rx="2" fill={colors.atTeal} {...ink} strokeWidth={1.6} />
+        <Rect x="12" y="20" width="16" height="16" rx="3" fill="#4fb3e8" {...ink} strokeWidth={1.6} />
+        <SvgText x="20" y="31" fontSize="7" fontWeight="bold" fill={colors.white} textAnchor="middle">
+          1 L
+        </SvgText>
+      </G>
+      <Path d="M34 13c2 8 4 18 5 30" fill="none" stroke="#4fb3e8" strokeWidth={3} strokeLinecap="round" />
+      <Path d="M22 44h38l-5 14H27z" fill={colors.atCream} {...ink} />
+      <Path d="M25 48h32l-1.5 4H26.5z" fill="#4fb3e8" />
+      <Path d="M22 44h38" {...ink} />
     </ArtFrame>
   );
 }

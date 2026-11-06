@@ -5,6 +5,8 @@ import {
   CoinsArt,
   FindItArt,
   FingersArt,
+  RaceDayArt,
+  WaterDayArt,
   HandspanArt,
   HideGuessArt,
   ScaleCupArt,
@@ -47,41 +49,100 @@ const STEPS = [
   { Art: GrownUpStepArt, text: "Show a grown-up" },
 ] as const;
 
-const QUEST_TASKS: Record<Exclude<QuestTask, "groups">, { Art: typeof HandspanArt; caption: string; steps: readonly string[] }> = {
+const QUEST_TASKS: Record<
+  Exclude<QuestTask, "groups">,
+  { Art: typeof HandspanArt; caption: string; steps: readonly string[] }
+> = {
   findIt: {
     Art: FindItArt,
     caption: "Find 6 objects",
-    steps: ["Find six objects that are the same, like spoons or shoes.", "Line them up.", "Touch each one and count: one, two, three, four, five, six!", "Show a grown-up."],
+    steps: [
+      "Find six objects that are the same, like spoons or shoes.",
+      "Line them up.",
+      "Touch each one and count: one, two, three, four, five, six!",
+      "Show a grown-up.",
+    ],
   },
   hideGuess: {
     Art: HideGuessArt,
     caption: "How many are hiding?",
-    steps: ["Put seven bottle tops on the table.", "Close your eyes. A grown-up hides some under a cup.", "Open your eyes. How many are hiding?", "Lift the cup and check with the grown-up!"],
+    steps: [
+      "Put seven bottle tops on the table.",
+      "Close your eyes. A grown-up hides some under a cup.",
+      "Open your eyes. How many are hiding?",
+      "Lift the cup and check with the grown-up!",
+    ],
   },
   fingers: {
     Art: FingersArt,
     caption: "Count your fingers",
-    steps: ["Show five fingers on one hand.", "Show four more on the other hand.", "Count them all. How many?", "Now swap! A grown-up shows fingers, and you say how many."],
+    steps: [
+      "Show five fingers on one hand.",
+      "Show four more on the other hand.",
+      "Count them all. How many?",
+      "Now swap! A grown-up shows fingers, and you say how many.",
+    ],
+  },
+  waterDay: {
+    Art: WaterDayArt,
+    caption: "How many litres?",
+    steps: [
+      "Find an empty 1-litre bottle with a grown-up.",
+      "Fill it with water. That is 1 litre.",
+      "Pour it into a big basin or bucket. Count 1 litre.",
+      "Fill and pour again. Count each litre: 2, 3, 4…",
+      "Tell a grown-up how many litres fill the basin.",
+    ],
+  },
+  raceDay: {
+    Art: RaceDayArt,
+    caption: "Who came first?",
+    steps: [
+      "Line up five toys at the start.",
+      "Race them to the finish, one at a time.",
+      "Say who came 1st, 2nd, 3rd, 4th and 5th.",
+      "Ask a grown-up: which toy came 3rd?",
+    ],
   },
   length: {
     Art: HandspanArt,
     caption: "How many hands long?",
-    steps: ["Put your hand at one end of a table. That's 1.", "Lift it. Put it down just in front. That's 2.", "Keep going to the end.", "Tell a grown-up how many."],
+    steps: [
+      "Put your hand at one end of a table. That's 1.",
+      "Lift it. Put it down just in front. That's 2.",
+      "Keep going to the end.",
+      "Tell a grown-up how many.",
+    ],
   },
   massCapacity: {
     Art: ScaleCupArt,
     caption: "Heavy, light and full",
-    steps: ["Hold two things: which is heavier?", "Fill a jug, one cup at a time", "Tell a grown-up how many cups"],
+    steps: [
+      "Hold two things: which is heavier?",
+      "Fill a jug, one cup at a time",
+      "Tell a grown-up how many cups",
+    ],
   },
   money: {
     Art: CoinsArt,
     caption: "Pay with shillings",
-    steps: ["Find some coins with a grown-up.", "Pick out the ten-shilling coins.", "Count three of them: ten, twenty, thirty.", "Play shop. Pay a grown-up thirty shillings."],
+    steps: [
+      "Find some coins with a grown-up.",
+      "Pick out the ten-shilling coins.",
+      "Count three of them: ten, twenty, thirty.",
+      "Play shop. Pay a grown-up thirty shillings.",
+    ],
   },
   shapes: {
     Art: ShapesArt,
     caption: "Build a shape house",
-    steps: ["Lay a book on the floor. It's a rectangle: the walls.", "Fold a paper from corner to corner. It's a triangle: the roof.", "Find a round lid. It's a circle: the sun.", "Lay a pencil under the house. It's a straight line: the ground.", "Bend a shoelace up to the door. It's a curved line: the path. Show a grown-up!"],
+    steps: [
+      "Lay a book on the floor. It's a rectangle: the walls.",
+      "Fold a paper from corner to corner. It's a triangle: the roof.",
+      "Find a round lid. It's a circle: the sun.",
+      "Lay a pencil under the house. It's a straight line: the ground.",
+      "Bend a shoelace up to the door. It's a curved line: the path. Show a grown-up!",
+    ],
   },
 };
 
@@ -114,15 +175,23 @@ export default function PhysicalQuestOverlay({
   onConfirmed,
 }: Readonly<PhysicalQuestOverlayProps>) {
   const [first, second] = SPLITS[grade];
-  const stepTexts: readonly string[] = task === "groups" ? STEPS.map((s) => s.text) : QUEST_TASKS[task].steps;
-  const stepsLine = stepTexts.map((t) => (/[.!?]$/.test(t) ? t : `${t}.`)).join(" ");
+  const stepTexts: readonly string[] =
+    task === "groups" ? STEPS.map((s) => s.text) : QUEST_TASKS[task].steps;
+  const stepsLine = stepTexts
+    .map((t) => (/[.!?]$/.test(t) ? t : `${t}.`))
+    .join(" ");
   const line = story ? `${story} ${stepsLine}` : stepsLine;
-  const read = () => narration.quest(story, stepsLine, grade, levelNumber, task);
+  const read = () =>
+    narration.quest(story, stepsLine, grade, levelNumber, task);
   useEffect(() => {
     narration.quest(story, stepsLine, grade, levelNumber, task);
     return () => narration.stop();
   }, [story, stepsLine, grade, levelNumber, task]);
-  const stepOffsets = stepTexts.map((_, i) => wordsOf(story).length + stepTexts.slice(0, i).reduce((n, t) => n + wordsOf(t).length, 0));
+  const stepOffsets = stepTexts.map(
+    (_, i) =>
+      wordsOf(story).length +
+      stepTexts.slice(0, i).reduce((n, t) => n + wordsOf(t).length, 0),
+  );
   const [checking, setChecking] = useState(false);
   const [sum, setSum] = useState(newSum);
   const doneRef = useRef(false);
@@ -139,7 +208,11 @@ export default function PhysicalQuestOverlay({
   };
 
   const dots = useMemo(
-    () => Array.from({ length: first + second }, (_, i) => i < first),
+    () =>
+      Array.from({ length: first + second }, (_, i) => ({
+        id: `cap-${i}`,
+        inFirst: i < first,
+      })),
     [first, second],
   );
 
@@ -149,7 +222,9 @@ export default function PhysicalQuestOverlay({
       contentContainerStyle={styles.panel}
       showsVerticalScrollIndicator={false}
     >
-      {story ? <SpokenText text={story} source={line} style={styles.story} /> : null}
+      {story ? (
+        <SpokenText text={story} source={line} style={styles.story} />
+      ) : null}
 
       {task === "groups" ? (
         <>
@@ -166,11 +241,13 @@ export default function PhysicalQuestOverlay({
                   { maxWidth: groupWidth(first) },
                 ]}
               >
-                {dots.filter(Boolean).map((_, i) => (
-                  <View key={`a${i}`} style={styles.dot}>
-                    <CapFace palette="teal" />
-                  </View>
-                ))}
+                {dots
+                  .filter((d) => d.inFirst)
+                  .map((d) => (
+                    <View key={d.id} style={styles.dot}>
+                      <CapFace palette="teal" />
+                    </View>
+                  ))}
               </View>
               <View
                 style={[
@@ -180,9 +257,9 @@ export default function PhysicalQuestOverlay({
                 ]}
               >
                 {dots
-                  .filter((d) => !d)
-                  .map((_, i) => (
-                    <View key={`b${i}`} style={styles.dot}>
+                  .filter((d) => !d.inFirst)
+                  .map((d) => (
+                    <View key={d.id} style={styles.dot}>
                       <CapFace palette="purple" />
                     </View>
                   ))}
@@ -203,7 +280,12 @@ export default function PhysicalQuestOverlay({
                   <Text style={styles.stepNumText}>{i + 1}</Text>
                 </View>
                 <s.Art size={56} />
-                <SpokenText text={s.text} source={line} offset={stepOffsets[i]} style={styles.stepText} />
+                <SpokenText
+                  text={s.text}
+                  source={line}
+                  offset={stepOffsets[i]}
+                  style={styles.stepText}
+                />
               </View>
             ))}
           </View>
@@ -253,7 +335,15 @@ export default function PhysicalQuestOverlay({
   );
 }
 
-function TaskCard({ task, line, offsets }: Readonly<{ task: Exclude<QuestTask, "groups">; line: string; offsets: number[] }>) {
+function TaskCard({
+  task,
+  line,
+  offsets,
+}: Readonly<{
+  task: Exclude<QuestTask, "groups">;
+  line: string;
+  offsets: number[];
+}>) {
   const { Art, caption, steps } = QUEST_TASKS[task];
   return (
     <>
@@ -271,7 +361,12 @@ function TaskCard({ task, line, offsets }: Readonly<{ task: Exclude<QuestTask, "
               <Text style={styles.stepNumText}>{i + 1}</Text>
             </View>
             {i === steps.length - 1 ? <GrownUpStepArt size={56} /> : null}
-            <SpokenText text={text} source={line} offset={offsets[i]} style={styles.stepText} />
+            <SpokenText
+              text={text}
+              source={line}
+              offset={offsets[i]}
+              style={styles.stepText}
+            />
           </View>
         ))}
       </View>

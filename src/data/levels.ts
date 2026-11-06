@@ -6,6 +6,7 @@ import type {
   HundredsPuzzle,
   HalvesPuzzle,
   NumberTrackPuzzle,
+  ColumnsPuzzle,
   PlaceValuePuzzle,
   QuestTask,
   TakeAwayPuzzle,
@@ -40,7 +41,7 @@ export type LevelDef =
     })
   | (LevelBase & {
       kind: "puzzle";
-      grade: 2;
+      grade: 2 | 3;
       game: "numberTrack";
       puzzle: NumberTrackPuzzle;
     })
@@ -64,6 +65,7 @@ export type LevelDef =
     })
   | (LevelBase & { kind: "puzzle"; grade: 3; game: "array"; puzzle: ArrayPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; game: "hundreds"; puzzle: HundredsPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 3; game: "columns"; puzzle: ColumnsPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
@@ -71,6 +73,8 @@ const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   findIt: { title: "Find It", equation: "Find 6 objects at home" },
   hideGuess: { title: "Hide and Guess", equation: "How many are hiding?" },
   fingers: { title: "Finger Maths", equation: "5 + 4 = 9" },
+  raceDay: { title: "Race Day", equation: "1st, 2nd, 3rd, 4th, 5th" },
+  waterDay: { title: "Water Day", equation: "Measure in litres" },
   length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: {
     title: "Heavy or Full",
@@ -146,17 +150,19 @@ const placeValue = (
 });
 
 const numberTrack = (
+  grade: 2 | 3,
   number: number,
   from: number,
   gaps: number[],
+  step = -1,
 ): LevelDef => ({
-  grade: 2,
+  grade,
   number,
   kind: "puzzle",
   game: "numberTrack",
-  title: "Count back",
-  equation: `${from}, ${from - 1}, ${from - 2} … count back from ${from}`,
-  puzzle: { from, gaps },
+  title: step === -1 ? "Count back" : `Count in ${step}s`,
+  equation: step === -1 ? `${from}, ${from - 1}, ${from - 2} … count back from ${from}` : `${from}, ${from + step}, ${from + 2 * step} … count on in ${step}s`,
+  puzzle: { from, gaps, step },
 });
 
 const groupsOf = (number: number, groups: number, each: number): LevelDef => ({
@@ -199,6 +205,19 @@ const array = (number: number, rows: number, cols: number): LevelDef => ({
   puzzle: { rows, cols },
 });
 
+const columns = (number: number, op: ColumnsPuzzle["op"], a: number, b: number): LevelDef => {
+  const sign = op === "add" ? "+" : "−";
+  return {
+    grade: 3,
+    number,
+    kind: "puzzle",
+    game: "columns",
+    title: `${a} ${sign} ${b}`,
+    equation: `${a} ${sign} ${b} = ${op === "add" ? a + b : a - b}`,
+    puzzle: { op, a, b },
+  };
+};
+
 const hundreds = (number: number, a: number): LevelDef => ({
   grade: 3,
   number,
@@ -223,7 +242,7 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
   ],
   2: [
     placeValue(1, "build", 34),
-    numberTrack(2, 50, [48, 46, 43, 41]),
+    numberTrack(2, 2, 50, [48, 46, 43, 41]),
     quest(2, 3, "length"),
     placeValue(4, "add", 27, 5),
     placeValue(5, "sub", 32, 7),
@@ -237,11 +256,11 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
   ],
   3: [
     hundreds(1, 243),
-    array(2, 2, 6),
-    quest(3, 3),
-    array(4, 3, 5),
-    array(5, 4, 3),
-    quest(3, 6),
+    numberTrack(3, 2, 130, [150, 180, 200, 210], 10),
+    quest(3, 3, "raceDay"),
+    columns(4, "add", 146, 27),
+    columns(5, "sub", 352, 125),
+    quest(3, 6, "waterDay"),
   ],
 };
 

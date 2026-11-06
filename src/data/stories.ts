@@ -186,52 +186,52 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
   ],
   3: [
     {
-      ask: "Brijo's farm grew two hundred and forty-three mangoes! Pack ten crates into each big box. How many hundreds, tens and ones are there?",
+      ask: "Brijo's farm grew 243 mangoes! Pack 10 crates into each big box. How many hundreds, tens and ones are there?",
       treasure: "mango",
       one: "a mango",
       many: "mangoes",
       mission: () => `Pack crates into hundreds`,
-      done: () => `Two hundreds, four tens and three ones make two hundred and forty-three!`,
+      done: () => `2 hundreds, 4 tens and 3 ones make 243!`,
     },
     {
-      ask: "Plant the garden in neat rows!",
-      treasure: "seed",
-      one: "a seed",
-      many: "seeds",
-      mission: (c) => `Plant the seeds in rows`,
-      done: (c) => `The seeds are in neat rows!`,
-    },
-    {
-      ask: "Time to move! Brijo wants to see real groups.",
-      treasure: "pebble",
-      one: "a shiny pebble",
-      many: "pebbles",
-      mission: (c) => `Find a treasure`,
-      done: (c) => `You found a shiny pebble for Brijo!`,
-    },
-    {
-      ask: "Stack the mangoes in rows for market day!",
+      ask: "Brijo is counting her mangoes in tens, starting at 130. Can you fill in the missing numbers?",
       treasure: "mango",
       one: "a mango",
       many: "mangoes",
-      mission: (c) => `Stack ${c} mangoes`,
-      done: (c) => `${c} mangoes stacked for market day!`,
+      mission: () => `Count on in tens from 130`,
+      done: () => `You counted in tens all the way to 220!`,
     },
     {
-      ask: "Bundle the sticks into tens!",
-      treasure: "drum",
-      one: "a little drum",
-      many: "drums",
-      mission: (c) => `Bundle the sticks`,
-      done: (c) => `The sticks are bundled into a ten!`,
+      ask: "Time to move! It's race day! Can you line up 5 toys and say who came 1st, 2nd and 3rd?",
+      treasure: "pebble",
+      one: "a shiny pebble",
+      many: "pebbles",
+      mission: () => `Run a toy race`,
+      done: () => `You judged the race like a champion!`,
     },
     {
-      ask: "This is the last stop! Show a grown-up and finish the adventure.",
+      ask: "Brijo picked 146 mangoes, then 27 more! How many mangoes does she have now?",
+      treasure: "mango",
+      one: "a mango",
+      many: "mangoes",
+      mission: (c) => `Add up to ${c} mangoes`,
+      done: (c) => `${c} mangoes ready for market day!`,
+    },
+    {
+      ask: "Brijo had 352 mangoes and sold 125 at the market. How many mangoes are left?",
+      treasure: "mango",
+      one: "a mango",
+      many: "mangoes",
+      mission: (c) => `Find the ${c} mangoes left`,
+      done: (c) => `${c} mangoes left for Brijo!`,
+    },
+    {
+      ask: "Time to move! It's water day! How many litres of water does a big basin hold?",
       treasure: "star",
       one: "a golden star",
       many: "stars",
-      mission: (c) => `Find a treasure`,
-      done: (c) => `You found a golden star for Brijo!`,
+      mission: () => `Measure water in litres`,
+      done: () => `You measured water in litres, just like Brijo!`,
     },
   ],
 };
@@ -252,6 +252,11 @@ export function treasureCount(level: LevelDef): number {
     }
     case 3:
       if (level.game === "hundreds") return level.puzzle.a;
+      if (level.game === "numberTrack") return 1;
+      if (level.game === "columns") {
+        const { op, a, b } = level.puzzle;
+        return op === "add" ? a + b : a - b;
+      }
       return level.puzzle.rows * level.puzzle.cols;
   }
 }

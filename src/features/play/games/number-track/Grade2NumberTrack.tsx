@@ -17,14 +17,22 @@ const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1400;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
-function choicesFor(answer: number): number[] {
-  return [answer + 2, answer, answer - 1];
+/** Near misses: one stone too far, or a slip in the ones when counting in tens. */
+export function choicesFor(answer: number, step: number): number[] {
+  if (Math.abs(step) === 1) return [answer + 2, answer, answer - 1];
+  return [answer + step, answer, answer + 1];
 }
 
-export default function Grade2NumberTrack({ level, from, gaps, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<NumberTrackProps>) {
+export function trackPrompt(from: number, step: number, solved: boolean, started: boolean): string {
+  if (solved) return step === -1 ? `You counted back from ${from}!` : "You counted in tens!";
+  if (started) return "What number comes next?";
+  return step === -1 ? `Count back from ${from}. Which number is missing?` : "Count on in tens. Which number is missing?";
+}
+
+export default function Grade2NumberTrack({ level, grade = 2, from, gaps, step = -1, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<NumberTrackProps>) {
   const schedule = useScheduler();
   const reduced = useReducedMotion();
-  const numbers = useMemo(() => Array.from({ length: STONES }, (_, i) => from - i), [from]);
+  const numbers = useMemo(() => Array.from({ length: STONES }, (_, i) => from + i * step), [from, step]);
   const missing = useMemo(() => numbers.filter((n) => gaps.includes(n)), [numbers, gaps]);
   const [filled, setFilled] = useState<number[]>(() =>
     draft?.version === DRAFT_VERSION ? (draft.picked ?? []).filter((n) => missing.includes(n)) : [],
@@ -42,8 +50,9 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
     onDraft?.({ version: DRAFT_VERSION, misses, picked: filled });
   }, [onDraft, misses, filled]);
 
-  const countBack = (until: number) => {
-    const run = numbers.filter((n) => n > until);
+  /** Brijo counts the stones aloud up to (not including) the stone at index `untilIndex`. */
+  const countBack = (untilIndex: number) => {
+    const run = numbers.slice(0, untilIndex);
     setHops((prev) => {
       const nextHops = { ...prev };
       run.forEach((n, i) => {
@@ -63,7 +72,7 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
       setMisses((m) => m + 1);
       setMissesHere((m) => m + 1);
       sfx.nudge();
-      schedule(onStruggle, countBack(next));
+      schedule(onStruggle, countBack(numbers.indexOf(next)));
       return;
     }
     sfx.snap(STONES - 1 - numbers.indexOf(n));
@@ -72,7 +81,7 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
     setFilled(nowFilled);
     if (nowFilled.length < missing.length) return;
     doneRef.current = true;
-    const end = countBack(numbers[STONES - 1] - 1);
+    const end = countBack(STONES);
     schedule(() => sfx.solved(), end);
     schedule(onSolved, end + SOLVED_HANDOFF_MS);
   };
@@ -82,23 +91,18 @@ export default function Grade2NumberTrack({ level, from, gaps, waiting = false, 
     setSize((prev) => (prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1 ? prev : { w: width, h: height }));
   };
   const stone = size ? Math.floor(Math.max(TARGET, Math.min(72, (size.w - 24 - 4 * 10) / 5, (size.h - 260) / 2.6))) : 56;
-  const choices = next === undefined ? [] : choicesFor(next);
+  const choices = next === undefined ? [] : choicesFor(next, step);
 
-  let prompt = `Count back from ${from}. Which number is missing?`;
-  if (solved) {
-    prompt = `You counted back from ${from}!`;
-  } else if (filled.length) {
-    prompt = "What number comes next?";
-  }
-  const promptClip = filled.length ? "nt-next" : `g2-l${String(level ?? 0).padStart(2, "0")}-missing`;
+  const prompt = trackPrompt(from, step, solved, filled.length > 0);
+  const promptClip = filled.length ? "nt-next" : `g${grade}-l${String(level ?? 0).padStart(2, "0")}-missing`;
 
   return (
-    <View style={styles.root} onLayout={onLayout} testID={`g2-numbertrack-l${level ?? 0}-${from}`}>
+    <View style={styles.root} onLayout={onLayout} testID={`g${grade}-numbertrack-l${level ?? 0}-${from}`}>
       {size ? (
         <>
           <Prompt text={prompt} clipId={promptClip} waiting={waiting} silent={solved} />
 
-          <View style={styles.track} accessible accessibilityLabel={`Counting back from ${from}`}>
+          <View style={styles.track} accessible accessibilityLabel={step === -1 ? `Counting back from ${from}` : `Counting in ${step}s from ${from}`}>
             {[0, 1].map((row) => (
               <View key={row} style={styles.row}>
                 {numbers.slice(row * 5, row * 5 + 5).map((n) => {
@@ -186,9 +190,9 @@ function Stone({
       accessibilityLabel={label}
     >
       {gap ? (
-        <Text style={[styles.num, styles.ask, { fontSize: size * 0.42 }, hint ? styles.ghost : null]}>{hint ? n : "?"}</Text>
+        <Text style={[styles.num, styles.ask, { fontSize: size * (n >= 100 ? 0.34 : 0.42) }, hint ? styles.ghost : null]}>{hint ? n : "?"}</Text>
       ) : (
-        <Animated.Text entering={justFilled ? POP : undefined} style={[styles.num, { fontSize: size * 0.42 }]}>
+        <Animated.Text entering={justFilled ? POP : undefined} style={[styles.num, { fontSize: size * (n >= 100 ? 0.34 : 0.42) }]}>
           {n}
         </Animated.Text>
       )}

@@ -15,3 +15,10 @@ export const RouteIcon = make(
     <Path d="M7.2 5h7.3a2.2 2.2 0 0 1 1.7 3.6L7.8 15.4A2.2 2.2 0 0 0 9.5 19h7.3" />
   </>,
 );
+export const ReplayIcon = make(
+  "ReplayIcon",
+  <>
+    <Path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
+    <Path d="M4.5 4.5v3.7h3.7" />
+  </>,
+);

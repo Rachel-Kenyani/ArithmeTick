@@ -1,3 +1,4 @@
+import { CHART_HEIGHT } from "./PlaceValueChart";
 import type { CounterItem } from "@/features/play/components/CounterFace";
 
 export type Step = "pack" | "tens" | "ones" | "solved";
@@ -54,7 +55,7 @@ export function gridFor(
   crateCell: number,
 ): { cols: number; pitch: number } {
   if (!size) return { cols: 7, pitch: 44 };
-  const avail = size.h - 58 - 44 - 46 - (crateCell * 2 + 24) - 40 - 40;
+  const avail = size.h - CHART_HEIGHT - 44 - 46 - (crateCell * 2 + 24) - 40 - 40;
   let best = { cols: 7, pitch: 0 };
   for (let cols = 5; cols <= 8; cols++) {
     const pitch = Math.min(

@@ -43,9 +43,18 @@ export interface PlaceValuePuzzle {
   b: number;
 }
 
+/** A three-digit sum worked in columns: hundreds, tens and ones, with regrouping. */
+export interface ColumnsPuzzle {
+  op: "add" | "sub";
+  a: number;
+  b: number;
+}
+
 export interface NumberTrackPuzzle {
   from: number;
   gaps: number[];
+  /** How far each stone moves on from the one before: -1 counts back in ones, 10 counts on in tens. */
+  step: number;
 }
 
 export interface GroupsPuzzle {
@@ -61,7 +70,7 @@ export interface ClockPuzzle {
   hour: number;
 }
 
-export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "length" | "massCapacity" | "money" | "shapes";
+export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "raceDay" | "waterDay" | "length" | "massCapacity" | "money" | "shapes";
 
 export interface HundredsPuzzle {
   a: number;
@@ -78,9 +87,10 @@ export type PlaceValueProps = GradeModuleProps & PlaceValuePuzzle;
 export type GroupsProps = GradeModuleProps & GroupsPuzzle;
 export type HalvesProps = GradeModuleProps & HalvesPuzzle;
 export type ClockProps = GradeModuleProps & ClockPuzzle;
-export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle;
+export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle & { grade?: 2 | 3 };
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 export type HundredsProps = GradeModuleProps & HundredsPuzzle;
+export type ColumnsProps = GradeModuleProps & ColumnsPuzzle;
 
 export interface GradeMeta {
   grade: Grade;

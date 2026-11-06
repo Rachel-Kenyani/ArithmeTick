@@ -40,6 +40,17 @@ export default function LevelCelebrationModal({ open, ...rest }: Readonly<LevelC
   return <Body {...rest} />;
 }
 
+const MAX_HERO_TREASURES = 40;
+
+function heroCount(count: number): number {
+  return count > MAX_HERO_TREASURES ? 1 : count;
+}
+
+function heroSize(count: number): number {
+  if (count > MAX_HERO_TREASURES) return 64;
+  return count > 10 ? 26 : 34;
+}
+
 function Body({ childName, treasure, treasureCount, questTask, grade, levelNumber, badge, starsEarned, starsTotal, reduced, nextLabel, onHighFive, onClaim }: Readonly<Omit<LevelCelebrationModalProps, "open">>) {
   const claimedRef = useRef(false);
 
@@ -84,7 +95,7 @@ function Body({ childName, treasure, treasureCount, questTask, grade, levelNumbe
             {hasQuestTaskArt(questTask) ? (
               <QuestTaskPicture task={questTask} size={96} />
             ) : (
-              <TreasureGroup id={treasure.treasure} count={treasureCount} size={treasureCount > 10 ? 26 : 34} animate={!reduced} />
+              <TreasureGroup id={treasure.treasure} count={heroCount(treasureCount)} size={heroSize(treasureCount)} animate={!reduced} />
             )}
             {doneLine ? <SpokenText text={doneLine} style={styles.heroText} /> : null}
           </View>

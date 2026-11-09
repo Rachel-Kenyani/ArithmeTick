@@ -16,6 +16,8 @@ const TASK_ART: Record<string, (props: ArtProps) => ReactElement> = {
   fingers: FingersArt,
   raceDay: RaceDayArt,
   waterDay: WaterDayArt,
+  change: ChangeArt,
+  treasureWalk: TreasureWalkArt,
 };
 
 export const hasQuestTaskArt = (task?: string): task is string => task !== undefined && task in TASK_ART;
@@ -228,6 +230,53 @@ export function WaterDayArt({ size = 64, title }: Readonly<ArtProps>) {
       <Path d="M22 44h38l-5 14H27z" fill={colors.atCream} {...ink} />
       <Path d="M25 48h32l-1.5 4H26.5z" fill="#4fb3e8" />
       <Path d="M22 44h38" {...ink} />
+    </ArtFrame>
+  );
+}
+
+export function ChangeArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <Rect x="4" y="10" width="34" height="18" rx="3" fill="#8fd19e" {...ink} />
+      <Circle cx="21" cy="19" r="5" fill="none" stroke="#1b1b1b" strokeWidth={1} opacity={0.35} />
+      <SvgText x="21" y="23" fontSize="10" fontWeight="bold" fill="#1b1b1b" textAnchor="middle">
+        50
+      </SvgText>
+      <Path d="M42 19h12M50 15l4 4-4 4" {...ink} strokeWidth={2.4} />
+      <Rect x="8" y="38" width="24" height="18" rx="4" fill={colors.atCream} {...ink} />
+      <Path d="M12 38c2-6 14-6 16 0" fill="#f2d58a" {...ink} strokeWidth={1.6} />
+      <SvgText x="20" y="51" fontSize="8" fontWeight="bold" fill={colors.atInk} textAnchor="middle">
+        30
+      </SvgText>
+      <Coin x={46} y={38} r={8} label="10" fill="#e3b341" />
+      <Coin x={50} y={53} r={8} label="10" fill="#e3b341" />
+    </ArtFrame>
+  );
+}
+
+function Foot({ x, y, turn }: Readonly<{ x: number; y: number; turn: number }>) {
+  return (
+    <G transform={`rotate(${turn} ${x} ${y})`}>
+      <Ellipse cx={x} cy={y} rx={2.6} ry={4} fill={colors.atTeal} />
+      <Circle cx={x} cy={y - 5.6} r={1.2} fill={colors.atTeal} />
+    </G>
+  );
+}
+
+export function TreasureWalkArt({ size = 64, title }: Readonly<ArtProps>) {
+  return (
+    <ArtFrame size={size} title={title}>
+      <Path d="M10 56V30h34" fill="none" stroke={colors.atTealLight} strokeWidth={2} strokeDasharray="3 3" />
+      <Foot x={8} y={52} turn={0} />
+      <Foot x={12} y={44} turn={0} />
+      <Foot x={8} y={36} turn={0} />
+      <Foot x={20} y={32} turn={90} />
+      <Foot x={30} y={28} turn={90} />
+      <Path d="M40 24l6 6M46 24l-6 6" stroke="#c0392b" strokeWidth={3} strokeLinecap="round" />
+      <Rect x="46" y="38" width="14" height="10" rx="2" fill="#c98b4e" {...ink} />
+      <Path d="M46 42h14" {...ink} strokeWidth={1.6} />
+      <Circle cx="53" cy="43" r="1.6" fill={colors.atYellow} {...ink} strokeWidth={1} />
+      <Path d="M20 10h14M28 6l6 4-6 4" {...ink} strokeWidth={2} />
     </ArtFrame>
   );
 }

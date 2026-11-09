@@ -7,6 +7,7 @@ import type {
   HalvesPuzzle,
   NumberTrackPuzzle,
   ColumnsPuzzle,
+  FractionPuzzle,
   PlaceValuePuzzle,
   QuestTask,
   TakeAwayPuzzle,
@@ -53,19 +54,20 @@ export type LevelDef =
     })
   | (LevelBase & {
       kind: "puzzle";
-      grade: 2;
+      grade: 2 | 3;
       game: "halves";
       puzzle: HalvesPuzzle;
     })
   | (LevelBase & {
       kind: "puzzle";
-      grade: 2;
+      grade: 2 | 3;
       game: "clock";
       puzzle: ClockPuzzle;
     })
   | (LevelBase & { kind: "puzzle"; grade: 3; game: "array"; puzzle: ArrayPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; game: "hundreds"; puzzle: HundredsPuzzle })
   | (LevelBase & { kind: "puzzle"; grade: 3; game: "columns"; puzzle: ColumnsPuzzle })
+  | (LevelBase & { kind: "puzzle"; grade: 3; game: "fraction"; puzzle: FractionPuzzle })
   | (LevelBase & { kind: "quest"; task: QuestTask });
 
 const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
@@ -75,6 +77,8 @@ const QUEST_TITLES: Record<QuestTask, { title: string; equation: string }> = {
   fingers: { title: "Finger Maths", equation: "5 + 4 = 9" },
   raceDay: { title: "Race Day", equation: "1st, 2nd, 3rd, 4th, 5th" },
   waterDay: { title: "Water Day", equation: "Measure in litres" },
+  change: { title: "Market Day", equation: "50 − 30 = 20 shillings change" },
+  treasureWalk: { title: "Treasure Walk", equation: "Forward, left, right" },
   length: { title: "Measure It", equation: "Measure with your hands" },
   massCapacity: {
     title: "Heavy or Full",
@@ -175,6 +179,26 @@ const groupsOf = (number: number, groups: number, each: number): LevelDef => ({
   puzzle: { groups, each },
 });
 
+const quarterOf = (number: number, food: string): LevelDef => ({
+  grade: 3,
+  number,
+  kind: "puzzle",
+  game: "fraction",
+  title: `Quarter the ${food}`,
+  equation: "1 out of 4 equal parts = 1/4",
+  puzzle: { parts: 4 },
+});
+
+const shareOf = (number: number, total: number, shares: number): LevelDef => ({
+  grade: 3,
+  number,
+  kind: "puzzle",
+  game: "halves",
+  title: `Share ${total}`,
+  equation: `${total} ÷ ${shares} = ${total / shares}`,
+  puzzle: { total, shares },
+});
+
 const halfOf = (number: number, total: number): LevelDef => ({
   grade: 2,
   number,
@@ -183,6 +207,16 @@ const halfOf = (number: number, total: number): LevelDef => ({
   title: "Share in half",
   equation: `Half of ${total} = ${total / 2}`,
   puzzle: { total },
+});
+
+const halfPast = (number: number, hour: number): LevelDef => ({
+  grade: 3,
+  number,
+  kind: "puzzle",
+  game: "clock",
+  title: "Half past",
+  equation: `half past ${hour}`,
+  puzzle: { hour, half: true },
 });
 
 const clockAt = (number: number, hour: number): LevelDef => ({
@@ -261,6 +295,12 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
     columns(4, "add", 146, 27),
     columns(5, "sub", 352, 125),
     quest(3, 6, "waterDay"),
+    array(7, 3, 4),
+    shareOf(8, 12, 3),
+    quest(3, 9, "change"),
+    quarterOf(10, "chapati"),
+    halfPast(11, 4),
+    quest(3, 12, "treasureWalk"),
   ],
 };
 

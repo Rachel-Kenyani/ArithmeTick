@@ -233,6 +233,54 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       mission: () => `Measure water in litres`,
       done: () => `You measured water in litres, just like Brijo!`,
     },
+    {
+      ask: "Brijo plants seeds in 3 rows, with 4 seeds in each row. How many seeds does she plant?",
+      treasure: "seed",
+      one: "a seed",
+      many: "seeds",
+      mission: (c) => `Plant ${c} seeds in rows`,
+      done: (c) => `3 rows of 4 make ${c} seeds!`,
+    },
+    {
+      ask: "3 monkeys want to share 12 mangoes fairly. How many mangoes does each monkey get?",
+      treasure: "mango",
+      one: "a mango",
+      many: "mangoes",
+      mission: () => `Share 12 mangoes fairly`,
+      done: () => `4 mangoes each, a fair share for every monkey!`,
+    },
+    {
+      ask: "Time to move! It's market day! Can you give the right change in shillings?",
+      treasure: "drum",
+      one: "a little drum",
+      many: "drums",
+      mission: () => `Give the right change`,
+      done: () => `20 shillings change, just right!`,
+    },
+    {
+      ask: "Brijo made a chapati to share with 3 friends. Can you cut it into 4 equal pieces?",
+      treasure: "leaf",
+      one: "a big leaf",
+      many: "leaves",
+      mission: () => `Cut the chapati into quarters`,
+      done: () => `Brijo got one quarter of the chapati!`,
+    },
+    {
+      ask: "Brijo's friends are coming at half past 4. Can you set the clock?",
+      treasure: "flower",
+      one: "a flower",
+      many: "flowers",
+      mission: () => `Set the clock to half past 4`,
+      done: () => `Half past 4, right on time!`,
+    },
+    {
+      ask: "This is the last stop! Brijo hid a treasure. Can you find it by following directions?",
+      treasure: "star",
+      one: "a golden star",
+      many: "stars",
+      mission: () => `Follow the treasure walk`,
+      done: () => `You followed the directions and found the treasure!`,
+    },
   ],
 };
 
@@ -253,6 +301,8 @@ export function treasureCount(level: LevelDef): number {
     case 3:
       if (level.game === "hundreds") return level.puzzle.a;
       if (level.game === "numberTrack") return 1;
+      if (level.game === "fraction" || level.game === "clock") return 1;
+      if (level.game === "halves") return level.puzzle.total / (level.puzzle.shares ?? 2);
       if (level.game === "columns") {
         const { op, a, b } = level.puzzle;
         return op === "add" ? a + b : a - b;

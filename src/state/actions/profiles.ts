@@ -1,7 +1,7 @@
-import { AVATARS, MAX_PROFILES, type ChildProfile } from "@/types/models";
+import { AVATARS, DEFAULT_SOUND, MAX_PROFILES, type ChildProfile, type SoundSettings } from "@/types/models";
 import type { Grade } from "@/types/domain";
 
-import { getSnapshot, setState } from "../core";
+import { getSnapshot, setState, updateProfile } from "../core";
 import { makeProfile } from "../seed";
 
 export const profileActions = {
@@ -31,5 +31,9 @@ export const profileActions = {
       ...s,
       profiles: s.profiles.map((profile) => (profile.id === id ? { ...profile, name, avatar: input.avatar } : profile)),
     }));
+  },
+
+  setSound(id: string, change: Partial<SoundSettings>) {
+    updateProfile(id, (profile) => ({ ...profile, sound: { ...DEFAULT_SOUND, ...profile.sound, ...change } }));
   },
 };

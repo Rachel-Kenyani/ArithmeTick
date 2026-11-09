@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
 import Animated, { FadeIn, ReduceMotion, useReducedMotion } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
+import { narration } from "@/services/narration";
 import type { ArrayProps, LevelDraft } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
@@ -24,7 +25,7 @@ const EQ_H = 64;
 const DONE_H = 64;
 const FADE = FadeIn.duration(260).reduceMotion(ReduceMotion.System);
 
-export default function Grade3ArrayMultiplication({ level, rows: targetRows, cols: targetCols, palActive, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ArrayProps>) {
+export default function Grade3ArrayMultiplication({ level, rows: targetRows, cols: targetCols, palActive, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ArrayProps>) {
   const pz = useMemo(() => normalizePuzzle(targetRows, targetCols), [targetRows, targetCols]);
   const reduced = useReducedMotion();
   const schedule = useScheduler();
@@ -105,6 +106,14 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   }, [onDraft, phase, picked, childDims]);
 
   const building = phase === "build" || phase === "locked";
+  const tag = `g3-l${String(level ?? 0).padStart(2, "0")}`;
+  const spokenText = arrayPrompt(phase, pz.rows, pz.cols);
+  const spokenClip = phase === "build" ? `${tag}-build` : "arr-ten";
+  useEffect(() => {
+    if (!spokenText || waiting) return;
+    narration.prompt(spokenText, spokenClip);
+  }, [spokenText, spokenClip, waiting]);
+  useEffect(() => () => narration.stop(), []);
   const stageW = size ? size.w - 24 : 0;
   const stageH = size ? size.h - GOAL_H - EQ_H - DONE_H - 24 : 0;
   const buildPitch = Math.floor(Math.max(26, Math.min(72, (stageW - SKIP_W) / MAX_COLS, stageH / MAX_ROWS)));
@@ -149,6 +158,13 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
       ) : null}
     </View>
   );
+}
+
+/** What Brijo says on the array board: how to build it, then how to make a ten. Nothing while it locks or bundles. */
+function arrayPrompt(phase: Phase, rows: number, cols: number): string | null {
+  if (phase === "build") return `Build ${rows} rows of ${cols}. Drag the corner, then tap Done.`;
+  if (phase === "regroup") return "Tap 10 to make a ten.";
+  return null;
 }
 
 function GoalPill({ rows, cols, phase }: Readonly<{ rows: number; cols: number; phase: Phase }>) {

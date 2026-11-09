@@ -64,13 +64,22 @@ export interface GroupsPuzzle {
 
 export interface HalvesPuzzle {
   total: number;
+  /** How many monkeys share fairly: 2 for halves (Grade 2), more for division as sharing (Grade 3). */
+  shares?: number;
+}
+
+/** A fraction as a fair share: cut a whole into this many equal parts and give one away. */
+export interface FractionPuzzle {
+  parts: number;
 }
 
 export interface ClockPuzzle {
   hour: number;
+  /** Half past the hour: the child sets the long hand to 6 first, then the hour. */
+  half?: boolean;
 }
 
-export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "raceDay" | "waterDay" | "length" | "massCapacity" | "money" | "shapes";
+export type QuestTask = "groups" | "findIt" | "hideGuess" | "fingers" | "raceDay" | "waterDay" | "change" | "treasureWalk" | "length" | "massCapacity" | "money" | "shapes";
 
 export interface HundredsPuzzle {
   a: number;
@@ -85,8 +94,9 @@ export type TenFrameProps = GradeModuleProps & Partial<TenFramePuzzle>;
 export type TakeAwayProps = GradeModuleProps & TakeAwayPuzzle;
 export type PlaceValueProps = GradeModuleProps & PlaceValuePuzzle;
 export type GroupsProps = GradeModuleProps & GroupsPuzzle;
-export type HalvesProps = GradeModuleProps & HalvesPuzzle;
-export type ClockProps = GradeModuleProps & ClockPuzzle;
+export type HalvesProps = GradeModuleProps & HalvesPuzzle & { grade?: 2 | 3 };
+export type ClockProps = GradeModuleProps & ClockPuzzle & { grade?: 2 | 3 };
+export type FractionProps = GradeModuleProps & FractionPuzzle;
 export type NumberTrackProps = GradeModuleProps & NumberTrackPuzzle & { grade?: 2 | 3 };
 export type ArrayProps = GradeModuleProps & Partial<ArrayPuzzle>;
 export type HundredsProps = GradeModuleProps & HundredsPuzzle;

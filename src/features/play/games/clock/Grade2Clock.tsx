@@ -32,37 +32,63 @@ function Hand({ length, width, color, angle }: Readonly<{ length: number; width:
   );
 }
 
-export default function Grade2Clock({ level, hour, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ClockProps>) {
+export default function Grade2Clock({ level, grade = 2, hour, half = false, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ClockProps>) {
   const schedule = useScheduler();
   const [shown, setShown] = useState(12);
   const [solved, setSolved] = useState(false);
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [angle, setAngle] = useState(0);
+  const [minuteAngle, setMinuteAngle] = useState(0);
+  const [stage, setStage] = useState<"minute" | "hour">(half ? "minute" : "hour");
   const doneRef = useRef(false);
 
   useEffect(() => {
     onDraft?.({ version: DRAFT_VERSION, misses });
   }, [onDraft, misses]);
 
-  const pointTo = (n: number) => {
-    const target = (n % 12) * 30;
+  /** Turn a hand forwards to `degrees`, the short way round. */
+  const turnTo = (from: number, degrees: number) => from + ((degrees - (((from % 360) + 360) % 360) + 360) % 360);
+
+  const pointTo = (n: number, past = 0) => {
+    const target = (n % 12) * 30 + past;
     const current = ((angle % 360) + 360) % 360;
     const step = (target - current + 360) % 360;
     setAngle(angle + step);
     setShown(n);
   };
 
+  const tapMinute = (n: number) => {
+    sfx.snap(n % 8);
+    setMinuteAngle((a) => turnTo(a, (n % 12) * 30));
+    const correct = n === 6;
+    onAttempt?.({ target: 6, answer: n, correct });
+    if (!correct) {
+      setMisses((m) => m + 1);
+      sfx.nudge();
+      narration.prompt("For half past, the long hand points to 6.", "clock-half");
+      schedule(onStruggle, 1600);
+      return;
+    }
+    sfx.groupPulse();
+    setStage("hour");
+  };
+
   const tapHour = (n: number) => {
     if (solved || waiting || doneRef.current) return;
+    if (stage === "minute") {
+      tapMinute(n);
+      return;
+    }
     sfx.snap(n % 8);
-    pointTo(n);
+    pointTo(n, half ? 15 : 0);
     const correct = n === hour;
     onAttempt?.({ target: hour, answer: n, correct });
     if (!correct) {
       setMisses((m) => m + 1);
       sfx.nudge();
-      narration.prompt(`That's ${WORDS[n]} o'clock.`, `clock-${n}`);
+      if (half) narration.prompt(`That's half past ${WORDS[n]}.`, `clock-half-${n}`);
+      else narration.prompt(`That's ${WORDS[n]} o'clock.`, `clock-${n}`);
       schedule(onStruggle, 1600);
       return;
     }
@@ -80,22 +106,27 @@ export default function Grade2Clock({ level, hour, waiting = false, onStruggle, 
   const r = face / 2;
   const ring = r - TARGET / 2 - 10;
   const hint = misses >= HINT_AFTER && !solved;
-  const id = `g2-l${String(level ?? 0).padStart(2, "0")}`;
-  const prompt = solved ? `${WORDS[hour]} o'clock!` : `Make it ${WORDS[hour]} o'clock. Tap a number to move the short hand.`;
+  const id = `g${grade}-l${String(level ?? 0).padStart(2, "0")}`;
+  const time = half ? `half past ${WORDS[hour]}` : `${WORDS[hour]} o'clock`;
+  let prompt = `Make it ${time}. Tap a number to move the short hand.`;
+  if (solved) prompt = `${time}!`;
+  else if (stage === "minute") prompt = `Make it ${time}. First, tap a number to move the long hand.`;
+  else if (half) prompt = "Now tap the hour to move the short hand.";
+  const clip = stage === "minute" ? `${id}-minute` : `${id}-set`;
 
   return (
-    <View style={styles.root} onLayout={onLayout} testID={`g2-clock-l${level ?? 0}-${hour}`}>
+    <View style={styles.root} onLayout={onLayout} testID={`g${grade}-clock-l${level ?? 0}-${hour}`}>
       {size ? (
         <>
-          <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`Set the clock to ${hour} o'clock`}>
-            <Text style={styles.stripText}>{`${hour} o'clock`}</Text>
+          <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`Set the clock to ${half ? `half past ${hour}` : `${hour} o'clock`}`}>
+            <Text style={styles.stripText}>{half ? `half past ${hour}` : `${hour} o'clock`}</Text>
           </View>
-          <Prompt text={prompt} clipId={`${id}-set`} waiting={waiting} silent={solved} />
+          <Prompt text={prompt} clipId={clip} waiting={waiting} silent={solved} />
 
           <View
             style={[styles.face, { width: face, height: face, borderRadius: r }, solved ? styles.faceWin : null]}
             accessible={false}
-            accessibilityLabel={`The clock shows ${shown} o'clock`}
+            accessibilityLabel={half && stage === "hour" && minuteAngle % 360 === 180 ? `The clock shows half past ${shown}` : `The clock shows ${shown} o'clock`}
           >
             {HOURS.map((n) => {
               const a = (n * 30 * Math.PI) / 180;
@@ -108,14 +139,14 @@ export default function Grade2Clock({ level, hour, waiting = false, onStruggle, 
                   disabled={solved}
                   accessibilityRole="button"
                   accessibilityLabel={`${n}`}
-                  style={[styles.num, { left: x, top: y }, hint && n === hour ? styles.numHint : null, shown === n && n !== 12 ? styles.numOn : null]}
+                  style={[styles.num, { left: x, top: y }, hint && n === (stage === "minute" ? 6 : hour) ? styles.numHint : null, shown === n && n !== 12 ? styles.numOn : null]}
                 >
                   <Text style={styles.numText}>{n}</Text>
                 </Pressable>
               );
             })}
             <View style={[styles.pivot, { left: r, top: r }]}>
-              <Hand length={ring - 12} width={8} color={colors.atTeal} angle={0} />
+              <Hand length={ring - 12} width={8} color={colors.atTeal} angle={minuteAngle} />
               <Hand length={ring * 0.55} width={12} color={colors.atPurple} angle={angle} />
               <View style={styles.cap} />
             </View>
@@ -128,7 +159,7 @@ export default function Grade2Clock({ level, hour, waiting = false, onStruggle, 
             </View>
             <View style={styles.keyItem}>
               <View style={[styles.swatch, { backgroundColor: colors.atTeal }]} />
-              <Text style={styles.keyText}>{"long hand on 12: o'clock"}</Text>
+              <Text style={styles.keyText}>{half ? "long hand on 6: half past" : "long hand on 12: o'clock"}</Text>
             </View>
           </View>
         </>

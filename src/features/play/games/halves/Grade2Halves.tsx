@@ -20,8 +20,9 @@ const SOLVED_HANDOFF_MS = 1400;
 const MONKEYS = [
   { id: "monkey-1", tone: "#8a5a33" },
   { id: "monkey-2", tone: "#6b4a2e" },
+  { id: "monkey-3", tone: "#a0703f" },
+  { id: "monkey-4", tone: "#5c3f27" },
 ] as const;
-const SHARES = MONKEYS.length;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
 const around = (n: number) => [n - 1, n, n + 1].filter((x) => x >= 0);
@@ -31,10 +32,12 @@ function plural(item: string): string {
   return item === "tomato" || item === "mango" ? `${item}es` : `${item}s`;
 }
 
-export default function Grade2Halves({ level, total, item = "tomato", waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<HalvesProps>) {
+export default function Grade2Halves({ level, grade = 2, total, shares = 2, item = "tomato", waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<HalvesProps>) {
   const schedule = useScheduler();
-  const half = total / SHARES;
-  const [onPlate, setOnPlate] = useState<number[]>(() => Array.from({ length: SHARES }, () => 0));
+  const monkeys = MONKEYS.slice(0, Math.min(MONKEYS.length, Math.max(2, shares)));
+  const half = total / monkeys.length;
+  const halving = monkeys.length === 2;
+  const [onPlate, setOnPlate] = useState<number[]>(() => monkeys.map(() => 0));
   const [step, setStep] = useState<Step>("share");
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
   const [bubbles, setBubbles] = useState<Partial<Record<string, Bubble>>>({});
@@ -113,35 +116,46 @@ export default function Grade2Halves({ level, total, item = "tomato", waiting = 
     const { width, height } = e.nativeEvent.layout;
     setSize((prev) => (prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1 ? prev : { w: width, h: height }));
   };
-  const cell = size ? Math.floor(Math.max(TARGET - 4, Math.min(56, (size.w - 120) / 5))) : TARGET;
+  const fitAcross = size ? (size.w - 24 - (monkeys.length - 1) * 20 - monkeys.length * 42) / (monkeys.length * 2) : TARGET;
+  const cell = size ? Math.floor(Math.max(30, Math.min(56, (size.w - 120) / 5, fitAcross))) : TARGET;
   const perRow = Math.min(half, 2);
   const plateW = perRow * cell + (perRow - 1) * 10 + 32;
   const many = plural(item);
-  const id = `g2-l${String(level ?? 0).padStart(2, "0")}`;
+  const id = `g${grade}-l${String(level ?? 0).padStart(2, "0")}`;
 
   const prompt = {
     share: `Give the ${many} out one at a time. Tap or drag a ${item === "cap" ? "bottle top" : item}.`,
     answer: "How many does each monkey get?",
-    solved: `Half of ${total} is ${half}!`,
+    solved: halving ? `Half of ${total} is ${half}!` : `${total} shared by ${monkeys.length} is ${half} each!`,
   }[step];
   const clip = { share: `${id}-share`, answer: `${id}-each`, solved: "" }[step];
 
   return (
-    <View style={styles.root} onLayout={onLayout} testID={`g2-halves-l${level ?? 0}-${total}`}>
+    <View style={styles.root} onLayout={onLayout} testID={`g${grade}-halves-l${level ?? 0}-${total}`}>
       {size ? (
         <>
-          <View style={[styles.strip, step === "solved" ? styles.stripWin : null]} accessible accessibilityLabel={`Half of ${total} is ${step === "solved" ? half : "what"}`}>
-            <Text style={styles.word}>Half of</Text>
-            <NumberTile value={total} tone="total" size={42} fontSize={22} />
-            <Text style={styles.word}>is</Text>
-            <NumberTile value={step === "solved" ? half : "?"} tone={step === "solved" ? "win" : "ask"} size={42} fontSize={22} />
-          </View>
+          {halving ? (
+            <View style={[styles.strip, step === "solved" ? styles.stripWin : null]} accessible accessibilityLabel={`Half of ${total} is ${step === "solved" ? half : "what"}`}>
+              <Text style={styles.word}>Half of</Text>
+              <NumberTile value={total} tone="total" size={42} fontSize={22} />
+              <Text style={styles.word}>is</Text>
+              <NumberTile value={step === "solved" ? half : "?"} tone={step === "solved" ? "win" : "ask"} size={42} fontSize={22} />
+            </View>
+          ) : (
+            <View style={[styles.strip, step === "solved" ? styles.stripWin : null]} accessible accessibilityLabel={`${total} shared by ${monkeys.length} is ${step === "solved" ? half : "what"} each`}>
+              <NumberTile value={total} tone="total" size={42} fontSize={22} />
+              <Text style={styles.word}>÷</Text>
+              <NumberTile value={monkeys.length} tone="five" size={42} fontSize={22} />
+              <Text style={styles.word}>=</Text>
+              <NumberTile value={step === "solved" ? half : "?"} tone={step === "solved" ? "win" : "ask"} size={42} fontSize={22} />
+            </View>
+          )}
           <Prompt text={prompt} clipId={clip} waiting={waiting} silent={step === "solved"} />
 
           <View style={styles.monkeys}>
-            {MONKEYS.map((monkey, plate) => (
+            {monkeys.map((monkey, plate) => (
               <View key={monkey.id} style={styles.monkey}>
-                <MonkeyArt size={64} tone={monkey.tone} title={`Monkey ${plate + 1}`} />
+                <MonkeyArt size={halving ? 64 : 52} tone={monkey.tone} title={`Monkey ${plate + 1}`} />
                 <View
                   ref={(r) => {
                     plateRefs.current[plate] = r;
@@ -208,7 +222,7 @@ const styles = StyleSheet.create({
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
   word: { fontFamily: fonts.bodyBold, fontSize: 18, color: colors.atInk },
-  monkeys: { flexDirection: "row", justifyContent: "center", gap: 20, marginTop: 8 },
+  monkeys: { flexDirection: "row", justifyContent: "center", gap: 20, marginTop: 8, flexWrap: "wrap" },
   monkey: { alignItems: "center", gap: 6 },
   plate: {
     flexDirection: "row",

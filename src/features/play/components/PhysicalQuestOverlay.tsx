@@ -7,6 +7,8 @@ import {
   FingersArt,
   RaceDayArt,
   WaterDayArt,
+  ChangeArt,
+  TreasureWalkArt,
   HandspanArt,
   HideGuessArt,
   ScaleCupArt,
@@ -81,6 +83,26 @@ const QUEST_TASKS: Record<
       "Show four more on the other hand.",
       "Count them all. How many?",
       "Now swap! A grown-up shows fingers, and you say how many.",
+    ],
+  },
+  change: {
+    Art: ChangeArt,
+    caption: "How much change?",
+    steps: [
+      "Play shop with a grown-up. A cup of maize costs 30 shillings.",
+      "Pay with 50 shillings.",
+      "Count up from 30 to 50: 40, 50. That's 20.",
+      "Give 20 shillings change. Now swap: you sell, the grown-up buys!",
+    ],
+  },
+  treasureWalk: {
+    Art: TreasureWalkArt,
+    caption: "Follow the directions",
+    steps: [
+      "Hide a small treasure with a grown-up watching.",
+      "Stand at the door. Give directions: forward 3 steps, turn left, forward 2 steps.",
+      "The grown-up follows your directions to find it.",
+      "Now swap! The grown-up hides it and you follow.",
     ],
   },
   waterDay: {

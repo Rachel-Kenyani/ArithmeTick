@@ -2,6 +2,7 @@ import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BackButton from "@/components/ui/BackButton";
+import SoundToggle from "@/components/top-bar/SoundToggle";
 import StarsPill from "@/components/top-bar/StarsPill";
 import TimePill from "@/components/top-bar/TimePill";
 
@@ -31,6 +32,7 @@ export default function AppTopBar({
       <View style={styles.controls}>
         <BackButton label={backLabel} onPress={onBack} />
         <View style={[styles.actions, { gap: roomy ? 8 : 6 }]}>
+          <SoundToggle />
           <StarsPill stars={stars} onPress={onStarsPress} />
           <TimePill secondsLeft={secondsLeft} paused={timePaused} />
         </View>

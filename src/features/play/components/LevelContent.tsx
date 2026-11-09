@@ -3,6 +3,7 @@ import { memo } from "react";
 import { storyFor } from "@/data/stories";
 import Grade1TakeAway from "@/features/play/games/take-away/Grade1TakeAway";
 import Grade1TenFrame from "@/features/play/games/ten-frame/Grade1TenFrame";
+import Grade3Chapati from "@/features/play/games/fractions/Grade3Chapati";
 import Grade3ColumnSub from "@/features/play/games/place-value/Grade3ColumnSub";
 import Grade3Columns from "@/features/play/games/place-value/Grade3Columns";
 import Grade2NumberTrack from "@/features/play/games/number-track/Grade2NumberTrack";
@@ -45,6 +46,9 @@ const LevelContent = memo(function LevelContent({ level, childName, palActive, w
       if (level.game === "halves") return <Grade2Halves key={key} {...shared} total={level.puzzle.total} />;
       return <Grade2Clock key={key} {...shared} hour={level.puzzle.hour} />;
     case 3:
+      if (level.game === "clock") return <Grade2Clock key={key} {...shared} grade={3} hour={level.puzzle.hour} half={level.puzzle.half} />;
+      if (level.game === "fraction") return <Grade3Chapati key={key} {...shared} parts={level.puzzle.parts} />;
+      if (level.game === "halves") return <Grade2Halves key={key} {...shared} grade={3} total={level.puzzle.total} shares={level.puzzle.shares} />;
       if (level.game === "columns" && level.puzzle.op === "sub") return <Grade3ColumnSub key={key} {...shared} op="sub" a={level.puzzle.a} b={level.puzzle.b} />;
       if (level.game === "columns") return <Grade3Columns key={key} {...shared} op={level.puzzle.op} a={level.puzzle.a} b={level.puzzle.b} />;
       if (level.game === "hundreds") return <Grade3Hundreds key={key} {...shared} a={level.puzzle.a} />;

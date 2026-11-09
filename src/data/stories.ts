@@ -93,7 +93,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       one: "a tomato",
       many: "tomatoes",
       mission: () => `Fill frames of 10`,
-      done: () => `Thirty-four tomatoes: three full frames and four left over!`,
+      done: () => `Thirty-four tomatoes: three full crates and four left over!`,
     },
     {
       ask: "Brijo is counting her mangoes backwards from fifty. Can you fill in the missing numbers?",

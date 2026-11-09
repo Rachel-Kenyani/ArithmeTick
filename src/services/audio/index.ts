@@ -48,7 +48,9 @@ export const sfx = {
   pause: () => play("pause"),
 };
 
+/** Turns sound effects off or on. Brijo's voice has its own switch in narration. */
 export function setMuted(next: boolean) {
+  if (next === muted) return;
   muted = next;
   listeners.forEach((fn) => fn(muted));
 }

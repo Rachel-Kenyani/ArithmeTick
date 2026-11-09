@@ -1,7 +1,6 @@
 import { createAudioPlayer } from "expo-audio";
 import * as Speech from "expo-speech";
 
-import { isMuted } from "@/services/audio";
 import {
   OPENERS,
   VOICE_CLIPS,
@@ -243,8 +242,19 @@ function speak(
   });
 }
 
-function say(text: string, parts: Part[]) {
-  if (isMuted()) return;
+let voiceOn = true;
+const voiceListeners = new Set<() => void>();
+
+/** Whether Brijo reads instructions aloud. A grown-up turns this off in Settings; sound effects are separate. */
+function setVoiceOn(next: boolean) {
+  if (next === voiceOn) return;
+  voiceOn = next;
+  if (!next) stopAll();
+  voiceListeners.forEach((fn) => fn());
+}
+
+function say(text: string, parts: Part[], force = false) {
+  if (!voiceOn && !force) return;
   stopAll();
   try {
     const playable = parts.filter(
@@ -281,6 +291,10 @@ export const narration = {
   prompt(text: string, clipId: string) {
     say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }]);
   },
+  /** Reads one instruction when the child asks, even with Brijo's voice turned off. */
+  replay(text: string, clipId: string) {
+    say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }], true);
+  },
   number(n: number) {
     say(String(n), [{ id: `num-${n}`, from: 0, to: 1 }]);
   },
@@ -306,4 +320,12 @@ export const narration = {
     };
   },
   current: () => spoken,
+  setVoiceOn,
+  isVoiceOn: () => voiceOn,
+  subscribeVoice(fn: () => void) {
+    voiceListeners.add(fn);
+    return () => {
+      voiceListeners.delete(fn);
+    };
+  },
 };

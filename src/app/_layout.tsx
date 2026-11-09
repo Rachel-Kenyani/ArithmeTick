@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { useApplySoundSettings } from "@/hooks/useSoundSettings";
 import { whenHydrated } from "@/state/store";
 import { colors } from "@/theme";
 
@@ -25,6 +26,7 @@ export default function RootLayout() {
     Quicksand_700Bold,
   });
   const [stateLoaded, setStateLoaded] = useState(false);
+  useApplySoundSettings();
 
   useEffect(() => {
     void whenHydrated().then(() => setStateLoaded(true));

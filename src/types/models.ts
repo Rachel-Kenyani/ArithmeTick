@@ -30,7 +30,16 @@ export interface ChildProfile {
   attempts?: AttemptLog[];
   gradeSeconds?: Partial<Record<Grade, number>>;
   drafts?: Record<string, { pal: boolean; board: LevelDraft }>;
+  sound?: SoundSettings;
 }
+
+/** Saved per child. Missing means both on. */
+export interface SoundSettings {
+  effects: boolean;
+  voice: boolean;
+}
+
+export const DEFAULT_SOUND: SoundSettings = { effects: true, voice: true };
 
 export interface AttemptLog {
   grade: Grade;

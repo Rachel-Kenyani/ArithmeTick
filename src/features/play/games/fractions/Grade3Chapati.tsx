@@ -49,7 +49,7 @@ export function chapatiPrompt(step: Step, parts: number): string {
     cut: "Cut the chapati into 4 equal pieces. Tap each dashed line to cut.",
     give: "Tap 1 piece to give to Brijo.",
     name: "Brijo has 1 of 4 equal pieces. What fraction of the chapati is that?",
-    solved: `1 out of ${parts} equal pieces is one quarter!`,
+    solved: `1 out of ${parts} equal pieces is 1 quarter!`,
   }[step];
 }
 

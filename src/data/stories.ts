@@ -263,7 +263,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       one: "a big leaf",
       many: "leaves",
       mission: () => `Cut the chapati into quarters`,
-      done: () => `Brijo got one quarter of the chapati!`,
+      done: () => `Brijo got 1 quarter of the chapati!`,
     },
     {
       ask: "Brijo's friends are coming at half past 4. Can you set the clock?",

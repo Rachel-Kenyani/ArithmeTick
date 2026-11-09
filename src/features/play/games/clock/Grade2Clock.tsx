@@ -16,7 +16,6 @@ const HINT_AFTER = 2;
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const SPRING = { damping: 14, stiffness: 140, reduceMotion: ReduceMotion.System };
 
-const WORDS = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
 
 function Hand({ length, width, color, angle }: Readonly<{ length: number; width: number; color: string; angle: number }>) {
   const turn = useSharedValue(angle);
@@ -87,8 +86,8 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     if (!correct) {
       setMisses((m) => m + 1);
       sfx.nudge();
-      if (half) narration.prompt(`That's half past ${WORDS[n]}.`, `clock-half-${n}`);
-      else narration.prompt(`That's ${WORDS[n]} o'clock.`, `clock-${n}`);
+      if (half) narration.prompt(`That's half past ${n}.`, `clock-half-${n}`);
+      else narration.prompt(`That's ${n} o'clock.`, `clock-${n}`);
       schedule(onStruggle, 1600);
       return;
     }
@@ -107,7 +106,7 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
   const ring = r - TARGET / 2 - 10;
   const hint = misses >= HINT_AFTER && !solved;
   const id = `g${grade}-l${String(level ?? 0).padStart(2, "0")}`;
-  const time = half ? `half past ${WORDS[hour]}` : `${WORDS[hour]} o'clock`;
+  const time = half ? `half past ${hour}` : `${hour} o'clock`;
   let prompt = `Make it ${time}. Tap a number to move the short hand.`;
   if (solved) prompt = `${time}!`;
   else if (stage === "minute") prompt = `Make it ${time}. First, tap a number to move the long hand.`;

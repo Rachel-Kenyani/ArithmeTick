@@ -120,7 +120,7 @@ const QUEST_TASKS: Record<
     Art: RaceDayArt,
     caption: "Who came first?",
     steps: [
-      "Line up five toys at the start.",
+      "Line up 5 toys at the start.",
       "Race them to the finish, one at a time.",
       "Say who came 1st, 2nd, 3rd, 4th and 5th.",
       "Ask a grown-up: which toy came 3rd?",

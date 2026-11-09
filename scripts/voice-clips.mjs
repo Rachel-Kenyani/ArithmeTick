@@ -8,7 +8,7 @@ const SCRIPTS = "docs/voice";
 const FFMPEG = "/opt/homebrew/bin/ffmpeg";
 const WHISPER = "/opt/homebrew/bin/whisper-cli";
 const model = process.env.WHISPER_MODEL;
-/** `--relabel` keeps the word timings already in clips.ts and only corrects their words from the scripts. */
+/** `--relabel` corrects the words of the timings already in clips.ts from the scripts, without transcribing. */
 const relabelOnly = process.argv.includes("--relabel");
 const ids = readdirSync(join(DIR, "en"))
   .filter((f) => f.endsWith(".m4a"))
@@ -105,15 +105,21 @@ function previousWords() {
   return m ? JSON.parse(m[1]) : {};
 }
 
-let words = {};
-if (relabelOnly) {
-  words = previousWords();
+/** Clips that already have timings keep them; only new clips are transcribed, unless `--all` is passed. */
+const words = process.argv.includes("--all") ? {} : previousWords();
+const untimed = ids.filter((id) => !words[id]?.length);
+if (relabelOnly || untimed.length === 0) {
+  // Nothing to transcribe.
 } else if (model && existsSync(model)) {
   const work = mkdtempSync(join(tmpdir(), "voice-"));
-  for (const id of ids) words[id] = wordTimes(id, work);
+  for (const id of untimed) words[id] = wordTimes(id, work);
   rmSync(work, { recursive: true });
+  console.log(`Transcribed ${untimed.length} clip(s): ${untimed.join(", ")}`);
 } else {
-  console.warn("No WHISPER_MODEL: writing the clip map without word timings.");
+  console.warn(`No WHISPER_MODEL: ${untimed.length} clip(s) left without word timings.`);
+}
+for (const id of Object.keys(words)) {
+  if (!ids.includes(id)) delete words[id];
 }
 
 const lines = scriptLines();

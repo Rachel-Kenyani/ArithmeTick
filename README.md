@@ -69,13 +69,12 @@ expo-audio · expo-haptics · AsyncStorage
 - [ ] Badges and Leaderboard tabs
 - [ ] Native Google Sign-In and Sign in with Apple
 
-## License
-
-The source code is released under the [MIT License](LICENSE).
-
 ### Voice recordings
 
-Brijo's voice recordings (`assets/voice/`) are **© Rachel Kenyani. All rights reserved.** They are not covered
-by the MIT License, are not included in this repository, and may not be copied, redistributed, modified or
-used in other projects without written permission. Forks and clones of this repository fall back to the
-phone's text-to-speech.
+Brijo's voice recordings (`assets/voice/`) are **© Rachel Kenyani. All rights reserved.** They are not included in this repository, and may not be copied, redistributed, modified or used in other projects without written permission. Forks and clones of this repository fall back to the phone's text-to-speech.
+
+## License
+
+Copyright (c) 2026 Rachel Kenyani. All rights reserved.
+
+This repository is shared for portfolio and viewing purposes only. Unauthorized copying, modification, distribution, or commercial use of this software, via any medium, is strictly prohibited.

@@ -4,11 +4,12 @@ import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
+import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import { colors, fonts } from "@/theme";
 
 import { useBreath } from "../ten-frame/hooks/useBreath";
 import { SPRING_UI } from "../ten-frame/utils/motion";
-import { MAX_COLS, MAX_ROWS, ROW_TONES, dimLimits, dimsAt, type Dims, type Puzzle } from "./logic";
+import { LIMITS, MAX_COLS, MAX_ROWS, ROW_TONES, dimsAt, type Dims, type Puzzle } from "./logic";
 
 const GUIDE = Array.from({ length: MAX_ROWS * MAX_COLS }, (_, i) => ({ r: Math.floor(i / MAX_COLS), c: i % MAX_COLS }));
 export const SKIP_W = 40;
@@ -16,6 +17,7 @@ export const SKIP_W = 40;
 interface ArrayBuilderProps {
   pz: Puzzle;
   dims: Dims;
+  item: CounterItem;
   pitch: number;
   palActive: boolean;
   locked: boolean;
@@ -25,19 +27,15 @@ interface ArrayBuilderProps {
   onGrab: () => void;
 }
 
-export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palActive, locked, hinting, reduced, onDims, onGrab }: Readonly<ArrayBuilderProps>) {
-  const limits = useSharedValue(dimLimits(pz, palActive));
+export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, palActive, locked, hinting, reduced, onDims, onGrab }: Readonly<ArrayBuilderProps>) {
   const last = useSharedValue({ rows: dims.rows, cols: dims.cols });
-  useEffect(() => {
-    limits.set(dimLimits(pz, palActive));
-  }, [limits, pz, palActive]);
   useEffect(() => {
     last.set({ rows: dims.rows, cols: dims.cols });
   }, [last, dims.rows, dims.cols]);
 
   const follow = (x: number, y: number) => {
     "worklet";
-    const next = dimsAt(x, y, pitch, limits.get());
+    const next = dimsAt(x, y, pitch, LIMITS);
     const prev = last.get();
     if (next.rows === prev.rows && next.cols === prev.cols) return;
     last.set(next);
@@ -77,7 +75,7 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palAct
       accessibilityLabel={`Array, ${dims.rows} rows of ${dims.cols}`}
       accessibilityActions={[{ name: "increment" }, { name: "decrement" }, { name: "addRow", label: "Add a row" }, { name: "removeRow", label: "Remove a row" }]}
       onAccessibilityAction={(e) => {
-        const l = dimLimits(pz, palActive);
+        const l = LIMITS;
         const step = { increment: [0, 1], decrement: [0, -1], addRow: [1, 0], removeRow: [-1, 0] }[e.nativeEvent.actionName] ?? [0, 0];
         const rows = Math.min(l.maxRows, Math.max(l.minRows, dims.rows + step[0]));
         const cols = Math.min(l.maxCols, Math.max(1, dims.cols + step[1]));
@@ -88,8 +86,10 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palAct
         <View style={{ width: MAX_COLS * pitch, height: MAX_ROWS * pitch }}>
           {GUIDE.map(({ r, c }) => {
             const on = r < dims.rows && c < dims.cols;
-            const band = palActive ? ROW_TONES[r] : undefined;
-            const blocked = palActive && (c >= pz.cols || r >= pz.rows);
+            const inTarget = c < pz.cols && r < pz.rows;
+            const band = palActive && inTarget ? ROW_TONES[r] : undefined;
+            const blocked = palActive && !inTarget;
+            const hole = palActive && inTarget;
             return (
               <View
                 key={`${r}:${c}`}
@@ -98,8 +98,11 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palAct
                   { left: c * pitch + inset, top: r * pitch + inset, width: tile, height: tile, borderRadius: tile * 0.22 },
                   on ? [styles.tile, band ? { backgroundColor: band, borderColor: "rgba(0,0,0,0.18)" } : null, locked ? styles.tileLocked : null] : null,
                   !on && blocked ? styles.blocked : null,
+                  !on && hole ? styles.hole : null,
                 ]}
-              />
+              >
+                {on ? <CounterFace item={item} palette={locked ? "gold" : "teal"} size={tile * 0.78} /> : null}
+              </View>
             );
           })}
           <Animated.View pointerEvents="none" style={[styles.handle, handleStyle]}>
@@ -122,9 +125,10 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, pitch, palAct
 const HANDLE = 44;
 
 const styles = StyleSheet.create({
-  cell: { position: "absolute", backgroundColor: "rgba(0,111,104,0.07)", borderWidth: 2, borderColor: "rgba(0,111,104,0.14)" },
+  cell: { position: "absolute", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,111,104,0.07)", borderWidth: 2, borderColor: "rgba(0,111,104,0.14)" },
   tile: { backgroundColor: colors.atTealLight, borderColor: colors.atTeal },
   tileLocked: { borderColor: "#E0A800", borderWidth: 3 },
+  hole: { borderStyle: "dashed", borderColor: "#B98A2E", backgroundColor: "rgba(185,138,46,0.12)" },
   blocked: { backgroundColor: "rgba(0,0,0,0.03)", borderColor: "rgba(0,0,0,0.05)" },
   handle: {
     position: "absolute",

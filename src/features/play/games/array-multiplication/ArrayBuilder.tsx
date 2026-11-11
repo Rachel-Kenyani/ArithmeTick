@@ -21,13 +21,15 @@ interface ArrayBuilderProps {
   pitch: number;
   palActive: boolean;
   locked: boolean;
+  /** While Brijo counts the array for the child: how many rows are counted so far, each with its running total. */
+  countedRows?: number;
   hinting: boolean;
   reduced: boolean;
   onDims: (rows: number, cols: number) => void;
   onGrab: () => void;
 }
 
-export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, palActive, locked, hinting, reduced, onDims, onGrab }: Readonly<ArrayBuilderProps>) {
+export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, palActive, locked, countedRows, hinting, reduced, onDims, onGrab }: Readonly<ArrayBuilderProps>) {
   const last = useSharedValue({ rows: dims.rows, cols: dims.cols });
   useEffect(() => {
     last.set({ rows: dims.rows, cols: dims.cols });
@@ -66,6 +68,7 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, 
   const inset = Math.max(3, Math.round(pitch * 0.08));
   const tile = pitch - inset * 2;
   const full = dims.cols === pz.cols;
+  const totals = countedRows ?? (palActive && full ? dims.rows : 0);
 
   return (
     <View
@@ -101,7 +104,7 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, 
                   !on && hole ? styles.hole : null,
                 ]}
               >
-                {on ? <CounterFace item={item} palette={locked ? "gold" : "teal"} size={tile * 0.78} /> : null}
+                {on ? <CounterFace item={item} palette={(countedRows === undefined ? locked : r < countedRows) ? "gold" : "teal"} size={tile * 0.78} /> : null}
               </View>
             );
           })}
@@ -111,8 +114,8 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, 
         </View>
       </GestureDetector>
 
-      {palActive && full
-        ? Array.from({ length: dims.rows }, (_, r) => (
+      {totals > 0
+        ? Array.from({ length: totals }, (_, r) => (
             <View key={r} style={[styles.skip, { left: MAX_COLS * pitch + 4, top: r * pitch + (pitch - 30) / 2, borderColor: ROW_TONES[r] }]}>
               <Text style={styles.skipText}>{(r + 1) * dims.cols}</Text>
             </View>

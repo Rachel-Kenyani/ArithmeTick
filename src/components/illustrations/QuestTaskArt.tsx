@@ -263,20 +263,47 @@ function Foot({ x, y, turn }: Readonly<{ x: number; y: number; turn: number }>) 
   );
 }
 
+/** A numbered step badge beside a footprint. */
+function StepBadge({ x, y, n }: Readonly<{ x: number; y: number; n: number }>) {
+  return (
+    <G>
+      <Circle cx={x} cy={y} r={3.4} fill={colors.white} {...ink} strokeWidth={1} />
+      <SvgText x={x} y={y + 1.6} fontSize={4.6} fontWeight="bold" fill={colors.atInk} textAnchor="middle">
+        {n}
+      </SvgText>
+    </G>
+  );
+}
+
+/**
+ * The walk seen from above, matching the example directions: from the door, forward 3 steps, turn left,
+ * forward 2 steps to the treasure. Each step is a numbered footprint.
+ */
 export function TreasureWalkArt({ size = 64, title }: Readonly<ArtProps>) {
   return (
     <ArtFrame size={size} title={title}>
-      <Path d="M10 56V30h34" fill="none" stroke={colors.atTealLight} strokeWidth={2} strokeDasharray="3 3" />
-      <Foot x={8} y={52} turn={0} />
-      <Foot x={12} y={44} turn={0} />
-      <Foot x={8} y={36} turn={0} />
-      <Foot x={20} y={32} turn={90} />
-      <Foot x={30} y={28} turn={90} />
-      <Path d="M40 24l6 6M46 24l-6 6" stroke="#c0392b" strokeWidth={3} strokeLinecap="round" />
-      <Rect x="46" y="38" width="14" height="10" rx="2" fill="#c98b4e" {...ink} />
-      <Path d="M46 42h14" {...ink} strokeWidth={1.6} />
-      <Circle cx="53" cy="43" r="1.6" fill={colors.atYellow} {...ink} strokeWidth={1} />
-      <Path d="M20 10h14M28 6l6 4-6 4" {...ink} strokeWidth={2} />
+      <Rect x="42" y="55" width="14" height="6" rx="1.5" fill="#a8743f" {...ink} strokeWidth={1.4} />
+      <Circle cx="53" cy="58" r="0.9" fill={colors.atYellow} />
+      <Path d="M49 53V24Q49 18 43 18H17" fill="none" stroke={colors.atTealLight} strokeWidth={1.6} strokeDasharray="2.5 2.5" />
+      <Foot x={47.5} y={49} turn={0} />
+      <Foot x={50.5} y={40} turn={0} />
+      <Foot x={47.5} y={31} turn={0} />
+      <StepBadge x={57} y={48} n={1} />
+      <StepBadge x={57} y={39} n={2} />
+      <StepBadge x={57} y={30} n={3} />
+      <Path d="M53 22Q53 12 43 12" fill="none" stroke={colors.atPlum} strokeWidth={2.2} strokeLinecap="round" />
+      <Path d="M46 9l-3.4 3 3.4 3" fill="none" stroke={colors.atPlum} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+      <SvgText x={57} y={12} fontSize={5} fontWeight="bold" fill={colors.atPlum} textAnchor="middle">
+        left
+      </SvgText>
+      <Foot x={35} y={19.5} turn={-90} />
+      <Foot x={25} y={16.5} turn={-90} />
+      <StepBadge x={35} y={27} n={1} />
+      <StepBadge x={25} y={24} n={2} />
+      <Rect x="3" y="13" width="12" height="9" rx="1.5" fill="#c98b4e" {...ink} strokeWidth={1.4} />
+      <Path d="M3 16.5h12" {...ink} strokeWidth={1.2} />
+      <Rect x="7.8" y="15.4" width="2.4" height="3" rx="0.6" fill={colors.atYellow} {...ink} strokeWidth={0.8} />
+      <Path d="M5 10l1.2 1.6M9 8.5v2M13 10l-1.2 1.6" stroke={colors.atYellow} strokeWidth={1.4} strokeLinecap="round" />
     </ArtFrame>
   );
 }

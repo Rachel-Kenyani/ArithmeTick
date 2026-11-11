@@ -97,12 +97,13 @@ const QUEST_TASKS: Record<
   },
   treasureWalk: {
     Art: TreasureWalkArt,
-    caption: "Follow the directions",
+    caption: "Give directions, step by step",
     steps: [
-      "Hide a small treasure with a grown-up watching.",
-      "Stand at the door. Give directions: forward 3 steps, turn left, forward 2 steps.",
-      "The grown-up follows your directions to find it.",
-      "Now swap! The grown-up hides it and you follow.",
+      "Hide a small treasure in the room while a grown-up watches.",
+      "Go back to the door with the grown-up.",
+      "Tell them each move, one at a time. For example: walk forward 3 steps, turn left, walk forward 2 steps.",
+      "The grown-up does only what you say. Do they find the treasure?",
+      "Now swap! The grown-up hides it, and you follow their directions.",
     ],
   },
   waterDay: {

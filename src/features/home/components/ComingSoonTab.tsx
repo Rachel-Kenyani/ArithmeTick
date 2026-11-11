@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 import BrijoHeadArt from "@/components/mascot/BrijoHeadArt";
 import BottomNav, { navigateToTab, type BottomTab } from "@/features/home/components/BottomNav";
-import StatusBarScrim from "@/features/home/components/StatusBarScrim";
+import MapTopBar from "@/features/home/components/MapTopBar";
 import Panel from "@/components/ui/Panel";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { useGuard } from "@/hooks/useGuard";
@@ -20,14 +18,12 @@ export interface ComingSoonTabProps {
 
 export default function ComingSoonTab({ tab, title, icon, message }: Readonly<ComingSoonTabProps>) {
   const ready = useGuard("profile");
-  const insets = useSafeAreaInsets();
   if (!ready) return <SplashBackdrop source={HOME_BACKGROUND} />;
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
-      <StatusBar style="dark" />
-      <StatusBarScrim />
-      <View style={[styles.body, { paddingTop: insets.top + 24 }]}>
+      <MapTopBar />
+      <View style={[styles.body, { paddingTop: 20 }]}>
         <Panel style={styles.card}>
           <View style={styles.iconBadge} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             {icon}

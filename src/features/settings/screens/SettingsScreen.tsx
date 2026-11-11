@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, Switch, Text, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
 
-import AppTopBar from "@/components/top-bar/AppTopBar";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
@@ -13,17 +11,17 @@ import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
 import { SmileIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
+import MapTopBar from "@/features/home/components/MapTopBar";
 import AvatarPicker from "@/features/settings/components/AvatarPicker";
 import { useGuard } from "@/hooks/useGuard";
 import { useSound } from "@/hooks/useSoundSettings";
-import { actions, useActiveProfile, useScreenTimeRemaining } from "@/state/store";
+import { actions, useActiveProfile } from "@/state/store";
 import type { AvatarKind } from "@/types/models";
 import { colors, fonts } from "@/theme";
 
 export default function SettingsScreen() {
   const ready = useGuard("profile");
   const profile = useActiveProfile();
-  const secondsLeft = useScreenTimeRemaining();
   const [name, setName] = useState(profile?.name ?? "");
   const [avatar, setAvatar] = useState<AvatarKind>(profile?.avatar ?? "owl");
   const validName = name.trim().length > 0;
@@ -41,12 +39,7 @@ export default function SettingsScreen() {
       align="top"
       grass={false}
       backgroundImage={SPLASH_BACKGROUND}
-      header={
-        <>
-          <StatusBar style="light" />
-          <AppTopBar backLabel="Back to map" onBack={() => navigateToTab(ROUTES.home)} stars={profile.stars} secondsLeft={secondsLeft} />
-        </>
-      }
+      header={<MapTopBar />}
       footer={<BottomNav active="settings" onNavigate={navigateToTab} />}
     >
       <Panel style={styles.card}>

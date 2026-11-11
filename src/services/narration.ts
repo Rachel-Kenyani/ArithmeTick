@@ -114,7 +114,7 @@ function playParts(text: string, parts: Part[], ticket: number) {
   const players = parts.map((p) =>
     VOICE_CLIPS[p.id] === undefined
       ? null
-      : createAudioPlayer(VOICE_CLIPS[p.id] as number),
+      : createAudioPlayer(VOICE_CLIPS[p.id] as number, { keepAudioSessionActive: true }),
   );
   /** Pauses before releasing: on iOS a released player can keep sounding, so a repeat would talk over it. */
   const release = () =>

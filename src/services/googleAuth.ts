@@ -4,10 +4,9 @@ const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
 
 const SAMPLE_IDENTITY = { email: "parent@gmail.com", name: null };
-const NEW_ACCOUNT_WINDOW_MS = 30_000;
 
 export type GoogleResult =
-  | { ok: true; email: string; name: string | null; isNew: boolean; sample: boolean }
+  | { ok: true; email: string; name: string | null; sample: boolean }
   | { ok: false; cancelled: boolean; message: string };
 
 const isGoogleConfigured = isAuthConfigured && Boolean(WEB_CLIENT_ID);
@@ -28,13 +27,8 @@ async function loadGoogle(): Promise<GoogleModule | null> {
   }
 }
 
-function isNewAccount(createdAt?: string, lastSignInAt?: string): boolean {
-  if (!createdAt || !lastSignInAt) return false;
-  return Math.abs(Date.parse(lastSignInAt) - Date.parse(createdAt)) < NEW_ACCOUNT_WINDOW_MS;
-}
-
 export async function continueWithGoogle(): Promise<GoogleResult> {
-  if (!isGoogleConfigured) return { ok: true, ...SAMPLE_IDENTITY, isNew: false, sample: true };
+  if (!isGoogleConfigured) return { ok: true, ...SAMPLE_IDENTITY, sample: true };
 
   const google = await loadGoogle();
   if (!google) return failed("Google sign-in works in the full app build, not in Expo Go.");
@@ -54,7 +48,6 @@ export async function continueWithGoogle(): Promise<GoogleResult> {
       ok: true,
       email: user.email ?? response.data.user.email,
       name: response.data.user.name,
-      isNew: isNewAccount(user.created_at, user.last_sign_in_at),
       sample: false,
     };
   } catch (error) {

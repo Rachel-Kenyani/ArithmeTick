@@ -7,15 +7,22 @@ import { narration } from "@/services/narration";
 import type { ClockProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
-import { Prompt, TARGET } from "../place-value/parts";
+import { CheckIcon } from "@/components/ui/icons";
+
+import { Prompt, TARGET, partStyles } from "../place-value/parts";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 
 const DRAFT_VERSION = 1;
-const SOLVED_HANDOFF_MS = 1800;
+/** Misses on one hand before its number is lit up. Each hand gets its own tries. */
 const HINT_AFTER = 2;
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const SPRING = { damping: 14, stiffness: 140, reduceMotion: ReduceMotion.System };
 
+/** Once the clock is right, Brijo says why: what each hand is showing. */
+export function clockExplanation(hour: number, half: boolean): string {
+  if (half) return `The long hand is on 6, so it's half past. The short hand has just passed ${hour}. It's half past ${hour}!`;
+  return `The long hand is on 12, so it's o'clock. The short hand is on ${hour}. It's ${hour} o'clock!`;
+}
 
 function Hand({ length, width, color, angle }: Readonly<{ length: number; width: number; color: string; angle: number }>) {
   const turn = useSharedValue(angle);
@@ -36,6 +43,8 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
   const [shown, setShown] = useState(12);
   const [solved, setSolved] = useState(false);
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
+  /** Misses on the hand being set now; starts again at 0 for the short hand. */
+  const [stageMisses, setStageMisses] = useState(0);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [angle, setAngle] = useState(0);
   const [minuteAngle, setMinuteAngle] = useState(0);
@@ -64,12 +73,14 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     onAttempt?.({ target: 6, answer: n, correct });
     if (!correct) {
       setMisses((m) => m + 1);
+      setStageMisses((m) => m + 1);
       sfx.nudge();
       narration.prompt("For half past, the long hand points to 6.", "clock-half");
       schedule(onStruggle, 1600);
       return;
     }
     sfx.groupPulse();
+    setStageMisses(0);
     setStage("hour");
   };
 
@@ -85,6 +96,7 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     onAttempt?.({ target: hour, answer: n, correct });
     if (!correct) {
       setMisses((m) => m + 1);
+      setStageMisses((m) => m + 1);
       sfx.nudge();
       if (half) narration.prompt(`That's half past ${n}.`, `clock-half-${n}`);
       else narration.prompt(`That's ${n} o'clock.`, `clock-${n}`);
@@ -94,7 +106,12 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     doneRef.current = true;
     setSolved(true);
     schedule(() => sfx.solved(), 500);
-    schedule(onSolved, SOLVED_HANDOFF_MS);
+  };
+
+  /** The child moves on when they are ready, after hearing why the clock is right. */
+  const finish = () => {
+    narration.stop();
+    onSolved();
   };
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -104,14 +121,15 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
   const face = size ? Math.floor(Math.max(260, Math.min(340, size.w - 32, size.h - 200))) : 280;
   const r = face / 2;
   const ring = r - TARGET / 2 - 10;
-  const hint = misses >= HINT_AFTER && !solved;
+  const hint = stageMisses >= HINT_AFTER && !solved;
   const id = `g${grade}-l${String(level ?? 0).padStart(2, "0")}`;
   const time = half ? `half past ${hour}` : `${hour} o'clock`;
   let prompt = `Make it ${time}. Tap a number to move the short hand.`;
-  if (solved) prompt = `${time}!`;
+  if (solved) prompt = clockExplanation(hour, half);
   else if (stage === "minute") prompt = `Make it ${time}. First, tap a number to move the long hand.`;
   else if (half) prompt = "Now tap the hour to move the short hand.";
-  const clip = stage === "minute" ? `${id}-minute` : `${id}-set`;
+  let clip = stage === "minute" ? `${id}-minute` : `${id}-set`;
+  if (solved) clip = `${id}-why`;
 
   return (
     <View style={styles.root} onLayout={onLayout} testID={`g${grade}-clock-l${level ?? 0}-${hour}`}>
@@ -120,7 +138,7 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
           <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`Set the clock to ${half ? `half past ${hour}` : `${hour} o'clock`}`}>
             <Text style={styles.stripText}>{half ? `half past ${hour}` : `${hour} o'clock`}</Text>
           </View>
-          <Prompt text={prompt} clipId={clip} waiting={waiting} silent={solved} />
+          <Prompt text={prompt} clipId={clip} waiting={waiting} />
 
           <View
             style={[styles.face, { width: face, height: face, borderRadius: r }, solved ? styles.faceWin : null]}
@@ -145,22 +163,29 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
               );
             })}
             <View style={[styles.pivot, { left: r, top: r }]}>
-              <Hand length={ring - 12} width={8} color={colors.atTeal} angle={minuteAngle} />
-              <Hand length={ring * 0.55} width={12} color={colors.atPurple} angle={angle} />
+              <Hand length={ring - 12} width={solved ? 10 : 8} color={colors.atTeal} angle={minuteAngle} />
+              <Hand length={ring * 0.55} width={solved ? 14 : 12} color={colors.atPurple} angle={angle} />
               <View style={styles.cap} />
             </View>
           </View>
 
-          <View style={styles.key}>
-            <View style={styles.keyItem}>
-              <View style={[styles.swatch, { backgroundColor: colors.atPurple }]} />
-              <Text style={styles.keyText}>short hand: the hour</Text>
+          {solved ? (
+            <Pressable onPress={finish} accessibilityRole="button" accessibilityLabel="All done" style={[partStyles.choice, styles.next]}>
+              <CheckIcon size={26} color={colors.white} strokeWidth={3} />
+              <Text style={styles.nextText}>All done!</Text>
+            </Pressable>
+          ) : (
+            <View style={styles.key}>
+              <View style={styles.keyItem}>
+                <View style={[styles.swatch, { backgroundColor: colors.atPurple }]} />
+                <Text style={styles.keyText}>short hand: the hour</Text>
+              </View>
+              <View style={styles.keyItem}>
+                <View style={[styles.swatch, { backgroundColor: colors.atTeal }]} />
+                <Text style={styles.keyText}>{half ? "long hand on 6: half past" : "long hand on 12: o'clock"}</Text>
+              </View>
             </View>
-            <View style={styles.keyItem}>
-              <View style={[styles.swatch, { backgroundColor: colors.atTeal }]} />
-              <Text style={styles.keyText}>{half ? "long hand on 6: half past" : "long hand on 12: o'clock"}</Text>
-            </View>
-          </View>
+          )}
         </>
       ) : null}
     </View>
@@ -191,5 +216,7 @@ const styles = StyleSheet.create({
   key: { gap: 4, alignItems: "flex-start" },
   keyItem: { flexDirection: "row", alignItems: "center", gap: 8 },
   swatch: { width: 22, height: 8, borderRadius: 4 },
+  next: { flexDirection: "row", gap: 6, paddingHorizontal: 22, backgroundColor: colors.atTeal, borderColor: colors.atTeal },
+  nextText: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.white },
   keyText: { fontFamily: fonts.bodySemiBold, fontSize: 16, color: colors.atInk },
 });

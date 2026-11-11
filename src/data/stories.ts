@@ -267,9 +267,9 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
     },
     {
       ask: "Brijo's friends are coming at half past 4. Can you set the clock?",
-      treasure: "flower",
-      one: "a flower",
-      many: "flowers",
+      treasure: "clock",
+      one: "a clock",
+      many: "clocks",
       mission: () => `Set the clock to half past 4`,
       done: () => `Half past 4, right on time!`,
     },

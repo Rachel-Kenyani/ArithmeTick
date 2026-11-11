@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet } from "react-native";
 
-import { SpeakerIcon, SpeakerOffIcon } from "@/components/ui/icons";
+import { MusicNoteIcon, MusicNoteOffIcon } from "@/components/ui/icons";
 import { useSound } from "@/hooks/useSoundSettings";
 import { setMuted, sfx } from "@/services/audio";
 import { actions, useActiveProfile } from "@/state/store";
@@ -31,7 +31,7 @@ export default function SoundToggle() {
       hitSlop={6}
       style={({ pressed }) => [styles.button, effects ? null : styles.off, pressed ? styles.pressed : null]}
     >
-      {effects ? <SpeakerIcon size={24} strokeWidth={2.3} color={colors.atTeal} /> : <SpeakerOffIcon size={24} strokeWidth={2.3} color="rgba(0,79,74,0.7)" />}
+      {effects ? <MusicNoteIcon size={24} strokeWidth={2.3} color={colors.atTeal} /> : <MusicNoteOffIcon size={24} strokeWidth={2.3} color="rgba(0,79,74,0.7)" />}
     </Pressable>
   );
 }

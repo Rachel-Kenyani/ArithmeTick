@@ -22,7 +22,7 @@ import {
 import Button from "@/components/ui/Button";
 import GrownUpNote, { GROWN_UP } from "@/components/ui/GrownUpNote";
 import SpokenText from "@/components/ui/SpokenText";
-import { SpeakerIcon } from "@/components/ui/icons";
+import { SpeechIcon } from "@/components/ui/icons";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import { CapFace } from "@/features/play/games/ten-frame/components/CapFace";
 import { sfx } from "@/services/audio";
@@ -319,7 +319,7 @@ export default function PhysicalQuestOverlay({
       <Button
         variant="purple"
         size="md"
-        icon={<SpeakerIcon size={22} color={colors.white} />}
+        icon={<SpeechIcon size={22} color={colors.white} />}
         onPress={read}
         accessibilityLabel="Repeat. Hear Brijo again"
       >

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeIn, FadeOut, ReduceMotion, ZoomIn } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, ReduceMotion, SlideInLeft, SlideInRight, ZoomIn } from "react-native-reanimated";
 import Svg, { Circle, Path } from "react-native-svg";
 
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
@@ -19,6 +19,12 @@ const MEDAL = 80;
 const RING = 92;
 const FADE = FadeIn.duration(180).reduceMotion(ReduceMotion.System);
 const FADE_OUT = FadeOut.duration(160).reduceMotion(ReduceMotion.System);
+const SLIDE_MS = 220;
+
+type Tab = "grade" | "everyday";
+/** The tab the child last picked, kept while the app stays open. */
+let rememberedTab: Tab | null = null;
+
 const POP = ZoomIn.springify().stiffness(260).damping(18).reduceMotion(ReduceMotion.System);
 
 /** Each badge's colour, for the rays behind it in the pop-up. */
@@ -34,6 +40,8 @@ export default function BadgesScreen() {
   const ready = useGuard("profile");
   const profile = useActiveProfile();
   const [open, setOpen] = useState<BadgeDef | null>(null);
+  const [picked, setPicked] = useState<Tab | null>(rememberedTab);
+  const [slideFrom, setSlideFrom] = useState<"left" | "right" | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -53,14 +61,59 @@ export default function BadgesScreen() {
   const all = [...gradeBadges, ...everyday];
   const won = all.filter(isEarned).length;
   const next = gradeBadges.find((b) => !isEarned(b)) ?? everyday.find((b) => !isEarned(b)) ?? null;
+  /** With no tab picked yet, open on the group the next badge to win belongs to. */
+  const tab: Tab = picked ?? (next && next.grade === undefined ? "everyday" : "grade");
+  const choose = (t: Tab) => {
+    if (t === tab) return;
+    rememberedTab = t;
+    setSlideFrom(t === "everyday" ? "right" : "left");
+    setPicked(t);
+  };
+  const openNext = (b: BadgeDef) => {
+    choose(b.grade === undefined ? "everyday" : "grade");
+    setOpen(b);
+  };
+  const tabs = [
+    { id: "grade" as const, label: `Grade ${profile.grade}`, badges: gradeBadges },
+    { id: "everyday" as const, label: "Everyday", badges: everyday },
+  ];
+  const shown = tabs.find((t) => t.id === tab) ?? tabs[0];
+  const Slide = slideFrom === "right" ? SlideInRight : SlideInLeft;
+  const entering = slideFrom ? Slide.duration(SLIDE_MS).reduceMotion(ReduceMotion.System) : undefined;
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
       <MapTopBar onBadges />
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
-        <Hero name={profile.name} won={won} total={all.length} next={next} onNext={setOpen} />
-        <Section title={`Grade ${profile.grade} badges`} badges={gradeBadges} isEarned={isEarned} onOpen={setOpen} />
-        <Section title="Everyday badges" note="Win these in any grade" badges={everyday} isEarned={isEarned} onOpen={setOpen} />
+        <Hero name={profile.name} won={won} total={all.length} next={next} onNext={openNext} />
+        <View style={styles.segments} accessibilityRole="tablist">
+          {tabs.map((t) => {
+            const on = t.id === tab;
+            return (
+              <Pressable
+                key={t.id}
+                onPress={() => choose(t.id)}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={`${t.label} badges, ${t.badges.filter(isEarned).length} of ${t.badges.length} won`}
+                style={[styles.segment, on ? styles.segmentOn : null]}
+              >
+                <Text style={[styles.segmentText, on ? styles.segmentTextOn : null]} numberOfLines={1}>
+                  {`${t.label} · ${t.badges.filter(isEarned).length}/${t.badges.length}`}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Animated.View key={tab} entering={entering}>
+          <Section
+            title={tab === "grade" ? `Grade ${profile.grade} badges` : "Everyday badges"}
+            note={tab === "grade" ? "One for each stop on the map" : "Win these in any grade"}
+            badges={shown.badges}
+            isEarned={isEarned}
+            onOpen={setOpen}
+          />
+        </Animated.View>
       </ScrollView>
       <BottomNav active="badges" onNavigate={navigateToTab} />
       {open ? <BadgePopup badge={open} won={isEarned(open)} onClose={() => setOpen(null)} /> : null}
@@ -246,6 +299,11 @@ const styles = StyleSheet.create({
   nextName: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.white },
   nextHow: { fontFamily: fonts.bodySemiBold, fontSize: 14, color: "rgba(255,255,255,0.85)" },
 
+  segments: { flexDirection: "row", padding: 4, gap: 4, borderRadius: 999, backgroundColor: "rgba(255,255,255,0.9)", borderWidth: 3, borderColor: colors.atMintDeep },
+  segment: { flex: 1, minHeight: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", paddingHorizontal: 10 },
+  segmentOn: { backgroundColor: colors.atTeal },
+  segmentText: { fontFamily: fonts.headingBold, fontSize: 16, color: colors.atTeal },
+  segmentTextOn: { color: colors.white },
   card: { width: "100%", alignItems: "stretch", gap: 14, paddingVertical: 18 },
   sectionHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
   sectionTitles: { flexShrink: 1, gap: 2 },

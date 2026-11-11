@@ -7,8 +7,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 import SplashBackdrop, {
   HOME_BACKGROUND,
@@ -17,7 +15,7 @@ import Button from "@/components/ui/Button";
 import Panel from "@/components/ui/Panel";
 import { BADGES, type BadgeDef } from "@/data/badges";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
-import StatusBarScrim from "@/features/home/components/StatusBarScrim";
+import MapTopBar from "@/features/home/components/MapTopBar";
 import BadgeMedallion from "@/features/play/components/BadgeMedallion";
 import { useGuard } from "@/hooks/useGuard";
 import { useActiveProfile } from "@/state/store";
@@ -27,7 +25,6 @@ const MEDAL = 84;
 
 export default function BadgesScreen() {
   const ready = useGuard("profile");
-  const insets = useSafeAreaInsets();
   const profile = useActiveProfile();
   const [open, setOpen] = useState<BadgeDef | null>(null);
   if (!ready || !profile) return <SplashBackdrop source={HOME_BACKGROUND} />;
@@ -41,10 +38,9 @@ export default function BadgesScreen() {
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
-      <StatusBar style="dark" />
-      <StatusBarScrim />
+      <MapTopBar onBadges />
       <ScrollView
-        contentContainerStyle={[styles.body, { paddingTop: insets.top + 20 }]}
+        contentContainerStyle={[styles.body, { paddingTop: 16 }]}
         showsVerticalScrollIndicator={false}
       >
         <Panel style={styles.card}>

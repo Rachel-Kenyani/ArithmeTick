@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Href } from "expo-router";
 
+import StatusBarShield from "@/components/top-bar/StatusBarShield";
 import BackButton from "@/components/ui/BackButton";
 import JungleBackdrop from "@/components/backdrops/JungleBackdrop";
 import { ROUTES } from "@/constants/routes";
@@ -98,12 +99,14 @@ export default function ScreenShell({
       {header}
       {content}
       {footer}
+      {header ? null : <StatusBarShield />}
     </View>
   ) : (
     <JungleBackdrop grass={grass} canopy={canopy}>
       {header}
       {content}
       {footer}
+      {header ? null : <StatusBarShield />}
     </JungleBackdrop>
   );
 }

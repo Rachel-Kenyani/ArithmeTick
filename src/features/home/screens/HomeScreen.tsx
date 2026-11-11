@@ -8,7 +8,6 @@ import AppTopBar from "@/components/top-bar/AppTopBar";
 import InfoBanner from "@/components/top-bar/InfoBanner";
 import LevelMap from "@/features/home/components/level-map/LevelMap";
 import BottomNav from "@/features/home/components/BottomNav";
-import StatusBarScrim from "@/features/home/components/StatusBarScrim";
 import { useMapAutoScroll } from "@/features/home/hooks/useMapAutoScroll";
 import { useMapUnlock } from "@/features/home/hooks/useMapUnlock";
 import { useNavigateOnce } from "@/features/home/hooks/useNavigateOnce";
@@ -76,7 +75,6 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
       {focused ? <StatusBar style="light" /> : null}
-      <StatusBarScrim />
       <View style={styles.shell}>
         <View style={styles.header}>
           <AppTopBar

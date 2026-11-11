@@ -6,6 +6,8 @@ import SoundToggle from "@/components/top-bar/SoundToggle";
 import StarsPill from "@/components/top-bar/StarsPill";
 import TimePill from "@/components/top-bar/TimePill";
 
+import { TOP_BAR_SHIELD } from "./constants";
+
 export interface AppTopBarProps {
   backLabel: string;
   onBack: () => void;
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 512,
     alignSelf: "center",
-    backgroundColor: "rgba(0,79,74,0.65)",
+    backgroundColor: TOP_BAR_SHIELD,
   },
   controls: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 6 },
   actions: { flexShrink: 1, flexDirection: "row", alignItems: "center" },

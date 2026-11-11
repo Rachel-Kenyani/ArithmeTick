@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 import BrijoHeadArt from "@/components/mascot/BrijoHeadArt";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
@@ -11,7 +9,7 @@ import { StarIcon } from "@/components/ui/icons";
 import { levelCount } from "@/data/levels";
 import { leaderboardFor, type LeaderRow, type LeaderScope } from "@/data/leaderboard";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
-import StatusBarScrim from "@/features/home/components/StatusBarScrim";
+import MapTopBar from "@/features/home/components/MapTopBar";
 import { useGuard } from "@/hooks/useGuard";
 import { useActiveProfile } from "@/state/store";
 import { colors, fonts } from "@/theme";
@@ -41,7 +39,6 @@ function Row({ row }: Readonly<{ row: LeaderRow }>) {
 
 export default function LeaderboardScreen() {
   const ready = useGuard("profile");
-  const insets = useSafeAreaInsets();
   const profile = useActiveProfile();
   const [scope, setScope] = useState<LeaderScope>("class");
   const board = useMemo(() => (profile ? leaderboardFor(scope, profile) : null), [scope, profile]);
@@ -55,9 +52,8 @@ export default function LeaderboardScreen() {
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
-      <StatusBar style="dark" />
-      <StatusBarScrim />
-      <ScrollView contentContainerStyle={[styles.body, { paddingTop: insets.top + 20 }]} showsVerticalScrollIndicator={false}>
+      <MapTopBar />
+      <ScrollView contentContainerStyle={[styles.body, { paddingTop: 16 }]} showsVerticalScrollIndicator={false}>
         <Panel style={styles.card}>
           <Text accessibilityRole="header" style={styles.title}>
             Scores

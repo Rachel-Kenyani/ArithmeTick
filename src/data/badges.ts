@@ -16,6 +16,17 @@ export interface BadgeDef {
 
 const reached = (grade: Grade, level: number) => (p: ChildProfile) => p.progress[grade] >= level;
 
+/** Three different levels in a grade solved with no wrong answers and no help, first time or on a replay. */
+const firstTry = (grade: Grade) => (p: ChildProfile) =>
+  Math.max(p.cleanSolves?.[grade] ?? 0, (p.cleanLevels ?? []).filter((k) => k.startsWith(`g${grade}-`)).length) >= 3;
+
+/**
+ * Star badges must be reachable in every grade. Each level gives 3 stars once, and the shortest grade (Grade 1)
+ * has 9 levels, so no grade can give more than 27.
+ */
+export const STAR_COLLECTOR_STARS = 15;
+export const SUPER_STAR_STARS = 24;
+
 export const BADGES: readonly BadgeDef[] = [
   { id: "ten-frame-explorer", name: "Ten-Frame Explorer", how: "Grade 1 · Level 1", about: "You filled your first ten-frame with Brijo.", tone: "teal", grade: 1, test: reached(1, 1) },
   { id: "feather-finder", name: "Feather Finder", how: "Grade 1 · Level 2", about: "You found all seven of Brijo's feathers.", tone: "teal", grade: 1, test: reached(1, 2) },
@@ -24,7 +35,7 @@ export const BADGES: readonly BadgeDef[] = [
   { id: "groups-guru", name: "Groups Guru", how: "Grade 1 · Level 6", about: "You made real groups with your own hands, twice.", tone: "leaf", grade: 1, test: reached(1, 6) },
   { id: "flower-planter", name: "Flower Planter", how: "Grade 1 · Level 7", about: "You helped Brijo plant nine flowers.", tone: "teal", grade: 1, test: reached(1, 7) },
   { id: "soup-helper", name: "Soup Helper", how: "Grade 1 · Level 8", about: "You took four tomatoes away for Brijo's soup.", tone: "teal", grade: 1, test: reached(1, 8) },
-  { id: "first-try-1", name: "First Try", how: "Solve 3 Grade 1 levels with no wrong answers", about: "You counted carefully and got it right the first time.", tone: "plum", grade: 1, test: (p) => (p.cleanSolves?.[1] ?? 0) >= 3 },
+  { id: "first-try-1", name: "First Try", how: "Solve 3 Grade 1 levels with no wrong answers", about: "You counted carefully and got it right the first time.", tone: "plum", grade: 1, test: firstTry(1) },
   { id: "grade-1-champion", name: "Grade 1 Champion", how: "Finish Grade 1", about: "You finished every Grade 1 stop on Brijo's map.", tone: "teal", grade: 1, test: reached(1, levelCount(1)) },
 
   { id: "place-value-pro", name: "Place Value Pro", how: "Grade 2 · Level 1", about: "You packed tomatoes into full crates of ten.", tone: "purple", grade: 2, test: reached(2, 1) },
@@ -37,20 +48,31 @@ export const BADGES: readonly BadgeDef[] = [
   { id: "market-shopper", name: "Market Shopper", how: "Grade 2 · Level 9", about: "You paid thirty shillings in ten-shilling coins.", tone: "leaf", grade: 2, test: reached(2, 9) },
   { id: "time-keeper", name: "Time Keeper", how: "Grade 2 · Level 11", about: "You set the clock to three o'clock.", tone: "purple", grade: 2, test: reached(2, 11) },
   { id: "shape-builder", name: "Shape Builder", how: "Grade 2 · Level 12", about: "You built Brijo a house out of shapes.", tone: "leaf", grade: 2, test: reached(2, 12) },
-  { id: "first-try-2", name: "First Try", how: "Solve 3 Grade 2 levels with no wrong answers", about: "You worked carefully and got it right the first time.", tone: "plum", grade: 2, test: (p) => (p.cleanSolves?.[2] ?? 0) >= 3 },
+  { id: "first-try-2", name: "First Try", how: "Solve 3 Grade 2 levels with no wrong answers", about: "You worked carefully and got it right the first time.", tone: "plum", grade: 2, test: firstTry(2) },
   { id: "grade-2-champion", name: "Grade 2 Champion", how: "Finish Grade 2", about: "You finished every Grade 2 stop on Brijo's map.", tone: "purple", grade: 2, test: reached(2, levelCount(2)) },
 
-  { id: "array-architect", name: "Array Architect", how: "Grade 3 · Level 7", about: "You built your first array of rows and columns.", tone: "yellow", grade: 3, test: reached(3, 7) },
-  { id: "regroup-ranger", name: "Regroup Ranger", how: "Grade 3 · Level 5", about: "You swapped tens and ones to solve a tricky sum.", tone: "yellow", grade: 3, test: reached(3, 5) },
+  { id: "hundreds-hero", name: "Hundreds Hero", how: "Grade 3 · Level 1", about: "You built a big number from hundreds, tens and ones.", tone: "yellow", grade: 3, test: reached(3, 1) },
+  { id: "tens-trekker", name: "Tens Trekker", how: "Grade 3 · Level 2", about: "You counted on in tens, all the way past 200.", tone: "yellow", grade: 3, test: reached(3, 2) },
+  { id: "race-referee", name: "Race Referee", how: "Grade 3 · Level 3", about: "You lined up a race and named who came 1st to 5th.", tone: "leaf", grade: 3, test: reached(3, 3) },
+  { id: "column-climber", name: "Column Climber", how: "Grade 3 · Level 4", about: "You added big numbers in columns and carried a ten.", tone: "yellow", grade: 3, test: reached(3, 4) },
+  { id: "regroup-ranger", name: "Regroup Ranger", how: "Grade 3 · Level 5", about: "You borrowed a ten to solve a tricky take-away.", tone: "yellow", grade: 3, test: reached(3, 5) },
+  { id: "water-measurer", name: "Water Measurer", how: "Grade 3 · Level 6", about: "You measured water in litres, one bottle at a time.", tone: "leaf", grade: 3, test: reached(3, 6) },
+  { id: "array-architect", name: "Array Architect", how: "Grade 3 · Level 7", about: "You planted seeds in rows and counted them up.", tone: "yellow", grade: 3, test: reached(3, 7) },
+  { id: "mango-sharer", name: "Mango Sharer", how: "Grade 3 · Level 8", about: "You shared 12 mangoes fairly between 3 monkeys.", tone: "yellow", grade: 3, test: reached(3, 8) },
+  { id: "change-maker", name: "Change Maker", how: "Grade 3 · Level 9", about: "You worked out the change at the market.", tone: "leaf", grade: 3, test: reached(3, 9) },
+  { id: "fraction-finder", name: "Fraction Finder", how: "Grade 3 · Level 10", about: "You cut a chapati into 4 equal quarters.", tone: "yellow", grade: 3, test: reached(3, 10) },
+  { id: "half-past-hero", name: "Half-Past Hero", how: "Grade 3 · Level 11", about: "You set the clock to half past 4, right on time.", tone: "yellow", grade: 3, test: reached(3, 11) },
+  { id: "treasure-tracker", name: "Treasure Tracker", how: "Grade 3 · Level 12", about: "You found treasure by giving directions, step by step.", tone: "leaf", grade: 3, test: reached(3, 12) },
+  { id: "first-try-3", name: "First Try", how: "Solve 3 Grade 3 levels with no wrong answers", about: "You worked carefully and got it right the first time.", tone: "plum", grade: 3, test: firstTry(3) },
   { id: "grade-3-champion", name: "Grade 3 Champion", how: "Finish Grade 3", about: "You finished every Grade 3 stop on Brijo's map.", tone: "yellow", grade: 3, test: reached(3, levelCount(3)) },
 
   { id: "hands-on-hero", name: "Hands-On Hero", how: "Finish a Move & Play level", about: "You got up and did maths with real things around you.", tone: "leaf", test: (p) => p.questsDone >= 1 },
   { id: "move-master", name: "Move Master", how: "Finish 3 Move & Play levels", about: "You moved, measured and built with maths three times.", tone: "leaf", test: (p) => p.questsDone >= 3 },
   { id: "high-five-hero", name: "High-Five Hero", how: "5 real high-fives", about: "You shared five real high-fives with a grown-up.", tone: "plum", test: (p) => p.highFives >= 5 },
-  { id: "never-give-up", name: "Never Give Up", how: "Finish a level after Brijo helped", about: "It was tricky, Brijo helped, and you kept going.", tone: "plum", test: (p) => (p.helpedSolves ?? 0) >= 1 },
-  { id: "busy-bee", name: "Busy Bee", how: "Play on 3 different days", about: "You came back to play on three different days.", tone: "yellow", test: (p) => (p.daysPlayed?.length ?? 0) >= 3 },
-  { id: "star-collector", name: "Star Collector", how: "Collect 30 stars", about: "You collected thirty stars by solving levels.", tone: "yellow", test: (p) => p.stars >= 30 },
-  { id: "super-star", name: "Super Star", how: "Collect 60 stars", about: "Sixty stars! You are a maths super star.", tone: "yellow", test: (p) => p.stars >= 60 },
+  { id: "never-give-up", name: "Never Give Up", how: "Finish a level after Brijo helped, or play a level again", about: "You kept going and kept practising. That is how maths grows.", tone: "plum", test: (p) => (p.helpedSolves ?? 0) >= 1 || (p.replays ?? 0) >= 1 },
+  { id: "busy-bee", name: "Busy Bee", how: "Play on 3 different days", about: "You came back to play on 3 different days.", tone: "yellow", test: (p) => (p.daysPlayed?.length ?? 0) >= 3 },
+  { id: "star-collector", name: "Star Collector", how: `Collect ${STAR_COLLECTOR_STARS} stars`, about: `You collected ${STAR_COLLECTOR_STARS} stars by solving levels.`, tone: "yellow", test: (p) => p.stars >= STAR_COLLECTOR_STARS },
+  { id: "super-star", name: "Super Star", how: `Collect ${SUPER_STAR_STARS} stars`, about: `${SUPER_STAR_STARS} stars! You are a maths super star.`, tone: "yellow", test: (p) => p.stars >= SUPER_STAR_STARS },
 ];
 
 export function getBadge(id: string): BadgeDef | null {

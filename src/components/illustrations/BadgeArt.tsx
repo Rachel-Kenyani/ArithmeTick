@@ -3,7 +3,10 @@ import { Circle, Ellipse, G, Line, Path, Rect, Text as SvgText } from "react-nat
 
 import { colors } from "@/theme";
 
+import { SUPER_STAR_STARS } from "@/data/badges";
+
 import { ArtFrame, ink, OUTLINE, starPath, type ArtProps } from "./art";
+import { TreasureGlyph } from "./TreasureArt";
 import TrophyArt from "./TrophyArt";
 
 const SKIN = "#f3b98a";
@@ -416,12 +419,89 @@ function SuperStar() {
     <>
       <Path d={starPath(32, 34, 26)} fill={colors.jgSun} {...ink} />
       <Path d="M22 6l5 7 5-9 5 9 5-7v10H22z" fill={colors.atPlum} {...ink} strokeWidth={1.8} />
-      <SvgText x="32" y="42" fontSize="14" fontWeight="bold" fill={OUTLINE} textAnchor="middle">60</SvgText>
+      <SvgText x="32" y="42" fontSize="14" fontWeight="bold" fill={OUTLINE} textAnchor="middle">{SUPER_STAR_STARS}</SvgText>
+    </>
+  );
+}
+
+/** A hundred square, a ten rod and three ones: the place-value blocks for 243. */
+function HundredsBlocks() {
+  const grid = [0, 1, 2, 3, 4].map((i) => 12 + i * 5);
+  return (
+    <>
+      <Rect x="9" y="10" width="26" height="26" rx="2" fill={colors.atYellow} {...ink} />
+      {grid.slice(1).map((v) => (
+        <Path key={v} d={`M${v - 1} 11v24M10 ${v - 1}h24`} stroke={WOOD_DARK} strokeWidth={0.9} opacity={0.5} />
+      ))}
+      <Rect x="40" y="10" width="7" height="26" rx="1.5" fill={colors.atTealLight} {...ink} />
+      <Path d="M41 15.5h5M41 20.5h5M41 25.5h5M41 30.5h5" stroke={colors.atTeal} strokeWidth={0.9} />
+      {[0, 1, 2].map((i) => (
+        <Rect key={i} x={12 + i * 9} y="44" width="7" height="7" rx="1.5" fill={colors.atPlum} {...ink} />
+      ))}
+    </>
+  );
+}
+
+/** A winners' podium: 1st in the middle, 2nd and 3rd either side. */
+function Podium() {
+  const block = (x: number, h: number, n: number, fill: string) => (
+    <G key={n}>
+      <Rect x={x} y={54 - h} width="16" height={h} rx="1.5" fill={fill} {...ink} />
+      <SvgText x={x + 8} y={54 - h + 11} fontSize="10" fontWeight="bold" fill={OUTLINE} textAnchor="middle">{n}</SvgText>
+    </G>
+  );
+  return (
+    <>
+      {block(8, 18, 2, colors.atTealLight)}
+      {block(24, 28, 1, colors.jgSun)}
+      {block(40, 12, 3, colors.atPurpleLight)}
+      <Path d={starPath(32, 14, 7)} fill={colors.jgSun} {...ink} strokeWidth={1.6} />
+    </>
+  );
+}
+
+/** A 1-litre bottle with water and a level mark. */
+function WaterBottle() {
+  return (
+    <>
+      <Rect x="27" y="6" width="10" height="6" rx="1.5" fill={colors.atPlum} {...ink} />
+      <Path d="M26 12h12v5c5 2 8 6 8 11v22a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6V28c0-5 3-9 8-11z" fill="#eaf7fb" {...ink} />
+      <Path d="M19 32h26v18a5 5 0 0 1-5 5H24a5 5 0 0 1-5-5z" fill="#5bb8e0" />
+      <Path d="M18 32h28" stroke="#2f86b0" strokeWidth={1.6} />
+      <SvgText x="32" y="46" fontSize="9" fontWeight="bold" fill={colors.white} textAnchor="middle">1 L</SvgText>
+      <Path d="M23 20c-2 2-3 5-3 8" stroke={colors.white} strokeWidth={2} strokeLinecap="round" />
+    </>
+  );
+}
+
+/** An open treasure chest with gold inside. */
+function Chest() {
+  return (
+    <>
+      <Path d="M12 26c0-8 8-12 20-12s20 4 20 12z" fill={WOOD} {...ink} />
+      <Circle cx="24" cy="26" r="4" fill={colors.jgSun} {...ink} strokeWidth={1.4} />
+      <Circle cx="33" cy="24" r="4" fill={colors.jgSun} {...ink} strokeWidth={1.4} />
+      <Circle cx="41" cy="26" r="4" fill={colors.jgSun} {...ink} strokeWidth={1.4} />
+      <Rect x="10" y="28" width="44" height="24" rx="3" fill={WOOD} {...ink} />
+      <Path d="M10 36h44" stroke={WOOD_DARK} strokeWidth={2} />
+      <Rect x="28" y="33" width="8" height="9" rx="1.5" fill={colors.jgSun} {...ink} strokeWidth={1.4} />
+      <Path d="M8 14l3 3M32 4v4M56 14l-3 3" stroke={colors.jgSun} strokeWidth={2.2} strokeLinecap="round" />
     </>
   );
 }
 
 const ART: Record<string, () => ReactNode> = {
+  "hundreds-hero": HundredsBlocks,
+  "tens-trekker": NumberStones,
+  "race-referee": Podium,
+  "column-climber": CrateUp,
+  "water-measurer": WaterBottle,
+  "mango-sharer": () => <TreasureGlyph id="mango" />,
+  "change-maker": TenCoins,
+  "fraction-finder": () => <TreasureGlyph id="chapati" />,
+  "half-past-hero": () => <TreasureGlyph id="clock" />,
+  "treasure-tracker": Chest,
+  "first-try-3": Target,
   "ten-frame-explorer": Compass,
   "place-value-pro": BalanceScale,
   "feather-finder": Feather,

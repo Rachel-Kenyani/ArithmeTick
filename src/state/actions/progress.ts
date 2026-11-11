@@ -46,6 +46,11 @@ export const progressActions = {
           ? { ...profile.cleanSolves, [grade]: (profile.cleanSolves?.[grade] ?? 0) + 1 }
           : profile.cleanSolves,
       helpedSolves: (profile.helpedSolves ?? 0) + (firstTime && outcome?.helped ? 1 : 0),
+      cleanLevels:
+        outcome?.misses === 0 && !outcome.helped && !profile.cleanLevels?.includes(draftKey(grade, levelNumber))
+          ? [...(profile.cleanLevels ?? []), draftKey(grade, levelNumber)]
+          : profile.cleanLevels,
+      replays: (profile.replays ?? 0) + (firstTime ? 0 : 1),
       daysPlayed: profile.daysPlayed?.includes(today()) ? profile.daysPlayed : [...(profile.daysPlayed ?? []), today()].slice(-MAX_DAYS),
     };
     if (next.drafts?.[draftKey(grade, levelNumber)]) {

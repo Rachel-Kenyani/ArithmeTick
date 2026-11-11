@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { newlyEarned } from "@/data/badges";
 import type { AppState, ChildProfile } from "@/types/models";
 
 const STORAGE_KEY = "arithmetick:v1";
@@ -23,12 +24,22 @@ function emit() {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Badges are checked when a level is finished. A child who has finished everything would never get a badge that
+ * was added or made easier later, so saved profiles are checked again when the app opens.
+ */
+function withDueBadges(profile: ChildProfile): ChildProfile {
+  const due = newlyEarned(profile);
+  return due.length ? { ...profile, badges: [...profile.badges, ...due] } : profile;
+}
+
 function parse(raw: string | null): AppState {
   if (!raw) return DEFAULT_STATE;
   try {
     const parsed = JSON.parse(raw) as Partial<AppState>;
     if (parsed?.v !== 1) return DEFAULT_STATE;
-    return { ...DEFAULT_STATE, ...parsed } as AppState;
+    const loaded = { ...DEFAULT_STATE, ...parsed } as AppState;
+    return { ...loaded, profiles: loaded.profiles.map(withDueBadges) };
   } catch {
     return DEFAULT_STATE;
   }

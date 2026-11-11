@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, ReduceMotion, ZoomIn } from "react-native-reanimated";
 
+import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import { colors, fonts } from "@/theme";
 
 import { ROW_TONES, TEN, type Puzzle } from "./logic";
@@ -19,6 +20,7 @@ export interface RegroupGeometry {
 
 interface RegroupBoardProps {
   pz: Puzzle;
+  item: CounterItem;
   geo: RegroupGeometry;
   picked: readonly number[];
   bundled: boolean;
@@ -26,7 +28,7 @@ interface RegroupBoardProps {
   onTap: (tile: number) => void;
 }
 
-export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundled, palActive, onTap }: Readonly<RegroupBoardProps>) {
+export const RegroupBoard = memo(function RegroupBoard({ pz, item, geo, picked, bundled, palActive, onTap }: Readonly<RegroupBoardProps>) {
   const { pitch, seg, stacked } = geo;
   const inset = Math.max(3, Math.round(pitch * 0.08));
   const tile = pitch - inset * 2;
@@ -56,7 +58,7 @@ export const RegroupBoard = memo(function RegroupBoard({ pz, geo, picked, bundle
                   on ? styles.picked : null,
                 ]}
               >
-                {on ? <Text style={[styles.order, { fontSize: Math.round(tile * 0.42) }]}>{order + 1}</Text> : null}
+                {on ? <Text style={[styles.order, { fontSize: Math.round(tile * 0.42) }]}>{order + 1}</Text> : <CounterFace item={item} palette="teal" size={tile * 0.78} />}
               </Pressable>
             );
           })}

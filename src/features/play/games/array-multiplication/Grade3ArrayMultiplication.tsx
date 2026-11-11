@@ -12,7 +12,7 @@ import { NumberTile } from "../ten-frame/components/NumberTile";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { ArrayBuilder, SKIP_W } from "./ArrayBuilder";
 import { RegroupBoard, regroupGeometry } from "./RegroupBoard";
-import { MAX_COLS, MAX_ROWS, TEN, constrain, dimLimits, isTarget, normalizePuzzle, pickTile, type Dims } from "./logic";
+import { LIMITS, MAX_COLS, MAX_ROWS, SHOW_AFTER_MISSES, TEN, constrain, missKind, missLine, normalizePuzzle, pickTile, showLine, type Dims } from "./logic";
 
 type Phase = "build" | "locked" | "regroup" | "bundled";
 
@@ -20,12 +20,12 @@ const LOCK_HOLD_MS = 1000;
 const BUNDLE_DELAY_MS = 380;
 const FUSE_AT_MS = 650;
 const SOLVED_AT_MS = 1600;
-const GOAL_H = 52;
+const GOAL_H = 60;
 const EQ_H = 64;
 const DONE_H = 64;
 const FADE = FadeIn.duration(260).reduceMotion(ReduceMotion.System);
 
-export default function Grade3ArrayMultiplication({ level, rows: targetRows, cols: targetCols, palActive, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ArrayProps>) {
+export default function Grade3ArrayMultiplication({ level, item = "cap", rows: targetRows, cols: targetCols, palActive, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ArrayProps>) {
   const pz = useMemo(() => normalizePuzzle(targetRows, targetCols), [targetRows, targetCols]);
   const reduced = useReducedMotion();
   const schedule = useScheduler();
@@ -39,8 +39,10 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   const missesRef = useRef(draft?.misses ?? 0);
   const bundleRef = useRef(0);
   const doneRef = useRef(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const tag = `g3-l${String(level ?? 0).padStart(2, "0")}`;
 
-  const dims = phase === "build" ? constrain(childDims, dimLimits(pz, palActive)) : { rows: pz.rows, cols: pz.cols };
+  const dims = phase === "build" ? constrain(childDims, LIMITS) : { rows: pz.rows, cols: pz.cols };
 
   const onLayout = useCallback((e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
@@ -55,15 +57,25 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
 
   const checkArray = () => {
     if (phase !== "build") return;
-    const correct = isTarget(dims, pz);
-    onAttempt?.({ target: pz.count, answer: dims.rows * dims.cols, correct });
-    if (!correct) {
+    const kind = missKind(dims, pz);
+    onAttempt?.({ target: pz.count, answer: dims.rows * dims.cols, correct: kind === null });
+    if (kind) {
       missesRef.current += 1;
       onDraft?.({ misses: missesRef.current, rows: dims.rows, cols: dims.cols });
       sfx.release();
       onStruggle();
+      if (missesRef.current >= SHOW_AFTER_MISSES) {
+        setChildDims({ rows: pz.rows, cols: pz.cols });
+        setGrabbed(true);
+        setFeedback(showLine(pz));
+        narration.prompt(showLine(pz), `${tag}-show`);
+      } else {
+        setFeedback(missLine(kind, pz));
+        narration.prompt(missLine(kind, pz), `${tag}-miss-${kind}`);
+      }
       return;
     }
+    setFeedback(null);
     setPhase("locked");
     sfx.groupPulse();
     schedule(() => sfx.sparkle(), 220);
@@ -106,7 +118,6 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
   }, [onDraft, phase, picked, childDims]);
 
   const building = phase === "build" || phase === "locked";
-  const tag = `g3-l${String(level ?? 0).padStart(2, "0")}`;
   const spokenText = arrayPrompt(phase, pz.rows, pz.cols);
   const spokenClip = phase === "build" ? `${tag}-build` : "arr-ten";
   useEffect(() => {
@@ -124,7 +135,7 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
       {size ? (
         <>
           <View style={[styles.goal, { height: GOAL_H }]}>
-            <GoalPill rows={pz.rows} cols={pz.cols} phase={phase} />
+            <GoalPill rows={pz.rows} cols={pz.cols} phase={phase} feedback={phase === "build" ? feedback : null} />
           </View>
 
           <View style={[styles.center, { height: EQ_H }]}>
@@ -136,6 +147,7 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
               <ArrayBuilder
                 pz={pz}
                 dims={dims}
+                item={item}
                 pitch={buildPitch}
                 palActive={palActive}
                 locked={phase === "locked"}
@@ -146,7 +158,7 @@ export default function Grade3ArrayMultiplication({ level, rows: targetRows, col
               />
             ) : (
               <Animated.View entering={FADE}>
-                <RegroupBoard pz={pz} geo={regroupGeo} picked={picked} bundled={phase === "bundled"} palActive={palActive} onTap={onTap} />
+                <RegroupBoard pz={pz} item={item} geo={regroupGeo} picked={picked} bundled={phase === "bundled"} palActive={palActive} onTap={onTap} />
               </Animated.View>
             )}
           </View>
@@ -167,16 +179,19 @@ function arrayPrompt(phase: Phase, rows: number, cols: number): string | null {
   return null;
 }
 
-function GoalPill({ rows, cols, phase }: Readonly<{ rows: number; cols: number; phase: Phase }>) {
+/** The goal, or, after a wrong Done, what to change. */
+function GoalPill({ rows, cols, phase, feedback }: Readonly<{ rows: number; cols: number; phase: Phase; feedback: string | null }>) {
   const building = phase === "build" || phase === "locked";
   let label = "Tap 10 to make a ten";
-  if (building) {
+  if (feedback) {
+    label = feedback;
+  } else if (building) {
     label = `Build ${rows} rows of ${cols}`;
   } else if (phase === "bundled") {
     label = "1 ten!";
   }
   return (
-    <View style={styles.pill} accessibilityLiveRegion="polite">
+    <View style={[styles.pill, feedback ? styles.pillTry : null]} accessibilityLiveRegion="polite">
       {building ? (
         <View style={{ width: cols * 9, height: rows * 9 }}>
           {Array.from({ length: rows * cols }, (_, i) => (
@@ -226,7 +241,8 @@ const styles = StyleSheet.create({
   stage: { flex: 1 },
   goal: { alignItems: "center", justifyContent: "center" },
   pill: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.white, borderRadius: 999, borderWidth: 3, borderColor: colors.atMintDeep, paddingHorizontal: 16, paddingVertical: 6 },
-  pillText: { fontFamily: fonts.bodySemiBold, fontSize: 16, color: colors.atInk },
+  pillTry: { borderColor: colors.atYellow, backgroundColor: colors.atCream, flexShrink: 1 },
+  pillText: { flexShrink: 1, fontFamily: fonts.bodySemiBold, fontSize: 16, lineHeight: 20, color: colors.atInk, textAlign: "center" },
   dot: { position: "absolute", width: 7, height: 7, borderRadius: 2, backgroundColor: colors.atTealLight },
   strip: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.white, borderRadius: 999, borderWidth: 3, borderColor: colors.atMintDeep, paddingHorizontal: 18, paddingVertical: 6 },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },

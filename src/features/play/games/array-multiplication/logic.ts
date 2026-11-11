@@ -26,6 +26,32 @@ export interface DimLimits {
   maxCols: number;
 }
 
+/** The child can always build any size: help shows where the target is, but never snaps a wrong array into the right one. */
+export const LIMITS: DimLimits = { minRows: 1, maxRows: MAX_ROWS, maxCols: MAX_COLS };
+
+/** Misses before Brijo builds the array for the child to count and check. */
+export const SHOW_AFTER_MISSES = 2;
+
+export type MissKind = "rows" | "cols" | "both";
+
+export function missKind(dims: Dims, pz: Puzzle): MissKind | null {
+  const rowsOk = dims.rows === pz.rows;
+  const colsOk = dims.cols === pz.cols;
+  if (rowsOk && colsOk) return null;
+  if (rowsOk) return "cols";
+  if (colsOk) return "rows";
+  return "both";
+}
+
+/** What Brijo says when the array is wrong: what is right so far, and what to change. */
+export function missLine(kind: MissKind, pz: Puzzle): string {
+  if (kind === "cols") return `${pz.rows} rows, well done! Now put ${pz.cols} seeds in each row.`;
+  if (kind === "rows") return `${pz.cols} seeds in each row, well done! Now make ${pz.rows} rows.`;
+  return `Not quite. Brijo needs ${pz.rows} rows, with ${pz.cols} seeds in each row.`;
+}
+
+export const showLine = (pz: Puzzle) => `Here are ${pz.rows} rows of ${pz.cols} seeds. Count them, then tap Done.`;
+
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 export function normalizePuzzle(rows = DEFAULT_ROWS, cols = DEFAULT_COLS): Puzzle {
@@ -39,10 +65,6 @@ export function normalizePuzzle(rows = DEFAULT_ROWS, cols = DEFAULT_COLS): Puzzl
   return { rows: r, cols: c, count: r * c, ones: r * c - TEN };
 }
 
-export function dimLimits(pz: Puzzle, palActive: boolean): DimLimits {
-  return palActive ? { minRows: pz.rows, maxRows: pz.rows, maxCols: pz.cols } : { minRows: 1, maxRows: MAX_ROWS, maxCols: MAX_COLS };
-}
-
 export function dimsAt(x: number, y: number, pitch: number, limits: DimLimits): Dims {
   "worklet";
   const cols = Math.min(limits.maxCols, Math.max(1, Math.ceil(x / pitch)));
@@ -54,7 +76,6 @@ export function constrain(dims: Dims, limits: DimLimits): Dims {
   return { rows: clamp(dims.rows, limits.minRows, limits.maxRows), cols: clamp(dims.cols, 1, limits.maxCols) };
 }
 
-export const isTarget = (dims: Dims, pz: Puzzle) => dims.rows === pz.rows && dims.cols === pz.cols;
 
 export interface PickResult {
   picked: number[];

@@ -9,7 +9,8 @@ export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "or
 const INK = "#1b1b1b";
 const W = 3;
 
-function Art({ id }: Readonly<{ id: TreasureId }>) {
+/** The treasure drawn on a 64 by 64 grid, for use inside another picture such as a badge. */
+export function TreasureGlyph({ id }: Readonly<{ id: TreasureId }>) {
   switch (id) {
     case "tomato":
       return (
@@ -157,7 +158,7 @@ function Art({ id }: Readonly<{ id: TreasureId }>) {
 export default function TreasureArt({ id, size = 48 }: Readonly<{ id: TreasureId; size?: number }>) {
   return (
     <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityElementsHidden importantForAccessibility="no">
-      <Art id={id} />
+      <TreasureGlyph id={id} />
     </Svg>
   );
 }

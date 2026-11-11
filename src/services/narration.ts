@@ -116,8 +116,12 @@ function playParts(text: string, parts: Part[], ticket: number) {
       ? null
       : createAudioPlayer(VOICE_CLIPS[p.id] as number),
   );
+  /** Pauses before releasing: on iOS a released player can keep sounding, so a repeat would talk over it. */
   const release = () =>
     players.forEach((p) => {
+      try {
+        p?.pause();
+      } catch {}
       try {
         p?.remove();
       } catch {}
@@ -269,11 +273,16 @@ function say(text: string, parts: Part[], force = false) {
 }
 
 export const narration = {
-  story(text: string, grade: number, level: number) {
-    say(text, [
-      { id: pick(OPENERS), from: 0, to: 0 },
-      { id: levelClip(grade, level, "ask"), from: 0, to: wordsOf(text).length },
-    ]);
+  /** `force` is for the child's own repeat, which plays even with Brijo's voice turned off. */
+  story(text: string, grade: number, level: number, force = false) {
+    say(
+      text,
+      [
+        { id: pick(OPENERS), from: 0, to: 0 },
+        { id: levelClip(grade, level, "ask"), from: 0, to: wordsOf(text).length },
+      ],
+      force,
+    );
   },
   done(
     line: string,
@@ -304,13 +313,18 @@ export const narration = {
     grade: number,
     level: number,
     task: string,
+    force = false,
   ) {
     const split = wordsOf(story).length;
     const text = `${story} ${steps}`;
-    say(text, [
-      { id: levelClip(grade, level, "ask"), from: 0, to: split },
-      { id: `quest-${task}`, from: split, to: wordsOf(text).length },
-    ]);
+    say(
+      text,
+      [
+        { id: levelClip(grade, level, "ask"), from: 0, to: split },
+        { id: `quest-${task}`, from: split, to: wordsOf(text).length },
+      ],
+      force,
+    );
   },
   stop: stopAll,
   subscribe(fn: (range: SpokenRange | null) => void) {

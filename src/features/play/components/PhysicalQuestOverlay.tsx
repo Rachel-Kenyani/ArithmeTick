@@ -204,7 +204,7 @@ export default function PhysicalQuestOverlay({
     .join(" ");
   const line = story ? `${story} ${stepsLine}` : stepsLine;
   const read = () =>
-    narration.quest(story, stepsLine, grade, levelNumber, task);
+    narration.quest(story, stepsLine, grade, levelNumber, task, true);
   useEffect(() => {
     narration.quest(story, stepsLine, grade, levelNumber, task);
     return () => narration.stop();

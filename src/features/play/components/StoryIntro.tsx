@@ -72,7 +72,7 @@ export default function StoryIntro({
             variant="purple"
             size="md"
             icon={<SpeechIcon size={22} color={colors.white} />}
-            onPress={() => narration.story(line, grade, level)}
+            onPress={() => narration.story(line, grade, level, true)}
             accessibilityLabel="Repeat. Hear Brijo again"
           >
             Repeat

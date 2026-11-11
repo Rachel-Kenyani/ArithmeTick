@@ -18,19 +18,32 @@ export const MapIcon = make(
   </>,
 );
 
-export const SpeakerIcon = make(
-  "SpeakerIcon",
+/** Game sound effects: two beamed notes. */
+export const MusicNoteIcon = make(
+  "MusicNoteIcon",
   <>
-    <Path d="M4.5 9.2h3.1l4.4-3.8a.6.6 0 0 1 1 .5v12.2a.6.6 0 0 1-1 .5l-4.4-3.8H4.5a1 1 0 0 1-1-1v-3.6a1 1 0 0 1 1-1z" />
-    <Path d="M16.2 9.2a4 4 0 0 1 0 5.6M19 6.5a7.8 7.8 0 0 1 0 11" />
+    <Path d="M9 17.5V6l10-2.2v11.4" />
+    <Path d="M9 9.6l10-2.2" />
+    <Path d="M6.5 15.3a2.5 2.2 0 1 0 0 4.4 2.5 2.2 0 0 0 0-4.4zM16.5 13a2.5 2.2 0 1 0 0 4.4 2.5 2.2 0 0 0 0-4.4z" />
   </>,
 );
 
-export const SpeakerOffIcon = make(
-  "SpeakerOffIcon",
+export const MusicNoteOffIcon = make(
+  "MusicNoteOffIcon",
   <>
-    <Path d="M4.5 9.2h3.1l4.4-3.8a.6.6 0 0 1 1 .5v12.2a.6.6 0 0 1-1 .5l-4.4-3.8H4.5a1 1 0 0 1-1-1v-3.6a1 1 0 0 1 1-1z" />
-    <Path d="M16.5 9.5l5 5M21.5 9.5l-5 5" />
+    <Path d="M9 17.5V6l10-2.2v11.4" />
+    <Path d="M9 9.6l10-2.2" />
+    <Path d="M6.5 15.3a2.5 2.2 0 1 0 0 4.4 2.5 2.2 0 0 0 0-4.4zM16.5 13a2.5 2.2 0 1 0 0 4.4 2.5 2.2 0 0 0 0-4.4z" />
+    <Path d="M3.5 3.5l17 17" />
+  </>,
+);
+
+/** Brijo speaking: a speech bubble with voice bars, for buttons that read words aloud. */
+export const SpeechIcon = make(
+  "SpeechIcon",
+  <>
+    <Path d="M5 4.5h14a2 2 0 0 1 2 2V15a2 2 0 0 1-2 2h-7l-4.5 3.5V17H5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2z" />
+    <Path d="M8 9.4v3.2M12 8.2v5.6M16 9.4v3.2" />
   </>,
 );
 

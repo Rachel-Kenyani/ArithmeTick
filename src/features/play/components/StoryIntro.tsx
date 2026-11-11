@@ -12,7 +12,7 @@ import BrijoMascot from "@/components/mascot/BrijoMascot";
 import Button from "@/components/ui/Button";
 import GrownUpNote from "@/components/ui/GrownUpNote";
 import Panel from "@/components/ui/Panel";
-import { SpeakerIcon } from "@/components/ui/icons";
+import { SpeechIcon } from "@/components/ui/icons";
 import CounterFace from "@/features/play/components/CounterFace";
 import type { StoryScene, StoryStop } from "@/data/stories";
 import { narration } from "@/services/narration";
@@ -71,7 +71,7 @@ export default function StoryIntro({
           <Button
             variant="purple"
             size="md"
-            icon={<SpeakerIcon size={22} color={colors.white} />}
+            icon={<SpeechIcon size={22} color={colors.white} />}
             onPress={() => narration.story(line, grade, level)}
             accessibilityLabel="Repeat. Hear Brijo again"
           >

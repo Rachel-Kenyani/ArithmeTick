@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
-import { SpeakerIcon } from "@/components/ui/icons";
+import { SpeechIcon } from "@/components/ui/icons";
 import { cardShadow, colors, fonts } from "@/theme";
 
 export interface InfoBannerProps {
@@ -87,7 +87,7 @@ export default function InfoBanner({
             accessibilityRole="button"
             accessibilityLabel="Hear the story again"
           >
-            <SpeakerIcon size={24} color={colors.white} />
+            <SpeechIcon size={24} color={colors.white} />
           </Pressable>
         </View>
       ) : null}

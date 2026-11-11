@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import SpokenText from "@/components/ui/SpokenText";
-import { ArrowRightIcon, ReplayIcon, SpeakerIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, ReplayIcon, SpeechIcon } from "@/components/ui/icons";
 import { narration } from "@/services/narration";
 import type { PlaceValuePuzzle } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -87,7 +87,8 @@ export function Prompt({ text, clipId, waiting, silent }: Readonly<{ text: strin
           hitSlop={8}
           style={({ pressed }) => [styles.listen, pressed ? styles.listenPressed : null]}
         >
-          <SpeakerIcon size={22} strokeWidth={2.4} color={colors.white} />
+          <SpeechIcon size={20} strokeWidth={2.4} color={colors.white} />
+          <Text style={styles.listenText}>Hear it</Text>
         </Pressable>
       )}
     </View>
@@ -148,7 +149,16 @@ export const partStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   pillWithListen: { flexDirection: "row", alignItems: "center", gap: 10, paddingRight: 6 },
   pillTextFlex: { flexShrink: 1 },
-  listen: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: colors.atTeal },
+  listen: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    minHeight: 40,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: colors.atTeal,
+  },
+  listenText: { color: colors.white, fontFamily: fonts.headingBold, fontSize: 15 },
   listenPressed: { transform: [{ scale: 0.94 }] },
   glow: { shadowColor: colors.atYellow, shadowOpacity: 0.9, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   fresh: { backgroundColor: colors.atPurpleLight },

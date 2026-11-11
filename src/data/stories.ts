@@ -259,9 +259,9 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
     },
     {
       ask: "Brijo made a chapati to share with 3 friends. Can you cut it into 4 equal pieces?",
-      treasure: "leaf",
-      one: "a big leaf",
-      many: "leaves",
+      treasure: "chapati",
+      one: "a chapati",
+      many: "chapatis",
       mission: () => `Cut the chapati into quarters`,
       done: () => `Brijo got 1 quarter of the chapati!`,
     },

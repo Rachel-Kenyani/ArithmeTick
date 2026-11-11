@@ -4,7 +4,7 @@ import { colors } from "@/theme";
 
 import { ChapatiBody } from "./ChapatiArt";
 
-export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato" | "chapati";
+export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato" | "chapati" | "clock";
 
 const INK = "#1b1b1b";
 const W = 3;
@@ -125,6 +125,20 @@ function Art({ id }: Readonly<{ id: TreasureId }>) {
             </G>
             <Path d="M0 -22V0H22" stroke={INK} strokeWidth={W} strokeLinejoin="round" fill="none" />
           </G>
+        </G>
+      );
+    case "clock":
+      return (
+        <G>
+          <Path d="M14 18a7 7 0 0 1 10-8M50 18a7 7 0 0 0-10-8" stroke={INK} strokeWidth={W} strokeLinecap="round" fill="none" />
+          <Path d="M10 17a8 8 0 0 1 12-10l-12 10zM54 17a8 8 0 0 0-12-10l12 10z" fill={colors.atYellow} stroke={INK} strokeWidth={W} strokeLinejoin="round" />
+          <Path d="M20 52l-4 6M44 52l4 6" stroke={INK} strokeWidth={W} strokeLinecap="round" />
+          <Circle cx={32} cy={35} r={21} fill={colors.atPlum} stroke={INK} strokeWidth={W} />
+          <Circle cx={32} cy={35} r={16.5} fill="#ffffff" stroke={INK} strokeWidth={2} />
+          <Path d="M32.0 19.0L32.0 21.5M48.0 35.0L45.5 35.0M32.0 51.0L32.0 48.5M16.0 35.0L18.5 35.0" stroke={INK} strokeWidth={2.2} strokeLinecap="round" />
+          <Path d="M32 35V48" stroke={colors.atTeal} strokeWidth={3} strokeLinecap="round" />
+          <Path d="M32 35L38.4 41.4" stroke={colors.atPurple} strokeWidth={4} strokeLinecap="round" />
+          <Circle cx={32} cy={35} r={2.4} fill={INK} />
         </G>
       );
     case "star":

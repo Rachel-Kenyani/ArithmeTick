@@ -179,12 +179,12 @@ const groupsOf = (number: number, groups: number, each: number): LevelDef => ({
   puzzle: { groups, each },
 });
 
-const quarterOf = (number: number, food: string): LevelDef => ({
+const quarterOf = (number: number): LevelDef => ({
   grade: 3,
   number,
   kind: "puzzle",
   game: "fraction",
-  title: `Quarter the ${food}`,
+  title: "Quarters",
   equation: "1 out of 4 equal parts = 1/4",
   puzzle: { parts: 4 },
 });
@@ -298,7 +298,7 @@ export const LEVELS: Record<Grade, readonly LevelDef[]> = {
     array(7, 3, 4),
     shareOf(8, 12, 3),
     quest(3, 9, "change"),
-    quarterOf(10, "chapati"),
+    quarterOf(10),
     halfPast(11, 4),
     quest(3, 12, "treasureWalk"),
   ],

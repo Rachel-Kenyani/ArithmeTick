@@ -1,8 +1,10 @@
-import Svg, { Circle, Ellipse, G, Path } from "react-native-svg";
+import Svg, { Circle, ClipPath, Defs, Ellipse, G, Path } from "react-native-svg";
 
 import { colors } from "@/theme";
 
-export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato";
+import { ChapatiBody } from "./ChapatiArt";
+
+export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "orange" | "pebble" | "seed" | "drum" | "leaf" | "star" | "tomato" | "chapati";
 
 const INK = "#1b1b1b";
 const W = 3;
@@ -100,6 +102,29 @@ function Art({ id }: Readonly<{ id: TreasureId }>) {
         <G>
           <Path d="M12 52C10 30 26 12 52 10c2 24-14 42-40 42z" fill={colors.atTealLight} stroke={INK} strokeWidth={W} strokeLinejoin="round" />
           <Path d="M14 50C24 38 34 28 48 14M26 40l-2-10M34 32l8 2" stroke={colors.atTeal} strokeWidth={2.6} strokeLinecap="round" fill="none" />
+        </G>
+      );
+    case "chapati":
+      return (
+        <G transform="translate(30 34)">
+          <Defs>
+            <ClipPath id="chapati-rest">
+              <Path d="M0 0L30 0A30 30 0 1 1 0 -30Z" />
+            </ClipPath>
+            <ClipPath id="chapati-quarter">
+              <Path d="M0 0L0 -30A30 30 0 0 1 30 0Z" />
+            </ClipPath>
+          </Defs>
+          <G clipPath="url(#chapati-rest)">
+            <ChapatiBody r={21} id="rest" outline={INK} outlineWidth={W} />
+          </G>
+          <Path d="M0 -22V0H22" stroke={INK} strokeWidth={W} strokeLinejoin="round" fill="none" />
+          <G transform="translate(5 -5)">
+            <G clipPath="url(#chapati-quarter)">
+              <ChapatiBody r={21} id="quarter" outline={INK} outlineWidth={W} />
+            </G>
+            <Path d="M0 -22V0H22" stroke={INK} strokeWidth={W} strokeLinejoin="round" fill="none" />
+          </G>
         </G>
       );
     case "star":

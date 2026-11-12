@@ -15,7 +15,7 @@ import Animated, {
   SlideInRight,
   ZoomIn,
 } from "react-native-reanimated";
-import Svg, { Circle, Path } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 
 import SplashBackdrop, {
   HOME_BACKGROUND,
@@ -25,6 +25,7 @@ import Panel from "@/components/ui/Panel";
 import { CheckIcon, LockIcon } from "@/components/ui/icons";
 import { BADGES, type BadgeDef, type BadgeTone } from "@/data/badges";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
+import HeroBanner, { HeroCallout } from "@/features/home/components/HeroBanner";
 import MapTopBar from "@/features/home/components/MapTopBar";
 import BadgeMedallion from "@/features/play/components/BadgeMedallion";
 import { useGuard } from "@/hooks/useGuard";
@@ -32,7 +33,6 @@ import { useActiveProfile } from "@/state/store";
 import { colors, fonts } from "@/theme";
 
 const MEDAL = 80;
-const RING = 92;
 const FADE = FadeIn.duration(180).reduceMotion(ReduceMotion.System);
 const FADE_OUT = FadeOut.duration(160).reduceMotion(ReduceMotion.System);
 const SLIDE_MS = 220;
@@ -190,99 +190,25 @@ function Hero({
   next: BadgeDef | null;
   onNext: (b: BadgeDef) => void;
 }>) {
-  const r = RING / 2 - 7;
-  const length = 2 * Math.PI * r;
   const left = total - won;
   return (
-    <View style={styles.hero}>
-      <Sparkles />
-      <View style={styles.heroRow}>
-        <View
-          style={{ width: RING, height: RING }}
-          accessible
-          accessibilityLabel={`${won} of ${total} badges won`}
-        >
-          <Svg width={RING} height={RING}>
-            <Circle
-              cx={RING / 2}
-              cy={RING / 2}
-              r={r}
-              stroke="rgba(255,255,255,0.25)"
-              strokeWidth={10}
-              fill="none"
-            />
-            <Circle
-              cx={RING / 2}
-              cy={RING / 2}
-              r={r}
-              stroke={colors.jgSun}
-              strokeWidth={10}
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={`${(length * won) / Math.max(1, total)} ${length}`}
-              transform={`rotate(-90 ${RING / 2} ${RING / 2})`}
-            />
-          </Svg>
-          <View style={styles.ringLabel}>
-            <Text style={styles.ringWon}>{won}</Text>
-            <Text style={styles.ringTotal}>{`of ${total}`}</Text>
-          </View>
-        </View>
-        <View style={styles.heroText}>
-          <Text
-            accessibilityRole="header"
-            style={styles.heroTitle}
-            numberOfLines={2}
-          >{`${name}'s Badges`}</Text>
-          <Text style={styles.heroSub}>
-            {left === 0 ? "You won every badge!" : `${left} more to win`}
-          </Text>
-        </View>
-      </View>
-      {next ? (
-        <Pressable
-          onPress={() => onNext(next)}
-          accessibilityRole="button"
-          accessibilityLabel={`Next up: ${next.name}. ${next.how}`}
-          style={({ pressed }) => [
-            styles.nextUp,
-            pressed ? styles.pressed : null,
-          ]}
-        >
-          <Text style={styles.nextLabel}>NEXT UP</Text>
-          <Text style={styles.nextName} numberOfLines={1}>
-            {next.name}
-          </Text>
-          <Text style={styles.nextHow} numberOfLines={1}>
-            {next.how}
-          </Text>
-        </Pressable>
-      ) : null}
-    </View>
-  );
-}
-
-function Sparkles() {
-  return (
-    <Svg
-      width="100%"
-      height="100%"
-      style={StyleSheet.absoluteFill}
-      pointerEvents="none"
+    <HeroBanner
+      title={`${name}'s Badges`}
+      subtitle={left === 0 ? "You won every badge!" : `${left} more to win`}
+      value={won}
+      total={total}
+      ringLabel={`${won} of ${total} badges won`}
     >
-      <Path
-        d="M300 18l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"
-        fill={colors.jgSun}
-        opacity={0.9}
-      />
-      <Path
-        d="M262 70l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"
-        fill={colors.white}
-        opacity={0.6}
-      />
-      <Circle cx={326} cy={86} r={3} fill={colors.atYellowSoft} opacity={0.7} />
-      <Circle cx={24} cy={16} r={2.5} fill={colors.white} opacity={0.5} />
-    </Svg>
+      {next ? (
+        <HeroCallout
+          label="NEXT UP"
+          title={next.name}
+          detail={next.how}
+          onPress={() => onNext(next)}
+          accessibilityLabel={`Next up: ${next.name}. ${next.how}`}
+        />
+      ) : null}
+    </HeroBanner>
   );
 }
 
@@ -445,68 +371,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   pressed: { transform: [{ scale: 0.96 }] },
-
-  hero: {
-    overflow: "hidden",
-    borderRadius: 28,
-    backgroundColor: colors.atTeal,
-    padding: 18,
-    gap: 14,
-    borderWidth: 3,
-    borderColor: "rgba(255,255,255,0.35)",
-  },
-  heroRow: { flexDirection: "row", alignItems: "center", gap: 16 },
-  ringLabel: {
-    ...StyleSheet.absoluteFill,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ringWon: {
-    fontFamily: fonts.headingBold,
-    fontSize: 30,
-    lineHeight: 34,
-    color: colors.white,
-  },
-  ringTotal: {
-    fontFamily: fonts.bodyBold,
-    fontSize: 13,
-    color: colors.atYellowSoft,
-  },
-  heroText: { flex: 1, gap: 4 },
-  heroTitle: {
-    fontFamily: fonts.body,
-    fontSize: 26,
-    lineHeight: 30,
-    color: colors.white,
-  },
-  heroSub: {
-    fontFamily: fonts.headingBold,
-    fontSize: 16,
-    color: colors.atYellowSoft,
-  },
-  nextUp: {
-    backgroundColor: "rgba(255,255,255,0.14)",
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 2,
-  },
-  nextLabel: {
-    fontFamily: fonts.headingBold,
-    fontSize: 12,
-    letterSpacing: 1,
-    color: colors.jgSun,
-  },
-  nextName: {
-    fontFamily: fonts.headingBold,
-    fontSize: 18,
-    color: colors.white,
-  },
-  nextHow: {
-    fontFamily: fonts.headingBold,
-    fontSize: 14,
-    color: "rgba(255,255,255,0.85)",
-  },
 
   segments: {
     flexDirection: "row",

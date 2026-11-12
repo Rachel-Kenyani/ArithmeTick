@@ -19,7 +19,7 @@ const TABS: {
   { key: "badges", label: "Badges", href: ROUTES.badges, Icon: MedalIcon },
   {
     key: "score",
-    label: "Scores",
+    label: "Stars",
     href: ROUTES.leaderboard,
     Icon: TrophyIcon,
   },

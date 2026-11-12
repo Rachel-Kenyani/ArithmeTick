@@ -274,7 +274,7 @@ const STORIES: Record<Grade, readonly StoryStop[]> = {
       done: () => `Half past 4, right on time!`,
     },
     {
-      ask: "This is the last stop! Brijo hid a treasure. Can you find it by following directions?",
+      ask: "This is the last stop! Brijo hid a treasure. Can you find it by following the directions?",
       treasure: "star",
       one: "a golden star",
       many: "stars",

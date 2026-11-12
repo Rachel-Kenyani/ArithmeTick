@@ -10,7 +10,7 @@ import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
-import { LogoutIcon } from "@/components/ui/icons";
+import { LogoutIcon, PlusIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { auth } from "@/services/auth";
 import { signOutOfGoogle } from "@/services/googleAuth";
@@ -18,7 +18,6 @@ import { actions, useAppState } from "@/state/store";
 import { colors } from "@/theme";
 import { useGuard } from "@/hooks/useGuard";
 
-import AddProfileTile from "../components/AddProfileTile";
 import HeaderCard from "../components/HeaderCard";
 import ProfileTile from "../components/ProfileTile";
 import { useProfileChooser } from "../hooks/useProfileChooser";
@@ -88,19 +87,15 @@ export default function ProfilesScreen() {
             />
           );
         })}
-
-        {canAdd ? (
-          <AddProfileTile
-            index={profiles.length}
-            state={tileState(null)}
-            reduce={reduceMotion}
-            disabled={!!chosen}
-            onPress={addProfile}
-            width={cellW}
-            sm={sm}
-          />
-        ) : null}
       </View>
+
+      {canAdd ? (
+        <HoldToConfirm
+          label="Grown-ups: hold to add a child"
+          icon={<PlusIcon size={20} strokeWidth={2.4} color={colors.atPlum} />}
+          onConfirm={addProfile}
+        />
+      ) : null}
 
       <HoldToConfirm
         label="Grown-ups: hold to log out"

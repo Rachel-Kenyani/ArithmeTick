@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Switch, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import Panel from "@/components/ui/Panel";
@@ -8,7 +8,8 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
 import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
-import { SmileIcon } from "@/components/ui/icons";
+import HoldToConfirm from "@/components/ui/HoldToConfirm";
+import { SmileIcon, SpeechIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
 import MapTopBar from "@/features/home/components/MapTopBar";
@@ -61,21 +62,19 @@ export default function SettingsScreen() {
         </View>
         <View style={styles.switchRow}>
           <View style={styles.switchText}>
+            <Text style={styles.switchState}>{voice ? `Brijo reads the instructions to ${profile.name}.` : `Brijo's voice is off for ${profile.name}.`}</Text>
             <Text style={styles.switchHint}>
               {voice
                 ? `Turn this off if ${profile.name} reads well or needs quiet. The sound effects button is in the top bar.`
-                : `${profile.name} can still tap the speaker on an instruction to hear it once.`}
+                : `${profile.name} can still tap Hear it on an instruction to hear it once.`}
             </Text>
           </View>
-          <Switch
-            value={voice}
-            onValueChange={(on) => actions.setSound(profile.id, { voice: on })}
-            accessibilityLabel={`Brijo reads the instructions to ${profile.name}`}
-            trackColor={{ false: GROWN_UP.border, true: GROWN_UP.ink }}
-            thumbColor={colors.white}
-            ios_backgroundColor={GROWN_UP.border}
-          />
         </View>
+        <HoldToConfirm
+          label={voice ? "Hold to turn Brijo's voice off" : "Hold to turn Brijo's voice on"}
+          icon={<SpeechIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
+          onConfirm={() => actions.setSound(profile.id, { voice: !voice })}
+        />
       </Panel>
     </ScreenShell>
   );
@@ -89,6 +88,7 @@ const styles = StyleSheet.create({
   grownUpTitle: { fontFamily: fonts.headingBold, fontSize: 18, color: GROWN_UP.ink },
   switchRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   switchText: { flex: 1, gap: 4 },
+  switchState: { fontFamily: fonts.headingBold, fontSize: 17, color: GROWN_UP.ink },
   switchHint: { fontFamily: fonts.headingBold, fontSize: 16, color: GROWN_UP.ink, opacity: 0.85 },
   label: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.atTeal },
 });

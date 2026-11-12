@@ -1,9 +1,10 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import Avatar from "@/components/ui/Avatar";
-import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
+import { GROWN_UP } from "@/components/ui/GrownUpNote";
+import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import Panel from "@/components/ui/Panel";
 import { LeafIcon, MapIcon, MedalIcon, StarIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
@@ -38,15 +39,10 @@ export default function LeaderboardScreen() {
         {family ? <FamilyBoard profiles={profiles} activeId={profile.id} /> : null}
         <JourneyCard child={profile} />
         {!family && profiles.length < MAX_PROFILES ? (
-          <Pressable
-            onPress={() => router.push(ROUTES.addExplorer as never)}
-            accessibilityRole="button"
-            accessibilityLabel="For grown-ups: add a brother or sister to share a family star goal"
-            style={({ pressed }) => [styles.grownUp, pressed ? styles.pressed : null]}
-          >
-            <InfoIcon size={22} />
+          <View style={styles.grownUp}>
             <Text style={styles.grownUpText}>{`Add a brother or sister to share a family star goal with ${profile.name}.`}</Text>
-          </Pressable>
+            <HoldToConfirm label="Grown-ups: hold to add a child" onConfirm={() => router.push(ROUTES.addExplorer as never)} />
+          </View>
         ) : null}
       </ScrollView>
       <BottomNav active="score" onNavigate={navigateToTab} />
@@ -156,7 +152,6 @@ function JourneyCard({ child }: Readonly<{ child: ChildProfile }>) {
 
 const styles = StyleSheet.create({
   body: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120, gap: 14, width: "100%", maxWidth: 480, alignSelf: "center" },
-  pressed: { transform: [{ scale: 0.98 }] },
   card: { width: "100%", alignItems: "stretch", gap: 14, paddingVertical: 18 },
   cardHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
   cardTitles: { flexShrink: 1, gap: 2 },
@@ -180,6 +175,6 @@ const styles = StyleSheet.create({
   tileValue: { fontFamily: fonts.headingBold, fontSize: 24, color: colors.atInk },
   tileLabel: { fontFamily: fonts.bodySemiBold, fontSize: 13, color: "#5b6664", textAlign: "center" },
 
-  grownUp: { flexDirection: "row", alignItems: "center", gap: 10, padding: 14, borderRadius: 20, borderWidth: 2, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
+  grownUp: { alignItems: "stretch", gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
   grownUpText: { flex: 1, fontFamily: fonts.headingBold, fontSize: 16, lineHeight: 21, color: GROWN_UP.ink },
 });

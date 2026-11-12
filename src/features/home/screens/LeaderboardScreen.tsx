@@ -1,155 +1,185 @@
-import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
 
-import BrijoHeadArt from "@/components/mascot/BrijoHeadArt";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import Avatar from "@/components/ui/Avatar";
+import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
 import Panel from "@/components/ui/Panel";
-import { StarIcon } from "@/components/ui/icons";
-import { levelCount } from "@/data/levels";
-import { leaderboardFor, type LeaderRow, type LeaderScope } from "@/data/leaderboard";
+import { LeafIcon, MapIcon, MedalIcon, StarIcon } from "@/components/ui/icons";
+import { ROUTES } from "@/constants/routes";
+import { FAMILY_GOAL_STEP, PERSONAL_GOAL_STEP, journeyOf, starGoal, type StarGoal } from "@/data/family";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
+import HeroBanner, { HeroCallout } from "@/features/home/components/HeroBanner";
 import MapTopBar from "@/features/home/components/MapTopBar";
 import { useGuard } from "@/hooks/useGuard";
-import { useActiveProfile } from "@/state/store";
+import { useActiveProfile, useAppState } from "@/state/store";
 import { colors, fonts } from "@/theme";
+import { MAX_PROFILES, type ChildProfile } from "@/types/models";
 
-const SCOPES: { key: LeaderScope; label: string }[] = [
-  { key: "class", label: "My class" },
-  { key: "school", label: "My school" },
-];
-
-function Row({ row }: Readonly<{ row: LeaderRow }>) {
-  return (
-    <View
-      style={[styles.row, row.isYou ? styles.rowYou : null]}
-      accessible
-      accessibilityLabel={`${row.isYou ? "You" : row.name}, ${row.stars} stars`}
-    >
-      <Text style={styles.rank}>{row.rank}</Text>
-      <Avatar kind={row.avatar} size={40} />
-      <Text style={[styles.rowName, row.isYou ? styles.rowNameYou : null]} numberOfLines={1}>
-        {row.isYou ? `${row.name} (you)` : row.name}
-      </Text>
-      <StarIcon size={20} color={colors.atYellow} />
-      <Text style={styles.rowStars}>{row.stars}</Text>
-    </View>
-  );
-}
-
+/**
+ * Stars, from real data on this phone only. With brothers and sisters, the family shares a star goal and sees each
+ * other's stars (no ranks, so children of different grades are not set against each other). With one child, the
+ * tab shows that child's own journey and personal star goals.
+ */
 export default function LeaderboardScreen() {
   const ready = useGuard("profile");
   const profile = useActiveProfile();
-  const [scope, setScope] = useState<LeaderScope>("class");
-  const board = useMemo(() => (profile ? leaderboardFor(scope, profile) : null), [scope, profile]);
-  if (!ready || !profile || !board) return <SplashBackdrop source={HOME_BACKGROUND} />;
+  const { profiles } = useAppState();
+  if (!ready || !profile) return <SplashBackdrop source={HOME_BACKGROUND} />;
 
-  const toGo = Math.max(0, board.teamGoal - board.teamStars);
-  const share = Math.min(1, board.teamStars / board.teamGoal);
-  const done = profile.progress[profile.grade];
-  const youShown = board.rows.some((r) => r.isYou);
-  const group = scope === "class" ? "class" : "school";
+  const family = profiles.length > 1;
+  const goal = family ? starGoal(profiles, FAMILY_GOAL_STEP) : starGoal([profile], PERSONAL_GOAL_STEP);
 
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
       <MapTopBar />
-      <ScrollView contentContainerStyle={[styles.body, { paddingTop: 16 }]} showsVerticalScrollIndicator={false}>
-        <Panel style={styles.card}>
-          <Text accessibilityRole="header" style={styles.title}>
-            Scores
-          </Text>
-
-          <View style={styles.toggle} accessibilityRole="tablist">
-            {SCOPES.map((s) => (
-              <Pressable
-                key={s.key}
-                onPress={() => setScope(s.key)}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: scope === s.key }}
-                style={[styles.toggleBtn, scope === s.key ? styles.toggleOn : null]}
-              >
-                <Text style={[styles.toggleText, scope === s.key ? styles.toggleTextOn : null]}>{s.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-
-          <View style={styles.team}>
-            <View style={styles.teamTop}>
-              <BrijoHeadArt width={64} />
-              <View style={styles.teamCopy}>
-                <Text style={styles.teamTitle}>{`Our ${group} star goal`}</Text>
-                <Text style={styles.teamLine}>
-                  {toGo === 0 ? "We reached the goal together!" : `Together we have ${board.teamStars} stars. ${toGo} more to go!`}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.bar} accessible accessibilityLabel={`${board.teamStars} of ${board.teamGoal} stars`}>
-              <View style={[styles.barFill, { width: `${share * 100}%` }]} />
-            </View>
-            <Text style={styles.barLabel}>{`${board.teamStars} / ${board.teamGoal}`}</Text>
-          </View>
-
-          <View style={styles.mine}>
-            <Avatar kind={profile.avatar} size={56} />
-            <View style={styles.mineCopy}>
-              <Text style={styles.mineTitle}>{`You added ${profile.stars} stars`}</Text>
-              <Text style={styles.mineLine}>{`${done} of ${levelCount(profile.grade)} Grade ${profile.grade} levels done`}</Text>
-            </View>
-            <View style={styles.mineStars}>
-              <StarIcon size={26} color={colors.atYellow} />
-              <Text style={styles.mineStarsText}>{profile.stars}</Text>
-            </View>
-          </View>
-
-          <Text style={styles.listTitle}>Star collectors</Text>
-          <View style={styles.list}>
-            {board.rows.map((r) => (
-              <Row key={r.id} row={r} />
-            ))}
-            {youShown ? null : (
-              <>
-                <Text style={styles.dots}>⋮</Text>
-                <Row row={board.you} />
-              </>
-            )}
-          </View>
-        </Panel>
+      <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
+        <GoalHero goal={goal} family={family} name={profile.name} />
+        {family ? <FamilyBoard profiles={profiles} activeId={profile.id} /> : null}
+        <JourneyCard child={profile} />
+        {!family && profiles.length < MAX_PROFILES ? (
+          <Pressable
+            onPress={() => router.push(ROUTES.addExplorer as never)}
+            accessibilityRole="button"
+            accessibilityLabel="For grown-ups: add a brother or sister to share a family star goal"
+            style={({ pressed }) => [styles.grownUp, pressed ? styles.pressed : null]}
+          >
+            <InfoIcon size={22} />
+            <Text style={styles.grownUpText}>{`Add a brother or sister to share a family star goal with ${profile.name}.`}</Text>
+          </Pressable>
+        ) : null}
       </ScrollView>
       <BottomNav active="score" onNavigate={navigateToTab} />
     </SplashBackdrop>
   );
 }
 
+/** The same teal banner as the Badges tab: stars towards the next goal as a ring, and goals reached so far. */
+function GoalHero({ goal, family, name }: Readonly<{ goal: StarGoal; family: boolean; name: string }>) {
+  const toGo = goal.goal - goal.stars;
+  let subtitle = `${toGo} more ${toGo === 1 ? "star" : "stars"} to the next goal`;
+  if (goal.complete) subtitle = family ? "Your family won every star!" : "You won every star!";
+  return (
+    <HeroBanner
+      title={family ? "Family Stars" : `${name}'s Stars`}
+      subtitle={subtitle}
+      value={goal.stars}
+      total={goal.goal}
+      ringLabel={`${goal.stars} of ${goal.goal} stars`}
+    >
+      <HeroCallout
+        label={family ? "OUR FAMILY STAR GOAL" : "MY STAR GOAL"}
+        title={reachedLine(goal.reached)}
+        detail={`A new goal every ${family ? FAMILY_GOAL_STEP : PERSONAL_GOAL_STEP} stars`}
+        accessibilityLabel={`${reachedLine(goal.reached)}. A new goal every ${family ? FAMILY_GOAL_STEP : PERSONAL_GOAL_STEP} stars`}
+      />
+    </HeroBanner>
+  );
+}
+
+/** A card heading like the Badges tab's: title, a short note, and a count chip. */
+function CardHead({ title, note, count }: Readonly<{ title: string; note: string; count: string }>) {
+  return (
+    <View style={styles.cardHead}>
+      <View style={styles.cardTitles}>
+        <Text accessibilityRole="header" style={styles.cardTitle}>{title}</Text>
+        <Text style={styles.cardNote}>{note}</Text>
+      </View>
+      <View style={styles.countChip}>
+        <Text style={styles.countText}>{count}</Text>
+      </View>
+    </View>
+  );
+}
+
+function reachedLine(reached: number): string {
+  if (reached === 0) return "First goal coming up";
+  return `${reached} ${reached === 1 ? "goal" : "goals"} reached`;
+}
+
+/** Each child's stars and badges, in the order they were added. The child playing now is highlighted. */
+function FamilyBoard({ profiles, activeId }: Readonly<{ profiles: readonly ChildProfile[]; activeId: string }>) {
+  return (
+    <Panel style={styles.card}>
+      <CardHead title="Our explorers" note="Every star counts for the family" count={`${profiles.length}`} />
+      <View style={styles.list}>
+        {profiles.map((p) => {
+          const you = p.id === activeId;
+          return (
+            <View key={p.id} style={[styles.row, you ? styles.rowYou : null]} accessible accessibilityLabel={`${p.name}${you ? ", playing now" : ""}. Grade ${p.grade}. ${p.stars} stars, ${p.badges.length} badges`}>
+              <Avatar kind={p.avatar} size={44} />
+              <View style={styles.rowCopy}>
+                <Text style={[styles.rowName, you ? styles.rowNameYou : null]} numberOfLines={1}>
+                  {you ? `${p.name} (you)` : p.name}
+                </Text>
+                <Text style={styles.rowGrade}>{`Grade ${p.grade}`}</Text>
+              </View>
+              <View style={styles.stat}>
+                <MedalIcon size={18} color={colors.atPurple} />
+                <Text style={styles.statText}>{p.badges.length}</Text>
+              </View>
+              <View style={styles.stat}>
+                <StarIcon size={20} color={colors.atYellow} />
+                <Text style={styles.statText}>{p.stars}</Text>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    </Panel>
+  );
+}
+
+function JourneyCard({ child }: Readonly<{ child: ChildProfile }>) {
+  const j = journeyOf(child);
+  const tiles = [
+    { id: "levels", Icon: MapIcon, tint: colors.atTeal, value: `${j.levelsDone}/${j.levels}`, label: `Grade ${child.grade} levels` },
+    { id: "badges", Icon: MedalIcon, tint: colors.atPurple, value: `${j.badgesWon}/${j.badges}`, label: "Badges won" },
+    { id: "quests", Icon: LeafIcon, tint: "#4f7d17", value: String(j.questsDone), label: "Move & Play done" },
+    { id: "days", Icon: StarIcon, tint: "#d9a400", value: String(j.daysPlayed), label: j.daysPlayed === 1 ? "Day played" : "Days played" },
+  ];
+  return (
+    <Panel style={styles.card}>
+      <CardHead title={`${child.name}'s journey`} note={`Grade ${child.grade}`} count={`${j.levelsDone}/${j.levels}`} />
+      <View style={styles.tiles}>
+        {tiles.map((t) => (
+          <View key={t.id} style={styles.tile} accessible accessibilityLabel={`${t.label}: ${t.value}`}>
+            <t.Icon size={22} color={t.tint} />
+            <Text style={styles.tileValue}>{t.value}</Text>
+            <Text style={styles.tileLabel}>{t.label}</Text>
+          </View>
+        ))}
+      </View>
+    </Panel>
+  );
+}
+
 const styles = StyleSheet.create({
-  body: { paddingHorizontal: 16, paddingBottom: 120 },
-  card: { width: "100%", maxWidth: 448, alignSelf: "center", alignItems: "stretch", gap: 14, paddingVertical: 24 },
-  title: { fontFamily: fonts.headingBold, fontSize: 28, color: colors.atTeal, textAlign: "center" },
-  toggle: { flexDirection: "row", backgroundColor: "#e3e9e8", borderRadius: 999, padding: 4 },
-  toggleBtn: { flex: 1, minHeight: 48, borderRadius: 999, alignItems: "center", justifyContent: "center" },
-  toggleOn: { backgroundColor: colors.atTeal },
-  toggleText: { fontFamily: fonts.bodyBold, fontSize: 16, color: "#5b6664" },
-  toggleTextOn: { color: colors.white },
-  team: { backgroundColor: colors.atCream, borderRadius: 20, borderWidth: 2, borderColor: colors.atYellow, padding: 14, gap: 10 },
-  teamTop: { flexDirection: "row", alignItems: "center", gap: 12 },
-  teamCopy: { flex: 1, gap: 2 },
-  teamTitle: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.atTeal },
-  teamLine: { fontFamily: fonts.bodySemiBold, fontSize: 16, lineHeight: 22, color: colors.atInk },
-  bar: { height: 16, borderRadius: 8, backgroundColor: "#fff", borderWidth: 2, borderColor: colors.atYellow, overflow: "hidden" },
-  barFill: { height: "100%", backgroundColor: colors.atYellow },
-  barLabel: { fontFamily: fonts.bodyBold, fontSize: 14, color: "#5b6664", textAlign: "right" },
-  mine: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: colors.atMint, borderRadius: 20, padding: 12 },
-  mineCopy: { flex: 1, gap: 2 },
-  mineTitle: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.atInk },
-  mineLine: { fontFamily: fonts.bodyMedium, fontSize: 15, color: "#3c3c3c" },
-  mineStars: { alignItems: "center" },
-  mineStarsText: { fontFamily: fonts.bodyBold, fontSize: 20, color: colors.atInk },
-  listTitle: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.atInk, marginTop: 4 },
-  list: { gap: 6 },
-  row: { flexDirection: "row", alignItems: "center", gap: 10, minHeight: 52, paddingHorizontal: 10, borderRadius: 14, backgroundColor: "#f6f8f8" },
+  body: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120, gap: 14, width: "100%", maxWidth: 480, alignSelf: "center" },
+  pressed: { transform: [{ scale: 0.98 }] },
+  card: { width: "100%", alignItems: "stretch", gap: 14, paddingVertical: 18 },
+  cardHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
+  cardTitles: { flexShrink: 1, gap: 2 },
+  cardTitle: { fontFamily: fonts.headingBold, fontSize: 21, color: colors.atTeal },
+  cardNote: { fontFamily: fonts.bodySemiBold, fontSize: 14, color: "#5b6664" },
+  countChip: { borderRadius: 999, backgroundColor: colors.atYellowSoft, paddingHorizontal: 12, paddingVertical: 4 },
+  countText: { fontFamily: fonts.headingBold, fontSize: 16, color: colors.atInk },
+
+  list: { gap: 8 },
+  row: { flexDirection: "row", alignItems: "center", gap: 10, minHeight: 60, paddingHorizontal: 10, borderRadius: 16, backgroundColor: "#f6f8f8" },
   rowYou: { backgroundColor: colors.atYellowSoft, borderWidth: 2, borderColor: colors.atYellow },
-  rank: { width: 24, fontFamily: fonts.bodyBold, fontSize: 16, color: "#5b6664", textAlign: "center" },
-  rowName: { flex: 1, fontFamily: fonts.bodySemiBold, fontSize: 16, color: colors.atInk },
+  rowCopy: { flex: 1 },
+  rowName: { fontFamily: fonts.bodySemiBold, fontSize: 17, color: colors.atInk },
   rowNameYou: { fontFamily: fonts.bodyBold },
-  rowStars: { minWidth: 28, fontFamily: fonts.bodyBold, fontSize: 16, color: colors.atInk, textAlign: "right" },
-  dots: { fontFamily: fonts.bodyBold, fontSize: 18, color: "#9aa8a6", textAlign: "center" },
+  rowGrade: { fontFamily: fonts.bodyMedium, fontSize: 13, color: "#5b6664" },
+  stat: { flexDirection: "row", alignItems: "center", gap: 3, minWidth: 44, justifyContent: "flex-end" },
+  statText: { fontFamily: fonts.bodyBold, fontSize: 17, color: colors.atInk },
+
+  tiles: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  tile: { flexGrow: 1, flexBasis: "45%", alignItems: "center", gap: 2, paddingVertical: 12, borderRadius: 18, backgroundColor: colors.atMint },
+  tileValue: { fontFamily: fonts.headingBold, fontSize: 24, color: colors.atInk },
+  tileLabel: { fontFamily: fonts.bodySemiBold, fontSize: 13, color: "#5b6664", textAlign: "center" },
+
+  grownUp: { flexDirection: "row", alignItems: "center", gap: 10, padding: 14, borderRadius: 20, borderWidth: 2, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
+  grownUpText: { flex: 1, fontFamily: fonts.headingBold, fontSize: 16, lineHeight: 21, color: GROWN_UP.ink },
 });

@@ -6,6 +6,7 @@ import { colors } from "@/theme";
 import { SUPER_STAR_STARS } from "@/data/badges";
 
 import { ArtFrame, ink, OUTLINE, starPath, type ArtProps } from "./art";
+import { QuestTaskPicture } from "./QuestTaskArt";
 import { TreasureGlyph } from "./TreasureArt";
 import TrophyArt from "./TrophyArt";
 
@@ -186,19 +187,6 @@ function Shell() {
       <Path d="M32 54V12M22 54L16 18M42 54l6-36M14 50L9 32M50 50l5-18" stroke="#d9925f" strokeWidth={1.8} strokeLinecap="round" fill="none" />
       <Rect x="24" y="52" width="16" height="7" rx="3" fill="#f6c9a8" {...ink} />
       <Path d="M20 16c-3 3-5 7-6 11" stroke="#fff" strokeWidth={2.4} strokeLinecap="round" fill="none" />
-    </>
-  );
-}
-
-function TwoGroups() {
-  const dots = (cx: number, fill: string) =>
-    [0, 1, 2].map((i) => <Circle key={`${cx}-${i}`} cx={cx + (i % 2 ? 6 : -6)} cy={22 + i * 10} r="5" fill={fill} {...ink} strokeWidth={1.6} />);
-  return (
-    <>
-      <Ellipse cx="18" cy="32" rx="14" ry="22" fill={colors.atCream} {...ink} />
-      <Ellipse cx="46" cy="32" rx="14" ry="22" fill={colors.atCream} {...ink} />
-      {dots(18, colors.atTeal)}
-      {dots(46, colors.atPurple)}
     </>
   );
 }
@@ -506,7 +494,6 @@ const ART: Record<string, () => ReactNode> = {
   "place-value-pro": BalanceScale,
   "feather-finder": Feather,
   "shell-seeker": Shell,
-  "groups-guru": TwoGroups,
   "flower-planter": Flower,
   "soup-helper": SoupPot,
   "first-try-1": Target,
@@ -528,8 +515,17 @@ const ART: Record<string, () => ReactNode> = {
   "number-builder": Puzzle,
   "number-detective": Magnifier,
   "regroup-ranger": StickBundle,
+  "borrow-buddy": StickBundle,
   "high-five-hero": HighFive,
   "star-collector": Stars,
+};
+
+/** Move & Play badges that use the activity's own picture. */
+const QUEST_ART: Record<string, string> = {
+  "same-spotter": "findIt",
+  "groups-guru": "hideGuess",
+  "finger-counter": "fingers",
+  "cup-filler": "massCapacity",
 };
 
 const CHAMPION_TONE = { "grade-1-champion": "teal", "grade-2-champion": "purple", "grade-3-champion": "yellow" } as const;
@@ -542,6 +538,7 @@ export default function BadgeArt({ id, size = 64, title }: Readonly<BadgeArtProp
   if (id in CHAMPION_TONE) {
     return <TrophyArt size={size} title={title} tone={CHAMPION_TONE[id as keyof typeof CHAMPION_TONE]} />;
   }
+  if (id in QUEST_ART) return <QuestTaskPicture task={QUEST_ART[id]} size={size} />;
   const Glyph = ART[id] ?? Stars;
   return (
     <ArtFrame size={size} title={title}>

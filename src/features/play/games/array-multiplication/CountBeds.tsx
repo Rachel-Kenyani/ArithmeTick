@@ -15,7 +15,6 @@ const BED_GAP = 10;
 interface CountBedsProps {
   pz: Puzzle;
   item: CounterItem;
-  /** Rows the child has tapped, in the order they tapped them. */
   counted: readonly number[];
   width: number;
   height: number;
@@ -23,7 +22,6 @@ interface CountBedsProps {
   onTapRow: (row: number) => void;
 }
 
-/** Each row of the array is its own planting bed. Tapping a bed lights the whole row and shows the running total beside it. */
 export const CountBeds = memo(function CountBeds({ pz, item, counted, width, height, disabled, onTapRow }: Readonly<CountBedsProps>) {
   const seed = Math.floor(Math.max(28, Math.min(60, (width - TOTAL_W * 2 - 24 - BED_PAD * 2 - 6) / pz.cols, (height - BED_GAP * (pz.rows - 1)) / pz.rows - BED_PAD * 2)));
 

@@ -31,7 +31,6 @@ import {
   type Puzzle,
 } from "./logic";
 
-/** Build the array (Brijo builds and counts it after two misses), count it row by row, then say how many. */
 type Phase = "build" | "show" | "locked" | "count" | "answer" | "solved";
 
 const LOCK_HOLD_MS = 1000;
@@ -215,7 +214,6 @@ export default function Grade3ArrayMultiplication({ level, item = "cap", rows: t
   );
 }
 
-/** What Brijo says as each step starts. Nothing while the array locks or once it is solved. */
 function boardLine(phase: Phase, pz: Puzzle, tag: string): { text: string; clip: string } | null {
   if (phase === "build") return { text: `Build ${pz.rows} rows of ${pz.cols}. Drag the corner, then tap Done.`, clip: `${tag}-build` };
   if (phase === "count") return { text: countLine, clip: `${tag}-count` };
@@ -223,7 +221,6 @@ function boardLine(phase: Phase, pz: Puzzle, tag: string): { text: string; clip:
   return null;
 }
 
-/** The goal for this step, or, after a mistake, what to change. */
 function GoalPill({ pz, phase, feedback }: Readonly<{ pz: Puzzle; phase: Phase; feedback: string | null }>) {
   const building = phase === "build" || phase === "show" || phase === "locked";
   let label = `${pz.rows} rows of ${pz.cols} make ${pz.count} seeds!`;
@@ -284,7 +281,6 @@ const styles = StyleSheet.create({
   op: { fontFamily: fonts.bodyBold, fontSize: 24, color: colors.atInk },
 });
 
-/** Picks up where the child left off: still building, or counting with some rows already tapped. */
 function resumeArray(draft: LevelDraft | undefined, rows: number): { counting: boolean; dims: Dims; counted: number[] } {
   const counted = (draft?.picked ?? []).filter((r, i, all) => Number.isInteger(r) && r >= 0 && r < rows && all.indexOf(r) === i).slice(0, rows - 1);
   const dims = {

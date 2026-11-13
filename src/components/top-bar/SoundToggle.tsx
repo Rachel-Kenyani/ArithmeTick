@@ -6,7 +6,6 @@ import { setMuted, sfx } from "@/services/audio";
 import { actions, useActiveProfile } from "@/state/store";
 import { colors } from "@/theme";
 
-/** Turns sound effects on and off for the active child. Brijo's voice is not affected; that switch is in Settings. */
 export default function SoundToggle() {
   const profile = useActiveProfile();
   const { effects } = useSound();

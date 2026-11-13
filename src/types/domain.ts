@@ -43,7 +43,6 @@ export interface PlaceValuePuzzle {
   b: number;
 }
 
-/** A three-digit sum worked in columns: hundreds, tens and ones, with regrouping. */
 export interface ColumnsPuzzle {
   op: "add" | "sub";
   a: number;
@@ -53,7 +52,6 @@ export interface ColumnsPuzzle {
 export interface NumberTrackPuzzle {
   from: number;
   gaps: number[];
-  /** How far each stone moves on from the one before: -1 counts back in ones, 10 counts on in tens. */
   step: number;
 }
 
@@ -64,18 +62,15 @@ export interface GroupsPuzzle {
 
 export interface HalvesPuzzle {
   total: number;
-  /** How many monkeys share fairly: 2 for halves (Grade 2), more for division as sharing (Grade 3). */
   shares?: number;
 }
 
-/** A fraction as a fair share: cut a whole into this many equal parts and give one away. */
 export interface FractionPuzzle {
   parts: number;
 }
 
 export interface ClockPuzzle {
   hour: number;
-  /** Half past the hour: the child sets the long hand to 6 first, then the hour. */
   half?: boolean;
 }
 

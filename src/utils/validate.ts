@@ -65,4 +65,4 @@ export function confirmProblem(pw: string, confirm: string): string | null {
   return null;
 }
 
-export const PASSWORD_UPDATED_FLAG = "arithmetick:password-updated"; // NOSONAR storage key name, not a credential
+export const PASSWORD_UPDATED_FLAG = "arithmetick:password-updated";

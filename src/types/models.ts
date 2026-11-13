@@ -26,9 +26,7 @@ export interface ChildProfile {
   questsDone: number;
   cleanSolves?: Partial<Record<Grade, number>>;
   helpedSolves?: number;
-  /** Levels finished with no wrong answers and no help, first time or replayed, as "g{grade}-l{level}". */
   cleanLevels?: string[];
-  /** Times a finished level was played again. */
   replays?: number;
   daysPlayed?: string[];
   attempts?: AttemptLog[];
@@ -37,7 +35,6 @@ export interface ChildProfile {
   sound?: SoundSettings;
 }
 
-/** Saved per child. Missing means both on. */
 export interface SoundSettings {
   effects: boolean;
   voice: boolean;

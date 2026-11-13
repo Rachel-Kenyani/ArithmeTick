@@ -24,10 +24,6 @@ function emit() {
   listeners.forEach((l) => l());
 }
 
-/**
- * Badges are checked when a level is finished. A child who has finished everything would never get a badge that
- * was added or made easier later, so saved profiles are checked again when the app opens.
- */
 function withDueBadges(profile: ChildProfile): ChildProfile {
   const due = newlyEarned(profile);
   return due.length ? { ...profile, badges: [...profile.badges, ...due] } : profile;

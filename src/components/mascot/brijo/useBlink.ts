@@ -19,9 +19,9 @@ export function useBlink(canBlink: boolean) {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const schedule = () => {
       timer = setTimeout(() => {
-        blinkOnce(Math.random() < 0.2); // NOSONAR decorative animation timing, not security-sensitive
+        blinkOnce(Math.random() < 0.2);
         schedule();
-      }, 3000 + Math.random() * 2000); // NOSONAR decorative animation timing, not security-sensitive
+      }, 3000 + Math.random() * 2000);
     };
     schedule();
     return () => clearTimeout(timer);

@@ -20,11 +20,11 @@ export function useGaze(eyes: EyeKind, canGaze: boolean, reduceMotion: boolean) 
     let timer: ReturnType<typeof setTimeout> | undefined;
     const schedule = () => {
       timer = setTimeout(() => {
-        const [x, y] = GAZE_SPOTS[Math.floor(Math.random() * GAZE_SPOTS.length)]; // NOSONAR decorative animation, not security-sensitive
+        const [x, y] = GAZE_SPOTS[Math.floor(Math.random() * GAZE_SPOTS.length)];
         gazeX.set(withSpring(x, GAZE_SPRING));
         gazeY.set(withSpring(y, GAZE_SPRING));
         schedule();
-      }, 2200 + Math.random() * 3000); // NOSONAR decorative animation timing, not security-sensitive
+      }, 2200 + Math.random() * 3000);
     };
     schedule();
     return () => clearTimeout(timer);

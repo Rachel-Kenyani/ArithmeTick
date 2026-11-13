@@ -17,11 +17,6 @@ import { useActiveProfile, useAppState } from "@/state/store";
 import { colors, fonts } from "@/theme";
 import { MAX_PROFILES, type ChildProfile } from "@/types/models";
 
-/**
- * Stars, from real data on this phone only. With brothers and sisters, the family shares a star goal and sees each
- * other's stars (no ranks, so children of different grades are not set against each other). With one child, the
- * tab shows that child's own journey and personal star goals.
- */
 export default function LeaderboardScreen() {
   const ready = useGuard("profile");
   const profile = useActiveProfile();
@@ -50,7 +45,6 @@ export default function LeaderboardScreen() {
   );
 }
 
-/** The same teal banner as the Badges tab: stars towards the next goal as a ring, and goals reached so far. */
 function GoalHero({ goal, family, name }: Readonly<{ goal: StarGoal; family: boolean; name: string }>) {
   const toGo = goal.goal - goal.stars;
   let subtitle = `${toGo} more ${toGo === 1 ? "star" : "stars"} to the next goal`;
@@ -73,7 +67,6 @@ function GoalHero({ goal, family, name }: Readonly<{ goal: StarGoal; family: boo
   );
 }
 
-/** A card heading like the Badges tab's: title, a short note, and a count chip. */
 function CardHead({ title, note, count }: Readonly<{ title: string; note: string; count: string }>) {
   return (
     <View style={styles.cardHead}>
@@ -93,7 +86,6 @@ function reachedLine(reached: number): string {
   return `${reached} ${reached === 1 ? "goal" : "goals"} reached`;
 }
 
-/** Each child's stars and badges, in the order they were added. The child playing now is highlighted. */
 function FamilyBoard({ profiles, activeId }: Readonly<{ profiles: readonly ChildProfile[]; activeId: string }>) {
   return (
     <Panel style={styles.card}>

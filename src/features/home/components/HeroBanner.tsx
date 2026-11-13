@@ -6,10 +6,6 @@ import { colors, fonts } from "@/theme";
 
 const RING = 92;
 
-/**
- * The teal banner at the top of the Badges and Stars tabs: a progress ring, the screen's title and a short line.
- * The title sits on solid teal so it stays readable over the jungle background.
- */
 export default function HeroBanner({
   title,
   subtitle,
@@ -56,7 +52,6 @@ export default function HeroBanner({
   );
 }
 
-/** A lighter box inside the banner: a small gold label, a line, and an optional detail. Tappable when given onPress. */
 export function HeroCallout({ label, title, detail, onPress, accessibilityLabel }: Readonly<{ label: string; title: string; detail?: string; onPress?: () => void; accessibilityLabel?: string }>) {
   const body = (
     <>

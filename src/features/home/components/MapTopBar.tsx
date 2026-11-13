@@ -6,10 +6,6 @@ import { ROUTES } from "@/constants/routes";
 import { navigateToTab } from "@/features/home/components/BottomNav";
 import { useActiveProfile, useScreenTimeRemaining } from "@/state/store";
 
-/**
- * The map's top bar for the other tabs (badges, leaderboard, settings): back to the map, sound, stars and time left,
- * so every tab has the same controls in the same place.
- */
 export default function MapTopBar({ onBadges = false }: Readonly<{ onBadges?: boolean }>) {
   const profile = useActiveProfile();
   const secondsLeft = useScreenTimeRemaining();

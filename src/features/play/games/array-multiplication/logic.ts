@@ -24,10 +24,8 @@ export interface DimLimits {
   maxCols: number;
 }
 
-/** The child can always build any size: help shows where the target is, but never snaps a wrong array into the right one. */
 export const LIMITS: DimLimits = { minRows: 1, maxRows: MAX_ROWS, maxCols: MAX_COLS };
 
-/** Misses before Brijo builds the array for the child to count and check. */
 export const SHOW_AFTER_MISSES = 2;
 
 export type MissKind = "rows" | "cols" | "both";
@@ -41,7 +39,6 @@ export function missKind(dims: Dims, pz: Puzzle): MissKind | null {
   return "both";
 }
 
-/** What Brijo says when the array is wrong: what is right so far, and what to change. */
 export function missLine(kind: MissKind, pz: Puzzle): string {
   if (kind === "cols") return `${pz.rows} rows, well done! Now put ${pz.cols} seeds in each row.`;
   if (kind === "rows") return `${pz.cols} seeds in each row, well done! Now make ${pz.rows} rows.`;
@@ -74,10 +71,6 @@ export function constrain(dims: Dims, limits: DimLimits): Dims {
 }
 
 
-/**
- * Three answers for "rows × cols = ?": the right one, the sum a child gives when they add instead of multiply,
- * and the total with one row too many. Smallest first, always three different numbers.
- */
 export function answerChoices(pz: Puzzle): number[] {
   const options = new Set([pz.count, pz.rows + pz.cols, pz.count + pz.cols]);
   for (let n = pz.count - pz.cols; options.size < 3; n -= 1) {
@@ -86,10 +79,8 @@ export function answerChoices(pz: Puzzle): number[] {
   return [...options].sort((a, b) => a - b);
 }
 
-/** The running totals down the rows, as Brijo counts them: "4, 8, 12". */
 export const skipCount = (pz: Puzzle) => Array.from({ length: pz.rows }, (_, r) => (r + 1) * pz.cols).join(", ");
 
-/** After two misses Brijo builds the array and counts it aloud, row by row, so the child hears the total. */
 export const showLine = (pz: Puzzle) => `Here are ${pz.rows} rows of ${pz.cols} seeds. Let's count them: ${skipCount(pz)}.`;
 
 export const countLine = "Tap each row to count the seeds.";

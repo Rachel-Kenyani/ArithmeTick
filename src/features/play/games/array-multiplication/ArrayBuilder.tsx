@@ -21,7 +21,6 @@ interface ArrayBuilderProps {
   pitch: number;
   palActive: boolean;
   locked: boolean;
-  /** While Brijo counts the array for the child: how many rows are counted so far, each with its running total. */
   countedRows?: number;
   hinting: boolean;
   reduced: boolean;

@@ -1,15 +1,10 @@
 import type { Place } from "./PlaceValueChart";
 import { digitsOf } from "./columnsLogic";
 
-/**
- * Column subtraction as it is done on paper. Before a column whose top digit is too small, Brijo borrows 1 from the
- * column to its left (crossing out that digit and writing one less), then the child takes away column by column.
- */
 export type SubStep = "borrowTens" | "ones" | "borrowHundreds" | "tens" | "hundreds" | "solved";
 
 const ORDER: SubStep[] = ["borrowTens", "ones", "borrowHundreds", "tens", "hundreds", "solved"];
 
-/** Whether a column has to borrow from the column to its left. */
 export function needsBorrow(place: "ones" | "tens", a: number, b: number): boolean {
   const top = digitsOf(a);
   const bottom = digitsOf(b);
@@ -17,7 +12,6 @@ export function needsBorrow(place: "ones" | "tens", a: number, b: number): boole
   return top.tens - (top.ones < bottom.ones ? 1 : 0) < bottom.tens;
 }
 
-/** Each top digit after all borrowing: what the child actually takes away from. */
 export function borrowedTop(a: number, b: number): Record<Place, number> {
   const top = digitsOf(a);
   const fromTens = needsBorrow("ones", a, b);
@@ -43,10 +37,6 @@ export function nextSubStep(step: SubStep, a: number, b: number): SubStep {
 
 const reached = (step: SubStep, than: SubStep) => ORDER.indexOf(step) >= ORDER.indexOf(than);
 
-/**
- * The new top digits written above the columns so far. Borrowing from the tens changes both the tens (one less)
- * and the ones (ten more), so both are rewritten at once.
- */
 export function rewrittenTop(step: SubStep, a: number, b: number): Partial<Record<Place, number>> {
   const top = digitsOf(a);
   const out: Partial<Record<Place, number>> = {};
@@ -68,14 +58,12 @@ export function subFocus(step: SubStep): Place | null {
   return null;
 }
 
-/** The answer digits written so far. */
 export function subWritten(step: SubStep, a: number, b: number): Partial<Record<Place, number>> {
   const d = digitsOf(a - b);
   const past = (than: SubStep) => ORDER.indexOf(step) > ORDER.indexOf(than);
   return { ones: past("ones") ? d.ones : undefined, tens: past("tens") ? d.tens : undefined, hundreds: past("hundreds") ? d.hundreds : undefined };
 }
 
-/** The take-away in one column: from how many, take how many. */
 export function columnTakeAway(place: Place, a: number, b: number): { from: number; take: number } {
   return { from: borrowedTop(a, b)[place], take: digitsOf(b)[place] };
 }

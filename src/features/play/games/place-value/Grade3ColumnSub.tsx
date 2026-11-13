@@ -20,18 +20,12 @@ import { columnTakeAway, firstSubStep, needsBorrow, nextSubStep, rewrittenTop, s
 
 const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1600;
-/** When the lending digit is crossed out, and when its 1 starts to travel. */
 const CROSS_MS = 700;
 const LEND_MS = 1200;
 
 type BorrowPhase = "start" | "crossed" | "flying" | "landed";
 const PER_ROW = 5;
 
-/**
- * Column subtraction the way it is done on paper. Brijo borrows when a column's top digit is too small, crossing
- * it out and writing the new digits. In each column the child taps bottle tops to take them away, then says how
- * many are left; a wrong answer has Brijo count what's left aloud.
- */
 export default function Grade3ColumnSub({ level = 0, a, b, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ColumnsProps>) {
   const schedule = useScheduler();
   const [step, setStep] = useState<SubStep>(() => firstSubStep(a, b));
@@ -49,10 +43,6 @@ export default function Grade3ColumnSub({ level = 0, a, b, waiting = false, onSt
 
   const borrowing = step === "borrowTens" || step === "borrowHundreds";
 
-  /**
-   * Brijo borrows on his own, step by step, then waits for the child to tap Next (or Show me again). Waits while the
-   * story card is up. `replays` restarts it.
-   */
   useEffect(() => {
     if (!borrowing || waiting) return;
     const timers = [
@@ -100,7 +90,6 @@ export default function Grade3ColumnSub({ level = 0, a, b, waiting = false, onSt
     setTaken((prev) => [...prev, index]);
   };
 
-  /** Brijo counts the bottle tops still there, numbering each one. Returns how long that takes. */
   const countLeft = () => {
     const rest = Array.from({ length: from }, (_, i) => i).filter((i) => !taken.includes(i));
     setMarks({});
@@ -179,10 +168,6 @@ export default function Grade3ColumnSub({ level = 0, a, b, waiting = false, onSt
   );
 }
 
-/**
- * What the written sum shows while borrowing: first the lending digit is crossed out and one less is written above
- * it, then a 1 travels from it to the column on its right, which becomes ten more (2 becomes 12).
- */
 function borrowView(step: SubStep, phase: BorrowPhase, a: number, b: number): { rewritten: Partial<Record<Place, number>>; flight: Flight | null } {
   const full = rewrittenTop(step, a, b);
   if (step !== "borrowTens" && step !== "borrowHundreds") return { rewritten: full, flight: null };

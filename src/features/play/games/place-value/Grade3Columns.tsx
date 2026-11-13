@@ -18,17 +18,10 @@ import { carriedInto, choicesFor, columnTerms, columnTotals, columnsClip, column
 
 const DRAFT_VERSION = 2;
 const SOLVED_HANDOFF_MS = 1600;
-/** How long Brijo's carry line stays up, long enough to say it, before the next column starts. */
-/** The column total sits in the answer row this long before its ten lifts off and flies to the next column. */
 const CARRY_SHOW_MS = 900;
 
 type CarryPhase = "none" | "show" | "flying" | "landed";
 
-/**
- * Column addition the way it is done on paper: add the ones, write the ones digit and carry the 1, add the tens
- * with the carried 1, then the hundreds. Each column's numbers are laid out as bottle tops in ten frames for the
- * child to tap and count; a wrong answer has Brijo count them aloud.
- */
 export default function Grade3Columns({ level = 0, a, b, item = "mango", waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ColumnsProps>) {
   const schedule = useScheduler();
   const totals = columnTotals(a, b);
@@ -58,7 +51,6 @@ export default function Grade3Columns({ level = 0, a, b, item = "mango", waiting
   const allCounted = Object.keys(marks).length >= frameTotal;
   const choices = useMemo(() => (place && adding ? choicesFor(totals[place]) : []), [place, adding, totals]);
 
-  /** Brijo carries the ten: the column total shows, then its 1 flies to the next column. Then Next / Show me again. */
   const playCarry = () => {
     setCarryPhase("show");
     schedule(() => {
@@ -96,7 +88,6 @@ export default function Grade3Columns({ level = 0, a, b, item = "mango", waiting
     }
   };
 
-  /** The child taps any bottle top not yet counted; it gets the next number. */
   const countOne = (index: number) => {
     if (waiting || !adding || marks[index] !== undefined) return;
     const n = Object.keys(marks).length + 1;
@@ -105,7 +96,6 @@ export default function Grade3Columns({ level = 0, a, b, item = "mango", waiting
     setMarks((prev) => ({ ...prev, [index]: n }));
   };
 
-  /** Brijo counts every bottle top from 1, one beat at a time. Returns how long that takes. */
   const countAloud = () => {
     setMarks({});
     for (let i = 1; i <= frameTotal; i++) {
@@ -170,17 +160,12 @@ export default function Grade3Columns({ level = 0, a, b, item = "mango", waiting
   );
 }
 
-/** The column whose bottle tops are shown: while carrying, the column the ten came from stays on screen. */
 function frameColumnFor(step: ColumnsStep): Place | null {
   if (step === "carryTens") return "ones";
   if (step === "carryHundreds") return "tens";
   return focusPlace(step);
 }
 
-/**
- * What the written sum shows while a ten is carried: the whole column total first (13), then the 1 flies up to the
- * next column, leaving the 3 behind, and lands as the carried 1.
- */
 function carryView(step: ColumnsStep, phase: CarryPhase, a: number, b: number) {
   const answer = writtenDigits(step, a, b);
   const carried = carriedInto(step, a, b);

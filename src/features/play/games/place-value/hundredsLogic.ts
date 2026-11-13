@@ -8,13 +8,8 @@ export type AskStep = "hundreds" | "tens" | "ones";
 
 export const CRATES_PER_BOX = 10;
 
-/** Space between crates on the table, so each crate reads as its own ten. */
 export const CRATE_GAP = 8;
 
-/**
- * Height taken by everything on the board except the crates. While packing: chart, two-line prompt, the hundred
- * box and the ones row. After: chart, prompt, shelf of boxes, table heading, ones row and the answer buttons.
- */
 function boardChrome(packing: boolean): number {
   const shared = CHART_HEIGHT + 72 + 52 + 24;
   return packing ? shared + 120 + 4 * 12 : shared + 56 + 22 + 52 + 6 * 12;
@@ -48,12 +43,10 @@ export function nextAsk(step: AskStep): HundredsStep {
   return "solved";
 }
 
-/** The space one crate of ten (5 × 2 items, with its padding and border) takes up for a given item size. */
 export function crateSlot(cell: number): { w: number; h: number } {
   return { w: Math.ceil(cell * 5.9 + 4), h: Math.ceil(cell * 2.6 + 4) };
 }
 
-/** Picks the column count (3–5) that lets the crates be biggest while still fitting the board. */
 export function crateLayout(size: { w: number; h: number }, crates: number, packing: boolean): { cell: number; cols: number } {
   const room = { w: size.w - 32, h: size.h - boardChrome(packing) };
   let best = { cell: 6, cols: 4 };

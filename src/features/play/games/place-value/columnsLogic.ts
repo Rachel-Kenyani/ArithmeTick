@@ -1,16 +1,11 @@
 import type { Place } from "./PlaceValueChart";
 
-/**
- * Column addition as it is done on paper: add the ones, write the ones digit and carry the ten, add the tens with
- * the carried 1, carry again if needed, then add the hundreds.
- */
 export type ColumnsStep = "ones" | "carryTens" | "tens" | "carryHundreds" | "hundreds" | "solved";
 
 export function digitsOf(n: number): Record<Place, number> {
   return { hundreds: Math.floor(n / 100), tens: Math.floor(n / 10) % 10, ones: n % 10 };
 }
 
-/** What each column adds up to, including what was carried into it. */
 export function columnTotals(a: number, b: number): Record<Place, number> {
   const top = digitsOf(a);
   const bottom = digitsOf(b);
@@ -20,13 +15,11 @@ export function columnTotals(a: number, b: number): Record<Place, number> {
   return { hundreds, tens, ones };
 }
 
-/** Whether a 1 was carried into this column from the one to its right. */
 export function isCarriedInto(place: Place, a: number, b: number): boolean {
   const totals = columnTotals(a, b);
   return (place === "tens" && totals.ones >= 10) || (place === "hundreds" && totals.tens >= 10);
 }
 
-/** The numbers added in one column, in the order a child says them: carried 1 first, then top, then bottom. */
 export function columnTerms(place: Place, a: number, b: number): number[] {
   const totals = columnTotals(a, b);
   const carriedIn = (place === "tens" && totals.ones >= 10) || (place === "hundreds" && totals.tens >= 10);
@@ -47,7 +40,6 @@ export function nextStep(step: ColumnsStep, a: number, b: number): ColumnsStep {
 const ORDER: ColumnsStep[] = ["ones", "carryTens", "tens", "carryHundreds", "hundreds", "solved"];
 const after = (step: ColumnsStep, than: ColumnsStep) => ORDER.indexOf(step) > ORDER.indexOf(than);
 
-/** The answer digits written so far. */
 export function writtenDigits(step: ColumnsStep, a: number, b: number): Partial<Record<Place, number>> {
   const sum = digitsOf(a + b);
   const totals = columnTotals(a, b);
@@ -58,7 +50,6 @@ export function writtenDigits(step: ColumnsStep, a: number, b: number): Partial<
   };
 }
 
-/** The carried 1s written so far, above the column they were carried into. Brijo writes each one as he carries it. */
 export function carriedInto(step: ColumnsStep, a: number, b: number): Partial<Record<Place, boolean>> {
   const at = ORDER.indexOf(step);
   return {
@@ -67,7 +58,6 @@ export function carriedInto(step: ColumnsStep, a: number, b: number): Partial<Re
   };
 }
 
-/** The column being worked on. */
 export function focusPlace(step: ColumnsStep): Place | null {
   if (step === "ones") return "ones";
   if (step === "carryTens" || step === "tens") return "tens";
@@ -94,14 +84,12 @@ export function columnsPrompt(step: ColumnsStep, a: number, b: number): string {
   }
 }
 
-/** Instruction clips are recorded per level, because the numbers in them change. */
 export function columnsClip(step: ColumnsStep, grade: number, level: number): string {
   if (step === "solved") return "";
   const name = { ones: "ones", carryTens: "carry", tens: "tens", carryHundreds: "carry-tens", hundreds: "hundreds" }[step];
   return `g${grade}-l${String(level).padStart(2, "0")}-${name}`;
 }
 
-/** Answer buttons: the right total, plus the slips children make (forgetting the carry, or writing only the ones). */
 export function choicesFor(total: number): number[] {
   const slips = [total >= 10 ? total - 10 : total + 2, total + 1, total - 1];
   return [...new Set([total, ...slips].filter((n) => n >= 0))].slice(0, 3).sort((x, y) => x - y);

@@ -10,10 +10,8 @@ import { digitsOf } from "./columnsLogic";
 const PLACES: Place[] = ["hundreds", "tens", "ones"];
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
-/** How long a carried or borrowed 1 takes to travel between columns. */
 export const FLY_MS = 900;
 
-/** A 1 moving between columns: carried up to the next column, or borrowed down into the one on its right. */
 export interface Flight {
   key: string;
   from: Place;
@@ -24,11 +22,6 @@ export interface Flight {
 
 type Spots = { x: Partial<Record<Place, number>>; top: number; width: number; carryY: number; answerY: number };
 
-/**
- * A sum written in place-value columns, as in a Grade 3 exercise book: carried 1s above the columns, the two
- * numbers, a line, and the answer row, which fills in one column at a time. When subtracting, a borrowed-from
- * digit is crossed out and its new value written small above it.
- */
 export default function ColumnSum({
   op,
   a,
@@ -113,7 +106,6 @@ export default function ColumnSum({
   );
 }
 
-/** The 1 travelling between columns, in an arc, from where it was made to where it is written. */
 function FlyingOne({ flight, spots }: Readonly<{ flight: Flight; spots: Spots }>) {
   const reduced = useReducedMotion();
   const t = useSharedValue(0);

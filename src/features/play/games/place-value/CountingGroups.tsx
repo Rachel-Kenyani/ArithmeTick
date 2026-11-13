@@ -13,9 +13,6 @@ const GAP_RATIO = 0.12;
 const rowsOf = (n: number) => Math.max(1, Math.ceil(n / PER_ROW));
 const unit = 1 + GAP_RATIO;
 
-/**
- * The biggest bottle tops that fit, trying the groups one under another (with + between) and side by side.
- */
 export function groupsLayout(room: { w: number; h: number }, terms: number[]): { cell: number; stacked: boolean } {
   const k = terms.length;
   const signs = (k - 1) * (SIGN_SIZE + 8);
@@ -30,11 +27,6 @@ export function groupsLayout(room: { w: number; h: number }, terms: number[]): {
   return { cell: Math.floor(Math.max(22, Math.min(64, stacked ? stack : side))), stacked };
 }
 
-/**
- * The numbers in one column as separate groups of bottle tops, joined by +: 6 + 7 shows a group of 6 and a group
- * of 7. Each group is labelled with its number. The child taps each bottle top once to count them all together.
- * Bottle tops are numbered across the groups in order, matching the board's count.
- */
 export default function CountingGroups({
   terms,
   carried,

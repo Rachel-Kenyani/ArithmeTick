@@ -11,24 +11,17 @@ type Palette = "teal" | "purple" | "gold";
 const POP = ZoomIn.springify().stiffness(420).damping(18).reduceMotion(ReduceMotion.System);
 const TRAY_PAD = 8;
 const FRAME_GAP = 10;
-/** The "Tap each bottle top" line under the frames, with its gap. */
 const TALLY_HEIGHT = 0;
 
-/** Which term each bottle top belongs to, filling the frames in order: first term, then the next, and so on. */
 export function slotOwners(terms: number[]): number[] {
   return terms.flatMap((n, t) => Array.from({ length: n }, () => t));
 }
 
-/** A carried 1 is gold so it stands out; the top number is teal and the bottom number purple. */
 export function paletteFor(term: number, terms: number, carried: boolean): Palette {
   if (carried && term === 0) return "gold";
   return term === terms - 1 && terms > 1 ? "purple" : "teal";
 }
 
-/**
- * The biggest bottle tops that fit the space, trying the frames side by side and stacked. `room` is the space the
- * tray may take up, including its own padding.
- */
 export function framesLayout(room: { w: number; h: number }, total: number): { cell: number; stacked: boolean } {
   const frames = Math.max(1, Math.ceil(total / 10));
   const w = room.w - TRAY_PAD * 2 - 4;
@@ -41,11 +34,6 @@ export function framesLayout(room: { w: number; h: number }, total: number): { c
   return { cell: Math.floor(Math.max(22, Math.min(64, stacked ? stack : side))), stacked };
 }
 
-/**
- * Bottle tops for one column of a sum, in ten frames so a full frame shows the ten to carry. The child taps each
- * bottle top once; it keeps the number it was counted as, so they can see where they got to. Tapping one that is
- * already counted does nothing.
- */
 export default function CountingFrames({
   terms,
   carried,
@@ -87,7 +75,6 @@ export default function CountingFrames({
   );
 }
 
-/** One bottle top the child can tap to count. Once counted it dims and shows its number, and can't be counted again. */
 export function CountCap({ mark, taken, palette, cell, onTap }: Readonly<{ mark?: number; taken?: boolean; palette: Palette; cell: number; onTap: () => void }>) {
   if (taken) {
     return (

@@ -7,7 +7,6 @@ const BROWN = "#b5733a";
 const CHAR = "#7d4a22";
 const LAYER = "#c99256";
 
-/** Browned blisters, as fractions of the radius: where the chapati touched the pan. */
 const BLISTERS = [
   { id: "b1", x: -0.48, y: -0.32, rx: 0.13, ry: 0.08, turn: -20 },
   { id: "b2", x: 0.34, y: -0.52, rx: 0.1, ry: 0.06, turn: 15 },
@@ -18,7 +17,6 @@ const BLISTERS = [
   { id: "b7", x: 0.2, y: 0.38, rx: 0.07, ry: 0.04, turn: -35 },
 ] as const;
 
-/** Small dark specks inside some blisters. */
 const SPECKS = [
   { id: "c1", x: -0.45, y: -0.3, r: 0.03 },
   { id: "c2", x: 0.55, y: 0.2, r: 0.035 },
@@ -26,7 +24,6 @@ const SPECKS = [
   { id: "c4", x: 0.36, y: -0.5, r: 0.02 },
 ] as const;
 
-/** A hand-rolled edge: a circle that wobbles a little, so it does not look drawn with a compass. */
 export function chapatiOutline(r: number, cx = 0, cy = 0): string {
   const steps = 72;
   const points = Array.from({ length: steps }, (_, i) => {
@@ -37,7 +34,6 @@ export function chapatiOutline(r: number, cx = 0, cy = 0): string {
   return `M${points.join("L")}Z`;
 }
 
-/** The faint spiral of a layered chapati. */
 function layerSpiral(r: number): string {
   const steps = 90;
   const turns = 2.4;
@@ -50,10 +46,6 @@ function layerSpiral(r: number): string {
   return `M${points.join("L")}`;
 }
 
-/**
- * A cooked chapati centred on 0,0. `id` keeps the gradient name unique when several chapatis share a screen;
- * `outline` sets the edge colour and width (the treasure uses the thick ink outline of the other treasures).
- */
 export function ChapatiBody({ r, id, outline = EDGE, outlineWidth = 2 }: Readonly<{ r: number; id: string; outline?: string; outlineWidth?: number }>) {
   const fill = `chapati-${id}`;
   return (

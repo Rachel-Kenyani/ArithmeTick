@@ -9,7 +9,6 @@ export type TreasureId = "mango" | "feather" | "shell" | "flower" | "nest" | "or
 const INK = "#1b1b1b";
 const W = 3;
 
-/** The treasure drawn on a 64 by 64 grid, for use inside another picture such as a badge. */
 export function TreasureGlyph({ id }: Readonly<{ id: TreasureId }>) {
   switch (id) {
     case "tomato":

@@ -2,7 +2,6 @@ type WordTimes = [word: string, ms: number][];
 
 function loadClips(): { clips: Partial<Record<string, number>>; words: Partial<Record<string, WordTimes>> } {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require("../../assets/voice/clips");
     return { clips: mod.default ?? {}, words: mod.words ?? {} };
   } catch {

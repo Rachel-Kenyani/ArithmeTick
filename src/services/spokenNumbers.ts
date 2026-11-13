@@ -4,7 +4,6 @@ const UNITS: Record<string, number> = {
 };
 const TENS: Record<string, number> = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
 
-/** The value of one spoken number word ("forty-three" → 43), or null if it isn't one. */
 export function numberWord(word: string): number | null {
   const w = word.toLowerCase().replace(/[^a-z-]/g, "");
   if (w in UNITS) return UNITS[w];
@@ -13,10 +12,6 @@ export function numberWord(word: string): number | null {
   return null;
 }
 
-/**
- * Joins a spoken number said over several words ("two hundred and forty-three") into one numeral token ("243")
- * timed at its first word, so it lines up with a numeral shown on screen as a single word.
- */
 export function joinSpokenNumbers(heard: [string, number][]): [string, number][] {
   const out: [string, number][] = [];
   let i = 0;

@@ -4,7 +4,7 @@ import type { Grade } from "@/types/domain";
 
 function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
-  return `p-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`; // NOSONAR non-security local id fallback
+  return `p-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`;
 }
 
 const EMPTY_PROGRESS: Record<Grade, number> = { 1: 0, 2: 0, 3: 0 };

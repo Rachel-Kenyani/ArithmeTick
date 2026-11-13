@@ -58,7 +58,7 @@ export function useSplashTimeline({
     const timers = cues.map(([t, cue]) => setTimeout(cue, t));
     cueTimers.current = timers;
     return () => timers.forEach(clearTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
   return skip;
 }

@@ -2,10 +2,6 @@ import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from "expo-aud
 
 import { HOLD_STEPS, SFX_ASSETS, type SfxName } from "@/services/audio/sfxAssets";
 
-/**
- * Players keep the audio session active when they finish. Otherwise iOS switches the session off just after each
- * sound, which cuts Brijo off mid-sentence whenever a line has no recording and is spoken by the phone's voice.
- */
 const players = new Map<SfxName, AudioPlayer>();
 let muted = false;
 let modeSet = false;
@@ -52,7 +48,6 @@ export const sfx = {
   pause: () => play("pause"),
 };
 
-/** Turns sound effects off or on. Brijo's voice has its own switch in narration. */
 export function setMuted(next: boolean) {
   if (next === muted) return;
   muted = next;

@@ -56,7 +56,6 @@ function stopAll() {
   publish(null);
 }
 
-/** Lower-case and strip punctuation, writing any number word as a numeral so "eleven" matches "11". */
 function norm(word: string) {
   const n = word.toLowerCase() === "zero" ? 0 : numberWord(word);
   return n === null ? word.toLowerCase().replace(/[^a-z0-9]/g, "") : String(n);
@@ -116,7 +115,6 @@ function playParts(text: string, parts: Part[], ticket: number) {
       ? null
       : createAudioPlayer(VOICE_CLIPS[p.id] as number, { keepAudioSessionActive: true }),
   );
-  /** Pauses before releasing: on iOS a released player can keep sounding, so a repeat would talk over it. */
   const release = () =>
     players.forEach((p) => {
       try {
@@ -249,7 +247,6 @@ function speak(
 let voiceOn = true;
 const voiceListeners = new Set<() => void>();
 
-/** Whether Brijo reads instructions aloud. A grown-up turns this off in Settings; sound effects are separate. */
 function setVoiceOn(next: boolean) {
   if (next === voiceOn) return;
   voiceOn = next;
@@ -273,7 +270,6 @@ function say(text: string, parts: Part[], force = false) {
 }
 
 export const narration = {
-  /** `force` is for the child's own repeat, which plays even with Brijo's voice turned off. */
   story(text: string, grade: number, level: number, force = false) {
     say(
       text,
@@ -300,7 +296,6 @@ export const narration = {
   prompt(text: string, clipId: string) {
     say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }]);
   },
-  /** Reads one instruction when the child asks, even with Brijo's voice turned off. */
   replay(text: string, clipId: string) {
     say(text, [{ id: clipId, from: 0, to: wordsOf(text).length }], true);
   },

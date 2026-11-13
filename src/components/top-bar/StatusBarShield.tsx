@@ -5,10 +5,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { TOP_BAR_SHIELD } from "./constants";
 
-/**
- * The translucent teal band behind the phone's time, signal and battery, as on the map's top bar, so they stay
- * readable over illustrated backgrounds. Screens with the app top bar already have it and do not need this.
- */
 export default function StatusBarShield() {
   const { top } = useSafeAreaInsets();
   const focused = useIsFocused();

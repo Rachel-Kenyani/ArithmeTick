@@ -18,7 +18,6 @@ export const MapIcon = make(
   </>,
 );
 
-/** Game sound effects: two beamed notes. */
 export const MusicNoteIcon = make(
   "MusicNoteIcon",
   <>
@@ -38,7 +37,6 @@ export const MusicNoteOffIcon = make(
   </>,
 );
 
-/** Brijo speaking: a speech bubble with voice bars, for buttons that read words aloud. */
 export const SpeechIcon = make(
   "SpeechIcon",
   <>

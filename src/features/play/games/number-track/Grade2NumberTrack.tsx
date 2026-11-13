@@ -17,7 +17,6 @@ const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1400;
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
 
-/** Near misses: one stone too far, or a slip in the ones when counting in tens. */
 export function choicesFor(answer: number, step: number): number[] {
   if (Math.abs(step) === 1) return [answer + 2, answer, answer - 1];
   return [answer + step, answer, answer + 1];
@@ -50,7 +49,6 @@ export default function Grade2NumberTrack({ level, grade = 2, from, gaps, step =
     onDraft?.({ version: DRAFT_VERSION, misses, picked: filled });
   }, [onDraft, misses, filled]);
 
-  /** Brijo counts the stones aloud up to (not including) the stone at index `untilIndex`. */
   const countBack = (untilIndex: number) => {
     const run = numbers.slice(0, untilIndex);
     setHops((prev) => {

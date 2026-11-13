@@ -13,12 +13,10 @@ import { Prompt, TARGET, partStyles } from "../place-value/parts";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 
 const DRAFT_VERSION = 1;
-/** Misses on one hand before its number is lit up. Each hand gets its own tries. */
 const HINT_AFTER = 2;
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const SPRING = { damping: 14, stiffness: 140, reduceMotion: ReduceMotion.System };
 
-/** Once the clock is right, Brijo says why: what each hand is showing. */
 export function clockExplanation(hour: number, half: boolean): string {
   if (half) return `The long hand is on 6, so it's half past. The short hand has just passed ${hour}. It's half past ${hour}!`;
   return `The long hand is on 12, so it's o'clock. The short hand is on ${hour}. It's ${hour} o'clock!`;
@@ -43,7 +41,6 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
   const [shown, setShown] = useState(12);
   const [solved, setSolved] = useState(false);
   const [misses, setMisses] = useState(draft?.version === DRAFT_VERSION ? draft.misses : 0);
-  /** Misses on the hand being set now; starts again at 0 for the short hand. */
   const [stageMisses, setStageMisses] = useState(0);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [angle, setAngle] = useState(0);
@@ -55,7 +52,6 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     onDraft?.({ version: DRAFT_VERSION, misses });
   }, [onDraft, misses]);
 
-  /** Turn a hand forwards to `degrees`, the short way round. */
   const turnTo = (from: number, degrees: number) => from + ((degrees - (((from % 360) + 360) % 360) + 360) % 360);
 
   const pointTo = (n: number, past = 0) => {
@@ -108,7 +104,6 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
     schedule(() => sfx.solved(), 500);
   };
 
-  /** The child moves on when they are ready, after hearing why the clock is right. */
   const finish = () => {
     narration.stop();
     onSolved();

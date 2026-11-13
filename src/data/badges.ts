@@ -16,14 +16,9 @@ export interface BadgeDef {
 
 const reached = (grade: Grade, level: number) => (p: ChildProfile) => p.progress[grade] >= level;
 
-/** Three different levels in a grade solved with no wrong answers and no help, first time or on a replay. */
 const firstTry = (grade: Grade) => (p: ChildProfile) =>
   Math.max(p.cleanSolves?.[grade] ?? 0, (p.cleanLevels ?? []).filter((k) => k.startsWith(`g${grade}-`)).length) >= 3;
 
-/**
- * Star badges must be reachable in every grade. Each level gives 3 stars once, and the shortest grade (Grade 1)
- * has 9 levels, so no grade can give more than 27.
- */
 export const STAR_COLLECTOR_STARS = 15;
 export const SUPER_STAR_STARS = 24;
 

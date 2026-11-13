@@ -5,8 +5,8 @@ export const ROUTES = {
   login: "/login",
   signup: "/signup",
   verify: "/verify",
-  forgotPassword: "/forgot-password", // NOSONAR route path, not a credential
-  resetPassword: "/reset-password", // NOSONAR route path, not a credential
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
   addExplorer: "/add-explorer",
   profiles: "/profiles",
   home: "/home",

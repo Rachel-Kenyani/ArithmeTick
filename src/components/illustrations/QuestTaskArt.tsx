@@ -263,7 +263,6 @@ function Foot({ x, y, turn }: Readonly<{ x: number; y: number; turn: number }>) 
   );
 }
 
-/** A numbered step badge beside a footprint. */
 function StepBadge({ x, y, n }: Readonly<{ x: number; y: number; n: number }>) {
   return (
     <G>
@@ -275,10 +274,6 @@ function StepBadge({ x, y, n }: Readonly<{ x: number; y: number; n: number }>) {
   );
 }
 
-/**
- * The walk seen from above, matching the example directions: from the door, forward 3 steps, turn left,
- * forward 2 steps to the treasure. Each step is a numbered footprint.
- */
 export function TreasureWalkArt({ size = 64, title }: Readonly<ArtProps>) {
   return (
     <ArtFrame size={size} title={title}>

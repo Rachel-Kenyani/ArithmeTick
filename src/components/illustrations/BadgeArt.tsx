@@ -412,7 +412,6 @@ function SuperStar() {
   );
 }
 
-/** A hundred square, a ten rod and three ones: the place-value blocks for 243. */
 function HundredsBlocks() {
   const grid = [0, 1, 2, 3, 4].map((i) => 12 + i * 5);
   return (
@@ -430,7 +429,6 @@ function HundredsBlocks() {
   );
 }
 
-/** A winners' podium: 1st in the middle, 2nd and 3rd either side. */
 function Podium() {
   const block = (x: number, h: number, n: number, fill: string) => (
     <G key={n}>
@@ -448,7 +446,6 @@ function Podium() {
   );
 }
 
-/** A 1-litre bottle with water and a level mark. */
 function WaterBottle() {
   return (
     <>
@@ -462,7 +459,6 @@ function WaterBottle() {
   );
 }
 
-/** An open treasure chest with gold inside. */
 function Chest() {
   return (
     <>
@@ -520,7 +516,6 @@ const ART: Record<string, () => ReactNode> = {
   "star-collector": Stars,
 };
 
-/** Move & Play badges that use the activity's own picture. */
 const QUEST_ART: Record<string, string> = {
   "same-spotter": "findIt",
   "groups-guru": "hideGuess",

@@ -29,7 +29,7 @@ export default function SpringIn({
       scale.set(withDelay(delay, withSpring(1, SPRING)));
       y.set(withDelay(delay, withSpring(0, SPRING)));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
   const animated = useAnimatedStyle(() => ({
     opacity: opacity.value,

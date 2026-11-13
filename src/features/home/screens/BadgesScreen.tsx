@@ -38,7 +38,6 @@ const FADE_OUT = FadeOut.duration(160).reduceMotion(ReduceMotion.System);
 const SLIDE_MS = 220;
 
 type Tab = "grade" | "everyday";
-/** The tab the child last picked, kept while the app stays open. */
 let rememberedTab: Tab | null = null;
 
 const POP = ZoomIn.springify()
@@ -46,7 +45,6 @@ const POP = ZoomIn.springify()
   .damping(18)
   .reduceMotion(ReduceMotion.System);
 
-/** Each badge's colour, for the rays behind it in the pop-up. */
 const TONE: Record<BadgeTone, string> = {
   teal: "#00a294",
   purple: "#8457d2",
@@ -83,7 +81,6 @@ export default function BadgesScreen() {
     gradeBadges.find((b) => !isEarned(b)) ??
     everyday.find((b) => !isEarned(b)) ??
     null;
-  /** With no tab picked yet, open on the group the next badge to win belongs to. */
   const tab: Tab =
     picked ?? (next && next.grade === undefined ? "everyday" : "grade");
   const choose = (t: Tab) => {
@@ -176,7 +173,6 @@ export default function BadgesScreen() {
   );
 }
 
-/** The banner: how many badges are won, as a ring, and which one to go for next. */
 function Hero({
   name,
   won,
@@ -280,7 +276,6 @@ function Tile({
   );
 }
 
-/** Drawn on the screen itself rather than in a separate window, so it always opens when a badge is tapped. */
 function BadgePopup({
   badge,
   won,
@@ -334,7 +329,6 @@ function BadgePopup({
   );
 }
 
-/** Sun rays in the badge's colour behind a won badge. */
 function Rays({ color }: Readonly<{ color: string }>) {
   const size = 200;
   const c = size / 2;

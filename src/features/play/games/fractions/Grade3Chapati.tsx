@@ -20,10 +20,8 @@ type Cut = "down" | "across";
 
 const DRAFT_VERSION = 1;
 const SOLVED_HANDOFF_MS = 1600;
-/** How long the numbers stay on the pieces after Brijo has counted them all. */
 const COUNT_HOLD_MS = 1400;
 const CUTS: readonly Cut[] = ["down", "across"];
-/** Each quarter, by the corner it sits in, with which way it moves out once cut. */
 const QUARTERS = [
   { id: "top-right", dx: 1, dy: -1, from: -90, to: 0 },
   { id: "bottom-right", dx: 1, dy: 1, from: 0, to: 90 },
@@ -31,7 +29,6 @@ const QUARTERS = [
   { id: "top-left", dx: -1, dy: -1, from: 180, to: 270 },
 ] as const;
 
-/** The fractions offered as answers: the right one and the two children most often mix it up with. */
 export function fractionChoices(parts: number): { top: number; bottom: number }[] {
   const near = [2, 3, 4, 8].filter((b) => b !== parts).slice(0, 2);
   return [parts, ...near].sort((x, y) => x - y).map((bottom) => ({ top: 1, bottom }));
@@ -53,7 +50,6 @@ interface Stroke {
   y2: number;
 }
 
-/** Which cut a finger stroke makes: long enough, mostly straight down or across, and through the middle. */
 export function strokeCut({ x1, y1, x2, y2 }: Stroke, r: number): Cut | null {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -63,7 +59,6 @@ export function strokeCut({ x1, y1, x2, y2 }: Stroke, r: number): Cut | null {
   return null;
 }
 
-/** The two straight cut edges of a piece, from the rim to the middle and back out. */
 function edges(r: number, from: number, to: number): string {
   const rad = (d: number) => (d * Math.PI) / 180;
   return `M${r * Math.cos(rad(from))} ${r * Math.sin(rad(from))}L0 0L${r * Math.cos(rad(to))} ${r * Math.sin(rad(to))}`;
@@ -78,16 +73,11 @@ function wedge(r: number, from: number, to: number): string {
   return `M0 0L${x1} ${y1}A${r} ${r} 0 0 1 ${x2} ${y2}Z`;
 }
 
-/**
- * Fractions as fair shares of a chapati: the child cuts it into 4 equal pieces, gives Brijo one, and names the
- * fraction. A wrong name has Brijo count the pieces aloud, pointing at each.
- */
 export default function Grade3Chapati({ level = 0, parts, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<FractionProps>) {
   const schedule = useScheduler();
   const [cuts, setCuts] = useState<Cut[]>([]);
   const [given, setGiven] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("cut");
-  /** How many pieces Brijo has counted so far; each counted piece shows its number. */
   const [counted, setCounted] = useState(0);
   const [trail, setTrail] = useState<Stroke | null>(null);
   const trailRef = useRef<Stroke | null>(null);
@@ -152,7 +142,6 @@ export default function Grade3Chapati({ level = 0, parts, waiting = false, onStr
   const r = box * 0.38;
   const half = box / 2;
 
-  /** The child can also slide a finger along a dashed line to cut, the way they would with a knife. */
   const drawStroke = (stroke: Stroke) => {
     trailRef.current = stroke;
     setTrail(stroke);

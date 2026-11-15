@@ -31,7 +31,7 @@ export default function SignupScreen() {
       router.push(ROUTES.verify);
       return null;
     },
-    google: () => googleContinue("signup"),
+    google: () => googleContinue(),
   });
   const {
     busy,

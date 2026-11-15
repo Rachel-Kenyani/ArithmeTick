@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { PendingVerification } from "@/types/models";
-import { CODE_LENGTH } from "@/features/auth/utils/verifyFlow";
 
 export type AuthResult = { ok: true } | { ok: false; message: string };
 
@@ -20,6 +19,7 @@ export function supabase(): SupabaseClient {
 }
 
 const OK: AuthResult = { ok: true };
+const NOT_CONFIGURED: AuthResult = { ok: false, message: "Sign-in isn’t available right now. Try again later." };
 export const RESET_LINK = "arithmetick://reset-password";
 const UNKNOWN_ACCOUNT_CODES = new Set(["otp_disabled", "user_not_found", "signup_disabled"]);
 const ALREADY_REGISTERED: AuthResult = {
@@ -62,7 +62,7 @@ async function safely(run: () => Promise<AuthResult>, fallback: string): Promise
 
 export const auth = {
   signUp(identifier: string, password: string): Promise<AuthResult> {
-    if (!isAuthConfigured) return Promise.resolve(OK);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { data, error } = isEmail(identifier)
         ? await supabase().auth.signUp({ email: identifier, password })
@@ -73,7 +73,7 @@ export const auth = {
   },
 
   logIn(identifier: string, password: string): Promise<AuthResult> {
-    if (!isAuthConfigured) return Promise.resolve(OK);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { error } = isEmail(identifier)
         ? await supabase().auth.signInWithPassword({ email: identifier, password })
@@ -83,7 +83,7 @@ export const auth = {
   },
 
   sendResetCode(identifier: string): Promise<AuthResult> {
-    if (!isAuthConfigured) return Promise.resolve(OK);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { error } = isEmail(identifier)
         ? await supabase().auth.resetPasswordForEmail(identifier, { redirectTo: RESET_LINK })
@@ -98,7 +98,7 @@ export const auth = {
   },
 
   resendCode(flow: PendingVerification): Promise<AuthResult> {
-    if (!isAuthConfigured) return Promise.resolve(OK);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     if (flow.purpose === "reset") return auth.sendResetCode(flow.identifier);
     return safely(async () => {
       const { error } = isEmail(flow.identifier)
@@ -110,7 +110,7 @@ export const auth = {
 
   verifyCode(flow: PendingVerification, code: string): Promise<AuthResult> {
     const wrong: AuthResult = { ok: false, message: "That code didn’t match. Check it and try again." };
-    if (!isAuthConfigured) return Promise.resolve(new RegExp(String.raw`^\d{${CODE_LENGTH}}$`).test(code) ? OK : wrong);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       if (!isEmail(flow.identifier)) {
         const { error } = await supabase().auth.verifyOtp({ phone: flow.identifier, token: code, type: "sms" });
@@ -123,7 +123,7 @@ export const auth = {
   },
 
   setNewPassword(password: string): Promise<AuthResult> {
-    if (!isAuthConfigured) return Promise.resolve(OK);
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { error } = await supabase().auth.updateUser({ password });
       if (error) return failure(error, "We couldn’t save the new password. Try again.");

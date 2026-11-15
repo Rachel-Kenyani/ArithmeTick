@@ -29,12 +29,21 @@ function withDueBadges(profile: ChildProfile): ChildProfile {
   return due.length ? { ...profile, badges: [...profile.badges, ...due] } : profile;
 }
 
+/**
+ * Before children were kept per account, logging out left the family on screen for the next sign-in. Children found
+ * with nobody signed in are moved aside, so they go to no one.
+ */
+function withOwnersOnly(state: AppState): AppState {
+  if (state.account || !state.profiles.length) return state;
+  return { ...state, profiles: [], activeProfileId: null, families: { ...state.families, "signed-out": state.profiles } };
+}
+
 function parse(raw: string | null): AppState {
   if (!raw) return DEFAULT_STATE;
   try {
     const parsed = JSON.parse(raw) as Partial<AppState>;
     if (parsed?.v !== 1) return DEFAULT_STATE;
-    const loaded = { ...DEFAULT_STATE, ...parsed } as AppState;
+    const loaded = withOwnersOnly({ ...DEFAULT_STATE, ...parsed } as AppState);
     return { ...loaded, profiles: loaded.profiles.map(withDueBadges) };
   } catch {
     return DEFAULT_STATE;

@@ -3,10 +3,8 @@ import { isAuthConfigured, supabase } from "@/services/auth";
 const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
 const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
 
-const SAMPLE_IDENTITY = { email: "parent@gmail.com", name: null };
-
 export type GoogleResult =
-  | { ok: true; email: string; name: string | null; sample: boolean }
+  | { ok: true; email: string; name: string | null }
   | { ok: false; cancelled: boolean; message: string };
 
 const isGoogleConfigured = isAuthConfigured && Boolean(WEB_CLIENT_ID);
@@ -28,7 +26,7 @@ async function loadGoogle(): Promise<GoogleModule | null> {
 }
 
 export async function continueWithGoogle(): Promise<GoogleResult> {
-  if (!isGoogleConfigured) return { ok: true, ...SAMPLE_IDENTITY, sample: true };
+  if (!isGoogleConfigured) return failed("Google sign-in isn’t available right now. Try again later.");
 
   const google = await loadGoogle();
   if (!google) return failed("Google sign-in works in the full app build, not in Expo Go.");
@@ -48,7 +46,6 @@ export async function continueWithGoogle(): Promise<GoogleResult> {
       ok: true,
       email: user.email ?? response.data.user.email,
       name: response.data.user.name,
-      sample: false,
     };
   } catch (error) {
     if (isErrorWithCode(error) && error.code === statusCodes.IN_PROGRESS) return CANCELLED;

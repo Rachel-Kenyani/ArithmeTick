@@ -43,7 +43,10 @@ Deno.serve(async (req) => {
     headers: { apiKey: API_KEY, Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
     body: form,
   });
-  if (!res.ok) return hookError(502, `Africa's Talking error ${res.status}`);
+  if (!res.ok) {
+    console.error(`Africa's Talking (${USERNAME}) HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    return hookError(502, `Africa's Talking error ${res.status}`);
+  }
 
   const result = await res.json();
   const recipient = result?.SMSMessageData?.Recipients?.[0];

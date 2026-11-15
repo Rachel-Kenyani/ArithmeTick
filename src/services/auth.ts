@@ -24,7 +24,11 @@ export const RESET_LINK = "arithmetick://reset-password";
 const UNKNOWN_ACCOUNT_CODES = new Set(["otp_disabled", "user_not_found", "signup_disabled"]);
 const ALREADY_REGISTERED: AuthResult = {
   ok: false,
-  message: "That email already has an account.",
+  message: "That email or phone number already has an account. Log in instead.",
+};
+const NO_PHONE_ACCOUNT: AuthResult = {
+  ok: false,
+  message: "No account uses that phone number. Check the number, or sign up.",
 };
 const isEmail = (identifier: string) => identifier.includes("@");
 
@@ -32,7 +36,12 @@ function failure(error: { message: string; code?: string } | null, fallback: str
   if (!error) return OK;
   if (error.code === "invalid_credentials") return { ok: false, message: "That email or password didn’t match." };
   if (error.code === "email_not_confirmed") return { ok: false, message: "Please verify your email first. Check your inbox for the code." };
-  if (error.code === "user_already_exists") return ALREADY_REGISTERED;
+  if (error.code === "user_already_exists" || error.code === "phone_exists" || error.code === "email_exists") return ALREADY_REGISTERED;
+  if (error.code === "same_password") return { ok: false, message: "That’s your current password. Choose a new one." };
+  if (error.code === "weak_password") return { ok: false, message: "That password is too easy to guess. Try a longer one." };
+  if (error.code === "session_not_found" || error.code === "session_expired" || /auth session missing/i.test(error.message)) {
+    return { ok: false, message: "Your reset code has expired. Ask for a new code." };
+  }
   const wait = /after (\d+) seconds?/i.exec(error.message);
   if (wait) return { ok: false, message: `Please wait ${wait[1]} seconds, then tap Resend Code.` };
   if (error.code === "over_sms_send_rate_limit" || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit") {
@@ -79,7 +88,11 @@ export const auth = {
       const { error } = isEmail(identifier)
         ? await supabase().auth.resetPasswordForEmail(identifier, { redirectTo: RESET_LINK })
         : await supabase().auth.signInWithOtp({ phone: identifier, options: { shouldCreateUser: false } });
-      if (error && UNKNOWN_ACCOUNT_CODES.has(error.code ?? "")) return OK;
+      if (error && UNKNOWN_ACCOUNT_CODES.has(error.code ?? "")) {
+        // An email reset never says whether the account exists. For a phone, Supabase sends nothing, so say so
+        // instead of showing a code screen for a text that will never arrive.
+        return isEmail(identifier) ? OK : NO_PHONE_ACCOUNT;
+      }
       return failure(error, "We couldn’t send the code. Try again.");
     }, "We couldn’t send the code. Try again.");
   },

@@ -70,6 +70,8 @@ export interface AppState {
   account: Account | null;
   pending: PendingVerification | null;
   profiles: ChildProfile[];
+  /** Each signed-out account's children, by account key, so one account never sees another's family. */
+  families?: Record<string, ChildProfile[]>;
   activeProfileId: string | null;
   screenTime: { day: string; usedSeconds: number };
   justUnlocked: { grade: Grade; level: number } | null;

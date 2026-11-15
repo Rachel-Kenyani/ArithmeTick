@@ -8,7 +8,7 @@ import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { ROUTES } from "@/constants/routes";
-import { auth } from "@/services/auth";
+import { auth, isAuthConfigured } from "@/services/auth";
 import { actions } from "@/state/store";
 import { colors, fonts } from "@/theme";
 
@@ -30,7 +30,7 @@ export default function LoginScreen() {
     submit: async (normalizedIdentifier, password) => {
       const result = await auth.logIn(normalizedIdentifier, password);
       if (!result.ok) return { password: result.message };
-      actions.login(normalizedIdentifier);
+      actions.login(normalizedIdentifier, !isAuthConfigured);
       router.push(ROUTES.profiles);
       return null;
     },
@@ -112,8 +112,8 @@ export default function LoginScreen() {
               {({ pressed }) => (
                 <Text
                   style={[
-                    styles.link,
                     styles.footerText,
+                    styles.link,
                     pressed && styles.linkPressed,
                   ]}
                 >

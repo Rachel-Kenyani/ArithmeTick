@@ -31,7 +31,7 @@ export default function ResetPasswordScreen() {
   const hydrated = useHydrated();
   const { pending } = useAppState();
   const [saved, setSaved] = useState(false);
-  const allowed = pending?.purpose === "reset" || saved;
+  const allowed = pending?.purpose === "reset" || pending?.purpose === "existing" || saved;
   const url = Linking.useLinkingURL();
   const fromLink = !allowed && !!url?.includes("reset-password") && /access_token|error/.test(url);
 
@@ -49,10 +49,10 @@ export default function ResetPasswordScreen() {
   }, [focused, hydrated, allowed, fromLink, url]);
 
   if (!hydrated || !allowed) return <SplashBackdrop />;
-  return <ResetCard onSaved={() => setSaved(true)} />;
+  return <ResetCard returning={pending?.purpose === "existing"} onSaved={() => setSaved(true)} />;
 }
 
-function ResetCard({ onSaved }: Readonly<{ onSaved: () => void }>) {
+function ResetCard({ returning, onSaved }: Readonly<{ returning: boolean; onSaved: () => void }>) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState<Errors>(NO_ERRORS);
@@ -98,7 +98,14 @@ function ResetCard({ onSaved }: Readonly<{ onSaved: () => void }>) {
     <ScreenShell backgroundImage={SPLASH_BACKGROUND}>
       <Animated.View entering={ENTER}>
         <Panel>
-          <ScreenHeading title="Reset Password" subtitle="Create a strong password." />
+          {returning ? (
+            <ScreenHeading
+              title="Welcome Back"
+              subtitle="You already have an account. Choose a password to get back in."
+            />
+          ) : (
+            <ScreenHeading title="Reset Password" subtitle="Create a strong password." />
+          )}
 
           <View style={styles.fields}>
             <PasswordField

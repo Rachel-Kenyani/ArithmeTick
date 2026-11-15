@@ -12,6 +12,12 @@ export const FLOW = {
     back: ROUTES.signup,
     next: ROUTES.addExplorer,
   },
+  existing: {
+    title: "Verify Account",
+    cta: "Verify My Account",
+    back: ROUTES.signup,
+    next: ROUTES.resetPassword,
+  },
   reset: {
     title: "Verify Identity",
     cta: "Verify & Continue",

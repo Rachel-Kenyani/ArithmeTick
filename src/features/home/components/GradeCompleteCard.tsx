@@ -200,13 +200,13 @@ const styles = StyleSheet.create({
   },
   text: { flexShrink: 1, minWidth: 0 },
   title: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     color: colors.atTeal,
     textAlign: "center",
   },
   body: {
     marginTop: 4,
-    fontFamily: fonts.bodyMedium,
+    fontFamily: fonts.textSemiBold,
     color: colors.jgOutline,
     lineHeight: 21,
     textAlign: "center",
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   time: {
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.textBold,
     fontSize: 16,
     color: colors.atPurple,
   },

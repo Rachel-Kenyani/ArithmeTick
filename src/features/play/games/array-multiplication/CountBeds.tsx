@@ -87,5 +87,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  totalText: { fontFamily: fonts.bodyBold, fontSize: 20, color: colors.atInk },
+  totalText: { fontFamily: fonts.displayBold, fontSize: 20, color: colors.atInk },
 });

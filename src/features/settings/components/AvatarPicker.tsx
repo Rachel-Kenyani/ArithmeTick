@@ -38,5 +38,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", gap: 12 },
   option: { flex: 1, alignItems: "center", gap: 6, borderRadius: 20, borderWidth: 3, borderColor: colors.jgField, backgroundColor: colors.white, paddingVertical: 14 },
   selected: { borderColor: colors.jgTeal, backgroundColor: colors.atMintDeep },
-  label: { fontFamily: fonts.bodyBold, fontSize: 18, lineHeight: 22, color: colors.atTeal },
+  label: { fontFamily: fonts.textBold, fontSize: 18, lineHeight: 22, color: colors.atTeal },
 });

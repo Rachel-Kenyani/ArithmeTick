@@ -1,5 +1,5 @@
-import { DynaPuff_400Regular, DynaPuff_500Medium, DynaPuff_600SemiBold, DynaPuff_700Bold } from "@expo-google-fonts/dynapuff";
-import { Quicksand_400Regular, Quicksand_500Medium, Quicksand_600SemiBold, Quicksand_700Bold } from "@expo-google-fonts/quicksand";
+import { DynaPuff_600SemiBold, DynaPuff_700Bold } from "@expo-google-fonts/dynapuff";
+import { Quicksand_600SemiBold, Quicksand_700Bold } from "@expo-google-fonts/quicksand";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -16,12 +16,8 @@ void SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    DynaPuff_400Regular,
-    DynaPuff_500Medium,
     DynaPuff_600SemiBold,
     DynaPuff_700Bold,
-    Quicksand_400Regular,
-    Quicksand_500Medium,
     Quicksand_600SemiBold,
     Quicksand_700Bold,
   });

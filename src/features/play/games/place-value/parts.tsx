@@ -129,8 +129,8 @@ export const partStyles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
   },
-  pillText: { fontFamily: fonts.headingSemiBold, fontSize: 20, color: colors.atInk, textAlign: "center" },
-  head: { fontFamily: fonts.headingBold, fontSize: 16, color: colors.atTeal },
+  pillText: { fontFamily: fonts.textSemiBold, fontSize: 20, color: colors.atInk, textAlign: "center" },
+  head: { fontFamily: fonts.textBold, fontSize: 16, color: colors.atTeal },
   choices: { flexDirection: "row", gap: 12 },
   choice: {
     minWidth: 72,
@@ -143,7 +143,7 @@ export const partStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  choiceText: { fontFamily: fonts.bodyBold, fontSize: 26, color: colors.atTeal },
+  choiceText: { fontFamily: fonts.displayBold, fontSize: 26, color: colors.atTeal },
 });
 
 const styles = StyleSheet.create({
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: colors.atTeal,
   },
-  listenText: { color: colors.white, fontFamily: fonts.headingBold, fontSize: 15 },
+  listenText: { color: colors.white, fontFamily: fonts.textBold, fontSize: 15 },
   listenPressed: { transform: [{ scale: 0.94 }] },
   glow: { shadowColor: colors.atYellow, shadowOpacity: 0.9, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   fresh: { backgroundColor: colors.atPurpleLight },
@@ -174,13 +174,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  op: { fontFamily: fonts.bodyBold, fontSize: 24, color: colors.atInk },
-  word: { fontFamily: fonts.bodyBold, fontSize: 18, color: colors.atInk },
+  op: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.atInk },
+  word: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atInk },
   replayRow: { flexDirection: "row", gap: 12 },
   replay: { flexDirection: "row", gap: 6, paddingHorizontal: 16 },
-  replayText: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.atTeal },
+  replayText: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atTeal },
   next: { flexDirection: "row", gap: 6, paddingHorizontal: 22, backgroundColor: colors.atTeal, borderColor: colors.atTeal },
-  nextText: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.white },
+  nextText: { fontFamily: fonts.textBold, fontSize: 20, color: colors.white },
 });
 
 export function ReplayOrNext({ onReplay, onNext }: Readonly<{ onReplay: () => void; onNext: () => void }>) {

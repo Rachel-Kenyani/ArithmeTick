@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   filled: { borderColor: colors.atTeal },
   active: { borderColor: colors.jgTeal, borderWidth: 3 },
   invalid: { borderColor: colors.atPlum, backgroundColor: "rgba(168,50,110,0.04)" },
-  char: { fontFamily: fonts.bodySemiBold, color: colors.atInk },
+  char: { fontFamily: fonts.textBold, color: colors.atInk },
   hidden: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, color: "transparent", backgroundColor: "transparent", fontSize: 1 },
 });
 

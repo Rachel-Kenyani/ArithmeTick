@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontFamily: fonts.headingSemiBold,
+    fontFamily: fonts.textSemiBold,
     fontSize: 20,
     textAlign: "center",
   },

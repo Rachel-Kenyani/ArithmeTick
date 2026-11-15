@@ -116,5 +116,5 @@ const styles = StyleSheet.create({
   auto: { alignSelf: "flex-start" },
   disabled: { opacity: 0.55 },
   face: { flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 8 },
-  label: { fontFamily: fonts.headingBold, textAlign: "center", flexShrink: 1, letterSpacing: 0.2 },
+  label: { fontFamily: fonts.textBold, textAlign: "center", flexShrink: 1, letterSpacing: 0.2 },
 });

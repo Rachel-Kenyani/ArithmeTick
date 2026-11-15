@@ -29,19 +29,21 @@ export const colors = {
   jgLeaf: "#6e9a2b",
   jgGrass: "#86c232",
   jgOutline: "#1b1b1b",
+  muted: "#5b6664",
+  locked: "#6b7775",
   white: "#ffffff",
   black: "#000000",
 } as const;
 
+/**
+ * Two roles. Display (DynaPuff) is for one screen title, hero titles and big numbers, never below 20px.
+ * Text (Quicksand) is for everything people read, at 600 or 700: lighter weights are too thin for early readers.
+ */
 export const fonts = {
-  body: "DynaPuff_400Regular",
-  bodyMedium: "DynaPuff_500Medium",
-  bodySemiBold: "DynaPuff_600SemiBold",
-  bodyBold: "DynaPuff_700Bold",
-  heading: "Quicksand_400Regular",
-  headingMedium: "Quicksand_500Medium",
-  headingSemiBold: "Quicksand_600SemiBold",
-  headingBold: "Quicksand_700Bold",
+  displaySemiBold: "DynaPuff_600SemiBold",
+  displayBold: "DynaPuff_700Bold",
+  textSemiBold: "Quicksand_600SemiBold",
+  textBold: "Quicksand_700Bold",
 } as const;
 
 export const edges = {

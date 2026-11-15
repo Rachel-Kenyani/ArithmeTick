@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   chevron: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
   scrim: { flex: 1, backgroundColor: "rgba(0,40,40,0.35)" },
   sheet: { backgroundColor: colors.jgCard, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 20, paddingTop: 20, gap: 10 },
-  sheetTitle: { fontFamily: fonts.headingBold, fontSize: 22, color: colors.atTeal, textAlign: "center", marginBottom: 6 },
+  sheetTitle: { fontFamily: fonts.textBold, fontSize: 22, color: colors.atTeal, textAlign: "center", marginBottom: 6 },
   option: {
     minHeight: 60,
     borderRadius: 16,
@@ -98,5 +98,5 @@ const styles = StyleSheet.create({
   },
   optionOn: { borderColor: colors.jgTeal },
   optionPressed: { backgroundColor: colors.atMint },
-  optionText: { fontFamily: fonts.headingBold, fontSize: 18, color: "#141414", flexShrink: 1 },
+  optionText: { fontFamily: fonts.textBold, fontSize: 18, color: "#141414", flexShrink: 1 },
 });

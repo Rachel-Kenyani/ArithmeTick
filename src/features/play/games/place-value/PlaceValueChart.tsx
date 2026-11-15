@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  op: { fontFamily: fonts.bodyBold, fontSize: 22, color: colors.atInk },
+  op: { fontFamily: fonts.displayBold, fontSize: 22, color: colors.atInk },
   chart: {
     flexShrink: 1,
     flexDirection: "row",
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   divider: { borderLeftWidth: 2, borderLeftColor: LINE },
   head: {
     textAlign: "center",
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.textBold,
     fontSize: 13,
     color: colors.atInk,
     paddingVertical: 5,
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.atCream,
   },
   digitCell: { height: 36, alignItems: "center", justifyContent: "center" },
-  digit: { fontFamily: fonts.headingBold, fontSize: 26, lineHeight: 32 },
+  digit: { fontFamily: fonts.textBold, fontSize: 26, lineHeight: 32 },
   ask: { color: colors.atTeal, opacity: 0.45 },
   value: {
     textAlign: "center",
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.textBold,
     fontSize: 13,
     color: colors.atInk,
     paddingVertical: 4,

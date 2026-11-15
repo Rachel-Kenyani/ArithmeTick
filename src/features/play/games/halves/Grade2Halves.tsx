@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  word: { fontFamily: fonts.bodyBold, fontSize: 18, color: colors.atInk },
+  word: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atInk },
   monkeys: { flexDirection: "row", justifyContent: "center", gap: 20, marginTop: 8, flexWrap: "wrap" },
   monkey: { alignItems: "center", gap: 6 },
   plate: {

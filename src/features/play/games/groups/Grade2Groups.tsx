@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
   stripPart: { flexDirection: "row", alignItems: "center", gap: 6 },
-  op: { fontFamily: fonts.bodyBold, fontSize: 22, color: colors.atInk },
+  op: { fontFamily: fonts.displayBold, fontSize: 22, color: colors.atInk },
   holes: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 14, marginTop: 24, marginBottom: 12 },
   hole: {
     alignItems: "center",

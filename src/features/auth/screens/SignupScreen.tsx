@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     lineHeight: 24,
     color: colors.jgOutline,

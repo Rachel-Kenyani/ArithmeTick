@@ -274,11 +274,11 @@ const styles = StyleSheet.create({
   pressed: { transform: [{ scale: 0.96 }] },
   pill: { maxWidth: "100%", flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.white, borderRadius: 24, borderWidth: 3, borderColor: colors.atMintDeep, paddingHorizontal: 16, paddingVertical: 6 },
   pillTry: { borderColor: colors.atYellow, backgroundColor: colors.atCream, flexShrink: 1 },
-  pillText: { flexShrink: 1, fontFamily: fonts.bodySemiBold, fontSize: 16, lineHeight: 20, color: colors.atInk, textAlign: "center" },
+  pillText: { flexShrink: 1, fontFamily: fonts.textSemiBold, fontSize: 16, lineHeight: 20, color: colors.atInk, textAlign: "center" },
   dot: { position: "absolute", width: 7, height: 7, borderRadius: 2, backgroundColor: colors.atTealLight },
   strip: { flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: colors.white, borderRadius: 999, borderWidth: 3, borderColor: colors.atMintDeep, paddingHorizontal: 18, paddingVertical: 6 },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  op: { fontFamily: fonts.bodyBold, fontSize: 24, color: colors.atInk },
+  op: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.atInk },
 });
 
 function resumeArray(draft: LevelDraft | undefined, rows: number): { counting: boolean; dims: Dims; counted: number[] } {

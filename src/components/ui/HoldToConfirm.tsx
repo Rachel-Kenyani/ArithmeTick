@@ -67,5 +67,5 @@ const styles = StyleSheet.create({
   },
   fill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: GROWN_UP.fill },
   content: { flexDirection: "row", alignItems: "center", gap: 8 },
-  label: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: GROWN_UP.ink },
+  label: { fontFamily: fonts.textSemiBold, fontSize: 15, color: GROWN_UP.ink },
 });

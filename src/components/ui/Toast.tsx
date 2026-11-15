@@ -43,5 +43,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
   },
-  text: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: colors.white },
+  text: { fontFamily: fonts.textSemiBold, fontSize: 15, color: colors.white },
 });

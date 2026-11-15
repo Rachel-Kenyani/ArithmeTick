@@ -188,12 +188,12 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   tagText: {
-    fontFamily: fonts.bodySemiBold,
+    fontFamily: fonts.textSemiBold,
     fontSize: 13,
     color: colors.white,
   },
   title: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 32,
     lineHeight: 38,
     color: colors.atTeal,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   heroText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     lineHeight: 24,
     color: colors.atInk,
@@ -231,12 +231,12 @@ const styles = StyleSheet.create({
   },
   badgeText: { flexShrink: 1 },
   badgeKicker: {
-    fontFamily: fonts.bodySemiBold,
+    fontFamily: fonts.textSemiBold,
     fontSize: 13,
     color: colors.jgOutline,
   },
   badgeName: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 20,
     color: colors.atPurple,
   },

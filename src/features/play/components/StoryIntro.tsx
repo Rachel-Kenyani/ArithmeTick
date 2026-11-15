@@ -193,11 +193,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0,111,104,0.35)",
   },
   caption: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 24,
     color: colors.atInk,
     textAlign: "center",
   },
-  num: { fontFamily: fonts.bodyBold, fontSize: 30, color: colors.atTeal },
+  num: { fontFamily: fonts.displayBold, fontSize: 30, color: colors.atTeal },
   numAway: { color: colors.atPurple },
 });

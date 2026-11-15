@@ -117,5 +117,5 @@ const styles = StyleSheet.create({
   gone: { opacity: 0.3 },
   slash: { position: "absolute", borderRadius: 4, backgroundColor: "#c0392b" },
   badge: { position: "absolute", alignItems: "center", justifyContent: "center", backgroundColor: colors.atInk },
-  badgeText: { fontFamily: fonts.headingBold, color: colors.white },
+  badgeText: { fontFamily: fonts.textBold, color: colors.white },
 });

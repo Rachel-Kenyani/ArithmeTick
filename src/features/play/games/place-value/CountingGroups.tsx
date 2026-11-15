@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
   side: { flexDirection: "row" },
   termRow: { alignItems: "center", gap: 4 },
   termSide: { flexDirection: "row" },
-  sign: { fontFamily: fonts.headingBold, fontSize: 24, lineHeight: SIGN_SIZE, color: colors.atInk },
+  sign: { fontFamily: fonts.textBold, fontSize: 24, lineHeight: SIGN_SIZE, color: colors.atInk },
   group: { flexDirection: "row", alignItems: "center", gap: 8, padding: GROUP_PAD, borderRadius: 14, backgroundColor: colors.atCream, borderWidth: 2, borderColor: colors.atMintDeep },
   groupCarried: { borderColor: colors.atYellow, borderStyle: "dashed" },
-  label: { width: LABEL_W - 8, textAlign: "center", fontFamily: fonts.headingBold, fontSize: 22, color: colors.atInk },
+  label: { width: LABEL_W - 8, textAlign: "center", fontFamily: fonts.textBold, fontSize: 22, color: colors.atInk },
   caps: { flexDirection: "row", flexWrap: "wrap" },
 });

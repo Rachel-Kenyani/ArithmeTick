@@ -48,13 +48,13 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: "row", alignItems: "center", gap: 8 },
   statusText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     color: colors.jgOutline,
     textAlign: "center",
   },
   clock: {
-    fontFamily: fonts.bodySemiBold,
+    fontFamily: fonts.displaySemiBold,
     fontSize: 20,
     color: "#3c3c3c",
     fontVariant: ["tabular-nums"],
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   verifiedText: {
-    fontFamily: fonts.bodySemiBold,
+    fontFamily: fonts.textSemiBold,
     fontSize: 18,
     color: colors.atTeal,
   },

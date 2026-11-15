@@ -271,6 +271,6 @@ const styles = StyleSheet.create({
   actions: { minHeight: 84, alignItems: "center", justifyContent: "center" },
   fraction: { minWidth: 64, paddingVertical: 6, gap: 2 },
   fractionWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  fracNum: { fontFamily: fonts.bodyBold, fontSize: 24, lineHeight: 28, color: colors.atTeal },
+  fracNum: { fontFamily: fonts.displayBold, fontSize: 24, lineHeight: 28, color: colors.atTeal },
   fracBar: { alignSelf: "stretch", height: 3, marginHorizontal: 8, borderRadius: 2, backgroundColor: colors.atTeal },
 });

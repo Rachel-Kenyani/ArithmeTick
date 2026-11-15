@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.jgCard,
   },
   name: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     color: colors.atTeal,
     lineHeight: 32,
     paddingHorizontal: 8,
@@ -129,5 +129,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.jgField,
   },
-  gradeText: { fontFamily: fonts.bodySemiBold, color: colors.atTeal },
+  gradeText: { fontFamily: fonts.textBold, color: colors.atTeal },
 });

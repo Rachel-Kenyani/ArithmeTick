@@ -32,8 +32,8 @@ export const accountActions = {
     setState((s) => (s.seenSplash ? s : { ...s, seenSplash: true }));
   },
 
-  beginSignup(identifier: string) {
-    setState((s) => ({ ...s, pending: { identifier: identifier.trim(), purpose: "signup" } }));
+  beginSignup(identifier: string, existing = false) {
+    setState((s) => ({ ...s, pending: { identifier: identifier.trim(), purpose: existing ? "existing" : "signup" } }));
   },
 
   beginReset(identifier: string) {

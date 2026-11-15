@@ -61,7 +61,8 @@ export interface Account {
 
 export interface PendingVerification {
   identifier: string;
-  purpose: "signup" | "reset";
+  /** `existing`: someone signed up with an email or phone that already has an account. They see the sign-up screens, but get a code to choose a new password. */
+  purpose: "signup" | "reset" | "existing";
 }
 
 export interface AppState {

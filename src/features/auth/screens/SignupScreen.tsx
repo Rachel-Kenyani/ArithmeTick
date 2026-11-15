@@ -27,7 +27,7 @@ export default function SignupScreen() {
     submit: async (normalizedIdentifier, password) => {
       const result = await auth.signUp(normalizedIdentifier, password);
       if (!result.ok) return { identifier: result.message };
-      actions.beginSignup(normalizedIdentifier);
+      actions.beginSignup(normalizedIdentifier, result.existing);
       router.push(ROUTES.verify);
       return null;
     },

@@ -49,5 +49,5 @@ export default function IdentifierField({
 
 const styles = StyleSheet.create({
   chip: { borderRadius: 10, backgroundColor: colors.atMintDeep, paddingHorizontal: 8, paddingVertical: 4 },
-  chipText: { fontFamily: fonts.headingBold, fontSize: 15, fontVariant: ["tabular-nums"] },
+  chipText: { fontFamily: fonts.textBold, fontSize: 15, fontVariant: ["tabular-nums"] },
 });

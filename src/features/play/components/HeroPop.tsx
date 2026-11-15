@@ -56,5 +56,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 6,
   },
-  heroText: { fontFamily: fonts.headingBold, fontSize: 22, color: "#7f2353" },
+  heroText: { fontFamily: fonts.textBold, fontSize: 22, color: "#7f2353" },
 });

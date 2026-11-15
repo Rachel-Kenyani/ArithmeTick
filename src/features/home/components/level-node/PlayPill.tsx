@@ -22,5 +22,5 @@ const styles = StyleSheet.create({
   playWrap: { paddingBottom: 4 },
   playEdge: { ...StyleSheet.absoluteFill, top: 4, borderRadius: 999, backgroundColor: "#c99a1c" },
   play: { flexDirection: "row", alignItems: "center", gap: 4, borderRadius: 999, backgroundColor: colors.jgSun, paddingVertical: 10, paddingHorizontal: 20 },
-  playText: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.jgOutline },
+  playText: { fontFamily: fonts.textBold, fontSize: 20, color: colors.jgOutline },
 });

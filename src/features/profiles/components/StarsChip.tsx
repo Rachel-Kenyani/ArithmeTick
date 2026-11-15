@@ -42,5 +42,5 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,193,7,0.7)",
   },
   newChip: { backgroundColor: "#f1eafc", borderColor: "rgba(126,79,203,0.3)" },
-  chipText: { fontFamily: fonts.bodyBold },
+  chipText: { fontFamily: fonts.textBold },
 });

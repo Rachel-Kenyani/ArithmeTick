@@ -15,5 +15,5 @@ export default function OrDivider({ label = "or", style }: Readonly<{ label?: st
 const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: 16, alignSelf: "stretch" },
   rule: { flex: 1, height: 1.5, borderRadius: 1, backgroundColor: "rgba(0,150,138,0.7)" },
-  label: { fontFamily: fonts.bodyMedium, fontSize: 18, color: colors.atTeal },
+  label: { fontFamily: fonts.textSemiBold, fontSize: 18, color: colors.atTeal },
 });

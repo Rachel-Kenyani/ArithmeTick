@@ -50,5 +50,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.92)",
   },
-  timeText: { flexShrink: 1, fontFamily: fonts.headingBold, fontSize: 15, fontVariant: ["tabular-nums"] },
+  timeText: { flexShrink: 1, fontFamily: fonts.textBold, fontSize: 15, fontVariant: ["tabular-nums"] },
 });

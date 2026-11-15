@@ -33,16 +33,16 @@ export default function ScreenHeading({
 const styles = StyleSheet.create({
   wrap: { alignItems: "center" },
   title: {
-    fontFamily: fonts.headingBold,
-    fontSize: 30,
-    lineHeight: 34,
+    fontFamily: fonts.displayBold,
+    fontSize: 32,
+    lineHeight: 36,
     color: colors.atTeal,
     textAlign: "center",
   },
   subtitle: {
     marginTop: 6,
     maxWidth: 360,
-    fontFamily: fonts.bodyMedium,
+    fontFamily: fonts.textSemiBold,
     fontSize: 16,
     lineHeight: 24,
     color: colors.jgOutline,

@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  title: { fontFamily: fonts.headingBold, fontSize: 28, color: colors.atTeal, textAlign: "center" },
-  soon: { fontFamily: fonts.bodyBold, fontSize: 20, color: colors.atPurple, textAlign: "center" },
-  message: { fontFamily: fonts.bodyMedium, fontSize: 16, lineHeight: 22, color: "#3c3c3c", textAlign: "center" },
+  title: { fontFamily: fonts.textBold, fontSize: 28, color: colors.atTeal, textAlign: "center" },
+  soon: { fontFamily: fonts.displayBold, fontSize: 20, color: colors.atPurple, textAlign: "center" },
+  message: { fontFamily: fonts.textSemiBold, fontSize: 16, lineHeight: 22, color: "#3c3c3c", textAlign: "center" },
 });

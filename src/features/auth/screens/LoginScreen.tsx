@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingHorizontal: 2,
   },
-  forgotText: { fontSize: 18, fontFamily: fonts.headingSemiBold },
+  forgotText: { fontSize: 18, fontFamily: fonts.textSemiBold },
   link: { color: colors.jgPurple },
   linkPressed: { color: "#6a3db8", textDecorationLine: "underline" },
   submit: { marginTop: 16 },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     lineHeight: 24,
     color: colors.jgOutline,

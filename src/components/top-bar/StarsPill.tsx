@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     shadowOffset: { width: 0, height: 4 },
   },
-  starsText: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.white, fontVariant: ["tabular-nums"] },
+  starsText: { fontFamily: fonts.textBold, fontSize: 20, color: colors.white, fontVariant: ["tabular-nums"] },
   pressed: { transform: [{ scale: 0.96 }] },
 });

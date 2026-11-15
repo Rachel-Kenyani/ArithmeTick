@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff2b0",
   },
   sheetTitle: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     lineHeight: 38,
     color: colors.atTeal,
     textAlign: "center",
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   sheetCopy: {
     marginTop: 8,
     marginBottom: 24,
-    fontFamily: fonts.bodyMedium,
+    fontFamily: fonts.textSemiBold,
     fontSize: 18,
     lineHeight: 24,
     color: colors.jgOutline,

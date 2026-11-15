@@ -26,5 +26,5 @@ export default function StopLabels({ status, height, title, reduceMotion }: Read
 const styles = StyleSheet.create({
   below: { position: "absolute", left: -40, right: -40, alignItems: "center" },
   title: { marginTop: 6, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: "rgba(255,255,255,0.9)" },
-  titleText: { fontFamily: fonts.headingBold, fontSize: 18, lineHeight: 19, color: colors.atTeal },
+  titleText: { fontFamily: fonts.textBold, fontSize: 18, lineHeight: 19, color: colors.atTeal },
 });

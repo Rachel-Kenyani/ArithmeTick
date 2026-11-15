@@ -17,6 +17,6 @@ export const fieldStyles = StyleSheet.create({
   },
   focused: { borderColor: colors.jgTeal },
   error: { borderColor: colors.atPlum },
-  text: { fontFamily: fonts.headingSemiBold, fontSize: 16, color: "#141414" },
+  text: { fontFamily: fonts.textSemiBold, fontSize: 16, color: "#141414" },
 });
 export const PLACEHOLDER_COLOR = "#474747";

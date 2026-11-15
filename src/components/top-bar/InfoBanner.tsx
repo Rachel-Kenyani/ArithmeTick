@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   tagText: {
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.textBold,
     fontSize: 13,
     letterSpacing: 0.5,
     color: colors.white,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   replayPressed: { transform: [{ scale: 0.92 }] },
   title: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 26,
     lineHeight: 30,
     color: colors.atTeal,
@@ -166,13 +166,13 @@ const styles = StyleSheet.create({
     borderColor: colors.jgField,
   },
   count: {
-    fontFamily: fonts.bodySemiBold,
+    fontFamily: fonts.textSemiBold,
     fontSize: 14,
     color: colors.atTeal,
     fontVariant: ["tabular-nums"],
   },
   note: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 17,
     color: colors.atTeal,
     textAlign: "center",

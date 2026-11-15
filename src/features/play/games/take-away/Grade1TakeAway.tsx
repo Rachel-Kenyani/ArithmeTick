@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   stripWin: { borderColor: "#E0A800", backgroundColor: colors.atCream },
-  op: { fontFamily: fonts.bodyBold, fontSize: 26, color: colors.atInk },
+  op: { fontFamily: fonts.displayBold, fontSize: 26, color: colors.atInk },
   action: { justifyContent: "center" },
   choices: { flexDirection: "row", gap: 12 },
   choice: {
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   choiceText: {
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.displayBold,
     fontSize: 26,
     color: colors.atTeal,
   },

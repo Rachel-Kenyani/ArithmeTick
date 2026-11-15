@@ -89,5 +89,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 16,
   },
-  continueText: { fontFamily: fonts.headingBold, fontSize: 18 },
+  continueText: { fontFamily: fonts.textBold, fontSize: 18 },
 });

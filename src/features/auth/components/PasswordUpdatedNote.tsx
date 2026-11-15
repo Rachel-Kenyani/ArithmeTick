@@ -40,5 +40,5 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   noteBadge: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.jgTeal, alignItems: "center", justifyContent: "center" },
-  noteText: { fontFamily: fonts.bodySemiBold, fontSize: 16, color: colors.atInk },
+  noteText: { fontFamily: fonts.textSemiBold, fontSize: 16, color: colors.atInk },
 });

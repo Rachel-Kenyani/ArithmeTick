@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   active: { borderColor: colors.atYellow, borderStyle: "solid", borderWidth: 4, backgroundColor: colors.atYellowSoft },
   filled: { borderColor: colors.atTeal, backgroundColor: colors.atGlow },
   win: { borderColor: "#E0A800" },
-  num: { fontFamily: fonts.bodyBold, color: colors.atInk },
+  num: { fontFamily: fonts.displayBold, color: colors.atInk },
   ask: { color: colors.atTeal },
   ghost: { opacity: 0.35 },
   actions: { minHeight: TARGET, alignItems: "center", justifyContent: "center" },

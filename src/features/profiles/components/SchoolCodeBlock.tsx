@@ -57,10 +57,10 @@ export default function SchoolCodeBlock({
 
 const styles = StyleSheet.create({
   codeBlock: { marginTop: 20 },
-  question: { marginBottom: 12, textAlign: "center", fontFamily: fonts.bodyMedium, fontSize: 17, lineHeight: 23, color: colors.jgOutline },
+  question: { marginBottom: 12, textAlign: "center", fontFamily: fonts.textSemiBold, fontSize: 17, lineHeight: 23, color: colors.jgOutline },
   codeError: { marginTop: 8, flexDirection: "row", alignItems: "flex-start", justifyContent: "center", gap: 6, paddingHorizontal: 8 },
   dot: { width: 6, height: 6, borderRadius: 3, marginTop: 8, backgroundColor: colors.atPlum },
-  codeErrorText: { flexShrink: 1, textAlign: "center", fontFamily: fonts.bodyMedium, fontSize: 15, lineHeight: 20, color: colors.atPlum },
+  codeErrorText: { flexShrink: 1, textAlign: "center", fontFamily: fonts.textSemiBold, fontSize: 15, lineHeight: 20, color: colors.atPlum },
   codeOk: { marginTop: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 },
-  codeOkText: { fontFamily: fonts.bodySemiBold, fontSize: 15, color: colors.atTeal },
+  codeOkText: { fontFamily: fonts.textSemiBold, fontSize: 15, color: colors.atTeal },
 });

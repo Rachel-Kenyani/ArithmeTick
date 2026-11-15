@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   title: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 26,
     color: colors.atTeal,
     textAlign: "center",
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   groupA: { borderColor: colors.atTealLight },
   groupB: { borderColor: colors.atPurpleLight },
   dot: { width: DOT, height: DOT },
-  split: { fontFamily: fonts.headingBold, fontSize: 28 },
+  split: { fontFamily: fonts.textBold, fontSize: 28 },
   steps: { gap: 8 },
   step: { flexDirection: "row", alignItems: "center", gap: 10 },
   stepNum: {
@@ -438,25 +438,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stepNumText: {
-    fontFamily: fonts.bodyBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     color: colors.white,
   },
   story: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 20,
     color: colors.atTeal,
     textAlign: "center",
   },
   stepText: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 20,
     color: colors.atInk,
     flexShrink: 1,
   },
   check: { gap: 10, alignItems: "center" },
   checkTitle: {
-    fontFamily: fonts.headingBold,
+    fontFamily: fonts.textBold,
     fontSize: 18,
     color: GROWN_UP.ink,
     textAlign: "center",
@@ -471,5 +471,5 @@ const styles = StyleSheet.create({
     borderColor: GROWN_UP.border,
     alignItems: "center",
   },
-  choiceText: { fontFamily: fonts.bodyBold, fontSize: 22, color: GROWN_UP.ink },
+  choiceText: { fontFamily: fonts.displayBold, fontSize: 22, color: GROWN_UP.ink },
 });

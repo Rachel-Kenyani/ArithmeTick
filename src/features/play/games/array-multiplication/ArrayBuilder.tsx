@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  grip: { fontFamily: fonts.bodyBold, fontSize: 22, lineHeight: 26, color: colors.atInk },
+  grip: { fontFamily: fonts.displayBold, fontSize: 22, lineHeight: 26, color: colors.atInk },
   skip: { position: "absolute", width: SKIP_W - 6, height: 30, borderRadius: 15, borderWidth: 2, backgroundColor: colors.white, alignItems: "center", justifyContent: "center" },
-  skipText: { fontFamily: fonts.bodyBold, fontSize: 15, color: colors.atInk },
+  skipText: { fontFamily: fonts.textBold, fontSize: 15, color: colors.atInk },
 });

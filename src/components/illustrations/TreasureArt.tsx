@@ -108,19 +108,19 @@ export function TreasureGlyph({ id }: Readonly<{ id: TreasureId }>) {
       return (
         <G transform="translate(30 34)">
           <Defs>
-            <ClipPath id="chapati-rest">
+            <ClipPath id="chapati-rest-clip">
               <Path d="M0 0L30 0A30 30 0 1 1 0 -30Z" />
             </ClipPath>
-            <ClipPath id="chapati-quarter">
+            <ClipPath id="chapati-quarter-clip">
               <Path d="M0 0L0 -30A30 30 0 0 1 30 0Z" />
             </ClipPath>
           </Defs>
-          <G clipPath="url(#chapati-rest)">
+          <G clipPath="url(#chapati-rest-clip)">
             <ChapatiBody r={21} id="rest" outline={INK} outlineWidth={W} />
           </G>
           <Path d="M0 -22V0H22" stroke={INK} strokeWidth={W} strokeLinejoin="round" fill="none" />
           <G transform="translate(5 -5)">
-            <G clipPath="url(#chapati-quarter)">
+            <G clipPath="url(#chapati-quarter-clip)">
               <ChapatiBody r={21} id="quarter" outline={INK} outlineWidth={W} />
             </G>
             <Path d="M0 -22V0H22" stroke={INK} strokeWidth={W} strokeLinejoin="round" fill="none" />

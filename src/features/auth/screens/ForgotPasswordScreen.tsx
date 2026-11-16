@@ -52,8 +52,7 @@ export default function ForgotPasswordScreen() {
         <Panel>
           <ScreenHeading
             title="Forgot Your Password?"
-            subtitle="Enter your registered email to receive a verification code."
-            // subtitle="Enter your registered email or phone number to receive a verification code."
+            subtitle="Enter your registered email or phone number to receive a verification code."
           />
 
           <IdentifierField

@@ -3,10 +3,9 @@ import { router } from "expo-router";
 
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import Avatar from "@/components/ui/Avatar";
-import { GROWN_UP } from "@/components/ui/GrownUpNote";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import Panel from "@/components/ui/Panel";
-import { LeafIcon, MapIcon, MedalIcon, StarIcon } from "@/components/ui/icons";
+import { LeafIcon, MapIcon, MedalIcon, PlusIcon, StarIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { FAMILY_GOAL_STEP, PERSONAL_GOAL_STEP, journeyOf, starGoal, type StarGoal } from "@/data/family";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
@@ -34,10 +33,12 @@ export default function LeaderboardScreen() {
         {family ? <FamilyBoard profiles={profiles} activeId={profile.id} /> : null}
         <JourneyCard child={profile} />
         {!family && profiles.length < MAX_PROFILES ? (
-          <View style={styles.grownUp}>
-            <Text style={styles.grownUpText}>{`Add a brother or sister to share a family star goal with ${profile.name}.`}</Text>
-            <HoldToConfirm label="Grown-ups: hold to add a child" onConfirm={() => router.push(ROUTES.addExplorer as never)} />
-          </View>
+          <HoldToConfirm
+            label="Grown-ups: add a child"
+            hint={`Hold to add a brother or sister to share a family star goal with ${profile.name}.`}
+            icon={<PlusIcon size={20} strokeWidth={2.4} color={colors.atPlum} />}
+            onConfirm={() => router.push(ROUTES.addExplorer as never)}
+          />
         ) : null}
       </ScrollView>
       <BottomNav active="score" onNavigate={navigateToTab} />
@@ -167,6 +168,4 @@ const styles = StyleSheet.create({
   tileValue: { fontFamily: fonts.textBold, fontSize: 24, color: colors.atInk },
   tileLabel: { fontFamily: fonts.textSemiBold, fontSize: 13, color: "#5b6664", textAlign: "center" },
 
-  grownUp: { alignItems: "stretch", gap: 12, padding: 14, borderRadius: 20, borderWidth: 2, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
-  grownUpText: { flex: 1, fontFamily: fonts.textBold, fontSize: 16, lineHeight: 21, color: GROWN_UP.ink },
 });

@@ -95,7 +95,7 @@ function ResetCard({ returning, onSaved }: Readonly<{ returning: boolean; onSave
   };
 
   return (
-    <ScreenShell backgroundImage={SPLASH_BACKGROUND}>
+    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={ROUTES.login}>
       <Animated.View entering={ENTER}>
         <Panel>
           {returning ? (

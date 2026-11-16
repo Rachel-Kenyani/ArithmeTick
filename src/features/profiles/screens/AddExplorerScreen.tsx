@@ -51,7 +51,7 @@ export default function AddExplorerScreen() {
   return (
     <ScreenShell
       backgroundImage={SPLASH_BACKGROUND}
-      back={showBack ? ROUTES.profiles : undefined}
+      back={showBack ? true : ROUTES.account}
     >
       <Animated.View entering={ENTER}>
         <Panel>

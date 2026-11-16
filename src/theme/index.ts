@@ -30,6 +30,9 @@ export const colors = {
   jgGrass: "#86c232",
   jgOutline: "#1b1b1b",
   muted: "#5b6664",
+  /** Destructive actions only (deleting an account). White text on it is 6.5:1. */
+  danger: "#b3261e",
+  dangerEdge: "#7a1912",
   locked: "#6b7775",
   white: "#ffffff",
   black: "#000000",

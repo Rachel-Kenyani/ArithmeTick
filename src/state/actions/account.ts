@@ -76,4 +76,14 @@ export const accountActions = {
       };
     });
   },
+
+  /** Forgets this account and every child in it, on this phone. Other accounts' families stay as they are. */
+  deleteAccount() {
+    setState((s) => {
+      if (!s.account) return { ...s, activeProfileId: null, pending: null };
+      const families = { ...s.families };
+      delete families[accountKey(s.account.identifier)];
+      return { ...s, account: null, activeProfileId: null, pending: null, profiles: [], families };
+    });
+  },
 };

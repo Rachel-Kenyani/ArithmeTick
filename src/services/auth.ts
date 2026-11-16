@@ -156,6 +156,22 @@ export const auth = {
   },
 
   async signOut(): Promise<void> {
+  /** Deletes the signed-in account on the server. Needs a live session, so an old one asks the parent to log in again. */
+  async deleteAccount(): Promise<AuthResult> {
+    if (!isAuthConfigured) return NOT_CONFIGURED;
+    const fallback = "We couldn’t delete the account. Check your connection and try again.";
+    try {
+      const { data } = await supabase().auth.getSession();
+      if (!data.session) return { ok: false, message: "Please log out and log in again, then delete the account." };
+      const { error } = await supabase().functions.invoke("delete-account", { method: "POST" });
+      if (error) return { ok: false, message: fallback };
+      await supabase().auth.signOut({ scope: "local" });
+      return OK;
+    } catch {
+      return { ok: false, message: fallback };
+    }
+  },
+
     if (!isAuthConfigured) return;
     try {
       await supabase().auth.signOut();

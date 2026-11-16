@@ -4,7 +4,7 @@ import Animated, { FadeIn, ReduceMotion, ZoomIn, ZoomOut } from "react-native-re
 
 import BasketArt from "@/components/illustrations/BasketArt";
 import { sfx } from "@/services/audio";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import type { PlaceValueProps } from "@/types/domain";
 import { colors } from "@/theme";
 

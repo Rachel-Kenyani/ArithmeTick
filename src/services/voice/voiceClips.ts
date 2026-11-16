@@ -2,7 +2,7 @@ type WordTimes = [word: string, ms: number][];
 
 function loadClips(): { clips: Partial<Record<string, number>>; words: Partial<Record<string, WordTimes>> } {
   try {
-    const mod = require("../../assets/voice/clips");
+    const mod = require("../../../assets/voice/clips");
     return { clips: mod.default ?? {}, words: mod.words ?? {} };
   } catch {
     return { clips: {}, words: {} };

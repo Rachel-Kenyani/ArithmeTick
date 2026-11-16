@@ -26,7 +26,7 @@ import { SpeechIcon } from "@/components/ui/icons";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import { CapFace } from "@/features/play/games/ten-frame/components/CapFace";
 import { sfx } from "@/services/audio";
-import { narration, wordsOf } from "@/services/narration";
+import { narration, wordsOf } from "@/services/voice/narration";
 import type { Grade, QuestTask } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";

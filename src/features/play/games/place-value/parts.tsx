@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import SpokenText from "@/components/ui/SpokenText";
 import { ArrowRightIcon, ReplayIcon, SpeechIcon } from "@/components/ui/icons";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import type { PlaceValuePuzzle } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 

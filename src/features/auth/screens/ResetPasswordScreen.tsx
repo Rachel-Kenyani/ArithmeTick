@@ -12,10 +12,10 @@ import SplashBackdrop, { SPLASH_BACKGROUND } from "@/components/backdrops/Splash
 import { PasswordField } from "@/components/ui/TextField";
 import { KeyIcon } from "@/components/ui/icons";
 import { auth } from "@/services/auth";
-import { markPasswordUpdated } from "@/services/flash";
+import { markPasswordUpdated } from "@/features/auth/utils/flash";
 import { ROUTES } from "@/constants/routes";
 import { actions, useAppState, useHydrated } from "@/state/store";
-import { confirmProblem, passwordProblem } from "@/utils/validate";
+import { confirmProblem, passwordProblem } from "@/features/auth/utils/validate";
 import { colors } from "@/theme";
 
 interface Errors {

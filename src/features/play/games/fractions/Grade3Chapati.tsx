@@ -7,7 +7,7 @@ import { scheduleOnRN } from "react-native-worklets";
 
 import { CHAPATI_EDGE, ChapatiBody } from "@/components/illustrations/ChapatiArt";
 import { sfx } from "@/services/audio";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import type { FractionProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 

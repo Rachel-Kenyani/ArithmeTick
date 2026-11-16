@@ -9,7 +9,7 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { FieldMessage } from "@/components/ui/TextField";
 import type { PendingVerification } from "@/types/models";
-import { identifierKind, maskIdentifier } from "@/utils/validate";
+import { identifierKind, maskIdentifier } from "@/features/auth/utils/validate";
 import { colors } from "@/theme";
 
 import { useVerifyFlow } from "../../hooks/useVerifyFlow";

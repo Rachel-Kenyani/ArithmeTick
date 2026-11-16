@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { TextInputInstance } from "react-native";
 
-import { identifierProblem, normalizeIdentifier, passwordProblem } from "@/utils/validate";
+import { identifierProblem, normalizeIdentifier, passwordProblem } from "@/features/auth/utils/validate";
 
 interface Errors {
   identifier: string | null;

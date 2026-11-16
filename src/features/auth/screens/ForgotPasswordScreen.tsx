@@ -11,7 +11,7 @@ import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { ROUTES } from "@/constants/routes";
 import { actions } from "@/state/store";
 import { auth } from "@/services/auth";
-import { identifierProblem, normalizeIdentifier } from "@/utils/validate";
+import { identifierProblem, normalizeIdentifier } from "@/features/auth/utils/validate";
 
 import IdentifierField from "../components/IdentifierField";
 

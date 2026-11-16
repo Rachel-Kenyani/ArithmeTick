@@ -15,7 +15,7 @@ import Panel from "@/components/ui/Panel";
 import { SpeechIcon } from "@/components/ui/icons";
 import CounterFace from "@/features/play/components/CounterFace";
 import type { StoryScene, StoryStop } from "@/data/stories";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";
 

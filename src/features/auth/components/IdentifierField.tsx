@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, type BlurEvent } from "react-native";
 import { TextField, type TextFieldProps } from "@/components/ui/TextField";
 import { MailIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
-import { normalizePhone } from "@/utils/validate";
+import { normalizePhone } from "@/features/auth/utils/validate";
 
 export const looksLikePhone = (raw: string) => /^[\d+(]/.test(raw.trim()) && !raw.includes("@");
 

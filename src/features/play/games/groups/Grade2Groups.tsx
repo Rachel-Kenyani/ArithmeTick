@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react
 import Animated, { FadeIn, ReduceMotion, ZoomIn } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import type { GroupsProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 

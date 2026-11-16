@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
 
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import { colors } from "@/theme";
 
 export default function SpokenText({

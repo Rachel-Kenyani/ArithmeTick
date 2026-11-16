@@ -6,7 +6,7 @@ import {
   VOICE_CLIPS,
   VOICE_WORDS,
   levelClip,
-} from "@/services/voiceClips";
+} from "@/services/voice/voiceClips";
 import { joinSpokenNumbers, numberWord } from "./spokenNumbers";
 
 export interface SpokenRange {

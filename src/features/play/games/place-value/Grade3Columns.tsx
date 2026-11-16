@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react
 import Animated, { FadeIn } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import type { ColumnsProps } from "@/types/domain";
 
 import { COUNT_STEP_MS } from "../ten-frame/constants";

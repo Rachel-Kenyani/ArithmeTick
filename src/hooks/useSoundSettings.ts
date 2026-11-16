@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { setMuted } from "@/services/audio";
-import { narration } from "@/services/narration";
+import { narration } from "@/services/voice/narration";
 import { useActiveProfile } from "@/state/store";
 import { DEFAULT_SOUND, type SoundSettings } from "@/types/models";
 

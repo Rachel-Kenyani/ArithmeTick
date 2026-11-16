@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AccessibilityInfo } from "react-native";
 
-import { consumePasswordUpdated } from "@/services/flash";
+import { consumePasswordUpdated } from "@/features/auth/utils/flash";
 
 export function usePasswordUpdatedNote() {
   const [flagged] = useState(consumePasswordUpdated);

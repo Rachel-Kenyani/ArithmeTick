@@ -41,7 +41,7 @@ function failure(error: { message: string; code?: string } | null, fallback: str
     return { ok: false, message: "Too many codes sent for now. Please try again in a little while." };
   }
   if (error.code === "unexpected_failure" && /hook/i.test(error.message)) {
-    return { ok: false, message: "We couldn’t send a text to that number. Try your email instead." };
+    return { ok: false, message: "We couldn’t text that number. It may be blocking promotional messages: on Safaricom, dial *456*9*5# and allow messages from AFRICASTKNG, then try again. Or use your email." };
   }
   if (error.code === "otp_expired") return { ok: false, message: "That code didn’t match or has expired. Try again." };
   if (error.message.toLowerCase().includes("network")) return { ok: false, message: "We couldn’t reach the server. Check your connection." };

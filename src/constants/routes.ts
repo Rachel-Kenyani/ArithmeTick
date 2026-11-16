@@ -11,6 +11,7 @@ export const ROUTES = {
   profiles: "/profiles",
   home: "/home",
   settings: "/settings",
+  account: "/account",
   badges: "/badges",
   leaderboard: "/leaderboard",
   play: (level: number) => `/play/${level}` as const,

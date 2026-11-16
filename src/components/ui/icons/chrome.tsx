@@ -74,6 +74,14 @@ export const LogoutIcon = make(
   </>,
 );
 
+export const TrashIcon = make(
+  "TrashIcon",
+  <>
+    <Path d="M4 6.5h16M9.5 6.5V4.8A1.3 1.3 0 0 1 10.8 3.5h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7" />
+    <Path d="M6.2 6.5l.9 12.3a1.8 1.8 0 0 0 1.8 1.7h6.2a1.8 1.8 0 0 0 1.8-1.7l.9-12.3M10 10.5v6M14 10.5v6" />
+  </>,
+);
+
 export const LeafIcon = make(
   "LeafIcon",
   <>

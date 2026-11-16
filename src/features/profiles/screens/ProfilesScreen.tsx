@@ -10,10 +10,8 @@ import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
-import { LogoutIcon, PlusIcon } from "@/components/ui/icons";
+import { SettingsIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
-import { auth } from "@/services/auth";
-import { signOutOfGoogle } from "@/services/googleAuth";
 import { actions, useAppState } from "@/state/store";
 import { colors } from "@/theme";
 import { useGuard } from "@/hooks/useGuard";
@@ -31,7 +29,7 @@ export default function ProfilesScreen() {
   const { width: W } = useWindowDimensions();
 
   const empty = ready && profiles.length === 0;
-  const { chosen, choose, canAdd, addProfile, tileState } = useProfileChooser({
+  const { chosen, choose, tileState } = useProfileChooser({
     profileCount: profiles.length,
     empty,
     reduceMotion,
@@ -48,68 +46,63 @@ export default function ProfilesScreen() {
   if (!ready || empty) return <SplashBackdrop />;
 
   return (
-    <ScreenShell
-      backgroundImage={SPLASH_BACKGROUND}
-      maxWidth={10000}
-      gap={sm ? 28 : 20}
-    >
-      <HeaderCard reduce={reduceMotion}>
-        <Panel
-          style={{ paddingTop: sm ? 24 : 20, paddingBottom: sm ? 24 : 20 }}
-        >
-          <ScreenHeading
-            title="Welcome Back!"
-            subtitle="Who is playing today?"
-          />
-        </Panel>
-      </HeaderCard>
-
-      <View
-        style={[
-          styles.grid,
-          { width: listW, gap, justifyContent: sm ? "center" : "flex-start" },
-        ]}
+    <View style={styles.root}>
+      <ScreenShell
+        backgroundImage={SPLASH_BACKGROUND}
+        maxWidth={10000}
+        gap={sm ? 28 : 20}
       >
-        {profiles.map((child, i) => {
-          const isChosen = chosen === child.id;
-          return (
-            <ProfileTile
-              key={child.id}
-              child={child}
-              index={i}
-              state={tileState(child.id)}
-              isChosen={isChosen}
-              disabled={!!chosen && !isChosen}
-              reduce={reduceMotion}
-              sm={sm}
-              width={cellW}
-              onPress={() => choose(child)}
+        <HeaderCard reduce={reduceMotion}>
+          <Panel
+            style={{ paddingTop: sm ? 24 : 20, paddingBottom: sm ? 24 : 20 }}
+          >
+            <ScreenHeading
+              title="Welcome Back!"
+              subtitle="Who is playing today?"
             />
-          );
-        })}
-      </View>
+          </Panel>
+        </HeaderCard>
 
-      {canAdd ? (
+        <View
+          style={[
+            styles.grid,
+            { width: listW, gap, justifyContent: sm ? "center" : "flex-start" },
+          ]}
+        >
+          {profiles.map((child, i) => {
+            const isChosen = chosen === child.id;
+            return (
+              <ProfileTile
+                key={child.id}
+                child={child}
+                index={i}
+                state={tileState(child.id)}
+                isChosen={isChosen}
+                disabled={!!chosen && !isChosen}
+                reduce={reduceMotion}
+                sm={sm}
+                width={cellW}
+                onPress={() => choose(child)}
+              />
+            );
+          })}
+        </View>
+
+      </ScreenShell>
+      <View style={[styles.corner, { top: insets.top + 16, right: Math.max(16, insets.right) }]}>
         <HoldToConfirm
-          label="Grown-ups: hold to add a child"
-          icon={<PlusIcon size={20} strokeWidth={2.4} color={colors.atPlum} />}
-          onConfirm={addProfile}
+          compact
+          label="Grown-ups: hold to add a child, log out or delete the account"
+          icon={<SettingsIcon size={24} strokeWidth={2.2} color={colors.atPlum} />}
+          onConfirm={() => router.push(ROUTES.account as never)}
         />
-      ) : null}
-
-      <HoldToConfirm
-        label="Grown-ups: hold to log out"
-        icon={<LogoutIcon size={20} strokeWidth={2.2} color={colors.atPlum} />}
-        onConfirm={() => {
-          void signOutOfGoogle().then(() => auth.signOut());
-          actions.logout();
-          router.replace(ROUTES.welcome as never);
-        }}
-      />
-    </ScreenShell>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
+  corner: { position: "absolute" },
   grid: { flexDirection: "row", flexWrap: "wrap", alignSelf: "center" },
 });

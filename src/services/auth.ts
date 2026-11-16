@@ -40,6 +40,9 @@ function failure(error: { message: string; code?: string } | null, fallback: str
   if (error.code === "over_sms_send_rate_limit" || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit") {
     return { ok: false, message: "Too many codes sent for now. Please try again in a little while." };
   }
+  if (/error sending .*email/i.test(error.message)) {
+    return { ok: false, message: "We couldn’t send the email code right now. Try Continue with Google, or try again later." };
+  }
   if (error.code === "unexpected_failure" && /hook/i.test(error.message)) {
     return { ok: false, message: "We couldn’t text that number. It may be blocking promotional messages: on Safaricom, dial *456*9*5# and allow messages from AFRICASTKNG, then try again. Or use your email." };
   }

@@ -60,21 +60,17 @@ export default function SettingsScreen() {
           <InfoIcon size={22} />
           <Text style={styles.grownUpTitle}>For grown-ups</Text>
         </View>
-        <View style={styles.switchRow}>
-          <View style={styles.switchText}>
-            <Text style={styles.switchState}>{voice ? `Brijo reads the instructions to ${profile.name}.` : `Brijo's voice is off for ${profile.name}.`}</Text>
-            <Text style={styles.switchHint}>
-              {voice
-                ? `Turn this off if ${profile.name} reads well or needs quiet. The sound effects button is in the top bar.`
-                : `${profile.name} can still tap Hear it on an instruction to hear it once.`}
-            </Text>
-          </View>
-        </View>
         <HoldToConfirm
-          label={voice ? "Hold to turn Brijo's voice off" : "Hold to turn Brijo's voice on"}
+          label={voice ? `Brijo's voice is on` : `Brijo's voice is off`}
+          hint={
+            voice
+              ? `Brijo reads the instructions to ${profile.name}. Hold to turn it off if ${profile.name} reads well or needs quiet.`
+              : `${profile.name} can still tap Hear it on an instruction. Hold to turn Brijo's voice back on.`
+          }
           icon={<SpeechIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
           onConfirm={() => actions.setSound(profile.id, { voice: !voice })}
         />
+        <Text style={styles.note}>Sound effects have their own button in the top bar.</Text>
       </Panel>
     </ScreenShell>
   );
@@ -86,9 +82,6 @@ const styles = StyleSheet.create({
   grownUp: { gap: 12, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
   grownUpHead: { flexDirection: "row", alignItems: "center", gap: 8 },
   grownUpTitle: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
-  switchRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  switchText: { flex: 1, gap: 4 },
-  switchState: { fontFamily: fonts.textBold, fontSize: 17, color: GROWN_UP.ink },
-  switchHint: { fontFamily: fonts.textBold, fontSize: 16, color: GROWN_UP.ink, opacity: 0.85 },
+  note: { fontFamily: fonts.textSemiBold, fontSize: 14, lineHeight: 19, color: GROWN_UP.ink, opacity: 0.85 },
   label: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atTeal },
 });

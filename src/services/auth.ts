@@ -26,7 +26,8 @@ const UNKNOWN_ACCOUNT_CODES = new Set(["otp_disabled", "user_not_found", "signup
 const EXISTS_CODES = new Set(["user_already_exists", "phone_exists", "email_exists"]);
 const isEmail = (identifier: string) => identifier.includes("@");
 
-function failure(error: { message: string; code?: string } | null, fallback: string): AuthResult {
+/** Turns a Supabase error into a message a parent can act on. Exported for tests. */
+export function failure(error: { message: string; code?: string } | null, fallback: string): AuthResult {
   if (!error) return OK;
   if (error.code === "invalid_credentials") return { ok: false, message: "That email or password didn’t match." };
   if (error.code === "email_not_confirmed") return { ok: false, message: "Please verify your email first. Check your inbox for the code." };
@@ -155,7 +156,6 @@ export const auth = {
     }
   },
 
-  async signOut(): Promise<void> {
   /** Deletes the signed-in account on the server. Needs a live session, so an old one asks the parent to log in again. */
   async deleteAccount(): Promise<AuthResult> {
     if (!isAuthConfigured) return NOT_CONFIGURED;
@@ -172,6 +172,7 @@ export const auth = {
     }
   },
 
+  async signOut(): Promise<void> {
     if (!isAuthConfigured) return;
     try {
       await supabase().auth.signOut();

@@ -40,6 +40,9 @@ function failure(error: { message: string; code?: string } | null, fallback: str
   if (error.code === "over_sms_send_rate_limit" || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit") {
     return { ok: false, message: "Too many codes sent for now. Please try again in a little while." };
   }
+  if (error.code === "unexpected_failure" && /hook/i.test(error.message)) {
+    return { ok: false, message: "We couldn’t send a text to that number. Try your email instead." };
+  }
   if (error.code === "otp_expired") return { ok: false, message: "That code didn’t match or has expired. Try again." };
   if (error.message.toLowerCase().includes("network")) return { ok: false, message: "We couldn’t reach the server. Check your connection." };
   return { ok: false, message: fallback };

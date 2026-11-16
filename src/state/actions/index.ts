@@ -10,5 +10,4 @@ export const actions = {
   ...profileActions,
   ...progressActions,
   ...screenTimeActions,
-
 };

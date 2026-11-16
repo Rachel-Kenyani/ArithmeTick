@@ -38,7 +38,8 @@ function withOwnersOnly(state: AppState): AppState {
   return { ...state, profiles: [], activeProfileId: null, families: { ...state.families, "signed-out": state.profiles } };
 }
 
-function parse(raw: string | null): AppState {
+/** Reads saved state, dropping anything from an old format. Exported for tests. */
+export function parse(raw: string | null): AppState {
   if (!raw) return DEFAULT_STATE;
   try {
     const parsed = JSON.parse(raw) as Partial<AppState>;

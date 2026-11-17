@@ -9,6 +9,7 @@ import {
 import Svg, { Circle, Path } from "react-native-svg";
 
 import SpokenText from "@/components/ui/SpokenText";
+import { SVG_HIDDEN } from "@/components/ui/icons/make";
 import { colors, fonts } from "@/theme";
 
 export const GROWN_UP = {
@@ -27,8 +28,7 @@ export function InfoIcon({
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      accessibilityElementsHidden
-      importantForAccessibility="no"
+      {...SVG_HIDDEN}
     >
       <Circle
         cx={12}

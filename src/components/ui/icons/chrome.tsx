@@ -94,3 +94,11 @@ export const HandIcon = make(
   "HandIcon",
   <Path d="M8 13V5.6a1.5 1.5 0 0 1 3 0V11.5M11 11.5V4a1.5 1.5 0 0 1 3 0v7.5M14 11.5V5.6a1.5 1.5 0 0 1 3 0v6.4M17 8.6a1.5 1.5 0 0 1 3 0v6.6a6.8 6.8 0 0 1-6.8 6.8h-1.4a6.6 6.6 0 0 1-5.5-3L3.5 15a1.7 1.7 0 0 1 2.6-2.1L8 15" />,
 );
+
+export const ShieldCheckIcon = make(
+  "ShieldCheckIcon",
+  <>
+    <Path d="M12 3.2 4.8 6v5.6c0 4.4 3 7.9 7.2 9.2 4.2-1.3 7.2-4.8 7.2-9.2V6z" />
+    <Path d="m8.8 12.1 2.2 2.2 4.2-4.4" />
+  </>,
+);

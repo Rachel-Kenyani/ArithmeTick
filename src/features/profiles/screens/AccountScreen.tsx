@@ -6,11 +6,13 @@ import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { GROWN_UP } from "@/components/ui/GrownUpNote";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import Panel from "@/components/ui/Panel";
+import ParentsGateBadge from "@/components/ui/ParentsGateBadge";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
-import { LogoutIcon, MailIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
+import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { canChangeEmail } from "@/features/auth/utils/validate";
+import { initialOf } from "@/features/profiles/utils/initialOf";
 import { useGuard } from "@/hooks/useGuard";
 import { auth } from "@/services/auth";
 import { signOutOfGoogle } from "@/services/googleAuth";
@@ -22,6 +24,31 @@ function whatIsDeleted(names: readonly string[]): string {
   if (names.length === 0) return "This deletes the account. It can’t be undone.";
   const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
   return `This deletes the account and ${who}’s stars, badges and progress. It can’t be undone.`;
+}
+
+function GuardianCard({ name, identifier }: Readonly<{ name?: string | null; identifier: string }>) {
+  const initial = initialOf(name ?? identifier);
+  return (
+    <View style={styles.signedIn} accessible accessibilityLabel={`Signed in as ${name ?? identifier}, primary guardian`}>
+      <View style={styles.avatar}>
+        {initial ? <Text style={styles.initial}>{initial}</Text> : <PhoneIcon size={22} strokeWidth={2.4} color={colors.white} />}
+      </View>
+      <View style={styles.identityText}>
+        <Text style={styles.caption}>Signed in as</Text>
+        <Text style={styles.identity} numberOfLines={1} ellipsizeMode="middle">
+          {name ?? identifier}
+        </Text>
+        {name ? (
+          <Text style={styles.caption} numberOfLines={1} ellipsizeMode="middle">
+            {identifier}
+          </Text>
+        ) : null}
+        <View style={styles.tag}>
+          <Text style={styles.tagText}>PRIMARY GUARDIAN</Text>
+        </View>
+      </View>
+    </View>
+  );
 }
 
 /** Grown-up controls: add a child, see who is signed in, log out, delete the account. Opened by the corner hold on the family screen. */
@@ -56,17 +83,11 @@ export default function AccountScreen() {
   };
 
   return (
-    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={ROUTES.profiles}>
+    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={ROUTES.profiles} backTrailing={<ParentsGateBadge />}>
       <View style={styles.stack}>
         <Panel style={styles.panel}>
           <ScreenHeading title="Grown-ups" />
-          <View style={styles.signedIn}>
-            <Text style={styles.caption}>Signed in as</Text>
-            <Text style={styles.identity} numberOfLines={1} ellipsizeMode="middle">
-              {account.name ?? account.identifier}
-            </Text>
-            {account.name ? <Text style={styles.caption}>{account.identifier}</Text> : null}
-          </View>
+          <GuardianCard name={account.name} identifier={account.identifier} />
           {profiles.length < MAX_PROFILES ? (
             <HoldToConfirm
               label="Add a child"
@@ -119,8 +140,13 @@ export default function AccountScreen() {
 const styles = StyleSheet.create({
   stack: { gap: 16 },
   panel: { gap: 12 },
-  signedIn: { gap: 2, padding: 14, borderRadius: 16, backgroundColor: GROWN_UP.bg, borderWidth: 2, borderColor: GROWN_UP.border },
+  signedIn: { flexDirection: "row", alignItems: "center", gap: 14, padding: 14, borderRadius: 16, backgroundColor: GROWN_UP.bg, borderWidth: 2, borderColor: GROWN_UP.border },
   caption: { fontFamily: fonts.textSemiBold, fontSize: 14, color: colors.muted },
+  avatar: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", backgroundColor: GROWN_UP.ink, borderWidth: 3, borderColor: colors.white },
+  initial: { fontFamily: fonts.displayBold, fontSize: 26, lineHeight: 30, color: colors.white },
+  identityText: { flex: 1, gap: 2, alignItems: "flex-start" },
+  tag: { marginTop: 6, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3, backgroundColor: colors.white, borderWidth: 1, borderColor: GROWN_UP.border },
+  tagText: { fontFamily: fonts.textBold, fontSize: 12, lineHeight: 16, letterSpacing: 1, color: GROWN_UP.ink },
   identity: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
   danger: { backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
   dangerTitle: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },

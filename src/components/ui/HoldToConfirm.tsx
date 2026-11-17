@@ -20,9 +20,13 @@ export interface HoldToConfirmProps {
   hint?: string;
   /** Called when the button is let go before the hold finishes, to remind people to keep holding. */
   onEarlyRelease?: () => void;
+  /** A short state on the right of a row, such as "On" or "Off". */
+  status?: string;
+  /** "card" draws the row on white, for use inside a light card rather than a plum one. */
+  surface?: "plum" | "card";
 }
 
-export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint, onEarlyRelease }: Readonly<HoldToConfirmProps>) {
+export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint, onEarlyRelease, status, surface = "plum" }: Readonly<HoldToConfirmProps>) {
   const progress = useSharedValue(0);
   const fillStyle = useAnimatedStyle(() => ({ width: `${progress.get() * 100}%` }));
 
@@ -51,7 +55,7 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
       accessibilityLabel={hint ? `${label}. ${hint}` : label}
       accessibilityHint={`Press and hold for ${Math.round(holdMs / 1000)} seconds`}
       onAccessibilityTap={confirm}
-      style={[styles.pill, tone === "danger" && styles.dangerPill, compact && styles.compact, hint ? styles.row : null]}
+      style={[styles.pill, tone === "danger" && styles.dangerPill, compact && styles.compact, hint ? styles.row : null, surface === "card" && styles.onCard]}
     >
       <Animated.View style={[styles.fill, tone === "danger" && styles.dangerFill, fillStyle]} />
       {hint ? (
@@ -61,6 +65,11 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
             <Text style={[styles.rowLabel, tone === "danger" && styles.dangerLabel]}>{label}</Text>
             <Text style={[styles.rowHint, tone === "danger" && styles.dangerHint]}>{hint}</Text>
           </View>
+          {status ? (
+            <View style={styles.status}>
+              <Text style={styles.statusText}>{status}</Text>
+            </View>
+          ) : null}
         </View>
       ) : (
         <View style={styles.content}>
@@ -91,6 +100,9 @@ const styles = StyleSheet.create({
   dangerFill: { backgroundColor: "rgba(0,0,0,0.25)" },
   dangerLabel: { fontFamily: fonts.textBold, color: colors.white },
   row: { alignSelf: "stretch", borderRadius: 18, paddingHorizontal: 14, paddingVertical: 12, minHeight: 68 },
+  onCard: { backgroundColor: colors.white },
+  status: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3, backgroundColor: GROWN_UP.bg, borderWidth: 1.5, borderColor: GROWN_UP.border },
+  statusText: { fontFamily: fonts.textBold, fontSize: 13, color: GROWN_UP.ink },
   rowContent: { flexDirection: "row", alignItems: "center", gap: 14 },
   badge: {
     width: 40,

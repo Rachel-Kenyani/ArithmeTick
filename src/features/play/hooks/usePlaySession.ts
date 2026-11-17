@@ -7,7 +7,8 @@ import type { BadgeDef } from "@/data/badges";
 import type { LevelDef } from "@/data/levels";
 import type { LevelDraft } from "@/types/domain";
 import type { ChildProfile } from "@/types/models";
-import { actions, draftKey, useScreenTimeRemaining, type LevelCompletion } from "@/state/store";
+import { reports } from "@/services/reports";
+import { actions, draftKey, getAppState, useScreenTimeRemaining, type LevelCompletion } from "@/state/store";
 
 const HIGH_FIVE_HERO = "high-five-hero";
 const HERO_POP_MS = 3200;
@@ -72,7 +73,11 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   const handleComplete = useCallback(() => {
     if (completedRef.current) return;
     completedRef.current = true;
-    setCompletion(actions.completeLevel(profileId, levelNumber, (Date.now() - openedAt.current) / 1000, boardRef.current ? { misses: boardRef.current.misses, helped: helpedRef.current } : undefined));
+    const result = actions.completeLevel(profileId, levelNumber, (Date.now() - openedAt.current) / 1000, boardRef.current ? { misses: boardRef.current.misses, helped: helpedRef.current } : undefined);
+    setCompletion(result);
+    const { account, profiles } = getAppState();
+    const child = profiles.find((p) => p.id === profileId);
+    if (account?.reports && child) void reports.afterLevel(child, levelNumber, result.firstTime);
   }, [profileId, levelNumber]);
 
   const [heroPop, setHeroPop] = useState<BadgeDef | null>(null);

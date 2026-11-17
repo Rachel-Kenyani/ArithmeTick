@@ -12,6 +12,7 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { canChangeEmail } from "@/features/auth/utils/validate";
+import ReportsCard from "@/features/profiles/components/ReportsCard";
 import { initialOf } from "@/features/profiles/utils/initialOf";
 import { useGuard } from "@/hooks/useGuard";
 import { auth } from "@/services/auth";
@@ -111,6 +112,8 @@ export default function AccountScreen() {
             onConfirm={logOut}
           />
         </Panel>
+
+        <ReportsCard account={account} family={profiles} />
 
         <Panel style={[styles.panel, styles.danger]}>
           <Text style={styles.dangerTitle}>Delete account</Text>

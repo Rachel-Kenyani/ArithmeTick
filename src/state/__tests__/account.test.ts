@@ -173,3 +173,18 @@ describe("changeEmail", () => {
     expect(getSnapshot().account).toBeNull();
   });
 });
+
+describe("setReports", () => {
+  it("remembers that reports are on for the signed-in account", () => {
+    accountActions.login("first@gmail.com");
+    accountActions.setReports(true);
+    expect(getSnapshot().account?.reports).toBe(true);
+    accountActions.setReports(false);
+    expect(getSnapshot().account?.reports).toBe(false);
+  });
+
+  it("does nothing when nobody is signed in", () => {
+    accountActions.setReports(true);
+    expect(getSnapshot().account).toBeNull();
+  });
+});

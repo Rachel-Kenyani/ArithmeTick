@@ -1,158 +1,150 @@
 import { router } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
+import Avatar from "@/components/ui/Avatar";
 import { GROWN_UP } from "@/components/ui/GrownUpNote";
-import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import Panel from "@/components/ui/Panel";
-import ParentsGateBadge from "@/components/ui/ParentsGateBadge";
-import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
+import { SettingsGroup, SettingsRow } from "@/components/ui/SettingsList";
+import { confirm } from "@/components/ui/confirm";
 import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { canChangeEmail } from "@/features/auth/utils/validate";
-import ReportsCard from "@/features/profiles/components/ReportsCard";
+import ReportsGroup from "@/features/profiles/components/ReportsGroup";
 import { initialOf } from "@/features/profiles/utils/initialOf";
 import { useGuard } from "@/hooks/useGuard";
 import { auth } from "@/services/auth";
 import { signOutOfGoogle } from "@/services/googleAuth";
 import { actions, useAppState } from "@/state/store";
 import { colors, fonts } from "@/theme";
-import { MAX_PROFILES } from "@/types/models";
+import { MAX_PROFILES, type Account } from "@/types/models";
 
-function whatIsDeleted(names: readonly string[]): string {
-  if (names.length === 0) return "This deletes the account. It can’t be undone.";
-  const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-  return `This deletes the account and ${who}’s stars, badges and progress. It can’t be undone.`;
-}
-
-function GuardianCard({ name, identifier }: Readonly<{ name?: string | null; identifier: string }>) {
-  const initial = initialOf(name ?? identifier);
+function AccountHeader({ account }: Readonly<{ account: Account }>) {
+  const shown = account.name ?? account.identifier;
+  const initial = initialOf(shown);
   return (
-    <View style={styles.signedIn} accessible accessibilityLabel={`Signed in as ${name ?? identifier}, primary guardian`}>
+    <View style={styles.header} accessible accessibilityLabel={`Signed in as ${shown}`}>
       <View style={styles.avatar}>
-        {initial ? <Text style={styles.initial}>{initial}</Text> : <PhoneIcon size={22} strokeWidth={2.4} color={colors.white} />}
+        {initial ? <Text style={styles.initial}>{initial}</Text> : <PhoneIcon size={24} strokeWidth={2.4} color={colors.white} />}
       </View>
-      <View style={styles.identityText}>
-        <Text style={styles.caption}>Signed in as</Text>
-        <Text style={styles.identity} numberOfLines={1} ellipsizeMode="middle">
-          {name ?? identifier}
+      <View style={styles.headerText}>
+        <Text style={styles.name} numberOfLines={1} ellipsizeMode="middle">
+          {shown}
         </Text>
-        {name ? (
-          <Text style={styles.caption} numberOfLines={1} ellipsizeMode="middle">
-            {identifier}
-          </Text>
-        ) : null}
-        <View style={styles.tag}>
-          <Text style={styles.tagText}>PRIMARY GUARDIAN</Text>
-        </View>
+        <Text style={styles.email} numberOfLines={1} ellipsizeMode="middle">
+          {account.name ? account.identifier : "Signed in"}
+        </Text>
       </View>
     </View>
   );
 }
 
-/** Grown-up controls: add a child, see who is signed in, log out, delete the account. Opened by the corner hold on the family screen. */
+/**
+ * The grown-ups' settings, reached by holding the gear on the family screen. That hold is the parent check, so the
+ * rows here are ordinary taps, laid out as grouped lists. Logging out asks first, and deleting the account has its own
+ * confirmation screen.
+ */
 export default function AccountScreen() {
   const ready = useGuard("account");
   const { account, profiles } = useAppState();
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (!ready || !account) return null;
 
   const logOut = () => {
-    void signOutOfGoogle().then(() => auth.signOut());
-    actions.logout();
-    router.replace(ROUTES.welcome as never);
-  };
-
-  const deleteAccount = () => {
-    if (deleting) return;
-    setDeleting(true);
-    setError(null);
-    void auth.deleteAccount().then((result) => {
-      if (!result.ok) {
-        setError(result.message);
-        setDeleting(false);
-        return;
-      }
-      void signOutOfGoogle();
-      actions.deleteAccount();
+    void confirm("Log out?", "Your family's progress stays saved on this phone.", "Log out").then((yes) => {
+      if (!yes) return;
+      void signOutOfGoogle().then(() => auth.signOut());
+      actions.logout();
       router.replace(ROUTES.welcome as never);
     });
   };
 
   return (
-    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={ROUTES.profiles} backTrailing={<ParentsGateBadge />}>
-      <View style={styles.stack}>
-        <Panel style={styles.panel}>
-          <ScreenHeading title="Grown-ups" />
-          <GuardianCard name={account.name} identifier={account.identifier} />
-          {profiles.length < MAX_PROFILES ? (
-            <HoldToConfirm
+    <ScreenShell backgroundImage={SPLASH_BACKGROUND} back={ROUTES.profiles}>
+      <Panel style={styles.panel}>
+        <AccountHeader account={account} />
+
+        <SettingsGroup title="Family">
+          {profiles.map((child) => (
+            <SettingsRow
+              key={child.id}
+              label={child.name}
+              icon={<Avatar kind={child.avatar} size={32} />}
+              value={`Grade ${child.grade}`}
+            />
+          ))}
+        </SettingsGroup>
+        {profiles.length < MAX_PROFILES ? (
+          <SettingsGroup>
+            <SettingsRow
               label="Add a child"
-              hint="Hold to add another explorer to this family."
-              icon={<PlusIcon size={20} strokeWidth={2.4} color={colors.atPlum} />}
-              onConfirm={() => router.push(ROUTES.addExplorer as never)}
+              hint="Up to 4 explorers in one family."
+              icon={<PlusIcon size={22} strokeWidth={2.4} color={GROWN_UP.ink} />}
+              opens
+              onPress={() => router.push(ROUTES.addExplorer as never)}
             />
-          ) : null}
+          </SettingsGroup>
+        ) : null}
+
+        <ReportsGroup account={account} family={profiles} />
+
+        <View style={styles.cards}>
+          <Text style={styles.heading} accessibilityRole="header">
+            Account
+          </Text>
           {canChangeEmail(account) ? (
-            <HoldToConfirm
-              label="Change email"
-              hint="Hold to log in with a different email. Your children's progress stays."
-              icon={<MailIcon size={20} strokeWidth={2.2} color={colors.atPlum} />}
-              onConfirm={() => router.push(ROUTES.changeEmail as never)}
+            <SettingsGroup>
+              <SettingsRow
+                label="Change email"
+                hint="Log in with a different email. Progress stays."
+                icon={<MailIcon size={22} strokeWidth={2.2} color={GROWN_UP.ink} />}
+                opens
+                onPress={() => router.push(ROUTES.changeEmail as never)}
+              />
+            </SettingsGroup>
+          ) : null}
+          <SettingsGroup>
+            <SettingsRow
+              label="Log out"
+              hint="Progress stays saved on this phone."
+              icon={<LogoutIcon size={22} strokeWidth={2.2} color={GROWN_UP.ink} />}
+              onPress={logOut}
             />
-          ) : null}
-          <HoldToConfirm
-            label="Log out"
-            hint="Hold to log out. Your family's progress stays saved."
-            icon={<LogoutIcon size={20} strokeWidth={2.2} color={colors.atPlum} />}
-            onConfirm={logOut}
-          />
-        </Panel>
-
-        <ReportsCard account={account} family={profiles} />
-
-        <Panel style={[styles.panel, styles.danger]}>
-          <Text style={styles.dangerTitle}>Delete account</Text>
-          <Text style={styles.body}>{whatIsDeleted(profiles.map((p) => p.name))}</Text>
-          {error ? (
-            <Text style={styles.error} accessibilityRole="alert">
-              {error}
-            </Text>
-          ) : null}
-          {deleting ? (
-            <ActivityIndicator color={GROWN_UP.ink} accessibilityLabel="Deleting the account" />
-          ) : (
-            <HoldToConfirm
+          </SettingsGroup>
+          <SettingsGroup>
+            <SettingsRow
               tone="danger"
-              label="Delete everything"
-              hint="Hold for 2 seconds. This can't be undone."
-              icon={<TrashIcon size={20} strokeWidth={2.4} color={colors.white} />}
-              onConfirm={deleteAccount}
+              label="Delete account"
+              hint="Removes the account and every child's progress."
+              icon={<TrashIcon size={22} strokeWidth={2.2} color={colors.danger} />}
+              opens
+              onPress={() => router.push(ROUTES.deleteAccount as never)}
             />
-          )}
-        </Panel>
-      </View>
+          </SettingsGroup>
+        </View>
+      </Panel>
     </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  stack: { gap: 16 },
-  panel: { gap: 12 },
-  signedIn: { flexDirection: "row", alignItems: "center", gap: 14, padding: 14, borderRadius: 16, backgroundColor: GROWN_UP.bg, borderWidth: 2, borderColor: GROWN_UP.border },
-  caption: { fontFamily: fonts.textSemiBold, fontSize: 14, color: colors.muted },
-  avatar: { width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", backgroundColor: GROWN_UP.ink, borderWidth: 3, borderColor: colors.white },
+  panel: { gap: 22 },
+  header: { flexDirection: "row", alignItems: "center", gap: 14 },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: GROWN_UP.ink,
+    borderWidth: 3,
+    borderColor: colors.white,
+  },
   initial: { fontFamily: fonts.displayBold, fontSize: 26, lineHeight: 30, color: colors.white },
-  identityText: { flex: 1, gap: 2, alignItems: "flex-start" },
-  tag: { marginTop: 6, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3, backgroundColor: colors.white, borderWidth: 1, borderColor: GROWN_UP.border },
-  tagText: { fontFamily: fonts.textBold, fontSize: 12, lineHeight: 16, letterSpacing: 1, color: GROWN_UP.ink },
-  identity: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
-  danger: { backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
-  dangerTitle: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
-  body: { fontFamily: fonts.textSemiBold, fontSize: 16, lineHeight: 22, color: GROWN_UP.ink },
-  error: { fontFamily: fonts.textBold, fontSize: 16, lineHeight: 22, color: GROWN_UP.ink },
+  headerText: { flex: 1, gap: 2 },
+  name: { fontFamily: fonts.textBold, fontSize: 19, color: GROWN_UP.ink },
+  email: { fontFamily: fonts.textSemiBold, fontSize: 14, color: colors.muted },
+  cards: { gap: 10 },
+  heading: { fontFamily: fonts.textBold, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: GROWN_UP.ink, paddingHorizontal: 6 },
 });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useIsFocused } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -8,11 +8,13 @@ import AppTopBar from "@/components/top-bar/AppTopBar";
 import InfoBanner from "@/components/top-bar/InfoBanner";
 import LevelMap from "@/features/home/components/level-map/LevelMap";
 import BottomNav from "@/features/home/components/BottomNav";
+import NextUpChip from "@/features/home/components/NextUpChip";
 import { useMapAutoScroll } from "@/features/home/hooks/useMapAutoScroll";
 import { useMapUnlock } from "@/features/home/hooks/useMapUnlock";
 import { useNavigateOnce } from "@/features/home/hooks/useNavigateOnce";
 import SplashBackdrop, { HOME_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { levelCount, levelsForGrade, type LevelDef } from "@/data/levels";
+import { nextStep } from "@/data/nextStep";
 import type { ChildProfile } from "@/types/models";
 import { ROUTES } from "@/constants/routes";
 import { actions, useActiveProfile, useScreenTimeRemaining } from "@/state/store";
@@ -58,6 +60,8 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
 
   const go = useNavigateOnce();
   const handlePlay = useCallback((level: LevelDef) => go(ROUTES.play(level.number)), [go]);
+  const handlePlayNumber = useCallback((level: number) => go(ROUTES.play(level)), [go]);
+  const step = useMemo(() => nextStep(grade, completed, profile.attempts ?? []), [grade, completed, profile.attempts]);
   const handleUnlockDone = useCallback(() => actions.clearJustUnlocked(), []);
 
   const { scrollRef, regionHeight, handleRegionLayout, handleMapLayout, handleFocusY } = useMapAutoScroll(allDone);
@@ -85,6 +89,7 @@ function HomeScreen({ profile }: Readonly<{ profile: ChildProfile }>) {
             onStarsPress={() => go(ROUTES.badges)}
           />
           {shortScreen ? null : banner}
+          <NextUpChip step={step} onPlay={handlePlayNumber} />
         </View>
 
         <ScrollView

@@ -15,6 +15,7 @@ import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
 import AppTopBar from "@/components/top-bar/AppTopBar";
 import InfoBanner from "@/components/top-bar/InfoBanner";
 import { levelCount, type LevelDef } from "@/data/levels";
+import { isWarmUp } from "@/data/nextStep";
 import type { ChildProfile } from "@/types/models";
 import { GRADE_META } from "@/types/domain";
 import { colors } from "@/theme";
@@ -43,6 +44,8 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
 
   const meta = GRADE_META[profile.grade];
   const story = storyFor(level.grade, level.number);
+  // Decided when the level opens: answers given during the play must not change the banner.
+  const [warmUp] = useState(() => isWarmUp(level.grade, profile.progress[level.grade] ?? 0, profile.attempts ?? [], level.number));
   const [storyOpen, setStoryOpen] = useState(!isQuest && story !== null);
   const inert = celebrating || timeUp;
   const sm = width >= 640;
@@ -57,7 +60,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
         importantForAccessibility={inert ? "no-hide-descendants" : "auto"}
       >
         <AppTopBar backLabel="Back to map" onBack={goHome} stars={profile.stars} secondsLeft={secondsLeft} timePaused={isQuest} />
-        <InfoBanner tag={`Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} onReplay={story && !isQuest ? () => setStoryOpen(true) : undefined} />
+        <InfoBanner tag={warmUp ? `Level ${levelNumber} · Warm-up` : `Level ${levelNumber}`} title={level.title} spoken={`Level ${levelNumber}: ${level.title}`} onReplay={story && !isQuest ? () => setStoryOpen(true) : undefined} />
 
         <View
           style={[

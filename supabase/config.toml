@@ -444,5 +444,9 @@ enabled = true
 # [functions.send-sms]
 # verify_jwt = false
 
+# Called by the weekly schedule and the unsubscribe link, which carry no sign-in. It checks its own key and signatures.
+[functions.send-report]
+verify_jwt = false
+
 [functions.delete-account]
 verify_jwt = true

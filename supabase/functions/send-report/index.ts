@@ -1,0 +1,239 @@
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
+/** Who reports come from, e.g. "ArithmeTick <reports@yourdomain>". Must be on the domain verified in Resend. */
+const REPORT_FROM = Deno.env.get("REPORT_FROM") ?? "";
+/** A long random secret: the weekly schedule sends it, and it signs the unsubscribe links. */
+const REPORT_KEY = Deno.env.get("REPORT_KEY") ?? "";
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-report-key",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+};
+
+interface Settings {
+  user_id: string;
+  opted_in_at: string;
+  last_sent_at: string | null;
+}
+
+interface Child {
+  user_id: string;
+  child_id: string;
+  child_name: string;
+  grade: number;
+  levels_done: number;
+  level_count: number;
+  total_levels: number;
+  stars: number;
+  skills_line: string | null;
+  practice_idea: string | null;
+  updated_at: string;
+  sent_levels: number;
+  sent_stars: number;
+}
+
+function reply(status: number, body: Record<string, unknown>): Response {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+}
+
+/** Calls the database as the service role, which can read every family's report rows. */
+async function db(path: string, init: RequestInit = {}): Promise<Response> {
+  return await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...init,
+    headers: {
+      apikey: SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+      "Content-Type": "application/json",
+      ...init.headers,
+    },
+  });
+}
+
+async function userIdFor(token: string): Promise<string | null> {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { Authorization: `Bearer ${token}`, apikey: ANON_KEY } });
+  if (!res.ok) return null;
+  return ((await res.json()) as { id?: string }).id ?? null;
+}
+
+async function emailOf(userId: string): Promise<string | null> {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+    headers: { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` },
+  });
+  if (!res.ok) return null;
+  return ((await res.json()) as { email?: string }).email || null;
+}
+
+async function sign(userId: string): Promise<string> {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(REPORT_KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`unsubscribe:${userId}`));
+  return Array.from(new Uint8Array(mac), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+const unsubscribeUrl = async (userId: string) =>
+  `${SUPABASE_URL}/functions/v1/send-report?unsubscribe=${userId}&sig=${await sign(userId)}`;
+
+const escape = (text: string) =>
+  text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+
+const FONT = "font-family:'Quicksand','Segoe UI',Arial,sans-serif;";
+const DISPLAY = "font-family:'DynaPuff','Quicksand','Trebuchet MS',Arial,sans-serif;";
+
+function plural(n: number, one: string, many: string): string {
+  return `${n} ${n === 1 ? one : many}`;
+}
+
+function childBlock(child: Child, kind: "weekly" | "grade"): string {
+  const levels = Math.max(0, child.total_levels - child.sent_levels);
+  const stars = Math.max(0, child.stars - child.sent_stars);
+  const headline =
+    kind === "grade"
+      ? `${escape(child.child_name)} finished Grade ${child.grade}!`
+      : `${escape(child.child_name)} · Grade ${child.grade}`;
+  const thisWeek =
+    kind === "grade"
+      ? `All ${child.level_count} levels done, with ${plural(child.stars, "star", "stars")} so far.`
+      : `This week: ${plural(levels, "level", "levels")} and ${plural(stars, "star", "stars")}. Now on level ${Math.min(child.levels_done + 1, child.level_count)} of ${child.level_count}.`;
+  const skills = child.skills_line
+    ? `<p style="margin:10px 0 0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${escape(child.child_name)}: ${escape(child.skills_line)}.</p>`
+    : "";
+  const idea = child.practice_idea
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;background:#FFF6D6;border-radius:18px;"><tr><td style="padding:14px 16px;${FONT}font-size:15px;line-height:22px;color:#1B2B2A;"><strong style="color:#004F4A;">Try at home:</strong> ${escape(child.practice_idea)}</td></tr></table>`
+    : "";
+  return `<tr><td style="padding:18px 32px 6px;">
+  <h2 style="margin:0;${DISPLAY}font-size:22px;line-height:28px;font-weight:700;color:#006F68;">${headline}</h2>
+  <p style="margin:6px 0 0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${thisWeek}</p>${skills}${idea}
+</td></tr>`;
+}
+
+function emailHtml(title: string, intro: string, blocks: string, unsubscribe: string): string {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(title)}</title>
+<link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet"></head>
+<body style="margin:0;padding:0;background:#EBF9F7;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EBF9F7;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:28px;overflow:hidden;border-bottom:6px solid #cfe8e4;">
+<tr><td align="center" style="background:#3E0E79;padding:26px 24px;">
+  <p style="margin:0;${DISPLAY}font-size:26px;font-weight:700;color:#ffffff;">ArithmeTick</p>
+  <p style="margin:8px 0 0;${FONT}font-size:13px;letter-spacing:1px;color:#E4D6F7;">Maths we learn together</p>
+</td></tr>
+<tr><td align="center" style="padding:28px 32px 4px;">
+  <h1 style="margin:0 0 8px;${DISPLAY}font-size:26px;line-height:32px;font-weight:700;color:#006F68;">${escape(title)}</h1>
+  <p style="margin:0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${intro}</p>
+</td></tr>
+${blocks}
+<tr><td align="center" style="padding:22px 32px 30px;">
+  <p style="margin:0;${FONT}font-size:13px;line-height:20px;color:#4A5F5D;">You get this because you turned on weekly reports in ArithmeTick. <a href="${unsubscribe}" style="color:#6D41A3;">Turn off reports</a> and we'll delete what we keep for them.</p>
+</td></tr>
+</table>
+<p style="margin:18px 0 0;${FONT}font-size:12px;line-height:18px;color:#4A5F5D;">ArithmeTick &middot; Maths for Grade 1&ndash;3 &middot; Nairobi, Kenya</p>
+</td></tr></table></body></html>`;
+}
+
+async function send(to: string, subject: string, html: string): Promise<boolean> {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: REPORT_FROM, to: [to], subject, html }),
+  });
+  if (!res.ok) console.error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  return res.ok;
+}
+
+async function markSent(children: readonly Child[]): Promise<void> {
+  for (const c of children) {
+    await db(`child_reports?user_id=eq.${c.user_id}&child_id=eq.${encodeURIComponent(c.child_id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ sent_levels: c.total_levels, sent_stars: c.stars }),
+    });
+  }
+}
+
+/** Every Sunday: one email per family, about the children who played since the last one. Families who didn't play get nothing. */
+async function sendWeekly(): Promise<Response> {
+  const settings = (await (await db("report_settings?select=*")).json()) as Settings[];
+  let sent = 0;
+  for (const s of settings) {
+    const since = s.last_sent_at ?? s.opted_in_at;
+    const played = (await (
+      await db(`child_reports?select=*&user_id=eq.${s.user_id}&updated_at=gt.${encodeURIComponent(since)}&order=child_name`)
+    ).json()) as Child[];
+    if (played.length === 0) continue;
+    const to = await emailOf(s.user_id);
+    if (!to) continue;
+    const names = played.map((c) => escape(c.child_name));
+    const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+    const html = emailHtml(
+      "This week in ArithmeTick",
+      `Here's how ${who} did this week.`,
+      played.map((c) => childBlock(c, "weekly")).join(""),
+      await unsubscribeUrl(s.user_id),
+    );
+    if (!(await send(to, `This week in ArithmeTick: ${played.map((c) => c.child_name).join(", ")}`, html))) continue;
+    await markSent(played);
+    await db(`report_settings?user_id=eq.${s.user_id}`, { method: "PATCH", body: JSON.stringify({ last_sent_at: new Date().toISOString() }) });
+    sent++;
+  }
+  console.log(`send-report weekly: ${sent} of ${settings.length} families emailed`);
+  return reply(200, { sent });
+}
+
+/** Straight away when a child finishes a grade, for families with reports on. */
+async function sendGrade(userId: string, childId: string): Promise<Response> {
+  const on = (await (await db(`report_settings?select=user_id&user_id=eq.${userId}`)).json()) as unknown[];
+  if (on.length === 0) return reply(200, { sent: 0 });
+  const rows = (await (
+    await db(`child_reports?select=*&user_id=eq.${userId}&child_id=eq.${encodeURIComponent(childId)}`)
+  ).json()) as Child[];
+  const child = rows[0];
+  const to = await emailOf(userId);
+  if (!child || !to) return reply(200, { sent: 0 });
+  const html = emailHtml(
+    `${child.child_name} finished Grade ${child.grade}!`,
+    `Every level in Grade ${child.grade} is done. Here's where ${escape(child.child_name)} is now.`,
+    childBlock(child, "grade"),
+    await unsubscribeUrl(userId),
+  );
+  const ok = await send(to, `${child.child_name} finished Grade ${child.grade} in ArithmeTick!`, html);
+  return reply(ok ? 200 : 502, { sent: ok ? 1 : 0 });
+}
+
+/** The link in every email: turns reports off and deletes what is kept for them, with no sign-in needed. */
+async function unsubscribe(userId: string, sig: string): Promise<Response> {
+  const page = (text: string, status = 200) =>
+    new Response(
+      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:40px 16px;background:#EBF9F7;${FONT}text-align:center;color:#1B2B2A;"><h1 style="${DISPLAY}color:#006F68;">ArithmeTick</h1><p style="font-size:17px;">${text}</p></body>`,
+      { status, headers: { "Content-Type": "text/html; charset=utf-8" } },
+    );
+  if (!/^[0-9a-f-]{36}$/.test(userId) || sig !== (await sign(userId))) return page("That link doesn't work. Turn reports off on the Grown-ups page in the app instead.", 400);
+  await db(`child_reports?user_id=eq.${userId}`, { method: "DELETE" });
+  await db(`report_settings?user_id=eq.${userId}`, { method: "DELETE" });
+  return page("Weekly reports are off, and we've deleted what we kept for them. You can turn them on again on the Grown-ups page.");
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  const url = new URL(req.url);
+
+  if (req.method === "GET") {
+    const userId = url.searchParams.get("unsubscribe");
+    return userId ? await unsubscribe(userId, url.searchParams.get("sig") ?? "") : reply(404, { error: "not_found" });
+  }
+  if (req.method !== "POST") return reply(405, { error: "method_not_allowed" });
+  if (!RESEND_API_KEY || !REPORT_FROM || !REPORT_KEY) return reply(500, { error: "not_configured" });
+
+  const body = (await req.json().catch(() => ({}))) as { kind?: string; child_id?: string };
+
+  if (body.kind === "weekly") {
+    if (req.headers.get("x-report-key") !== REPORT_KEY) return reply(401, { error: "not_allowed" });
+    return await sendWeekly();
+  }
+  if (body.kind === "grade" && body.child_id) {
+    const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+    const userId = token ? await userIdFor(token) : null;
+    if (!userId) return reply(401, { error: "not_signed_in" });
+    return await sendGrade(userId, body.child_id);
+  }
+  return reply(400, { error: "unknown_kind" });
+});

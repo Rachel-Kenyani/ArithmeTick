@@ -15,6 +15,7 @@ import type { Href } from "expo-router";
 import Scaled from "@/components/ui/Scaled";
 import { useUiScale } from "@/hooks/useUiScale";
 import StatusBarShield from "@/components/top-bar/StatusBarShield";
+import { TOP_BAR_SHIELD } from "@/components/top-bar/constants";
 import BackButton from "@/components/ui/BackButton";
 import JungleBackdrop from "@/components/backdrops/JungleBackdrop";
 import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
@@ -53,6 +54,15 @@ export default function ScreenShell({
   const insets = useSafeAreaInsets();
   const scale = useUiScale();
   const picture = backgroundImage ?? null;
+  const topBar = back ? (
+    <View style={[styles.topBar, { paddingTop: insets.top + 12, paddingLeft: Math.max(16, insets.left), paddingRight: Math.max(16, insets.right) }]}>
+      <Scaled style={[styles.topBarColumn, { maxWidth: maxWidth * scale }]} innerStyle={styles.backRow}>
+        <BackButton href={typeof back === "boolean" ? undefined : back} fallbackHref={ROUTES.welcome} />
+        {backTrailing}
+      </Scaled>
+    </View>
+  ) : null;
+  const bar = header ?? topBar;
   const content = (
     <KeyboardAvoidingView
       style={styles.fill}
@@ -62,7 +72,7 @@ export default function ScreenShell({
         contentContainerStyle={[
           styles.scroll,
           {
-            paddingTop: header ? 16 : insets.top + 16,
+            paddingTop: bar ? 16 : insets.top + 16,
             paddingBottom: insets.bottom + (grass ? 64 : 24),
             paddingLeft: Math.max(16, insets.left),
             paddingRight: Math.max(16, insets.right),
@@ -82,15 +92,6 @@ export default function ScreenShell({
           ]}
         >
           <Scaled style={align === "top" && scale === 1 ? styles.fill : undefined} innerStyle={styles.scaledInner}>
-            {back ? (
-              <View style={styles.backRow}>
-                <BackButton
-                  href={typeof back === "boolean" ? undefined : back}
-                  fallbackHref={ROUTES.welcome}
-                />
-                {backTrailing}
-              </View>
-            ) : null}
             <View style={[{ gap }, align === "top" && styles.fill, style]}>
               {children}
             </View>
@@ -102,17 +103,17 @@ export default function ScreenShell({
   return picture ? (
     <View style={styles.fill}>
       <SplashBackdrop source={picture} />
-      {header}
+      {bar}
       {content}
       {footer}
-      {header ? null : <StatusBarShield />}
+      {bar ? null : <StatusBarShield />}
     </View>
   ) : (
     <JungleBackdrop grass={grass} canopy={canopy}>
-      {header}
+      {bar}
       {content}
       {footer}
-      {header ? null : <StatusBarShield />}
+      {bar ? null : <StatusBarShield />}
     </JungleBackdrop>
   );
 }
@@ -122,5 +123,7 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, alignItems: "center" },
   column: { width: "100%", flexGrow: 1 },
   scaledInner: { width: "100%" },
-  backRow: { marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
+  topBar: { zIndex: 20, width: "100%", paddingBottom: 10, backgroundColor: TOP_BAR_SHIELD },
+  topBarColumn: { width: "100%", alignSelf: "center" },
+  backRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
 });

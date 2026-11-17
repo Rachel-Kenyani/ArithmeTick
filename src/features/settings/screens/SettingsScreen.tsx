@@ -57,20 +57,22 @@ export default function SettingsScreen() {
       </Panel>
       <Panel style={styles.grownUp}>
         <View style={styles.grownUpHead}>
-          <InfoIcon size={22} />
+          <InfoIcon size={18} />
           <Text style={styles.grownUpTitle}>For grown-ups</Text>
         </View>
         <HoldToConfirm
-          label={voice ? `Brijo's voice is on` : `Brijo's voice is off`}
-          hint={
-            voice
-              ? `Brijo reads the instructions to ${profile.name}. Hold to turn it off if ${profile.name} reads well or needs quiet.`
-              : `${profile.name} can still tap Hear it on an instruction. Hold to turn Brijo's voice back on.`
-          }
+          surface="card"
+          label="Brijo reads aloud"
+          status={voice ? "On" : "Off"}
+          hint={voice ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
           icon={<SpeechIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
           onConfirm={() => actions.setSound(profile.id, { voice: !voice })}
         />
-        <Text style={styles.note}>Sound effects have their own button in the top bar.</Text>
+        <Text style={styles.note}>
+          {voice
+            ? `Turn it off if ${profile.name} reads well or needs quiet. Sound effects have their own button in the top bar.`
+            : `${profile.name} can still tap Hear it on an instruction. Sound effects have their own button in the top bar.`}
+        </Text>
       </Panel>
     </ScreenShell>
   );
@@ -79,9 +81,9 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   card: { gap: 20 },
   section: { gap: 8 },
-  grownUp: { gap: 12, backgroundColor: GROWN_UP.bg, borderColor: GROWN_UP.border },
-  grownUpHead: { flexDirection: "row", alignItems: "center", gap: 8 },
-  grownUpTitle: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
-  note: { fontFamily: fonts.textSemiBold, fontSize: 14, lineHeight: 19, color: GROWN_UP.ink, opacity: 0.85 },
+  grownUp: { gap: 10 },
+  grownUpHead: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 6 },
+  grownUpTitle: { fontFamily: fonts.textBold, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: GROWN_UP.ink },
+  note: { fontFamily: fonts.textSemiBold, fontSize: 14, lineHeight: 19, color: colors.muted, paddingHorizontal: 6 },
   label: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atTeal },
 });

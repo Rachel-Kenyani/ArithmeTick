@@ -65,4 +65,16 @@ export function confirmProblem(pw: string, confirm: string): string | null {
   return null;
 }
 
+/** Only accounts that log in with an email and password can change it here. Google accounts change it with Google. */
+export const canChangeEmail = (account: { identifier: string; method: string } | null) =>
+  account?.method === "password" && isEmail(account.identifier);
+
+export function newEmailProblem(current: string, raw: string): string | null {
+  const next = raw.trim().toLowerCase();
+  if (!next) return "Please enter the new email.";
+  if (!isEmail(next)) return "Please check the email address, e.g. name@gmail.com.";
+  if (next === current.trim().toLowerCase()) return "That’s the email you use now. Enter a different one.";
+  return null;
+}
+
 export const PASSWORD_UPDATED_FLAG = "arithmetick:password-updated";

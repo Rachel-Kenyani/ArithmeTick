@@ -77,6 +77,16 @@ export const accountActions = {
     });
   },
 
+  /** Moves the signed-in account to a new email. The children come along, since they belong to the account, not the address. */
+  changeEmail(newEmail: string) {
+    setState((s) => {
+      if (!s.account) return s;
+      const families = { ...s.families };
+      delete families[accountKey(newEmail)];
+      return { ...s, account: { ...s.account, identifier: newEmail.trim().toLowerCase() }, families };
+    });
+  },
+
   /** Forgets this account and every child in it, on this phone. Other accounts' families stay as they are. */
   deleteAccount() {
     setState((s) => {

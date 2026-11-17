@@ -8,8 +8,9 @@ import HoldToConfirm from "@/components/ui/HoldToConfirm";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
-import { LogoutIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
+import { LogoutIcon, MailIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
+import { canChangeEmail } from "@/features/auth/utils/validate";
 import { useGuard } from "@/hooks/useGuard";
 import { auth } from "@/services/auth";
 import { signOutOfGoogle } from "@/services/googleAuth";
@@ -72,6 +73,14 @@ export default function AccountScreen() {
               hint="Hold to add another explorer to this family."
               icon={<PlusIcon size={20} strokeWidth={2.4} color={colors.atPlum} />}
               onConfirm={() => router.push(ROUTES.addExplorer as never)}
+            />
+          ) : null}
+          {canChangeEmail(account) ? (
+            <HoldToConfirm
+              label="Change email"
+              hint="Hold to log in with a different email. Your children's progress stays."
+              icon={<MailIcon size={20} strokeWidth={2.2} color={colors.atPlum} />}
+              onConfirm={() => router.push(ROUTES.changeEmail as never)}
             />
           ) : null}
           <HoldToConfirm

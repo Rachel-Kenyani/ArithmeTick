@@ -142,3 +142,34 @@ describe("loading saved state", () => {
     expect(parse("not json")).toBe(DEFAULT_STATE);
   });
 });
+
+describe("changeEmail", () => {
+  it("moves the account to the new email and keeps the children", () => {
+    signUp("old@gmail.com");
+    const child = amani();
+    setState((s) => ({ ...s, profiles: [child], activeProfileId: child.id }));
+
+    accountActions.changeEmail(" New@Gmail.com ");
+
+    expect(getSnapshot().account?.identifier).toBe("new@gmail.com");
+    expect(getSnapshot().profiles).toEqual([child]);
+    expect(getSnapshot().activeProfileId).toBe(child.id);
+  });
+
+  it("keeps the children with the account after logging out and back in with the new email", () => {
+    signUp("old@gmail.com");
+    const child = amani();
+    setState((s) => ({ ...s, profiles: [child] }));
+    accountActions.changeEmail("new@gmail.com");
+    accountActions.logout();
+
+    accountActions.login("new@gmail.com");
+
+    expect(getSnapshot().profiles).toEqual([child]);
+  });
+
+  it("does nothing when no one is signed in", () => {
+    accountActions.changeEmail("new@gmail.com");
+    expect(getSnapshot().account).toBeNull();
+  });
+});

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Image, StyleSheet, View, type ImageSourcePropType } from "react-native";
 
+import LayeredSplash from "./LayeredSplash";
+
 export const SPLASH_BACKGROUND = require("../../../assets/splash/bg-12.jpg");
 export const HOME_BACKGROUND = require("../../../assets/splash/home-bg.jpg");
 
@@ -13,12 +15,16 @@ export default function SplashBackdrop({
 }>) {
   return (
     <View style={StyleSheet.absoluteFill}>
-      <Image
+      {source === SPLASH_BACKGROUND ? (
+        <LayeredSplash />
+      ) : (
+        <Image
         source={source}
         resizeMode="cover"
         blurRadius={source === HOME_BACKGROUND ? 2 : 0}
         style={styles.image}
       />
+      )}
       {source === HOME_BACKGROUND ? <View pointerEvents="none" style={styles.homeMute} /> : null}
       {children}
     </View>

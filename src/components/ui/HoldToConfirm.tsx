@@ -18,9 +18,11 @@ export interface HoldToConfirmProps {
   compact?: boolean;
   /** Full-width row with the icon in a badge and a second line under the label, for lists of grown-up actions. */
   hint?: string;
+  /** Called when the button is let go before the hold finishes, to remind people to keep holding. */
+  onEarlyRelease?: () => void;
 }
 
-export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint }: Readonly<HoldToConfirmProps>) {
+export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint, onEarlyRelease }: Readonly<HoldToConfirmProps>) {
   const progress = useSharedValue(0);
   const fillStyle = useAnimatedStyle(() => ({ width: `${progress.get() * 100}%` }));
 
@@ -36,6 +38,7 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
     );
   };
   const stop = () => {
+    if (progress.get() < 1) onEarlyRelease?.();
     cancelAnimation(progress);
     progress.set(withTiming(0, { duration: 200 }));
   };

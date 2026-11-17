@@ -1,7 +1,9 @@
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BackButton from "@/components/ui/BackButton";
+import Scaled from "@/components/ui/Scaled";
+import { useLayoutWindow } from "@/hooks/useUiScale";
 import SoundToggle from "@/components/top-bar/SoundToggle";
 import StarsPill from "@/components/top-bar/StarsPill";
 import TimePill from "@/components/top-bar/TimePill";
@@ -26,19 +28,19 @@ export default function AppTopBar({
   timePaused = false,
 }: Readonly<AppTopBarProps>) {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, scale } = useLayoutWindow();
   const roomy = width >= 380;
 
   return (
     <View style={[styles.topBar, { paddingTop: insets.top + 12, paddingHorizontal: roomy ? 16 : 12 }]}>
-      <View style={styles.controls}>
+      <Scaled style={[styles.column, { maxWidth: 512 * scale }]} innerStyle={styles.controls}>
         <BackButton label={backLabel} onPress={onBack} />
         <View style={[styles.actions, { gap: roomy ? 8 : 6 }]}>
           <SoundToggle />
           <StarsPill stars={stars} onPress={onStarsPress} />
           <TimePill secondsLeft={secondsLeft} paused={timePaused} />
         </View>
-      </View>
+      </Scaled>
     </View>
   );
 }
@@ -48,10 +50,9 @@ const styles = StyleSheet.create({
     zIndex: 20,
     paddingBottom: 10,
     width: "100%",
-    maxWidth: 512,
-    alignSelf: "center",
     backgroundColor: TOP_BAR_SHIELD,
   },
+  column: { width: "100%", alignSelf: "center" },
   controls: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 6 },
   actions: { flexShrink: 1, flexDirection: "row", alignItems: "center" },
 });

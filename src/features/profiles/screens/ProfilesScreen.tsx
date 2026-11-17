@@ -11,12 +11,12 @@ import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
-import { SettingsIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { actions, useAppState } from "@/state/store";
 import { colors } from "@/theme";
 import { useGuard } from "@/hooks/useGuard";
 
+import GrownUpsGear from "../components/GrownUpsGear";
 import HeaderCard from "../components/HeaderCard";
 import ProfileTile from "../components/ProfileTile";
 import { useProfileChooser } from "../hooks/useProfileChooser";
@@ -91,12 +91,7 @@ export default function ProfilesScreen() {
 
       </ScreenShell>
       <View style={[styles.corner, { top: insets.top + 16, right: Math.max(16, insets.right), transform: [{ scale }] }]}>
-        <HoldToConfirm
-          compact
-          label="Grown-ups: hold to add a child, log out or delete the account"
-          icon={<SettingsIcon size={24} strokeWidth={2.2} color={colors.atPlum} />}
-          onConfirm={() => router.push(ROUTES.account as never)}
-        />
+        <GrownUpsGear />
       </View>
     </View>
   );

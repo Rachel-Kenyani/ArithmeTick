@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,6 +17,7 @@ import { useUiScale } from "@/hooks/useUiScale";
 import StatusBarShield from "@/components/top-bar/StatusBarShield";
 import BackButton from "@/components/ui/BackButton";
 import JungleBackdrop from "@/components/backdrops/JungleBackdrop";
+import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
 import { ROUTES } from "@/constants/routes";
 
 export interface ScreenShellProps {
@@ -101,11 +101,7 @@ export default function ScreenShell({
   );
   return picture ? (
     <View style={styles.fill}>
-      <Image
-        source={picture}
-        resizeMode="cover"
-        style={styles.backgroundImage}
-      />
+      <SplashBackdrop source={picture} />
       {header}
       {content}
       {footer}
@@ -123,7 +119,6 @@ export default function ScreenShell({
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  backgroundImage: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   scroll: { flexGrow: 1, alignItems: "center" },
   column: { width: "100%", flexGrow: 1 },
   scaledInner: { width: "100%" },

@@ -19,21 +19,28 @@ describe("normalizeIdentifier", () => {
     expect(normalizeIdentifier(" Parent@Gmail.COM ")).toBe("parent@gmail.com");
   });
 
-  it("formats phone numbers", () => {
-    expect(normalizeIdentifier("0710 515 773")).toBe("+254710515773");
-  });
+  // PHONE: phone sign-in is switched off, so phone numbers are no longer formatted.
+  // PHONE: it("formats phone numbers", () => {
+  // PHONE:   expect(normalizeIdentifier("0710 515 773")).toBe("+254710515773");
+  // PHONE: });
 });
 
 describe("identifierProblem", () => {
-  it("accepts an email or a phone number", () => {
+  it("accepts an email", () => {
     expect(identifierProblem("parent@gmail.com")).toBeNull();
-    expect(identifierProblem("0710515773")).toBeNull();
   });
+
+  it("asks for an email instead of a phone number while phone sign-in is off", () => {
+    expect(identifierProblem("0710515773")).toMatch(/email/i);
+  });
+  // PHONE: it("accepts a phone number", () => {
+  // PHONE:   expect(identifierProblem("0710515773")).toBeNull();
+  // PHONE: });
 
   it("explains what's wrong", () => {
     expect(identifierProblem("")).toMatch(/enter/i);
     expect(identifierProblem("parent@gmail")).toMatch(/email/i);
-    expect(identifierProblem("0710")).toMatch(/Kenyan mobile/);
+    // PHONE: expect(identifierProblem("0710")).toMatch(/Kenyan mobile/);
   });
 });
 

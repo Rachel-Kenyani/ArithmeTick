@@ -33,7 +33,7 @@ export default function IdentifierField({
       icon={
         phone ? (
           <View style={styles.chip} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-            <Text style={styles.chipText}>+254</Text>
+            <Text style={styles.chipText}>🇰🇪+254</Text>
           </View>
         ) : (
           <MailIcon color={colors.atPurple} />

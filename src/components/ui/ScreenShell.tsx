@@ -13,6 +13,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Href } from "expo-router";
 
+import Scaled from "@/components/ui/Scaled";
+import { useUiScale } from "@/hooks/useUiScale";
 import StatusBarShield from "@/components/top-bar/StatusBarShield";
 import BackButton from "@/components/ui/BackButton";
 import JungleBackdrop from "@/components/backdrops/JungleBackdrop";
@@ -49,6 +51,8 @@ export default function ScreenShell({
   footer,
 }: Readonly<ScreenShellProps>) {
   const insets = useSafeAreaInsets();
+  const scale = useUiScale();
+  const picture = backgroundImage ?? null;
   const content = (
     <KeyboardAvoidingView
       style={styles.fill}
@@ -72,31 +76,33 @@ export default function ScreenShell({
           style={[
             styles.column,
             {
-              maxWidth,
+              maxWidth: maxWidth * scale,
               justifyContent: align === "center" ? "center" : "flex-start",
             },
           ]}
         >
-          {back ? (
-            <View style={styles.backRow}>
-              <BackButton
-                href={typeof back === "boolean" ? undefined : back}
-                fallbackHref={ROUTES.welcome}
-              />
-              {backTrailing}
+          <Scaled style={align === "top" && scale === 1 ? styles.fill : undefined} innerStyle={styles.scaledInner}>
+            {back ? (
+              <View style={styles.backRow}>
+                <BackButton
+                  href={typeof back === "boolean" ? undefined : back}
+                  fallbackHref={ROUTES.welcome}
+                />
+                {backTrailing}
+              </View>
+            ) : null}
+            <View style={[{ gap }, align === "top" && styles.fill, style]}>
+              {children}
             </View>
-          ) : null}
-          <View style={[{ gap }, align === "top" && styles.fill, style]}>
-            {children}
-          </View>
+          </Scaled>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
-  return backgroundImage ? (
+  return picture ? (
     <View style={styles.fill}>
       <Image
-        source={backgroundImage}
+        source={picture}
         resizeMode="cover"
         style={styles.backgroundImage}
       />
@@ -120,5 +126,6 @@ const styles = StyleSheet.create({
   backgroundImage: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   scroll: { flexGrow: 1, alignItems: "center" },
   column: { width: "100%", flexGrow: 1 },
+  scaledInner: { width: "100%" },
   backRow: { marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
 });

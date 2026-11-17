@@ -1,4 +1,4 @@
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useReducedMotion } from "react-native-reanimated";
@@ -6,6 +6,7 @@ import { useReducedMotion } from "react-native-reanimated";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
+import { useLayoutWindow } from "@/hooks/useUiScale";
 import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
@@ -26,7 +27,7 @@ export default function ProfilesScreen() {
   const { profiles } = useAppState();
   const reduceMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
-  const { width: W } = useWindowDimensions();
+  const { width: W, scale } = useLayoutWindow();
 
   const empty = ready && profiles.length === 0;
   const { chosen, choose, tileState } = useProfileChooser({
@@ -89,7 +90,7 @@ export default function ProfilesScreen() {
         </View>
 
       </ScreenShell>
-      <View style={[styles.corner, { top: insets.top + 16, right: Math.max(16, insets.right) }]}>
+      <View style={[styles.corner, { top: insets.top + 16, right: Math.max(16, insets.right), transform: [{ scale }] }]}>
         <HoldToConfirm
           compact
           label="Grown-ups: hold to add a child, log out or delete the account"
@@ -103,6 +104,6 @@ export default function ProfilesScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  corner: { position: "absolute" },
+  corner: { position: "absolute", transformOrigin: "top right" },
   grid: { flexDirection: "row", flexWrap: "wrap", alignSelf: "center" },
 });

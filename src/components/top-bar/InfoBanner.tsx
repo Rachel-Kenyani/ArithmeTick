@@ -1,6 +1,8 @@
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import Scaled from "@/components/ui/Scaled";
 import { SpeechIcon } from "@/components/ui/icons";
+import { useLayoutWindow } from "@/hooks/useUiScale";
 import { cardShadow, colors, fonts } from "@/theme";
 
 export interface InfoBannerProps {
@@ -37,69 +39,70 @@ export default function InfoBanner({
   progress,
   onReplay,
 }: Readonly<InfoBannerProps>) {
-  const { width } = useWindowDimensions();
+  const { width, scale } = useLayoutWindow();
   const tablet = width >= 640;
 
   return (
-    <View style={[styles.wrap, { paddingHorizontal: tablet ? 24 : 16 }]}>
-      <View
-        style={[styles.card, cardShadow, onReplay ? styles.cardWithReplay : null]}
-        accessible
-        accessibilityRole="header"
-        accessibilityLabel={spoken}
-      >
-        <View style={styles.tag}>
-          <Text style={styles.tagText} maxFontSizeMultiplier={1.3}>
-            {tag}
-          </Text>
-        </View>
-        <Text
-          style={styles.title}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.7}
-          maxFontSizeMultiplier={1.3}
+    <Scaled style={[styles.outer, { maxWidth: 512 * scale }]}>
+      <View style={[styles.wrap, { paddingHorizontal: tablet ? 24 : 16 }]}>
+        <View
+          style={[styles.card, cardShadow, onReplay ? styles.cardWithReplay : null]}
+          accessible
+          accessibilityRole="header"
+          accessibilityLabel={spoken}
         >
-          {title}
-        </Text>
-        {progress ? (
-          <View style={styles.progress}>
-            <View style={styles.pips}>
-              {PIP_IDS.slice(0, progress.total).map((id, index) => (
-                <View
-                  key={id}
-                  style={[styles.pip, pipStyle(index, progress.completed)]}
-                />
-              ))}
-            </View>
-            <Text style={styles.count}>
-              {progress.completed} of {progress.total}
+          <View style={styles.tag}>
+            <Text style={styles.tagText} maxFontSizeMultiplier={1.3}>
+              {tag}
             </Text>
+          </View>
+          <Text
+            style={styles.title}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            maxFontSizeMultiplier={1.3}
+          >
+            {title}
+          </Text>
+          {progress ? (
+            <View style={styles.progress}>
+              <View style={styles.pips}>
+                {PIP_IDS.slice(0, progress.total).map((id, index) => (
+                  <View
+                    key={id}
+                    style={[styles.pip, pipStyle(index, progress.completed)]}
+                  />
+                ))}
+              </View>
+              <Text style={styles.count}>
+                {progress.completed} of {progress.total}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+        {onReplay ? (
+          <View style={[styles.replayWrap, { right: (tablet ? 24 : 16) + 10 }]} pointerEvents="box-none">
+            <Pressable
+              onPress={onReplay}
+              hitSlop={8}
+              style={({ pressed }) => [styles.replay, pressed ? styles.replayPressed : null]}
+              accessibilityRole="button"
+              accessibilityLabel="Hear the story again"
+            >
+              <SpeechIcon size={24} color={colors.white} />
+            </Pressable>
           </View>
         ) : null}
       </View>
-      {onReplay ? (
-        <View style={[styles.replayWrap, { right: (tablet ? 24 : 16) + 10 }]} pointerEvents="box-none">
-          <Pressable
-            onPress={onReplay}
-            hitSlop={8}
-            style={({ pressed }) => [styles.replay, pressed ? styles.replayPressed : null]}
-            accessibilityRole="button"
-            accessibilityLabel="Hear the story again"
-          >
-            <SpeechIcon size={24} color={colors.white} />
-          </Pressable>
-        </View>
-      ) : null}
-    </View>
+    </Scaled>
   );
 }
 
 const styles = StyleSheet.create({
+  outer: { width: "100%", alignSelf: "center" },
   wrap: {
     width: "100%",
-    maxWidth: 512,
-    alignSelf: "center",
     paddingTop: 12 + TAG_H / 2,
   },
   card: {

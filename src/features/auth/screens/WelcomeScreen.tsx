@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 import Button from "@/components/ui/Button";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
+import { useLayoutWindow } from "@/hooks/useUiScale";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { ChevronRightIcon, KeyIcon, RouteIcon } from "@/components/ui/icons";
 import { sfx } from "@/services/audio";
@@ -19,7 +20,7 @@ const clamp = (min: number, v: number, max: number) => Math.min(max, Math.max(mi
 
 export default function WelcomeScreen() {
   const account = useAppState().account;
-  const { width: W, height: H } = useWindowDimensions();
+  const { width: W, height: H } = useLayoutWindow();
   const head = clamp(140, W * 0.37, 200);
 
   return (

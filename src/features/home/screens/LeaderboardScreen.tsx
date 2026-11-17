@@ -13,10 +13,13 @@ import HeroBanner, { HeroCallout } from "@/features/home/components/HeroBanner";
 import MapTopBar from "@/features/home/components/MapTopBar";
 import { useGuard } from "@/hooks/useGuard";
 import { useActiveProfile, useAppState } from "@/state/store";
+import Scaled from "@/components/ui/Scaled";
+import { useUiScale } from "@/hooks/useUiScale";
 import { colors, fonts } from "@/theme";
 import { MAX_PROFILES, type ChildProfile } from "@/types/models";
 
 export default function LeaderboardScreen() {
+  const scale = useUiScale();
   const ready = useGuard("profile");
   const profile = useActiveProfile();
   const { profiles } = useAppState();
@@ -28,7 +31,8 @@ export default function LeaderboardScreen() {
   return (
     <SplashBackdrop source={HOME_BACKGROUND}>
       <MapTopBar />
-      <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Scaled style={[styles.column, { maxWidth: 480 * scale }]} innerStyle={styles.body}>
         <GoalHero goal={goal} family={family} name={profile.name} />
         {family ? <FamilyBoard profiles={profiles} activeId={profile.id} /> : null}
         <JourneyCard child={profile} />
@@ -40,6 +44,7 @@ export default function LeaderboardScreen() {
             onConfirm={() => router.push(ROUTES.addExplorer as never)}
           />
         ) : null}
+        </Scaled>
       </ScrollView>
       <BottomNav active="score" onNavigate={navigateToTab} />
     </SplashBackdrop>
@@ -144,7 +149,9 @@ function JourneyCard({ child }: Readonly<{ child: ChildProfile }>) {
 }
 
 const styles = StyleSheet.create({
-  body: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120, gap: 14, width: "100%", maxWidth: 480, alignSelf: "center" },
+  scroll: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120, alignItems: "center" },
+  column: { width: "100%" },
+  body: { gap: 14 },
   card: { width: "100%", alignItems: "stretch", gap: 14, paddingVertical: 18 },
   cardHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
   cardTitles: { flexShrink: 1, gap: 2 },

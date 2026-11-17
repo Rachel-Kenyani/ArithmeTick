@@ -30,6 +30,8 @@ import MapTopBar from "@/features/home/components/MapTopBar";
 import BadgeMedallion from "@/features/play/components/BadgeMedallion";
 import { useGuard } from "@/hooks/useGuard";
 import { useActiveProfile } from "@/state/store";
+import Scaled from "@/components/ui/Scaled";
+import { useUiScale } from "@/hooks/useUiScale";
 import { colors, fonts } from "@/theme";
 
 const MEDAL = 80;
@@ -54,6 +56,7 @@ const TONE: Record<BadgeTone, string> = {
 };
 
 export default function BadgesScreen() {
+  const scale = useUiScale();
   const ready = useGuard("profile");
   const profile = useActiveProfile();
   const [open, setOpen] = useState<BadgeDef | null>(null);
@@ -111,9 +114,10 @@ export default function BadgesScreen() {
     <SplashBackdrop source={HOME_BACKGROUND}>
       <MapTopBar onBadges />
       <ScrollView
-        contentContainerStyle={styles.body}
+        contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
+        <Scaled style={[styles.column, { maxWidth: 480 * scale }]} innerStyle={styles.body}>
         <Hero
           name={profile.name}
           won={won}
@@ -160,6 +164,7 @@ export default function BadgesScreen() {
             onOpen={setOpen}
           />
         </Animated.View>
+        </Scaled>
       </ScrollView>
       <BottomNav active="badges" onNavigate={navigateToTab} />
       {open ? (
@@ -355,15 +360,9 @@ function Rays({ color }: Readonly<{ color: string }>) {
 }
 
 const styles = StyleSheet.create({
-  body: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 120,
-    gap: 16,
-    width: "100%",
-    maxWidth: 480,
-    alignSelf: "center",
-  },
+  scroll: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120, alignItems: "center" },
+  column: { width: "100%" },
+  body: { gap: 16 },
   pressed: { transform: [{ scale: 0.96 }] },
 
   segments: {

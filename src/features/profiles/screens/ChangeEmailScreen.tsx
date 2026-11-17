@@ -55,12 +55,12 @@ function FormStep({ currentEmail, onSent }: Readonly<{ currentEmail: string; onS
   const onSubmit = () => {
     if (busy) return;
     const next = {
-      password: password ? null : "Please enter your current password.",
       email: newEmailProblem(currentEmail, newEmail),
+      password: password ? null : "Please enter your current password.",
     };
     setErrors(next);
-    if (next.password) return passwordRef.current?.focus();
     if (next.email) return emailRef.current?.focus();
+    if (next.password) return passwordRef.current?.focus();
     setBusy(true);
     const normalized = newEmail.trim().toLowerCase();
     void auth.requestEmailChange(currentEmail, password, normalized).then((result) => {
@@ -75,6 +75,25 @@ function FormStep({ currentEmail, onSent }: Readonly<{ currentEmail: string; onS
     <>
       <ScreenHeading title="Change Email" subtitle={`You log in with ${currentEmail} now.`} />
       <View style={styles.fields}>
+        <TextField
+          ref={emailRef}
+          label="New email"
+          icon={<MailIcon color={colors.atPurple} />}
+          placeholder="Enter your New Email"
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          autoComplete="email"
+          autoFocus
+          autoCapitalize="none"
+          autoCorrect={false}
+          spellCheck={false}
+          returnKeyType="next"
+          submitBehavior="submit"
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          value={newEmail}
+          onChangeText={setNewEmail}
+          error={errors.email}
+        />
         <PasswordField
           ref={passwordRef}
           label="Current password"
@@ -82,29 +101,11 @@ function FormStep({ currentEmail, onSent }: Readonly<{ currentEmail: string; onS
           placeholder="Enter Password"
           textContentType="password"
           autoComplete="current-password"
-          returnKeyType="next"
-          submitBehavior="submit"
-          onSubmitEditing={() => emailRef.current?.focus()}
+          returnKeyType="send"
+          onSubmitEditing={onSubmit}
           value={password}
           onChangeText={setPassword}
           error={errors.password}
-        />
-        <TextField
-          ref={emailRef}
-          label="New email"
-          icon={<MailIcon color={colors.atPurple} />}
-          placeholder="name@gmail.com"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          autoComplete="email"
-          autoCapitalize="none"
-          autoCorrect={false}
-          spellCheck={false}
-          returnKeyType="send"
-          onSubmitEditing={onSubmit}
-          value={newEmail}
-          onChangeText={setNewEmail}
-          error={errors.email}
         />
       </View>
       <Button trailing="arrow" loading={busy} onPress={onSubmit} style={styles.submit}>

@@ -156,6 +156,38 @@ export const auth = {
     }
   },
 
+  /**
+   * Checks the current password, then asks Supabase to send a code to the new email. The password check stops someone
+   * holding an unlocked phone from moving the account to their own email.
+   */
+  requestEmailChange(currentEmail: string, password: string, newEmail: string): Promise<AuthResult> {
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
+    const fallback = "We couldn’t send a code to the new email. Try again.";
+    return safely(async () => {
+      const checked = await supabase().auth.signInWithPassword({ email: currentEmail, password });
+      if (checked.error?.code === "invalid_credentials") return { ok: false, message: "That password didn’t match." };
+      if (checked.error) return failure(checked.error, fallback);
+      const { error } = await supabase().auth.updateUser({ email: newEmail });
+      if (error && EXISTS_CODES.has(error.code ?? "")) {
+        return { ok: false, message: "That email is already used by another ArithmeTick account." };
+      }
+      return failure(error, fallback);
+    }, fallback);
+  },
+
+  /** Finishes the change with the code sent to the new email. */
+  confirmEmailChange(newEmail: string, code: string): Promise<AuthResult> {
+    if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
+    return safely(async () => {
+      const { data, error } = await supabase().auth.verifyOtp({ email: newEmail, token: code, type: "email_change" });
+      if (error) return { ok: false, message: "That code didn’t match. Check it and try again." };
+      if (data.user?.email?.toLowerCase() !== newEmail.toLowerCase()) {
+        return { ok: false, message: "Also confirm with the code sent to your current email, then try again." };
+      }
+      return OK;
+    }, "We couldn’t check the code. Check your connection.");
+  },
+
   /** Deletes the signed-in account on the server. Needs a live session, so an old one asks the parent to log in again. */
   async deleteAccount(): Promise<AuthResult> {
     if (!isAuthConfigured) return NOT_CONFIGURED;

@@ -127,3 +127,45 @@ describe("deleteAccount", () => {
     expect(mockAuth.signOut).not.toHaveBeenCalled();
   });
 });
+
+describe("changing the email", () => {
+  it("checks the password, then sends a code to the new email", async () => {
+    mockAuth.signInWithPassword.mockResolvedValue(ok);
+    mockAuth.updateUser.mockResolvedValue(ok);
+    await expect(auth.requestEmailChange("old@gmail.com", "secret123", "new@gmail.com")).resolves.toEqual({ ok: true });
+    expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({ email: "old@gmail.com", password: "secret123" });
+    expect(mockAuth.updateUser).toHaveBeenCalledWith({ email: "new@gmail.com" });
+  });
+
+  it("stops at a wrong password without sending anything", async () => {
+    mockAuth.signInWithPassword.mockResolvedValue(err("invalid_credentials"));
+    const result = await auth.requestEmailChange("old@gmail.com", "wrong", "new@gmail.com");
+    expect(result).toEqual({ ok: false, message: "That password didn’t match." });
+    expect(mockAuth.updateUser).not.toHaveBeenCalled();
+  });
+
+  it("says when the new email already has an account", async () => {
+    mockAuth.signInWithPassword.mockResolvedValue(ok);
+    mockAuth.updateUser.mockResolvedValue(err("email_exists"));
+    const result = await auth.requestEmailChange("old@gmail.com", "secret123", "taken@gmail.com");
+    expect(result).toEqual({ ok: false, message: expect.stringMatching(/already used/) });
+  });
+
+  it("confirms with the code sent to the new email", async () => {
+    mockAuth.verifyOtp.mockResolvedValue({ data: { user: { email: "new@gmail.com" } }, error: null });
+    await expect(auth.confirmEmailChange("new@gmail.com", "12345678")).resolves.toEqual({ ok: true });
+    expect(mockAuth.verifyOtp).toHaveBeenCalledWith({ email: "new@gmail.com", token: "12345678", type: "email_change" });
+  });
+
+  it("says when the code is wrong", async () => {
+    mockAuth.verifyOtp.mockResolvedValue(err("otp_expired"));
+    const result = await auth.confirmEmailChange("new@gmail.com", "00000000");
+    expect(result).toEqual({ ok: false, message: expect.stringMatching(/didn’t match/) });
+  });
+
+  it("asks for the old email's code too if Supabase still wants both", async () => {
+    mockAuth.verifyOtp.mockResolvedValue({ data: { user: { email: "old@gmail.com" } }, error: null });
+    const result = await auth.confirmEmailChange("new@gmail.com", "12345678");
+    expect(result).toEqual({ ok: false, message: expect.stringMatching(/current email/) });
+  });
+});

@@ -1,4 +1,4 @@
-import { identifierProblem, maskIdentifier, normalizeIdentifier, normalizePhone, passwordProblem } from "@/features/auth/utils/validate";
+import { canChangeEmail, identifierProblem, newEmailProblem, maskIdentifier, normalizeIdentifier, normalizePhone, passwordProblem } from "@/features/auth/utils/validate";
 
 describe("normalizePhone", () => {
   it.each(["0710515773", "+254710515773", "254710515773", "0710 515 773", "00254710515773", "0110515773"])(
@@ -49,5 +49,26 @@ describe("passwordProblem", () => {
     expect(passwordProblem("")).not.toBeNull();
     expect(passwordProblem("short")).toMatch(/8/);
     expect(passwordProblem("longenough")).toBeNull();
+  });
+});
+
+describe("changing the email", () => {
+  it("is only offered to email and password accounts", () => {
+    expect(canChangeEmail({ identifier: "a@gmail.com", method: "password" })).toBe(true);
+    expect(canChangeEmail({ identifier: "a@gmail.com", method: "google" })).toBe(false);
+    expect(canChangeEmail({ identifier: "+254723456767", method: "password" })).toBe(false);
+    expect(canChangeEmail(null)).toBe(false);
+  });
+
+  it.each([
+    ["", /enter the new email/],
+    ["not-an-email", /check the email/],
+    [" OLD@gmail.com ", /email you use now/],
+  ])("rejects %p", (raw, message) => {
+    expect(newEmailProblem("old@gmail.com", raw)).toMatch(message);
+  });
+
+  it("accepts a different valid email", () => {
+    expect(newEmailProblem("old@gmail.com", "new@gmail.com")).toBeNull();
   });
 });

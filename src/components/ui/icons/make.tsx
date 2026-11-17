@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ColorValue, ViewStyle } from "react-native";
+import { Platform, type ColorValue, type ViewStyle } from "react-native";
 import Svg from "react-native-svg";
 
 import { colors } from "@/theme";
@@ -14,14 +14,16 @@ export interface IconProps {
   style?: ViewStyle;
 }
 
+/** Props that hide decorative SVG from screen readers. On the web they become `aria-hidden`, since the DOM has no native props. */
+export const SVG_HIDDEN =
+  Platform.OS === "web"
+    ? ({ "aria-hidden": true } as const)
+    : ({ accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants" } as const);
+
 export function a11y(title?: string) {
-  return title
-    ? ({ accessible: true, accessibilityRole: "image", accessibilityLabel: title } as const)
-    : ({
-        accessible: false,
-        accessibilityElementsHidden: true,
-        importantForAccessibility: "no-hide-descendants",
-      } as const);
+  if (title) return { accessible: true, accessibilityRole: "image", accessibilityLabel: title } as const;
+  if (Platform.OS === "web") return SVG_HIDDEN;
+  return { accessible: false, ...SVG_HIDDEN } as const;
 }
 
 export function make(displayName: string, glyph: ReactNode) {

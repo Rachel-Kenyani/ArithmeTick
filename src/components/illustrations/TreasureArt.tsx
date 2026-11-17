@@ -1,5 +1,6 @@
 import Svg, { Circle, ClipPath, Defs, Ellipse, G, Path } from "react-native-svg";
 
+import { SVG_HIDDEN } from "@/components/ui/icons/make";
 import { colors } from "@/theme";
 
 import { ChapatiBody } from "./ChapatiArt";
@@ -156,7 +157,7 @@ export function TreasureGlyph({ id }: Readonly<{ id: TreasureId }>) {
 
 export default function TreasureArt({ id, size = 48 }: Readonly<{ id: TreasureId; size?: number }>) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityElementsHidden importantForAccessibility="no">
+    <Svg width={size} height={size} viewBox="0 0 64 64" {...SVG_HIDDEN}>
       <TreasureGlyph id={id} />
     </Svg>
   );

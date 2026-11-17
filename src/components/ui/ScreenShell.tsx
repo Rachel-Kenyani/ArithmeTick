@@ -21,6 +21,8 @@ import { ROUTES } from "@/constants/routes";
 export interface ScreenShellProps {
   children: ReactNode;
   back?: Href | boolean;
+  /** Sits on the right of the back button's row, such as the Parents Gate badge. */
+  backTrailing?: ReactNode;
   align?: "center" | "top";
   maxWidth?: number;
   grass?: boolean;
@@ -35,6 +37,7 @@ export interface ScreenShellProps {
 export default function ScreenShell({
   children,
   back,
+  backTrailing,
   align = "center",
   maxWidth = 448,
   grass = true,
@@ -75,11 +78,12 @@ export default function ScreenShell({
           ]}
         >
           {back ? (
-            <View style={styles.back}>
+            <View style={styles.backRow}>
               <BackButton
                 href={typeof back === "boolean" ? undefined : back}
                 fallbackHref={ROUTES.welcome}
               />
+              {backTrailing}
             </View>
           ) : null}
           <View style={[{ gap }, align === "top" && styles.fill, style]}>
@@ -116,5 +120,5 @@ const styles = StyleSheet.create({
   backgroundImage: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
   scroll: { flexGrow: 1, alignItems: "center" },
   column: { width: "100%", flexGrow: 1 },
-  back: { marginBottom: 20, alignSelf: "flex-start" },
+  backRow: { marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
 });

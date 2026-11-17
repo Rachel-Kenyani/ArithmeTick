@@ -57,6 +57,8 @@ export interface Account {
   identifier: string;
   method: "password" | "google";
   name?: string | null;
+  /** The grown-up turned on weekly email reports. The server holds the real setting; this remembers it on the phone. */
+  reports?: boolean;
 }
 
 export interface PendingVerification {

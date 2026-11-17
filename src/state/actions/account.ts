@@ -62,6 +62,10 @@ export const accountActions = {
     setState((s) => signInAs(s, { identifier: identity.email, method: "google", name: identity.name }));
   },
 
+  setReports(on: boolean) {
+    setState((s) => (s.account && s.account.reports !== on ? { ...s, account: { ...s.account, reports: on } } : s));
+  },
+
   /** Puts this account's children away with it, so the next person to sign in starts from their own family. */
   logout() {
     setState((s) => {

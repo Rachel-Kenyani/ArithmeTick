@@ -226,7 +226,7 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = false
 # If enabled, users need to confirm their email address before signing in.
-# ArithmeTick: on, so Create Account emails a 6-digit code (Verify Account screen).
+# ArithmeTick: on, so Create Account emails a 8-digit code (Verify Account screen).
 enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
@@ -247,13 +247,13 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# ArithmeTick: the app asks for the 6-digit code, so the emails show the code (not only a link).
+# ArithmeTick: the app asks for the 8-digit code, so the emails show the code (not only a link).
 [auth.email.template.confirmation]
-subject = "Your ArithmeTick code"
+subject = "{{ .Token }} is your ArithmeTick code"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your ArithmeTick password"
+subject = "{{ .Token }} is your ArithmeTick reset code"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.magic_link]

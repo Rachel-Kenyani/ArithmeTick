@@ -13,11 +13,11 @@ export interface SkillDef {
 export const SKILLS: readonly SkillDef[] = [
   { id: "makingTen", name: "making 10" },
   { id: "takingAway", name: "taking away" },
-  { id: "placeValue", name: "tens and hundreds" },
+  { id: "placeValue", name: "place value" },
   { id: "addingOn", name: "adding on" },
   { id: "countingInSteps", name: "counting in steps" },
   { id: "groups", name: "equal groups" },
-  { id: "sharing", name: "sharing and fractions" },
+  { id: "sharing", name: "sharing equally" },
   { id: "time", name: "telling the time" },
 ];
 

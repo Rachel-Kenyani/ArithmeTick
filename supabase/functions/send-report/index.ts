@@ -90,7 +90,7 @@ function childBlock(child: Child, kind: "weekly" | "grade"): string {
   const stars = Math.max(0, child.stars - child.sent_stars);
   const headline =
     kind === "grade"
-      ? `${escape(child.child_name)} finished Grade ${child.grade}!`
+      ? `What ${escape(child.child_name)} learned`
       : `${escape(child.child_name)} · Grade ${child.grade}`;
   const thisWeek =
     kind === "grade"
@@ -114,9 +114,13 @@ function emailHtml(title: string, intro: string, blocks: string, unsubscribe: st
 <body style="margin:0;padding:0;background:#EBF9F7;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EBF9F7;"><tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:28px;overflow:hidden;border-bottom:6px solid #cfe8e4;">
-<tr><td align="center" style="background:#3E0E79;padding:26px 24px;">
-  <p style="margin:0;${DISPLAY}font-size:26px;font-weight:700;color:#ffffff;">ArithmeTick</p>
-  <p style="margin:8px 0 0;${FONT}font-size:13px;letter-spacing:1px;color:#E4D6F7;">Maths we learn together</p>
+<tr><td align="center" style="background:#3E0E79;padding:28px 24px 26px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
+    <td style="background:#440f85;border-radius:22px;padding:14px 22px;border:3px solid #3a0b77;">
+      <img src="https://raw.githubusercontent.com/Rachel-Kenyani/ArithmeTick/main/assets/splash-icon.png" width="190" height="82" alt="ArithmeTick" style="display:block;width:190px;height:82px;border:0;outline:none;text-decoration:none;${DISPLAY}font-size:24px;color:#ffffff;">
+    </td>
+  </tr></table>
+  <p style="margin:14px 0 0;${FONT}font-size:13px;letter-spacing:1px;color:#E4D6F7;">Maths we learn together</p>
 </td></tr>
 <tr><td align="center" style="padding:28px 32px 4px;">
   <h1 style="margin:0 0 8px;${DISPLAY}font-size:26px;line-height:32px;font-weight:700;color:#006F68;">${escape(title)}</h1>
@@ -212,11 +216,43 @@ async function unsubscribe(userId: string, sig: string): Promise<Response> {
   return page("Weekly reports are off, and we've deleted what we kept for them. You can turn them on again on the Grown-ups page.");
 }
 
+/** A made-up family, for previewing both reports in a browser without waiting for Sunday. */
+const SAMPLE: Child[] = [
+  {
+    user_id: "preview", child_id: "a", child_name: "Jabali", grade: 1, levels_done: 4, level_count: 9, total_levels: 4, stars: 12,
+    skills_line: "making 10 is strong, taking away is still growing",
+    practice_idea: "Put 9 bottle tops on the table. Hide some under a cup while Jabali looks away. How many are hiding?",
+    updated_at: "", sent_levels: 1, sent_stars: 3,
+  },
+  {
+    user_id: "preview", child_id: "b", child_name: "Tessa", grade: 2, levels_done: 7, level_count: 12, total_levels: 16, stars: 48,
+    skills_line: "place value and adding on are strong, equal groups is still growing",
+    practice_idea: "Lay out seeds in 3 rows of 4. Ask Tessa to count the rows, not every seed: 4, 8, 12.",
+    updated_at: "", sent_levels: 14, sent_stars: 42,
+  },
+];
+
+/** `?preview=weekly` or `?preview=grade` shows a report with the sample family. Nothing is sent. */
+function preview(kind: string): Response {
+  const html =
+    kind === "grade"
+      ? emailHtml(
+          "Tessa finished Grade 2!",
+          "Every level in Grade 2 is done. Here's where Tessa is now.",
+          childBlock({ ...SAMPLE[1], levels_done: 12, total_levels: 21 }, "grade"),
+          "#",
+        )
+      : emailHtml("This week in ArithmeTick", "Here's how Jabali and Tessa did this week.", SAMPLE.map((c) => childBlock(c, "weekly")).join(""), "#");
+  return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   const url = new URL(req.url);
 
   if (req.method === "GET") {
+    const previewKind = url.searchParams.get("preview");
+    if (previewKind) return preview(previewKind);
     const userId = url.searchParams.get("unsubscribe");
     return userId ? await unsubscribe(userId, url.searchParams.get("sig") ?? "") : reply(404, { error: "not_found" });
   }

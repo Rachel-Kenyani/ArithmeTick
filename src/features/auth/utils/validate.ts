@@ -14,14 +14,17 @@ export function normalizePhone(raw: string): string | null {
   return match ? `+254${match[1]}` : null;
 }
 
+/** Phone sign-in is switched off until codes can reach every parent (a WhatsApp or transactional SMS sender). To bring it back, restore the commented-out lines marked PHONE. */
 export function isValidIdentifier(raw: string): boolean {
-  return isEmail(raw) || normalizePhone(raw) !== null;
+  return isEmail(raw);
+  // PHONE: return isEmail(raw) || normalizePhone(raw) !== null;
 }
 
 export function normalizeIdentifier(raw: string): string {
   const trimmed = raw.trim();
   if (isEmail(trimmed)) return trimmed.toLowerCase();
-  return normalizePhone(trimmed) ?? trimmed;
+  return trimmed;
+  // PHONE: return normalizePhone(trimmed) ?? trimmed;
 }
 
 export function identifierKind(raw: string): "email" | "phone number" {
@@ -46,11 +49,13 @@ export function maskIdentifier(raw: string): string {
 
 export function identifierProblem(raw: string): string | null {
   const trimmed = raw.trim();
-  if (!trimmed) return "Please enter your email or phone number.";
+  if (!trimmed) return "Please enter your email address.";
   if (isValidIdentifier(trimmed)) return null;
-  if (trimmed.includes("@")) return "Please check the email address, e.g. name@gmail.com.";
-  if (/^[\d\s+\-().]+$/.test(trimmed)) return "Please enter a Kenyan mobile number, e.g. 0723 456 767.";
-  return "Please use an email address or a phone number, e.g. 0723 456 767.";
+  return "Please check the email address, e.g. name@gmail.com.";
+  // PHONE: if (!trimmed) return "Please enter your email or phone number.";
+  // PHONE: if (trimmed.includes("@")) return "Please check the email address, e.g. name@gmail.com.";
+  // PHONE: if (/^[\d\s+\-().]+$/.test(trimmed)) return "Please enter a Kenyan mobile number, e.g. 0723 456 767.";
+  // PHONE: return "Please use an email address or a phone number, e.g. 0723 456 767.";
 }
 
 export function passwordProblem(pw: string): string | null {

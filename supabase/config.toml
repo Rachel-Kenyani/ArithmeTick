@@ -440,8 +440,9 @@ enabled = true
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
 
 # Africa's Talking SMS hook: Supabase calls it directly, so it uses the hook signature instead of a user JWT.
-[functions.send-sms]
-verify_jwt = false
+# PHONE: switched off with phone sign-in. Restore with the app's PHONE lines.
+# [functions.send-sms]
+# verify_jwt = false
 
 [functions.delete-account]
 verify_jwt = true

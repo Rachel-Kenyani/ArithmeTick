@@ -1,5 +1,3 @@
-import { createClient } from "npm:@supabase/supabase-js@2.118.0";
-
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -14,9 +12,20 @@ function reply(status: number, body: Record<string, unknown>): Response {
   return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 }
 
+/** Asks Supabase Auth who owns this session token. */
+async function userIdFor(token: string): Promise<string | null> {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: ANON_KEY },
+  });
+  if (!res.ok) return null;
+  const user = (await res.json()) as { id?: string };
+  return user.id ?? null;
+}
+
 /**
  * Deletes the signed-in parent's account. The caller is identified only from their own session token, so nobody can
  * delete someone else's account. Children's names and progress live on the phone, and the app wipes those itself.
+ * Uses Supabase Auth's REST API directly, so the function has no packages to install.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -25,16 +34,17 @@ Deno.serve(async (req) => {
   const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ?? "";
   if (!token) return reply(401, { error: "not_signed_in" });
 
-  const asCaller = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
-  const { data, error } = await asCaller.auth.getUser(token);
-  if (error || !data.user) return reply(401, { error: "not_signed_in" });
+  const userId = await userIdFor(token);
+  if (!userId) return reply(401, { error: "not_signed_in" });
 
-  const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } });
-  const { error: deleteError } = await admin.auth.admin.deleteUser(data.user.id);
-  if (deleteError) {
-    console.error(`delete-account failed for ${data.user.id}: ${deleteError.message}`);
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}`, apikey: SERVICE_ROLE_KEY },
+  });
+  if (!res.ok) {
+    console.error(`delete-account failed for ${userId}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`);
     return reply(500, { error: "delete_failed" });
   }
-  console.log(`delete-account: deleted ${data.user.id}`);
+  console.log(`delete-account: deleted ${userId}`);
   return reply(200, { deleted: true });
 });

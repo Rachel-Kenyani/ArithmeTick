@@ -12,6 +12,7 @@ export const ROUTES = {
   home: "/home",
   settings: "/settings",
   account: "/account",
+  deleteAccount: "/delete-account",
   changeEmail: "/change-email",
   badges: "/badges",
   leaderboard: "/leaderboard",

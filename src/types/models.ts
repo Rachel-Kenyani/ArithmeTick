@@ -33,6 +33,8 @@ export interface ChildProfile {
   gradeSeconds?: Partial<Record<Grade, number>>;
   drafts?: Record<string, { pal: boolean; board: LevelDraft }>;
   sound?: SoundSettings;
+  /** When the name, animal, school code or sound settings last changed, so the newest edit wins across phones. */
+  editedAt?: number;
 }
 
 export interface SoundSettings {

@@ -188,3 +188,23 @@ describe("setReports", () => {
     expect(getSnapshot().account).toBeNull();
   });
 });
+
+describe("mergeSavedFamily", () => {
+  it("brings the saved family onto a phone that has none", () => {
+    accountActions.login("first@gmail.com");
+    accountActions.mergeSavedFamily("first@gmail.com", [amani(), bahati()]);
+    expect(getSnapshot().profiles.map((p) => p.name)).toEqual(["Amani", "Bahati"]);
+  });
+
+  it("ignores a family saved for an account that is no longer signed in", () => {
+    accountActions.login("second@gmail.com");
+    accountActions.mergeSavedFamily("first@gmail.com", [amani()]);
+    expect(getSnapshot().profiles).toEqual([]);
+  });
+
+  it("matches the account whatever case the email was typed in", () => {
+    accountActions.login("First@Gmail.com");
+    accountActions.mergeSavedFamily("first@gmail.com", [amani()]);
+    expect(getSnapshot().profiles).toHaveLength(1);
+  });
+});

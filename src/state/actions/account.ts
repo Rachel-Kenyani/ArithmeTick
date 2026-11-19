@@ -1,6 +1,7 @@
-import type { Account, AppState } from "@/types/models";
+import type { Account, AppState, ChildProfile } from "@/types/models";
 
 import { getSnapshot, setState } from "../core";
+import { mergeFamilies } from "../mergeProfiles";
 
 /** One key per account, whatever case the email was typed in. */
 export const accountKey = (identifier: string) => identifier.trim().toLowerCase();
@@ -64,6 +65,17 @@ export const accountActions = {
 
   setReports(on: boolean) {
     setState((s) => (s.account && s.account.reports !== on ? { ...s, account: { ...s.account, reports: on } } : s));
+  },
+
+  /**
+   * Brings in the family saved with the account (from another phone, or before a reinstall), merged with what this
+   * phone has so nothing either earned is lost. Ignored if a different account signed in meanwhile.
+   */
+  mergeSavedFamily(identifier: string, saved: readonly ChildProfile[]) {
+    setState((s) => {
+      if (!s.account || accountKey(s.account.identifier) !== accountKey(identifier) || saved.length === 0) return s;
+      return { ...s, profiles: mergeFamilies(s.profiles, saved) };
+    });
   },
 
   /** Puts this account's children away with it, so the next person to sign in starts from their own family. */

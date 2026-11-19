@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
 
 import Button from "@/components/ui/Button";
+import GrownUpNote from "@/components/ui/GrownUpNote";
 import { GradCapIcon, SmileIcon } from "@/components/ui/icons";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
@@ -87,6 +88,10 @@ export default function AddExplorerScreen() {
             style={styles.grade}
           />
 
+          <GrownUpNote style={styles.note}>
+            {`We save ${name.trim() || "your child"}’s progress with your account, so it’s safe if you change or reset your phone.`}
+          </GrownUpNote>
+
           <Button
             trailing="arrow"
             loading={busy}
@@ -104,5 +109,6 @@ export default function AddExplorerScreen() {
 const styles = StyleSheet.create({
   heading: { marginBottom: 24 },
   grade: { marginTop: 16 },
-  submit: { marginTop: 28 },
+  note: { marginTop: 24 },
+  submit: { marginTop: 20 },
 });

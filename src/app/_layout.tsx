@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useApplySoundSettings } from "@/hooks/useSoundSettings";
+import { startFamilySync } from "@/services/familySync";
 import { whenHydrated } from "@/state/store";
 import { colors } from "@/theme";
 
@@ -33,6 +34,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync().catch(() => {});
   }, [ready]);
+
+  useEffect(() => (stateLoaded ? startFamilySync() : undefined), [stateLoaded]);
 
   if (!ready) return null;
 

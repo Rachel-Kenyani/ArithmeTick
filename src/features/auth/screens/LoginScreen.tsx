@@ -9,6 +9,7 @@ import ScreenShell from "@/components/ui/ScreenShell";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
 import { ROUTES } from "@/constants/routes";
 import { auth } from "@/services/auth";
+import { restoreFamily } from "@/services/familySync";
 import { actions } from "@/state/store";
 import { colors, fonts } from "@/theme";
 
@@ -31,6 +32,7 @@ export default function LoginScreen() {
       const result = await auth.logIn(normalizedIdentifier, password);
       if (!result.ok) return { password: result.message };
       actions.login(normalizedIdentifier);
+      await restoreFamily();
       router.push(ROUTES.profiles);
       return null;
     },

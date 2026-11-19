@@ -29,11 +29,11 @@ export const profileActions = {
     if (!name || !AVATARS.includes(input.avatar)) return;
     setState((s) => ({
       ...s,
-      profiles: s.profiles.map((profile) => (profile.id === id ? { ...profile, name, avatar: input.avatar } : profile)),
+      profiles: s.profiles.map((profile) => (profile.id === id ? { ...profile, name, avatar: input.avatar, editedAt: Date.now() } : profile)),
     }));
   },
 
   setSound(id: string, change: Partial<SoundSettings>) {
-    updateProfile(id, (profile) => ({ ...profile, sound: { ...DEFAULT_SOUND, ...profile.sound, ...change } }));
+    updateProfile(id, (profile) => ({ ...profile, sound: { ...DEFAULT_SOUND, ...profile.sound, ...change }, editedAt: Date.now() }));
   },
 };

@@ -17,6 +17,7 @@ export function makeProfile(input: Partial<ChildProfile> & Pick<ChildProfile, "n
     badges: [],
     highFives: 0,
     questsDone: 0,
+    editedAt: Date.now(),
     ...input,
   };
 }

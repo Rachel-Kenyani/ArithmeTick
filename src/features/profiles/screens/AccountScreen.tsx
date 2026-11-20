@@ -11,6 +11,7 @@ import { confirm } from "@/components/ui/confirm";
 import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { canChangeEmail } from "@/features/auth/utils/validate";
+import DailyLimitGroup from "@/features/profiles/components/DailyLimitGroup";
 import ReportsGroup from "@/features/profiles/components/ReportsGroup";
 import { initialOf } from "@/features/profiles/utils/initialOf";
 import { useGuard } from "@/hooks/useGuard";
@@ -86,6 +87,8 @@ export default function AccountScreen() {
             />
           </SettingsGroup>
         ) : null}
+
+        <DailyLimitGroup />
 
         <ReportsGroup account={account} family={profiles} />
 

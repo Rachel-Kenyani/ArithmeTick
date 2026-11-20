@@ -79,5 +79,7 @@ export interface AppState {
   families?: Record<string, ChildProfile[]>;
   activeProfileId: string | null;
   screenTime: { day: string; usedSeconds: number };
+  /** The family's daily play limit in minutes, set by a grown-up. Kept on this phone only, never saved with the account. */
+  dailyLimitMinutes?: number;
   justUnlocked: { grade: Grade; level: number } | null;
 }

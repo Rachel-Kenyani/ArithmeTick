@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 
 import type { ChildProfile, AppState } from "@/types/models";
-import { SCREEN_TIME_ENABLED, SESSION_CAP_SECONDS } from "@/types/domain";
+import { SCREEN_TIME_ENABLED, dailyLimitSeconds } from "@/types/domain";
 
 import { getSnapshot, isHydrated, subscribe } from "./core";
 
@@ -18,8 +18,13 @@ export function useActiveProfile(): ChildProfile | null {
   return s.profiles.find((p) => p.id === s.activeProfileId) ?? null;
 }
 
+/** Seconds of play left today under the family's daily limit. */
+export function secondsLeftToday(s: Pick<AppState, "dailyLimitMinutes" | "screenTime">): number {
+  const limit = dailyLimitSeconds(s.dailyLimitMinutes);
+  if (!SCREEN_TIME_ENABLED) return limit;
+  return Math.max(0, limit - s.screenTime.usedSeconds);
+}
+
 export function useScreenTimeRemaining(): number {
-  const s = useAppState();
-  if (!SCREEN_TIME_ENABLED) return SESSION_CAP_SECONDS;
-  return Math.max(0, SESSION_CAP_SECONDS - s.screenTime.usedSeconds);
+  return secondsLeftToday(useAppState());
 }

@@ -1,14 +1,21 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from "expo-audio";
 
+import { shouldPlay } from "@/services/audio/calmSounds";
 import { HOLD_STEPS, SFX_ASSETS, type SfxName } from "@/services/audio/sfxAssets";
 
 const players = new Map<SfxName, AudioPlayer>();
 let muted = false;
+let calm = false;
+
+/** Turns calm mode's quieter sounds on or off for the child playing now. */
+export function setCalmSounds(on: boolean) {
+  calm = on;
+}
 let modeSet = false;
 const listeners = new Set<(muted: boolean) => void>();
 
 function play(name: SfxName) {
-  if (muted) return;
+  if (!shouldPlay(name, { muted, calm })) return;
   if (!modeSet) {
     modeSet = true;
     void setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});

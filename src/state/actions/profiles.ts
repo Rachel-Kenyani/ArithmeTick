@@ -33,6 +33,10 @@ export const profileActions = {
     }));
   },
 
+  setCalm(id: string, on: boolean) {
+    updateProfile(id, (profile) => (profile.calm === on ? profile : { ...profile, calm: on, editedAt: Date.now() }));
+  },
+
   setLargeText(id: string, on: boolean) {
     updateProfile(id, (profile) => (profile.largeText === on ? profile : { ...profile, largeText: on, editedAt: Date.now() }));
   },

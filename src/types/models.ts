@@ -35,6 +35,8 @@ export interface ChildProfile {
   sound?: SoundSettings;
   /** "Larger Brijo captions": Brijo's instructions and story text shown 25% larger, for a child who finds the normal size hard to read. */
   largeText?: boolean;
+  /** "Calm mode": no sparkles, bouncing or celebration sounds, for a child who is easily overwhelmed. */
+  calm?: boolean;
   /** When the name, animal, school code or sound settings last changed, so the newest edit wins across phones. */
   editedAt?: number;
 }

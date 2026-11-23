@@ -1,0 +1,48 @@
+# Runs on every push and pull request: type-check, lint, tests with a coverage floor, and the Supabase functions.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn typecheck
+      - run: npx eslint . --max-warnings 0
+      - run: yarn test:ci
+
+  functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/send-report/index.ts supabase/functions/delete-account/index.ts
+      - run: deno lint supabase/functions/
+
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # Reports high and critical advisories as a warning. Today they all come from Expo's command-line tools
+      # (node-forge, glob, minimatch), which run on the build machine and never ship to phones; an Expo upgrade clears them.
+      - run: yarn audit --groups dependencies --level high || echo "::warning::yarn audit found high-severity issues; see the log."

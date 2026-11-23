@@ -48,7 +48,8 @@
     "typecheck": "tsc --noEmit",
     "sfx": "node scripts/render-sfx.mjs",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "test:ci": "jest --ci --coverage --coverageReporters=text-summary"
   },
   "private": true,
   "jest": {
@@ -61,6 +62,14 @@
       "/android/",
       "/ios/",
       "/supabase/"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 75,
+        "branches": 64,
+        "functions": 69,
+        "lines": 80
+      }
+    }
   }
 }

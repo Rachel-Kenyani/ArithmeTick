@@ -8,7 +8,7 @@ import Panel from "@/components/ui/Panel";
 import ScreenShell from "@/components/ui/ScreenShell";
 import { SettingsGroup, SettingsRow } from "@/components/ui/SettingsList";
 import { confirm } from "@/components/ui/confirm";
-import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
+import { LogoutIcon, MailIcon, PhoneIcon, PlusIcon, SpeechIcon, TrashIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import { canChangeEmail } from "@/features/auth/utils/validate";
 import DailyLimitGroup from "@/features/profiles/components/DailyLimitGroup";
@@ -53,7 +53,7 @@ export default function AccountScreen() {
   if (!ready || !account) return null;
 
   const logOut = () => {
-    void confirm("Log out?", "Your family's progress stays saved on this phone.", "Log out").then((yes) => {
+    void confirm("Log out?", "Your family's progress is saved with your account.", "Log out").then((yes) => {
       if (!yes) return;
       void signOutOfGoogle().then(() => auth.signOut());
       actions.logout();
@@ -92,6 +92,16 @@ export default function AccountScreen() {
 
         <ReportsGroup account={account} family={profiles} />
 
+        <SettingsGroup title="Help">
+          <SettingsRow
+            label="Report a problem"
+            hint="Something didn’t work, was hard to use, or could be better."
+            icon={<SpeechIcon size={22} strokeWidth={2.2} color={GROWN_UP.ink} />}
+            opens
+            onPress={() => router.push(ROUTES.reportProblem as never)}
+          />
+        </SettingsGroup>
+
         <View style={styles.cards}>
           <Text style={styles.heading} accessibilityRole="header">
             Account
@@ -110,7 +120,7 @@ export default function AccountScreen() {
           <SettingsGroup>
             <SettingsRow
               label="Log out"
-              hint="Progress stays saved on this phone."
+              hint="Progress is saved with your account."
               icon={<LogoutIcon size={22} strokeWidth={2.2} color={GROWN_UP.ink} />}
               onPress={logOut}
             />

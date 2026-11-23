@@ -14,6 +14,7 @@ export const ROUTES = {
   account: "/account",
   deleteAccount: "/delete-account",
   changeEmail: "/change-email",
+  reportProblem: "/report-problem",
   badges: "/badges",
   leaderboard: "/leaderboard",
   play: (level: number) => `/play/${level}` as const,

@@ -60,7 +60,8 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.957971466473-p693gq9usus5q1ea93nlib0umq9fu3p1"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "scheme": "arithmetick",
     "experiments": {

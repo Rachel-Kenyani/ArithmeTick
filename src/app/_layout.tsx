@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import CaptchaHost from "@/components/ui/CaptchaHost";
 import { useCalm } from "@/hooks/useCalm";
 import { useApplySoundSettings } from "@/hooks/useSoundSettings";
 import { startFamilySync } from "@/services/familySync";
@@ -51,6 +52,7 @@ export default function RootLayout() {
           <Stack.Screen name="splash" options={{ animation: "none", gestureEnabled: false }} />
           <Stack.Screen name="index" options={{ animation: "none" }} />
         </Stack>
+        <CaptchaHost />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

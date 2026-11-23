@@ -1,6 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+import { captchaToken } from "@/services/captcha";
+import { secureSessionStorage } from "@/services/secureSession";
 import type { PendingVerification } from "@/types/models";
 
 export type AuthResult = { ok: true } | { ok: false; message: string };
@@ -14,7 +15,7 @@ export const isAuthConfigured = Boolean(URL && ANON_KEY);
 let client: SupabaseClient | null = null;
 export function supabase(): SupabaseClient {
   client ??= createClient(URL ?? "", ANON_KEY ?? "", {
-    auth: { storage: AsyncStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+    auth: { storage: secureSessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
   });
   return client;
 }
@@ -29,6 +30,7 @@ const isEmail = (identifier: string) => identifier.includes("@");
 /** Turns a Supabase error into a message a parent can act on. Exported for tests. */
 export function failure(error: { message: string; code?: string } | null, fallback: string): AuthResult {
   if (!error) return OK;
+  if (error.code === "captcha_failed") return { ok: false, message: "We couldn’t check that you’re a person. Try again." };
   if (error.code === "invalid_credentials") return { ok: false, message: "That email or password didn’t match." };
   if (error.code === "email_not_confirmed") return { ok: false, message: "Please verify your email first. Check your inbox for the code." };
   if (error.code === "same_password") return { ok: false, message: "That’s your current password. Choose a new one." };
@@ -70,8 +72,8 @@ export const auth = {
     const fallback = "We couldn’t create the account. Try again.";
     try {
       const { data, error } = isEmail(identifier)
-        ? await supabase().auth.signUp({ email: identifier, password })
-        : await supabase().auth.signUp({ phone: identifier, password });
+        ? await supabase().auth.signUp({ email: identifier, password, options: { captchaToken: await captchaToken() } })
+        : await supabase().auth.signUp({ phone: identifier, password, options: { captchaToken: await captchaToken() } });
       const exists = error ? EXISTS_CODES.has(error.code ?? "") : data.user?.identities?.length === 0;
       if (exists) {
         const sent = await auth.sendResetCode(identifier);
@@ -88,8 +90,8 @@ export const auth = {
     if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { error } = isEmail(identifier)
-        ? await supabase().auth.signInWithPassword({ email: identifier, password })
-        : await supabase().auth.signInWithPassword({ phone: identifier, password });
+        ? await supabase().auth.signInWithPassword({ email: identifier, password, options: { captchaToken: await captchaToken() } })
+        : await supabase().auth.signInWithPassword({ phone: identifier, password, options: { captchaToken: await captchaToken() } });
       return failure(error, "We couldn’t log you in. Try again.");
     }, "We couldn’t log you in. Try again.");
   },
@@ -98,8 +100,8 @@ export const auth = {
     if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     return safely(async () => {
       const { error } = isEmail(identifier)
-        ? await supabase().auth.resetPasswordForEmail(identifier, { redirectTo: RESET_LINK })
-        : await supabase().auth.signInWithOtp({ phone: identifier, options: { shouldCreateUser: false } });
+        ? await supabase().auth.resetPasswordForEmail(identifier, { redirectTo: RESET_LINK, captchaToken: await captchaToken() })
+        : await supabase().auth.signInWithOtp({ phone: identifier, options: { shouldCreateUser: false, captchaToken: await captchaToken() } });
       if (error && UNKNOWN_ACCOUNT_CODES.has(error.code ?? "")) return OK;
       return failure(error, "We couldn’t send the code. Try again.");
     }, "We couldn’t send the code. Try again.");
@@ -110,8 +112,8 @@ export const auth = {
     if (flow.purpose !== "signup") return auth.sendResetCode(flow.identifier);
     return safely(async () => {
       const { error } = isEmail(flow.identifier)
-        ? await supabase().auth.resend({ type: "signup", email: flow.identifier })
-        : await supabase().auth.resend({ type: "sms", phone: flow.identifier });
+        ? await supabase().auth.resend({ type: "signup", email: flow.identifier, options: { captchaToken: await captchaToken() } })
+        : await supabase().auth.resend({ type: "sms", phone: flow.identifier, options: { captchaToken: await captchaToken() } });
       return failure(error, "We couldn’t send a new code. Try again.");
     }, "We couldn’t send a new code. Try again.");
   },
@@ -164,7 +166,7 @@ export const auth = {
     if (!isAuthConfigured) return Promise.resolve(NOT_CONFIGURED);
     const fallback = "We couldn’t send a code to the new email. Try again.";
     return safely(async () => {
-      const checked = await supabase().auth.signInWithPassword({ email: currentEmail, password });
+      const checked = await supabase().auth.signInWithPassword({ email: currentEmail, password, options: { captchaToken: await captchaToken() } });
       if (checked.error?.code === "invalid_credentials") return { ok: false, message: "That password didn’t match." };
       if (checked.error) return failure(checked.error, fallback);
       const { error } = await supabase().auth.updateUser({ email: newEmail });

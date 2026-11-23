@@ -133,7 +133,7 @@ describe("changing the email", () => {
     mockAuth.signInWithPassword.mockResolvedValue(ok);
     mockAuth.updateUser.mockResolvedValue(ok);
     await expect(auth.requestEmailChange("old@gmail.com", "secret123", "new@gmail.com")).resolves.toEqual({ ok: true });
-    expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({ email: "old@gmail.com", password: "secret123" });
+    expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({ email: "old@gmail.com", password: "secret123", options: { captchaToken: undefined } });
     expect(mockAuth.updateUser).toHaveBeenCalledWith({ email: "new@gmail.com" });
   });
 

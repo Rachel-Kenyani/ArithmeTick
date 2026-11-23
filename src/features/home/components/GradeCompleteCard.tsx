@@ -9,7 +9,6 @@ import {
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -23,6 +22,7 @@ import Panel from "@/components/ui/Panel";
 import TrophyArt from "@/components/illustrations/TrophyArt";
 import { StarIcon, StopwatchIcon } from "@/components/ui/icons";
 import { colors, fonts } from "@/theme";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export function formatFinishTime(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));
@@ -46,7 +46,7 @@ export default function GradeCompleteCard({
   visible,
   onClose,
 }: Readonly<GradeCompleteCardProps>) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useCalmMotion();
   const sm = useWindowDimensions().width >= 640;
 
   const opacity = useSharedValue(reduceMotion ? 1 : 0);

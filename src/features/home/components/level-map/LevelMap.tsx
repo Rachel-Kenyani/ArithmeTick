@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
 
 import LevelNode from "@/features/home/components/level-node/LevelNode";
 import MapFinishFlag from "@/features/home/components/level-map/MapFinishFlag";
@@ -10,6 +9,7 @@ import { clamp, computeLayout } from "@/features/home/components/level-map/compu
 import { useReportFocus } from "@/features/home/components/level-map/useReportFocus";
 import { useUnlockSequence } from "@/features/home/components/level-map/useUnlockSequence";
 import { levelStatus, type LevelDef, type LevelStatus } from "@/data/levels";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export interface LevelMapProps {
   levels: readonly LevelDef[];
@@ -22,7 +22,7 @@ export interface LevelMapProps {
 }
 
 export default function LevelMap({ levels, completed, regionHeight, onFocusY, unlockLevel, onUnlockDone, onPlay }: Readonly<LevelMapProps>) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useCalmMotion();
   const [boxWidth, setBoxWidth] = useState(0);
   const count = levels.length;
 

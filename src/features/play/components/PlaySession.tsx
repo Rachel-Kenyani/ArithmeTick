@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
-import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import HeroPop from "@/features/play/components/HeroPop";
@@ -19,9 +19,10 @@ import { isWarmUp } from "@/data/nextStep";
 import type { ChildProfile } from "@/types/models";
 import { GRADE_META } from "@/types/domain";
 import { colors } from "@/theme";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export default function PlaySession({ profile, level }: Readonly<{ profile: ChildProfile; level: LevelDef }>) {
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const {

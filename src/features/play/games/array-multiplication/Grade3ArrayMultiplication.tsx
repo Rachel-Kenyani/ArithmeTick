@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
-import Animated, { FadeIn, ReduceMotion, useReducedMotion } from "react-native-reanimated";
+import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
 import { scaleText, useTextScale } from "@/hooks/useTextScale";
@@ -31,6 +31,7 @@ import {
   type Dims,
   type Puzzle,
 } from "./logic";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 type Phase = "build" | "show" | "locked" | "count" | "answer" | "solved";
 
@@ -46,7 +47,7 @@ const FADE = FadeIn.duration(260).reduceMotion(ReduceMotion.System);
 
 export default function Grade3ArrayMultiplication({ level, item = "cap", rows: targetRows, cols: targetCols, palActive, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<ArrayProps>) {
   const pz = useMemo(() => normalizePuzzle(targetRows, targetCols), [targetRows, targetCols]);
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
   const schedule = useScheduler();
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [resumed] = useState(() => resumeArray(draft, pz.rows));

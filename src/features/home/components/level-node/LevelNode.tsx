@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet } from "react-native";
-import Animated, { useReducedMotion, withSpring } from "react-native-reanimated";
+import Animated, { withSpring } from "react-native-reanimated";
 
 import CurrentRing from "@/features/home/components/level-node/CurrentRing";
 import DoneStars from "@/features/home/components/level-node/DoneStars";
@@ -8,11 +8,12 @@ import StopLabels from "@/features/home/components/level-node/StopLabels";
 import { ABOVE, BELOW, SPRING, STATUS_WORD, coinRadius, platformHeight, platformWidth } from "@/features/home/components/level-node/constants";
 import type { LevelNodeProps } from "@/features/home/components/level-node/types";
 import { useLevelNodeMotion } from "@/features/home/components/level-node/useLevelNodeMotion";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export type { LevelNodeProps } from "@/features/home/components/level-node/types";
 
 export default function LevelNode({ level, status, size, x, y, side, pop = 0, onPlay }: Readonly<LevelNodeProps>) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useCalmMotion();
   const isQuest = level.kind === "quest";
   const locked = status === "locked";
   const big = size >= 84;

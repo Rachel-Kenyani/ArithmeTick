@@ -1,6 +1,6 @@
 import { memo, useCallback, useId } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import Animated, { Easing, useReducedMotion, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import Animated, { Easing, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import Svg, { Ellipse } from "react-native-svg";
 
 import { sfx } from "@/services/audio";
@@ -20,11 +20,12 @@ import { useGaze } from "./brijo/useGaze";
 import { useBrijoClock } from "./brijo/useBrijoClock";
 import { useLayerStyles } from "./brijo/useLayerStyles";
 import { useMoodBlend } from "./brijo/useMoodBlend";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export type { BrijoMascotProps, BrijoMood } from "./brijo/types";
 
 function BrijoMascot({ mood = "idle", size = 96, style }: Readonly<BrijoMascotProps>) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useCalmMotion();
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const moodIdx = Math.max(0, MOODS.indexOf(mood));
   const eyes = EYES[mood];

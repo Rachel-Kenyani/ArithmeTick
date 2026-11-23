@@ -5,7 +5,6 @@ import Animated, {
   ReduceMotion,
   ZoomIn,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
 } from "react-native-reanimated";
 
@@ -24,6 +23,7 @@ import { useBoardLayout } from "../ten-frame/hooks/useBoardLayout";
 import { WhiteTenFrame } from "../ten-frame/components/WhiteTenFrame";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { keyframes } from "../ten-frame/utils/motion";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 type Step = "watch" | "count" | "solved";
 type FxKind = "count";
@@ -71,7 +71,7 @@ export default function Grade1TakeAway({
   const away = Math.min(start - 1, Math.max(1, Math.round(awayProp)));
   const left = start - away;
   const schedule = useScheduler();
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
 
   const awaySlots = useMemo(() => SLOTS.slice(start - away, start), [start, away]);
   const resumed = draft?.version === DRAFT_VERSION && draft.regrouping === true;

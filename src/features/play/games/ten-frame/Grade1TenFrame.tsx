@@ -1,5 +1,4 @@
 import { View } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
 
 import type { TenFrameProps } from "@/types/domain";
 
@@ -16,12 +15,13 @@ import { useTenFrameGame } from "./hooks/useTenFrameGame";
 import { normalizeTarget } from "./logic/caps";
 import { frameChrome, groupTones, slotMarkers } from "./logic/viewState";
 import { styles } from "./styles";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 const NONE: readonly number[] = [];
 
 export default function Grade1TenFrame({ level, target: targetProp, palActive, onStruggle, onAttempt, onSolved, draft, onDraft, item = "cap" }: Readonly<TenFrameProps>) {
   const target = normalizeTarget(targetProp);
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
   const { layout, geo, onLayout } = useBoardLayout();
   const { placed, solved, revealAll, draggingId, near, fx, caps, drag, checkAnswer, handleDragStart, handleNear, handleDragEnd, handleTap, fillNext } = useTenFrameGame({
     target,

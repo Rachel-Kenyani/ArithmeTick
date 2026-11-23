@@ -6,8 +6,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { useCalm } from "@/hooks/useCalm";
 import { useApplySoundSettings } from "@/hooks/useSoundSettings";
 import { startFamilySync } from "@/services/familySync";
 import { whenHydrated } from "@/state/store";
@@ -24,6 +26,7 @@ export default function RootLayout() {
   });
   const [stateLoaded, setStateLoaded] = useState(false);
   useApplySoundSettings();
+  const calm = useCalm();
 
   useEffect(() => {
     void whenHydrated().then(() => setStateLoaded(true));
@@ -43,6 +46,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <StatusBar style="light" />
+        {calm ? <ReducedMotionConfig mode={ReduceMotion.Always} /> : null}
         <Stack screenOptions={{ headerShown: false, animation: "fade", contentStyle: { backgroundColor: colors.jgSky } }}>
           <Stack.Screen name="splash" options={{ animation: "none", gestureEnabled: false }} />
           <Stack.Screen name="index" options={{ animation: "none" }} />

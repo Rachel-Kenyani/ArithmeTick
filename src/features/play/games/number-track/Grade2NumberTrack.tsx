@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
-import Animated, { FadeIn, ReduceMotion, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue } from "react-native-reanimated";
+import Animated, { FadeIn, ReduceMotion, ZoomIn, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
 import { narration } from "@/services/voice/narration";
@@ -10,6 +10,7 @@ import { colors, fonts } from "@/theme";
 import { Prompt, TARGET, partStyles } from "../place-value/parts";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
 import { keyframes } from "../ten-frame/utils/motion";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 const STONES = 10;
 const COUNT_STEP_MS = 1200;
@@ -30,7 +31,7 @@ export function trackPrompt(from: number, step: number, solved: boolean, started
 
 export default function Grade2NumberTrack({ level, grade = 2, from, gaps, step = -1, waiting = false, onStruggle, onAttempt, onSolved, draft, onDraft }: Readonly<NumberTrackProps>) {
   const schedule = useScheduler();
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
   const numbers = useMemo(() => Array.from({ length: STONES }, (_, i) => from + i * step), [from, step]);
   const missing = useMemo(() => numbers.filter((n) => gaps.includes(n)), [numbers, gaps]);
   const [filled, setFilled] = useState<number[]>(() =>

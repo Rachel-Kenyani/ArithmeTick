@@ -2,7 +2,6 @@ import { useId, type ReactNode } from "react";
 import { StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Path } from "react-native-svg";
-import { useReducedMotion } from "react-native-reanimated";
 
 import { colors } from "@/theme";
 
@@ -15,6 +14,7 @@ import { Palm } from "./jungle/Palm";
 import { PALM_H, PALM_LEFT, PALM_RIGHT, PALM_W } from "./jungle/palmArt";
 import { TrianglePattern } from "./jungle/TrianglePattern";
 import { VINE_H, VINE_W, VINES } from "./jungle/vines";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 export interface JungleBackdropProps {
   children?: ReactNode;
@@ -26,7 +26,7 @@ export interface JungleBackdropProps {
 export default function JungleBackdrop({ children, grass = true, canopy = true, style }: Readonly<JungleBackdropProps>) {
   const uid = `jg${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const { width: W, height: H } = useWindowDimensions();
-  const motion = !useReducedMotion();
+  const motion = !useCalmMotion();
 
   const cloudBigW = clamp(160, W * 0.4, 300);
   const cloudWideW = clamp(160, W * 0.38, 300);

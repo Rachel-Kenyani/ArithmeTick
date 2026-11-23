@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
-import Animated, { Easing, ReduceMotion, ZoomIn, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, ReduceMotion, ZoomIn, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 import { colors, fonts } from "@/theme";
 
 import { PLACE_COLORS, type Place } from "./PlaceValueChart";
 import { digitsOf } from "./columnsLogic";
+import { useCalmMotion } from "@/hooks/useCalm";
 
 const PLACES: Place[] = ["hundreds", "tens", "ones"];
 const POP = ZoomIn.springify().stiffness(380).damping(20).reduceMotion(ReduceMotion.System);
@@ -107,7 +108,7 @@ export default function ColumnSum({
 }
 
 function FlyingOne({ flight, spots }: Readonly<{ flight: Flight; spots: Spots }>) {
-  const reduced = useReducedMotion();
+  const reduced = useCalmMotion();
   const t = useSharedValue(0);
   const fromX = spots.x[flight.from] ?? 0;
   const toX = spots.x[flight.to] ?? 0;

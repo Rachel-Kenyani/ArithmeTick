@@ -79,7 +79,8 @@ const escape = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
 const FONT = "font-family:'Quicksand','Segoe UI',Arial,sans-serif;";
-const DISPLAY = "font-family:'DynaPuff','Quicksand','Trebuchet MS',Arial,sans-serif;";
+/** Headings for grown-ups: the same plain typeface as the text, in bold. No playful display font in reports. */
+const DISPLAY = FONT;
 
 function plural(n: number, one: string, many: string): string {
   return `${n} ${n === 1 ? one : many}`;
@@ -110,7 +111,7 @@ function childBlock(child: Child, kind: "weekly" | "grade"): string {
 
 function emailHtml(title: string, intro: string, blocks: string, unsubscribe: string): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(title)}</title>
-<link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet"></head>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet"></head>
 <body style="margin:0;padding:0;background:#EBF9F7;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EBF9F7;"><tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:28px;overflow:hidden;border-bottom:6px solid #cfe8e4;">

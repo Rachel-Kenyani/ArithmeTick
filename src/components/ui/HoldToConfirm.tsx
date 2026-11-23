@@ -20,13 +20,13 @@ export interface HoldToConfirmProps {
   hint?: string;
   /** Called when the button is let go before the hold finishes, to remind people to keep holding. */
   onEarlyRelease?: () => void;
-  /** A short state on the right of a row, such as "On" or "Off". */
-  status?: string;
+  /** Shows a switch on the right of a row, on or off, matching the app's other grown-up switches. */
+  switchOn?: boolean;
   /** "card" draws the row on white, for use inside a light card rather than a plum one. */
   surface?: "plum" | "card";
 }
 
-export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint, onEarlyRelease, status, surface = "plum" }: Readonly<HoldToConfirmProps>) {
+export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, tone = "grownUp", compact = false, hint, onEarlyRelease, switchOn, surface = "plum" }: Readonly<HoldToConfirmProps>) {
   const progress = useSharedValue(0);
   const fillStyle = useAnimatedStyle(() => ({ width: `${progress.get() * 100}%` }));
 
@@ -51,7 +51,8 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
     <Pressable
       onPressIn={start}
       onPressOut={stop}
-      accessibilityRole="button"
+      accessibilityRole={switchOn === undefined ? "button" : "switch"}
+      accessibilityState={switchOn === undefined ? undefined : { checked: switchOn }}
       accessibilityLabel={hint ? `${label}. ${hint}` : label}
       accessibilityHint={`Press and hold for ${Math.round(holdMs / 1000)} seconds`}
       onAccessibilityTap={confirm}
@@ -65,11 +66,15 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
             <Text style={[styles.rowLabel, tone === "danger" && styles.dangerLabel]}>{label}</Text>
             <Text style={[styles.rowHint, tone === "danger" && styles.dangerHint]}>{hint}</Text>
           </View>
-          {status ? (
-            <View style={styles.status}>
-              <Text style={styles.statusText}>{status}</Text>
+          {switchOn === undefined ? null : (
+            <View
+              style={[styles.track, switchOn && styles.trackOn]}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              <View style={[styles.knob, switchOn && styles.knobOn]} />
             </View>
-          ) : null}
+          )}
         </View>
       ) : (
         <View style={styles.content}>
@@ -101,8 +106,10 @@ const styles = StyleSheet.create({
   dangerLabel: { fontFamily: fonts.textBold, color: colors.white },
   row: { alignSelf: "stretch", borderRadius: 18, paddingHorizontal: 14, paddingVertical: 12, minHeight: 68 },
   onCard: { backgroundColor: colors.white },
-  status: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3, backgroundColor: GROWN_UP.bg, borderWidth: 1.5, borderColor: GROWN_UP.border },
-  statusText: { fontFamily: fonts.textBold, fontSize: 13, color: GROWN_UP.ink },
+  track: { width: 46, height: 28, borderRadius: 14, padding: 3, backgroundColor: colors.locked, justifyContent: "center" },
+  trackOn: { backgroundColor: GROWN_UP.border },
+  knob: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.white },
+  knobOn: { alignSelf: "flex-end", backgroundColor: GROWN_UP.ink },
   rowContent: { flexDirection: "row", alignItems: "center", gap: 14 },
   badge: {
     width: 40,

@@ -63,23 +63,24 @@ export default function SettingsScreen() {
         <HoldToConfirm
           surface="card"
           label="Brijo reads aloud"
-          status={voice ? "On" : "Off"}
+          switchOn={voice}
           hint={voice ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
           icon={<SpeechIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
           onConfirm={() => actions.setSound(profile.id, { voice: !voice })}
         />
         <HoldToConfirm
           surface="card"
-          label="Larger text"
-          status={profile.largeText ? "On" : "Off"}
+          label="Larger reading text"
+          switchOn={profile.largeText === true}
           hint={profile.largeText ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
           icon={<Text style={styles.aa}>Aa</Text>}
           onConfirm={() => actions.setLargeText(profile.id, !profile.largeText)}
         />
         <Text style={styles.note}>
           {voice
-            ? `Turn it off if ${profile.name} reads well or needs quiet. Sound effects have their own button in the top bar.`
-            : `${profile.name} can still tap Hear it on an instruction. Sound effects have their own button in the top bar.`}
+            ? `Turn Brijo off if ${profile.name} reads well or needs quiet.`
+            : `${profile.name} can still tap Hear it on an instruction.`}{" "}
+          Larger reading text makes Brijo’s instructions and stories bigger. Sound effects have their own button in the top bar.
         </Text>
       </Panel>
     </ScreenShell>

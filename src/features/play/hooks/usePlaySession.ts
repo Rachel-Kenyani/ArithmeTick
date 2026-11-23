@@ -7,6 +7,7 @@ import type { BadgeDef } from "@/data/badges";
 import type { LevelDef } from "@/data/levels";
 import type { LevelDraft } from "@/types/domain";
 import type { ChildProfile } from "@/types/models";
+import { announce, answerAnnouncement, levelDoneAnnouncement } from "@/services/a11y";
 import { reports } from "@/services/reports";
 import { actions, draftKey, getAppState, useScreenTimeRemaining, type LevelCompletion } from "@/state/store";
 
@@ -48,6 +49,7 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
   const handleAttempt = useCallback(
     ({ target, answer, correct }: { target: number; answer: number; correct: boolean }) => {
       actions.logAttempt(profileId, { grade, level: levelNumber, target, answer, correct, ms: Date.now() - openedAt.current, pal: palRef.current, at: Date.now() });
+      announce(answerAnnouncement(correct, answer));
     },
     [profileId, grade, levelNumber],
   );
@@ -75,6 +77,7 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     completedRef.current = true;
     const result = actions.completeLevel(profileId, levelNumber, (Date.now() - openedAt.current) / 1000, boardRef.current ? { misses: boardRef.current.misses, helped: helpedRef.current } : undefined);
     setCompletion(result);
+    announce(levelDoneAnnouncement(result.starsEarned));
     const { account, profiles } = getAppState();
     const child = profiles.find((p) => p.id === profileId);
     if (account?.reports && child) void reports.afterLevel(child, levelNumber, result.firstTime);

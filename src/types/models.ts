@@ -33,7 +33,7 @@ export interface ChildProfile {
   gradeSeconds?: Partial<Record<Grade, number>>;
   drafts?: Record<string, { pal: boolean; board: LevelDraft }>;
   sound?: SoundSettings;
-  /** Brijo's instructions and story text shown 25% larger, for a child who finds the normal size hard to read. */
+  /** "Larger Brijo captions": Brijo's instructions and story text shown 25% larger, for a child who finds the normal size hard to read. */
   largeText?: boolean;
   /** When the name, animal, school code or sound settings last changed, so the newest edit wins across phones. */
   editedAt?: number;

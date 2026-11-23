@@ -70,7 +70,7 @@ export default function SettingsScreen() {
         />
         <HoldToConfirm
           surface="card"
-          label="Larger reading text"
+          label="Larger Brijo captions"
           switchOn={profile.largeText === true}
           hint={profile.largeText ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
           icon={<Text style={styles.aa}>Aa</Text>}
@@ -80,7 +80,7 @@ export default function SettingsScreen() {
           {voice
             ? `Turn Brijo off if ${profile.name} reads well or needs quiet.`
             : `${profile.name} can still tap Hear it on an instruction.`}{" "}
-          Larger reading text makes Brijo’s instructions and stories bigger. Sound effects have their own button in the top bar.
+          Larger Brijo captions makes the words Brijo says bigger on screen. Sound effects have their own button in the top bar.
         </Text>
       </Panel>
     </ScreenShell>

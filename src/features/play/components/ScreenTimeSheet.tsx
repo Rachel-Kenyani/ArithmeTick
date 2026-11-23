@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import Animated, {
   FadeIn,
@@ -14,7 +15,13 @@ import Twinkle, {
 import BrijoMascot from "@/components/mascot/BrijoMascot";
 import Button from "@/components/ui/Button";
 import { MapIcon } from "@/components/ui/icons";
+import { narration } from "@/services/voice/narration";
 import { colors, fonts } from "@/theme";
+
+/** What Brijo says when the day's screen time runs out. Recorded as `time-up.m4a`; the phone's voice reads it until then. */
+export const TIME_UP_LINE =
+  "That's today's screen time! I'll be here tomorrow.";
+export const TIME_UP_CLIP = "time-up";
 
 export default function ScreenTimeSheet({
   onBack,
@@ -23,6 +30,17 @@ export default function ScreenTimeSheet({
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const sm = width >= 640;
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => narration.prompt(TIME_UP_LINE, TIME_UP_CLIP),
+      600,
+    );
+    return () => {
+      clearTimeout(timer);
+      narration.stop();
+    };
+  }, []);
 
   return (
     <Animated.View
@@ -39,7 +57,7 @@ export default function ScreenTimeSheet({
 
       <Animated.View
         accessibilityRole="none"
-        accessibilityLabel="That's today's screen time! Go play outside. Brijo will be here tomorrow."
+        accessibilityLabel={TIME_UP_LINE}
         style={[
           styles.sheet,
           sm ? styles.sheetSm : styles.sheetPhone,
@@ -75,9 +93,7 @@ export default function ScreenTimeSheet({
         >
           That&apos;s today&apos;s screen time!
         </Text>
-        <Text style={styles.sheetCopy}>
-          Go play outside. Brijo will be here tomorrow.
-        </Text>
+        <Text style={styles.sheetCopy}>I&apos;ll be here tomorrow.</Text>
 
         <Button
           variant="teal"

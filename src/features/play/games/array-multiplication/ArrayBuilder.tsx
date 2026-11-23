@@ -75,6 +75,7 @@ export const ArrayBuilder = memo(function ArrayBuilder({ pz, dims, item, pitch, 
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel={`Array, ${dims.rows} rows of ${dims.cols}`}
+      accessibilityHint="Swipe up or down to change the columns. Use actions to add or remove a row."
       accessibilityActions={[{ name: "increment" }, { name: "decrement" }, { name: "addRow", label: "Add a row" }, { name: "removeRow", label: "Remove a row" }]}
       onAccessibilityAction={(e) => {
         const l = LIMITS;

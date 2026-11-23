@@ -260,7 +260,7 @@ export default function Grade1TakeAway({
               fx={fx[slot]}
               reduced={reduced}
               onPress={step === "count" ? tally : undefined}
-              label={`${itemName(item)} on the frame. Tap to count it`}
+              label={step === "count" ? `${itemName(item)} on the frame. Tap to count it` : `${itemName(item)} on the frame`}
             />
           ) : null
         }

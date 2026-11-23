@@ -161,7 +161,7 @@ export default function Grade2Groups({ level, groups, each, item = "seed", waiti
                   onPress={() => countHole(hole)}
                   disabled={!tappable}
                   accessibilityRole={tappable ? "button" : "image"}
-                  accessibilityLabel={`Hole ${hole + 1}, ${n} ${n === 1 ? item : many}`}
+                  accessibilityLabel={`Hole ${hole + 1}, ${n} ${n === 1 ? item : many}${n === each ? ", full" : ""}`}
                   style={[styles.hole, { width: holeW, minHeight: seed + 30 }, tappable ? styles.holeTap : null, n === each && step === "plant" ? styles.holeFull : null]}
                 >
                   <View style={[styles.seeds, { minHeight: seed }]}>

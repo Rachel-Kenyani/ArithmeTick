@@ -230,7 +230,7 @@ export default function Grade3Chapati({ level = 0, parts, waiting = false, onStr
                       key={`hit-${q.id}`}
                       onPress={() => give(q.id)}
                       accessibilityRole="button"
-                      accessibilityLabel="Piece of chapati. Tap to give it to Brijo"
+                      accessibilityLabel={`${q.id.replace("-", " ")} piece of chapati. Tap to give it to Brijo`}
                       style={[styles.cutHit, { left: box / 2 + (q.dx > 0 ? 6 : -r * 0.95), top: box / 2 + (q.dy > 0 ? 6 : -r * 0.95), width: r * 0.9, height: r * 0.9 }]}
                     />
                   ))

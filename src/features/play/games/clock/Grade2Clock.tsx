@@ -126,19 +126,22 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
   let clip = stage === "minute" ? `${id}-minute` : `${id}-set`;
   if (solved) clip = `${id}-why`;
 
+  const showing = half && stage === "hour" && minuteAngle % 360 === 180 ? `half past ${shown}` : `${shown} o'clock`;
+
   return (
     <View style={styles.root} onLayout={onLayout} testID={`g${grade}-clock-l${level ?? 0}-${hour}`}>
       {size ? (
         <>
-          <View style={[styles.strip, solved ? styles.stripWin : null]} accessible accessibilityLabel={`Set the clock to ${half ? `half past ${hour}` : `${hour} o'clock`}`}>
+          <View style={[styles.strip, solved ? styles.stripWin : null]} accessible
+            accessibilityLiveRegion="polite"
+            accessibilityLabel={`Set the clock to ${half ? `half past ${hour}` : `${hour} o'clock`}. The clock shows ${showing}`}
+          >
             <Text style={styles.stripText}>{half ? `half past ${hour}` : `${hour} o'clock`}</Text>
           </View>
           <Prompt text={prompt} clipId={clip} waiting={waiting} />
 
           <View
             style={[styles.face, { width: face, height: face, borderRadius: r }, solved ? styles.faceWin : null]}
-            accessible={false}
-            accessibilityLabel={half && stage === "hour" && minuteAngle % 360 === 180 ? `The clock shows half past ${shown}` : `The clock shows ${shown} o'clock`}
           >
             {HOURS.map((n) => {
               const a = (n * 30 * Math.PI) / 180;
@@ -151,6 +154,7 @@ export default function Grade2Clock({ level, grade = 2, hour, half = false, wait
                   disabled={solved}
                   accessibilityRole="button"
                   accessibilityLabel={`${n}`}
+                  accessibilityState={{ selected: shown === n, disabled: solved }}
                   style={[styles.num, { left: x, top: y }, hint && n === (stage === "minute" ? 6 : hour) ? styles.numHint : null, shown === n && n !== 12 ? styles.numOn : null]}
                 >
                   <Text style={styles.numText}>{n}</Text>

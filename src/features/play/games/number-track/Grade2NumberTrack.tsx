@@ -100,15 +100,21 @@ export default function Grade2NumberTrack({ level, grade = 2, from, gaps, step =
         <>
           <Prompt text={prompt} clipId={promptClip} waiting={waiting} silent={solved} />
 
-          <View style={styles.track} accessible accessibilityLabel={step === -1 ? `Counting back from ${from}` : `Counting in ${step}s from ${from}`}>
+          <View style={styles.track}>
             {[0, 1].map((row) => (
               <View key={row} style={styles.row}>
-                {numbers.slice(row * 5, row * 5 + 5).map((n) => {
+                {numbers.slice(row * 5, row * 5 + 5).map((n, k) => {
                   const gap = missing.includes(n) && !filled.includes(n);
+                  const index = row * 5 + k;
+                  const before = numbers[index - 1];
+                  const beforeShown = before !== undefined && !(missing.includes(before) && !filled.includes(before)) ? before : undefined;
                   return (
                     <Stone
                       key={n}
                       n={n}
+                      place={index + 1}
+                      before={beforeShown}
+                      intro={index === 0 ? (step === -1 ? `Counting back from ${from}` : `Counting in ${step}s from ${from}`) : undefined}
                       size={stone}
                       gap={gap}
                       active={n === next}
@@ -143,6 +149,9 @@ export default function Grade2NumberTrack({ level, grade = 2, from, gaps, step =
 
 function Stone({
   n,
+  place,
+  before,
+  intro,
   size,
   gap,
   active,
@@ -153,6 +162,12 @@ function Stone({
   reduced,
 }: Readonly<{
   n: number;
+  /** 1-based position on the track, so a screen reader can say which stone this is. */
+  place: number;
+  /** The number on the stone before, when it is showing. */
+  before?: number;
+  /** Read before the first stone, so the track says what it is counting. */
+  intro?: string;
   size: number;
   gap: boolean;
   active: boolean;
@@ -171,8 +186,10 @@ function Stone({
 
   let label = String(n);
   if (gap) {
-    label = active ? "Missing number, fill this one" : "Missing number";
+    const where = before === undefined ? `stone ${place}` : `after ${before}`;
+    label = active ? `Missing number ${where}. Fill this one` : `Missing number ${where}`;
   }
+  if (intro) label = `${intro}. ${label}`;
   return (
     <Animated.View
       style={[

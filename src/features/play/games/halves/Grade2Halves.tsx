@@ -162,7 +162,7 @@ export default function Grade2Halves({ level, grade = 2, total, shares = 2, item
                   }}
                   collapsable={false}
                   accessible
-                  accessibilityLabel={`Monkey ${plate + 1} has ${onPlate[plate]}`}
+                  accessibilityLabel={`Monkey ${plate + 1} has ${onPlate[plate]}${onPlate[plate] === half ? ", full" : ""}`}
                   style={[styles.plate, { width: plateW, minHeight: Math.ceil(half / perRow) * (cell + 10) + 22 }, onPlate[plate] === half ? styles.plateFull : null]}
                 >
                   {Array.from({ length: onPlate[plate] }, (_, i) => (

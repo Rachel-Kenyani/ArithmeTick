@@ -119,7 +119,7 @@ export default function LoginScreen() {
                     pressed && styles.linkPressed,
                   ]}
                 >
-                  Register Now!
+                  Register Now
                 </Text>
               )}
             </Pressable>

@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown, ReduceMotion } from "react-native-reanimated";
 
 import Button from "@/components/ui/Button";
@@ -7,6 +7,7 @@ import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";
 import ScreenShell from "@/components/ui/ScreenShell";
 import { SPLASH_BACKGROUND } from "@/components/backdrops/SplashBackdrop";
+import { PRIVACY_URL, TERMS_URL } from "@/constants/links";
 import { ROUTES } from "@/constants/routes";
 import { auth } from "@/services/auth";
 import { actions } from "@/state/store";
@@ -80,6 +81,18 @@ export default function SignupScreen() {
             Get Started
           </Button>
 
+          <Text style={styles.legal}>
+            By continuing, you agree to our{" "}
+            <Text style={styles.legalLink} accessibilityRole="link" onPress={() => void Linking.openURL(TERMS_URL)}>
+              Terms of Use
+            </Text>{" "}
+            and{" "}
+            <Text style={styles.legalLink} accessibilityRole="link" onPress={() => void Linking.openURL(PRIVACY_URL)}>
+              Privacy Policy
+            </Text>
+            .
+          </Text>
+
           <View style={styles.footer}>
             <Text style={styles.footerText}>Have An Account? </Text>
             <Pressable
@@ -95,7 +108,7 @@ export default function SignupScreen() {
                     pressed && styles.linkPressed,
                   ]}
                 >
-                  Login Now!
+                  Login Now
                 </Text>
               )}
             </Pressable>
@@ -109,6 +122,8 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   enter: { marginTop: 8 },
   submit: { marginTop: 28 },
+  legal: { marginTop: 14, fontFamily: fonts.textSemiBold, fontSize: 14, lineHeight: 20, color: colors.muted, textAlign: "center" },
+  legalLink: { fontFamily: fonts.textBold, color: colors.jgPurple, textDecorationLine: "underline" },
   link: { color: colors.jgPurple },
   linkPressed: { color: "#6a3db8", textDecorationLine: "underline" },
   footer: {

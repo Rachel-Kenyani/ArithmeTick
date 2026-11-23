@@ -56,7 +56,7 @@ export default function AddExplorerScreen() {
     >
       <Animated.View entering={ENTER}>
         <Panel>
-          <ScreenHeading title="Almost Done!" style={styles.heading} />
+          <ScreenHeading title={profiles.length === 0 ? "Almost Done!" : "Add a Child"} style={styles.heading} />
 
           <TextField
             ref={nameRef}
@@ -78,8 +78,8 @@ export default function AddExplorerScreen() {
           />
 
           <SelectField
-            label="Choose their Grade / Class"
-            placeholder="Choose their Grade / Class"
+            label="Choose their grade"
+            placeholder="Choose their grade"
             icon={<GradCapIcon color={colors.atPurple} />}
             value={grade}
             options={GRADE_OPTIONS}
@@ -88,17 +88,13 @@ export default function AddExplorerScreen() {
             style={styles.grade}
           />
 
-          <GrownUpNote style={styles.note}>
-            {`We save ${name.trim() || "your child"}’s progress with your account, so it’s safe if you change or reset your phone.`}
-          </GrownUpNote>
-
           <Button
             trailing="arrow"
             loading={busy}
             onPress={submit}
             style={styles.submit}
           >
-            Add Profile
+            Add Child
           </Button>
         </Panel>
       </Animated.View>

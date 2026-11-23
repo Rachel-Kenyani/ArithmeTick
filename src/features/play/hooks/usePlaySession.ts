@@ -46,10 +46,13 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     if (palActive) helpedRef.current = true;
   }, [palActive]);
   const grade = level.grade;
+  /** When the last wrong answer was given, so the play area can show a "Not quite" message for it. */
+  const [missedAt, setMissedAt] = useState<number | null>(null);
   const handleAttempt = useCallback(
     ({ target, answer, correct }: { target: number; answer: number; correct: boolean }) => {
       actions.logAttempt(profileId, { grade, level: levelNumber, target, answer, correct, ms: Date.now() - openedAt.current, pal: palRef.current, at: Date.now() });
       announce(answerAnnouncement(correct, answer));
+      if (!correct) setMissedAt(Date.now());
     },
     [profileId, grade, levelNumber],
   );
@@ -130,6 +133,7 @@ export function usePlaySession(profile: ChildProfile, level: LevelDef) {
     palActive,
     engagePal,
     handleAttempt,
+    missedAt,
     draft: saved?.board,
     handleDraft,
     completion,

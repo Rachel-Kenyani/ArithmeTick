@@ -9,6 +9,7 @@ import LevelContent from "@/features/play/components/LevelContent";
 import StoryIntro from "@/features/play/components/StoryIntro";
 import { sceneFor, storyFor, treasureCount } from "@/data/stories";
 import ScreenTimeSheet from "@/features/play/components/ScreenTimeSheet";
+import TryAgainPill from "@/features/play/components/TryAgainPill";
 import { usePlaySession } from "@/features/play/hooks/usePlaySession";
 import { gutterFor } from "@/features/play/utils/playFormat";
 import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
@@ -37,6 +38,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
     completion,
     celebrating,
     timeUp,
+    missedAt,
     handleComplete,
     heroPop,
     handleHighFive,
@@ -82,6 +84,7 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
           >
             <LevelContent level={level} childName={profile.name} palActive={palActive} waiting={storyOpen} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
           </Animated.View>
+          {missedAt !== null && !celebrating ? <TryAgainPill key={missedAt} reduced={reduced} /> : null}
         </View>
       </View>
 

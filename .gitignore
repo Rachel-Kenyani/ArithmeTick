@@ -54,3 +54,20 @@ AGENTS.md
 docs/
 assets/voice
 sonar-project.properties
+
+# Supabase CLI cache and local secrets (the pooler URL names the database host)
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+supabase/functions/.env
+supabase/functions/**/.env
+
+# Signing keys, store credentials and app builds
+*.keystore
+credentials.json
+google-services.json
+GoogleService-Info.plist
+*service-account*.json
+*.apk
+*.aab
+*.ipa

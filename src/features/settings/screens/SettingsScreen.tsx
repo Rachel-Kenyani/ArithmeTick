@@ -9,7 +9,7 @@ import TextField from "@/components/ui/TextField";
 import Button from "@/components/ui/Button";
 import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
 import HoldToConfirm from "@/components/ui/HoldToConfirm";
-import { SmileIcon, SpeechIcon } from "@/components/ui/icons";
+import { CalmIcon, SmileIcon, SpeechIcon } from "@/components/ui/icons";
 import { ROUTES } from "@/constants/routes";
 import BottomNav, { navigateToTab } from "@/features/home/components/BottomNav";
 import MapTopBar from "@/features/home/components/MapTopBar";
@@ -76,11 +76,19 @@ export default function SettingsScreen() {
           icon={<Text style={styles.aa}>Aa</Text>}
           onConfirm={() => actions.setLargeText(profile.id, !profile.largeText)}
         />
+        <HoldToConfirm
+          surface="card"
+          label="Calm mode"
+          switchOn={profile.calm === true}
+          hint={profile.calm ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
+          icon={<CalmIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
+          onConfirm={() => actions.setCalm(profile.id, !profile.calm)}
+        />
         <Text style={styles.note}>
           {voice
             ? `Turn Brijo off if ${profile.name} reads well or needs quiet.`
             : `${profile.name} can still tap Hear it on an instruction.`}{" "}
-          Larger Brijo captions makes the words Brijo says bigger on screen. Sound effects have their own button in the top bar.
+          Larger Brijo captions makes the words Brijo says bigger on screen. Calm mode turns off sparkles, bouncing and cheering sounds, for a child who finds them too much. Sound effects have their own button in the top bar.
         </Text>
       </Panel>
     </ScreenShell>

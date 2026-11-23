@@ -102,3 +102,9 @@ export const ShieldCheckIcon = make(
     <Path d="m8.8 12.1 2.2 2.2 4.2-4.4" />
   </>,
 );
+
+/** Calm mode: three gentle waves. */
+export const CalmIcon = make(
+  "CalmIcon",
+  <Path d="M3 8c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0M3 12.5c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0M3 17c2-1.6 4-1.6 6 0s4 1.6 6 0 4-1.6 6 0" />,
+);

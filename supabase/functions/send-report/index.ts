@@ -35,6 +35,8 @@ interface Child {
   updated_at: string;
   sent_levels: number;
   sent_stars: number;
+  /** The grade whose end-of-grade email was last sent, so it goes only once. */
+  grade_emailed: number | null;
 }
 
 function reply(status: number, body: Record<string, unknown>): Response {
@@ -145,7 +147,11 @@ async function send(to: string, subject: string, html: string): Promise<boolean>
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({ from: REPORT_FROM, to: [to], subject, html }),
   });
-  if (!res.ok) console.error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) {
+    // Resend's error text can quote the address, so only its error name is logged.
+    const detail = ((await res.json().catch(() => ({}))) as { name?: string }).name ?? "unknown";
+    console.error(`Resend ${res.status}: ${detail}`);
+  }
   return res.ok;
 }
 
@@ -208,8 +214,10 @@ async function sendGrade(userId: string, childId: string): Promise<Response> {
     await db(`child_reports?select=*&user_id=eq.${userId}&child_id=eq.${encodeURIComponent(childId)}`)
   ).json()) as Child[];
   const child = rows[0];
+  const finished = child && child.levels_done >= child.level_count && child.level_count > 0;
+  if (!finished || child.grade_emailed === child.grade) return reply(200, { sent: 0 });
   const to = await emailOf(userId);
-  if (!child || !to) return reply(200, { sent: 0 });
+  if (!to) return reply(200, { sent: 0 });
   const html = emailHtml(
     `${child.child_name} finished Grade ${child.grade}!`,
     `Every level in Grade ${child.grade} is done. Here's where ${escapeHtml(child.child_name)} is now.`,
@@ -217,6 +225,12 @@ async function sendGrade(userId: string, childId: string): Promise<Response> {
     await unsubscribeUrl(userId),
   );
   const ok = await send(to, `${child.child_name} finished Grade ${child.grade} in ArithmeTick!`, html);
+  if (ok) {
+    await db(`child_reports?user_id=eq.${userId}&child_id=eq.${encodeURIComponent(childId)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ grade_emailed: child.grade }),
+    });
+  }
   return reply(ok ? 200 : 502, { sent: ok ? 1 : 0 });
 }
 
@@ -242,13 +256,13 @@ const SAMPLE: Child[] = [
     user_id: "preview", child_id: "a", child_name: "Jabali", grade: 1, levels_done: 4, level_count: 9, total_levels: 4, stars: 12,
     skills_line: "making 10 is strong, taking away is still growing",
     practice_idea: "Put 9 bottle tops on the table. Hide some under a cup while Jabali looks away. How many are hiding?",
-    updated_at: "", sent_levels: 1, sent_stars: 3,
+    updated_at: "", sent_levels: 1, sent_stars: 3, grade_emailed: null,
   },
   {
     user_id: "preview", child_id: "b", child_name: "Tessa", grade: 2, levels_done: 7, level_count: 12, total_levels: 16, stars: 48,
     skills_line: "place value and adding on are strong, equal groups is still growing",
     practice_idea: "Lay out seeds in 3 rows of 4. Ask Tessa to count the rows, not every seed: 4, 8, 12.",
-    updated_at: "", sent_levels: 14, sent_stars: 42,
+    updated_at: "", sent_levels: 14, sent_stars: 42, grade_emailed: null,
   },
 ];
 

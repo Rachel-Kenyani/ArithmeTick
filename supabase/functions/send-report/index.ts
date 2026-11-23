@@ -6,6 +6,8 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const REPORT_FROM = Deno.env.get("REPORT_FROM") ?? "";
 /** A long random secret: the weekly schedule sends it, and it signs the unsubscribe links. */
 const REPORT_KEY = Deno.env.get("REPORT_KEY") ?? "";
+/** The public website, where the unsubscribe link lands. */
+const WEBSITE_URL = Deno.env.get("WEBSITE_URL") ?? "https://arithmetick.rachelkenyani.com";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -218,17 +220,20 @@ async function sendGrade(userId: string, childId: string): Promise<Response> {
   return reply(ok ? 200 : 502, { sent: ok ? 1 : 0 });
 }
 
+/**
+ * Sends the browser to a page on the website. Supabase shows a function's HTML as plain text, so the pages a parent
+ * sees live on the website instead.
+ */
+const goTo = (path: string) => new Response(null, { status: 303, headers: { Location: `${WEBSITE_URL}${path}` } });
+
 /** The link in every email: turns reports off and deletes what is kept for them, with no sign-in needed. */
 async function unsubscribe(userId: string, sig: string): Promise<Response> {
-  const page = (text: string, status = 200) =>
-    new Response(
-      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;padding:40px 16px;background:#EBF9F7;${FONT}text-align:center;color:#1B2B2A;"><h1 style="${DISPLAY}color:#006F68;">ArithmeTick</h1><p style="font-size:17px;">${text}</p></body>`,
-      { status, headers: { "Content-Type": "text/html; charset=utf-8" } },
-    );
-  if (!/^[0-9a-f-]{36}$/.test(userId) || sig !== (await sign(userId))) return page("That link doesn't work. Turn reports off on the Grown-ups page in the app instead.", 400);
-  await db(`child_reports?user_id=eq.${userId}`, { method: "DELETE" });
-  await db(`report_settings?user_id=eq.${userId}`, { method: "DELETE" });
-  return page("Weekly reports are off, and we've deleted what we kept for them. You can turn them on again on the Grown-ups page.");
+  if (!/^[0-9a-f-]{36}$/.test(userId) || sig !== (await sign(userId))) return goTo("/reports-link");
+  await Promise.all([
+    db(`child_reports?user_id=eq.${userId}`, { method: "DELETE" }),
+    db(`report_settings?user_id=eq.${userId}`, { method: "DELETE" }),
+  ]);
+  return goTo("/reports-off");
 }
 
 /** A made-up family, for previewing both reports in a browser without waiting for Sunday. */

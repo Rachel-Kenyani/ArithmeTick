@@ -83,6 +83,18 @@ describe("sendResetCode never says whether an account exists", () => {
     await expect(auth.sendResetCode("+254700000000")).resolves.toEqual({ ok: true });
   });
 
+  it("says when the person check failed, rather than that the code couldn't be sent", async () => {
+    const { CaptchaError } = jest.requireActual<typeof import("@/services/captcha")>("@/services/captcha");
+    mockAuth.resetPasswordForEmail.mockResolvedValue(err("captcha_failed"));
+    await expect(auth.sendResetCode("a@gmail.com")).resolves.toEqual({ ok: false, message: expect.stringMatching(/check that you’re a person/) });
+    mockAuth.resetPasswordForEmail.mockRejectedValue(new CaptchaError("timeout"));
+    await expect(auth.sendResetCode("a@gmail.com")).resolves.toEqual({ ok: false, message: expect.stringMatching(/check that you’re a person/) });
+    mockAuth.resetPasswordForEmail.mockRejectedValue(new CaptchaError("cancelled"));
+    await expect(auth.sendResetCode("a@gmail.com")).resolves.toEqual({ ok: false, message: expect.stringMatching(/^Stopped/) });
+    mockAuth.signUp.mockRejectedValue(new CaptchaError("timeout"));
+    await expect(auth.signUp("new@gmail.com", "secret123")).resolves.toEqual({ ok: false, message: expect.stringMatching(/person/) });
+  });
+
   it("treats an unknown email as sent", async () => {
     mockAuth.resetPasswordForEmail.mockResolvedValue(err("user_not_found"));
     await expect(auth.sendResetCode("nobody@gmail.com")).resolves.toEqual({ ok: true });

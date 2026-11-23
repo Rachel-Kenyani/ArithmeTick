@@ -10,8 +10,10 @@ export const TURNSTILE_SITE_KEY = process.env.EXPO_PUBLIC_TURNSTILE_SITE_KEY ?? 
 /** The page the widget runs on. Its hostname must be listed on the Turnstile widget in Cloudflare. */
 export const CAPTCHA_BASE_URL = "https://arithmetick.rachelkenyani.com";
 
-/** How long to wait for Turnstile before giving up. */
+/** How long to wait for Turnstile while it works unseen. */
 export const CAPTCHA_TIMEOUT_MS = 30_000;
+/** How long a person gets once Cloudflare asks them to tick the box. */
+export const CAPTCHA_INTERACTIVE_MS = 5 * 60_000;
 
 export class CaptchaError extends Error {}
 
@@ -19,6 +21,8 @@ export interface CaptchaRequest {
   id: number;
   resolve: (token: string) => void;
   reject: (error: Error) => void;
+  /** The host calls this when the box appears (true) and goes away (false), so the person isn't timed out. */
+  interacting: (on: boolean) => void;
 }
 
 type Host = (request: CaptchaRequest | null) => void;
@@ -138,8 +142,27 @@ export function captchaToken(): Promise<string | undefined> {
     if (Platform.OS === "web") return withTimeout(webToken(TURNSTILE_SITE_KEY), CAPTCHA_TIMEOUT_MS);
     const show = host;
     if (!show) return Promise.reject(new CaptchaError("no_host"));
-    const token = new Promise<string>((resolve, reject) => show({ id: nextId++, resolve, reject }));
-    return withTimeout(token, CAPTCHA_TIMEOUT_MS).finally(() => show(null));
+    const token = new Promise<string>((resolve, reject) => {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const arm = (ms: number) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => reject(new CaptchaError("timeout")), ms);
+      };
+      arm(CAPTCHA_TIMEOUT_MS);
+      show({
+        id: nextId++,
+        resolve: (value) => {
+          clearTimeout(timer);
+          resolve(value);
+        },
+        reject: (error) => {
+          clearTimeout(timer);
+          reject(error);
+        },
+        interacting: (on) => arm(on ? CAPTCHA_INTERACTIVE_MS : CAPTCHA_TIMEOUT_MS),
+      });
+    });
+    return token.finally(() => show(null));
   };
   const result = queue.then(run, run);
   queue = result.catch(() => undefined);

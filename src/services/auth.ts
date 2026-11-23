@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-import { captchaToken } from "@/services/captcha";
+import { CaptchaError, captchaToken } from "@/services/captcha";
 import { secureSessionStorage } from "@/services/secureSession";
 import type { PendingVerification } from "@/types/models";
 
@@ -30,7 +30,7 @@ const isEmail = (identifier: string) => identifier.includes("@");
 /** Turns a Supabase error into a message a parent can act on. Exported for tests. */
 export function failure(error: { message: string; code?: string } | null, fallback: string): AuthResult {
   if (!error) return OK;
-  if (error.code === "captcha_failed") return { ok: false, message: "We couldn’t check that you’re a person. Try again." };
+  if (error.code === "captcha_failed") return CAPTCHA_FAILED;
   if (error.code === "invalid_credentials") return { ok: false, message: "That email or password didn’t match." };
   if (error.code === "email_not_confirmed") return { ok: false, message: "Please verify your email first. Check your inbox for the code." };
   if (error.code === "same_password") return { ok: false, message: "That’s your current password. Choose a new one." };
@@ -54,11 +54,21 @@ export function failure(error: { message: string; code?: string } | null, fallba
   return { ok: false, message: fallback };
 }
 
+type Failure = { ok: false; message: string };
+const CAPTCHA_FAILED: Failure = { ok: false, message: "We couldn’t check that you’re a person. Try again." };
+const CAPTCHA_CANCELLED: Failure = { ok: false, message: "Stopped. Tap the button again when you’re ready." };
+
+/** What to show when a call throws: the CAPTCHA's own message when it was the CAPTCHA, otherwise the fallback. */
+function thrown(error: unknown, fallback: string): Failure {
+  if (error instanceof CaptchaError) return error.message === "cancelled" ? CAPTCHA_CANCELLED : CAPTCHA_FAILED;
+  return { ok: false, message: fallback };
+}
+
 async function safely(run: () => Promise<AuthResult>, fallback: string): Promise<AuthResult> {
   try {
     return await run();
-  } catch {
-    return { ok: false, message: fallback };
+  } catch (error) {
+    return thrown(error, fallback);
   }
 }
 
@@ -81,8 +91,8 @@ export const auth = {
       }
       const result = failure(error, fallback);
       return result.ok ? { ok: true, existing: false } : result;
-    } catch {
-      return { ok: false, message: fallback };
+    } catch (error) {
+      return thrown(error, fallback);
     }
   },
 

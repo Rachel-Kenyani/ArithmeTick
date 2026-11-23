@@ -71,6 +71,31 @@ describe("captcha with a site key", () => {
     await expect(captcha.captchaToken()).rejects.toThrow("no_host");
   });
 
+  it("gives a person time once the box appears, and times out again if it goes away unsolved", async () => {
+    jest.useFakeTimers();
+    const captcha = load();
+    let request: import("@/services/captcha").CaptchaRequest | null = null;
+    const unregister = captcha.registerCaptchaHost((r) => {
+      if (r) request = r;
+    });
+    const pending = captcha.captchaToken();
+    await jest.advanceTimersByTimeAsync(10_000);
+    request!.interacting(true);
+    await jest.advanceTimersByTimeAsync(captcha.CAPTCHA_TIMEOUT_MS * 3);
+    request!.resolve("ticked");
+    await expect(pending).resolves.toBe("ticked");
+
+    const second = captcha.captchaToken();
+    const failed = expect(second).rejects.toThrow("timeout");
+    await jest.advanceTimersByTimeAsync(1);
+    request!.interacting(true);
+    request!.interacting(false);
+    await jest.advanceTimersByTimeAsync(captcha.CAPTCHA_TIMEOUT_MS + 1);
+    await failed;
+    unregister();
+    jest.useRealTimers();
+  });
+
   it("gives up after the timeout", async () => {
     jest.useFakeTimers();
     const captcha = load();

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 
 import {
@@ -38,8 +38,13 @@ export default function CaptchaHost() {
     const pending = current.current;
     if (pending?.id !== request.id) return;
     const message = parseCaptchaMessage(event.nativeEvent.data);
-    if (message.type === "show") setVisible(true);
-    else if (message.type === "hide") setVisible(false);
+    if (message.type === "show") {
+      setVisible(true);
+      pending.interacting(true);
+    } else if (message.type === "hide") {
+      setVisible(false);
+      pending.interacting(false);
+    }
     else if (message.type === "token") pending.resolve(message.token);
     else pending.reject(new CaptchaError(message.code));
   };
@@ -57,6 +62,15 @@ export default function CaptchaHost() {
           javaScriptEnabled
           style={styles.web}
         />
+        {visible ? (
+          <Pressable
+            onPress={() => current.current?.reject(new CaptchaError("cancelled"))}
+            accessibilityRole="button"
+            style={({ pressed }) => [styles.cancel, pressed && styles.cancelPressed]}
+          >
+            <Text style={styles.cancelText}>Cancel</Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
@@ -68,4 +82,7 @@ const styles = StyleSheet.create({
   card: { width: "100%", maxWidth: 360, borderRadius: 24, backgroundColor: colors.white, padding: 16, gap: 10 },
   title: { fontFamily: fonts.textBold, fontSize: 17, color: colors.atInk, textAlign: "center" },
   web: { width: "100%", height: 80, backgroundColor: "transparent" },
+  cancel: { alignSelf: "center", minHeight: 44, paddingHorizontal: 20, justifyContent: "center", borderRadius: 999 },
+  cancelPressed: { backgroundColor: "rgba(0,79,74,0.08)" },
+  cancelText: { fontFamily: fonts.textBold, fontSize: 16, color: colors.atInk },
 });

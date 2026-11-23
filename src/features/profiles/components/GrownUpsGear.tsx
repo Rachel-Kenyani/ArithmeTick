@@ -45,6 +45,10 @@ export default function GrownUpsGear() {
           router.push(ROUTES.account as never);
         }}
       />
+      <View style={styles.hold} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <HandIcon size={14} strokeWidth={2.4} color={GROWN_UP.ink} />
+        <Text style={styles.holdText}>Hold</Text>
+      </View>
       {tip ? (
         <Animated.View
           entering={FadeIn.duration(150).reduceMotion(ReduceMotion.System)}
@@ -63,6 +67,18 @@ export default function GrownUpsGear() {
 
 const styles = StyleSheet.create({
   wrap: { alignItems: "center", gap: 4 },
+  hold: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: GROWN_UP.bg,
+    borderWidth: 1.5,
+    borderColor: GROWN_UP.border,
+  },
+  holdText: { fontFamily: fonts.textBold, fontSize: 12, lineHeight: 16, color: GROWN_UP.ink },
   tip: {
     position: "absolute",
     top: 6,

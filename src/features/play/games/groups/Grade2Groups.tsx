@@ -8,7 +8,7 @@ import type { GroupsProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
 import { DragItem } from "../place-value/DragItem";
-import { Loose, Prompt, TARGET, partStyles, type Bubble } from "../place-value/parts";
+import { FullBadge, Loose, Prompt, TARGET, partStyles, type Bubble } from "../place-value/parts";
 import { CountBubble } from "../ten-frame/components/CountBubble";
 import { NumberTile } from "../ten-frame/components/NumberTile";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
@@ -171,6 +171,7 @@ export default function Grade2Groups({ level, groups, each, item = "seed", waiti
                       </Animated.View>
                     ))}
                   </View>
+                  {n === each ? <FullBadge /> : null}
                   {bubbles[hole] ? <CountBubble key={bubbles[hole].n} label={bubbles[hole].label} delayMs={bubbles[hole].delayMs} size={holeW} /> : null}
                 </Pressable>
               );

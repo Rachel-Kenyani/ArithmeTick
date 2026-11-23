@@ -8,7 +8,7 @@ import type { HalvesProps } from "@/types/domain";
 import { colors, fonts } from "@/theme";
 
 import { DragItem } from "../place-value/DragItem";
-import { Loose, Prompt, TARGET, partStyles, type Bubble } from "../place-value/parts";
+import { FullBadge, Loose, Prompt, TARGET, partStyles, type Bubble } from "../place-value/parts";
 import { NumberTile } from "../ten-frame/components/NumberTile";
 import { COUNT_STEP_MS } from "../ten-frame/constants";
 import { useScheduler } from "../ten-frame/hooks/useScheduler";
@@ -170,6 +170,7 @@ export default function Grade2Halves({ level, grade = 2, total, shares = 2, item
                       <Loose item={item} size={cell} bubble={bubbles[`${plate}-${i}`]} />
                     </Animated.View>
                   ))}
+                  {onPlate[plate] === half ? <FullBadge /> : null}
                 </View>
               </View>
             ))}

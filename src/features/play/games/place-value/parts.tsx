@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import CounterFace, { type CounterItem } from "@/features/play/components/CounterFace";
 import SpokenText from "@/components/ui/SpokenText";
-import { ArrowRightIcon, ReplayIcon, SpeechIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, CheckIcon, ReplayIcon, SpeechIcon } from "@/components/ui/icons";
 import { narration } from "@/services/voice/narration";
 import type { PlaceValuePuzzle } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -119,6 +119,31 @@ export function Equation({
     </View>
   );
 }
+
+/** A tick in the corner of a hole or plate that has its share, so "full" is shown by more than a border colour. */
+export function FullBadge() {
+  return (
+    <View style={badgeStyles.badge} pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <CheckIcon size={16} strokeWidth={3.2} color={colors.white} />
+    </View>
+  );
+}
+
+const badgeStyles = StyleSheet.create({
+  badge: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.atTeal,
+    borderWidth: 2,
+    borderColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export const partStyles = StyleSheet.create({
   pill: {

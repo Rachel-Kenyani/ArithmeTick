@@ -15,6 +15,7 @@ import CounterFace, { type CounterItem } from "@/features/play/components/Counte
 
 import { ToneOverlay } from "./CapFace";
 import { CountBubble } from "./CountBubble";
+import { activateProps } from "@/services/a11y";
 
 interface BottleCapProps {
   item: CounterItem;
@@ -127,9 +128,7 @@ export const BottleCap = memo(function BottleCap({
         accessibilityState={{ disabled: frozen }}
         accessibilityElementsHidden={!visible}
         importantForAccessibility={visible ? "yes" : "no-hide-descendants"}
-        onAccessibilityTap={() => {
-          if (!frozen) onTap(id);
-        }}
+        {...activateProps(frozen ? undefined : () => onTap(id))}
         pointerEvents={visible ? "auto" : "none"}
         style={[styles.cap, { width: size, height: size }, outerStyle]}
       >

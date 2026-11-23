@@ -4,6 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 import { scheduleOnRN } from "react-native-worklets";
 
 import { SPRING_UI } from "../ten-frame/utils/motion";
+import { activateProps } from "@/services/a11y";
 
 export function DragItem({
   enabled,
@@ -67,7 +68,7 @@ export function DragItem({
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View accessible accessibilityRole={enabled ? "button" : "image"} accessibilityLabel={label} onAccessibilityTap={onTap} style={st}>
+      <Animated.View accessible accessibilityRole={enabled ? "button" : "image"} accessibilityLabel={label} {...activateProps(enabled ? onTap : undefined)} style={st}>
         {children}
       </Animated.View>
     </GestureDetector>

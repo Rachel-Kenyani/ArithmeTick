@@ -8,6 +8,7 @@ import { useBreath } from "../hooks/useBreath";
 import { styles } from "../styles";
 import type { WellMode } from "../types";
 import { PopIn } from "./PopIn";
+import { activateProps } from "@/services/a11y";
 
 interface WellProps {
   index: number;
@@ -61,9 +62,10 @@ export const Well = memo(function Well({
   return (
     <Animated.View
       accessible
+      accessibilityRole={isNext ? "button" : "image"}
       accessibilityLabel={label}
       accessibilityHint={isNext ? "Double tap to put a bottle cap here" : undefined}
-      onAccessibilityTap={isNext ? onFillNext : undefined}
+      {...activateProps(isNext ? onFillNext : undefined)}
       style={[
         styles.well,
         { left: x - size / 2, top: y - size / 2, width: size, height: size, borderRadius: radius, zIndex: preview ? 2 : 1 },

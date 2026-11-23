@@ -4,6 +4,7 @@ import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming
 import { scheduleOnRN } from "react-native-worklets";
 
 import { GROWN_UP, InfoIcon } from "@/components/ui/GrownUpNote";
+import { activateProps } from "@/services/a11y";
 import { sfx } from "@/services/audio";
 import { colors, fonts } from "@/theme";
 
@@ -55,7 +56,7 @@ export default function HoldToConfirm({ label, icon, onConfirm, holdMs = 2000, t
       accessibilityState={switchOn === undefined ? undefined : { checked: switchOn }}
       accessibilityLabel={hint ? `${label}. ${hint}` : label}
       accessibilityHint={`Press and hold for ${Math.round(holdMs / 1000)} seconds`}
-      onAccessibilityTap={confirm}
+      {...activateProps(confirm)}
       style={[styles.pill, tone === "danger" && styles.dangerPill, compact && styles.compact, hint ? styles.row : null, surface === "card" && styles.onCard]}
     >
       <Animated.View style={[styles.fill, tone === "danger" && styles.dangerFill, fillStyle]} />

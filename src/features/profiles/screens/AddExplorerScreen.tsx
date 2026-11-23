@@ -2,7 +2,6 @@ import { StyleSheet } from "react-native";
 import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
 
 import Button from "@/components/ui/Button";
-import GrownUpNote from "@/components/ui/GrownUpNote";
 import { GradCapIcon, SmileIcon } from "@/components/ui/icons";
 import Panel from "@/components/ui/Panel";
 import ScreenHeading from "@/components/ui/ScreenHeading";

@@ -1,5 +1,4 @@
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useReducedMotion } from "react-native-reanimated";
 
@@ -10,10 +9,7 @@ import { useLayoutWindow } from "@/hooks/useUiScale";
 import SplashBackdrop, {
   SPLASH_BACKGROUND,
 } from "@/components/backdrops/SplashBackdrop";
-import HoldToConfirm from "@/components/ui/HoldToConfirm";
-import { ROUTES } from "@/constants/routes";
-import { actions, useAppState } from "@/state/store";
-import { colors } from "@/theme";
+import { useAppState } from "@/state/store";
 import { useGuard } from "@/hooks/useGuard";
 
 import GrownUpsGear from "../components/GrownUpsGear";

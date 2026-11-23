@@ -75,7 +75,8 @@ async function sign(userId: string): Promise<string> {
 const unsubscribeUrl = async (userId: string) =>
   `${SUPABASE_URL}/functions/v1/send-report?unsubscribe=${userId}&sig=${await sign(userId)}`;
 
-const escape = (text: string) =>
+/** Makes text safe to put inside the email's HTML. */
+const escapeHtml = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
 const FONT = "font-family:'Quicksand','Segoe UI',Arial,sans-serif;";
@@ -91,17 +92,17 @@ function childBlock(child: Child, kind: "weekly" | "grade"): string {
   const stars = Math.max(0, child.stars - child.sent_stars);
   const headline =
     kind === "grade"
-      ? `What ${escape(child.child_name)} learned`
-      : `${escape(child.child_name)} · Grade ${child.grade}`;
+      ? `What ${escapeHtml(child.child_name)} learned`
+      : `${escapeHtml(child.child_name)} · Grade ${child.grade}`;
   const thisWeek =
     kind === "grade"
       ? `All ${child.level_count} levels done, with ${plural(child.stars, "star", "stars")} so far.`
       : `This week: ${plural(levels, "level", "levels")} and ${plural(stars, "star", "stars")}. Now on level ${Math.min(child.levels_done + 1, child.level_count)} of ${child.level_count}.`;
   const skills = child.skills_line
-    ? `<p style="margin:10px 0 0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${escape(child.child_name)}: ${escape(child.skills_line)}.</p>`
+    ? `<p style="margin:10px 0 0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${escapeHtml(child.child_name)}: ${escapeHtml(child.skills_line)}.</p>`
     : "";
   const idea = child.practice_idea
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;background:#FFF6D6;border-radius:18px;"><tr><td style="padding:14px 16px;${FONT}font-size:15px;line-height:22px;color:#1B2B2A;"><strong style="color:#004F4A;">Try at home:</strong> ${escape(child.practice_idea)}</td></tr></table>`
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;background:#FFF6D6;border-radius:18px;"><tr><td style="padding:14px 16px;${FONT}font-size:15px;line-height:22px;color:#1B2B2A;"><strong style="color:#004F4A;">Try at home:</strong> ${escapeHtml(child.practice_idea)}</td></tr></table>`
     : "";
   return `<tr><td style="padding:18px 32px 6px;">
   <h2 style="margin:0;${DISPLAY}font-size:22px;line-height:28px;font-weight:700;color:#006F68;">${headline}</h2>
@@ -110,7 +111,7 @@ function childBlock(child: Child, kind: "weekly" | "grade"): string {
 }
 
 function emailHtml(title: string, intro: string, blocks: string, unsubscribe: string): string {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(title)}</title>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(title)}</title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet"></head>
 <body style="margin:0;padding:0;background:#EBF9F7;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EBF9F7;"><tr><td align="center" style="padding:32px 16px;">
@@ -124,7 +125,7 @@ function emailHtml(title: string, intro: string, blocks: string, unsubscribe: st
   <p style="margin:14px 0 0;${FONT}font-size:13px;letter-spacing:1px;color:#E4D6F7;">Maths we learn together</p>
 </td></tr>
 <tr><td align="center" style="padding:28px 32px 4px;">
-  <h1 style="margin:0 0 8px;${DISPLAY}font-size:26px;line-height:32px;font-weight:700;color:#006F68;">${escape(title)}</h1>
+  <h1 style="margin:0 0 8px;${DISPLAY}font-size:26px;line-height:32px;font-weight:700;color:#006F68;">${escapeHtml(title)}</h1>
   <p style="margin:0;${FONT}font-size:16px;line-height:24px;color:#1B2B2A;">${intro}</p>
 </td></tr>
 ${blocks}
@@ -147,39 +148,52 @@ async function send(to: string, subject: string, html: string): Promise<boolean>
 }
 
 async function markSent(children: readonly Child[]): Promise<void> {
-  for (const c of children) {
-    await db(`child_reports?user_id=eq.${c.user_id}&child_id=eq.${encodeURIComponent(c.child_id)}`, {
-      method: "PATCH",
-      body: JSON.stringify({ sent_levels: c.total_levels, sent_stars: c.stars }),
-    });
-  }
+  await Promise.all(
+    children.map((c) =>
+      db(`child_reports?user_id=eq.${c.user_id}&child_id=eq.${encodeURIComponent(c.child_id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ sent_levels: c.total_levels, sent_stars: c.stars }),
+      }),
+    ),
+  );
 }
 
-/** Every Sunday: one email per family, about the children who played since the last one. Families who didn't play get nothing. */
+/** Emails one family about the children who played since their last report. True when an email went out. */
+async function sendWeeklyTo(s: Settings): Promise<boolean> {
+  const since = s.last_sent_at ?? s.opted_in_at;
+  const played = (await (
+    await db(`child_reports?select=*&user_id=eq.${s.user_id}&updated_at=gt.${encodeURIComponent(since)}&order=child_name`)
+  ).json()) as Child[];
+  if (played.length === 0) return false;
+  const to = await emailOf(s.user_id);
+  if (!to) return false;
+  const names = played.map((c) => escapeHtml(c.child_name));
+  const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+  const html = emailHtml(
+    "This week in ArithmeTick",
+    `Here's how ${who} did this week.`,
+    played.map((c) => childBlock(c, "weekly")).join(""),
+    await unsubscribeUrl(s.user_id),
+  );
+  if (!(await send(to, `This week in ArithmeTick: ${played.map((c) => c.child_name).join(", ")}`, html))) return false;
+  await Promise.all([
+    markSent(played),
+    db(`report_settings?user_id=eq.${s.user_id}`, { method: "PATCH", body: JSON.stringify({ last_sent_at: new Date().toISOString() }) }),
+  ]);
+  return true;
+}
+
+/**
+ * Every Sunday: one email per family, about the children who played since the last one. Families who didn't play get
+ * nothing. Families are emailed one after another, not all at once, because Resend accepts only a few emails a second.
+ */
 async function sendWeekly(): Promise<Response> {
   const settings = (await (await db("report_settings?select=*")).json()) as Settings[];
-  let sent = 0;
-  for (const s of settings) {
-    const since = s.last_sent_at ?? s.opted_in_at;
-    const played = (await (
-      await db(`child_reports?select=*&user_id=eq.${s.user_id}&updated_at=gt.${encodeURIComponent(since)}&order=child_name`)
-    ).json()) as Child[];
-    if (played.length === 0) continue;
-    const to = await emailOf(s.user_id);
-    if (!to) continue;
-    const names = played.map((c) => escape(c.child_name));
-    const who = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-    const html = emailHtml(
-      "This week in ArithmeTick",
-      `Here's how ${who} did this week.`,
-      played.map((c) => childBlock(c, "weekly")).join(""),
-      await unsubscribeUrl(s.user_id),
-    );
-    if (!(await send(to, `This week in ArithmeTick: ${played.map((c) => c.child_name).join(", ")}`, html))) continue;
-    await markSent(played);
-    await db(`report_settings?user_id=eq.${s.user_id}`, { method: "PATCH", body: JSON.stringify({ last_sent_at: new Date().toISOString() }) });
-    sent++;
-  }
+  const results = await settings.reduce<Promise<boolean[]>>(
+    async (done, s) => [...(await done), await sendWeeklyTo(s)],
+    Promise.resolve([]),
+  );
+  const sent = results.filter(Boolean).length;
   console.log(`send-report weekly: ${sent} of ${settings.length} families emailed`);
   return reply(200, { sent });
 }
@@ -196,7 +210,7 @@ async function sendGrade(userId: string, childId: string): Promise<Response> {
   if (!child || !to) return reply(200, { sent: 0 });
   const html = emailHtml(
     `${child.child_name} finished Grade ${child.grade}!`,
-    `Every level in Grade ${child.grade} is done. Here's where ${escape(child.child_name)} is now.`,
+    `Every level in Grade ${child.grade} is done. Here's where ${escapeHtml(child.child_name)} is now.`,
     childBlock(child, "grade"),
     await unsubscribeUrl(userId),
   );
@@ -247,30 +261,36 @@ function preview(kind: string): Response {
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
 }
 
+/** A link opened in a browser: a report preview, or the unsubscribe link from an email. */
+async function handleGet(url: URL): Promise<Response> {
+  const previewKind = url.searchParams.get("preview");
+  if (previewKind) return preview(previewKind);
+  const userId = url.searchParams.get("unsubscribe");
+  return userId ? await unsubscribe(userId, url.searchParams.get("sig") ?? "") : reply(404, { error: "not_found" });
+}
+
+/** The end-of-grade email, sent by the app for the signed-in grown-up. */
+async function handleGrade(req: Request, childId: string): Promise<Response> {
+  const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+  const userId = token ? await userIdFor(token) : null;
+  if (!userId) return reply(401, { error: "not_signed_in" });
+  return await sendGrade(userId, childId);
+}
+
+/** The weekly run (from the schedule, with the report key) or an end-of-grade email (from the app). */
+async function handlePost(req: Request): Promise<Response> {
+  if (!RESEND_API_KEY || !REPORT_FROM || !REPORT_KEY) return reply(500, { error: "not_configured" });
+  const body = (await req.json().catch(() => ({}))) as { kind?: string; child_id?: string };
+  if (body.kind === "weekly") {
+    return req.headers.get("x-report-key") === REPORT_KEY ? await sendWeekly() : reply(401, { error: "not_allowed" });
+  }
+  if (body.kind === "grade" && body.child_id) return await handleGrade(req, body.child_id);
+  return reply(400, { error: "unknown_kind" });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
-  const url = new URL(req.url);
-
-  if (req.method === "GET") {
-    const previewKind = url.searchParams.get("preview");
-    if (previewKind) return preview(previewKind);
-    const userId = url.searchParams.get("unsubscribe");
-    return userId ? await unsubscribe(userId, url.searchParams.get("sig") ?? "") : reply(404, { error: "not_found" });
-  }
-  if (req.method !== "POST") return reply(405, { error: "method_not_allowed" });
-  if (!RESEND_API_KEY || !REPORT_FROM || !REPORT_KEY) return reply(500, { error: "not_configured" });
-
-  const body = (await req.json().catch(() => ({}))) as { kind?: string; child_id?: string };
-
-  if (body.kind === "weekly") {
-    if (req.headers.get("x-report-key") !== REPORT_KEY) return reply(401, { error: "not_allowed" });
-    return await sendWeekly();
-  }
-  if (body.kind === "grade" && body.child_id) {
-    const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-    const userId = token ? await userIdFor(token) : null;
-    if (!userId) return reply(401, { error: "not_signed_in" });
-    return await sendGrade(userId, body.child_id);
-  }
-  return reply(400, { error: "unknown_kind" });
+  if (req.method === "GET") return await handleGet(new URL(req.url));
+  if (req.method === "POST") return await handlePost(req);
+  return reply(405, { error: "method_not_allowed" });
 });

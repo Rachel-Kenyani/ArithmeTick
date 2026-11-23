@@ -33,6 +33,10 @@ export const profileActions = {
     }));
   },
 
+  setLargeText(id: string, on: boolean) {
+    updateProfile(id, (profile) => (profile.largeText === on ? profile : { ...profile, largeText: on, editedAt: Date.now() }));
+  },
+
   setSound(id: string, change: Partial<SoundSettings>) {
     updateProfile(id, (profile) => ({ ...profile, sound: { ...DEFAULT_SOUND, ...profile.sound, ...change }, editedAt: Date.now() }));
   },

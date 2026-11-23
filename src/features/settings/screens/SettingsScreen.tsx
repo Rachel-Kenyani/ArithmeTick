@@ -68,6 +68,14 @@ export default function SettingsScreen() {
           icon={<SpeechIcon size={20} strokeWidth={2.2} color={GROWN_UP.ink} />}
           onConfirm={() => actions.setSound(profile.id, { voice: !voice })}
         />
+        <HoldToConfirm
+          surface="card"
+          label="Larger text"
+          status={profile.largeText ? "On" : "Off"}
+          hint={profile.largeText ? "Hold for 2 seconds to turn off" : "Hold for 2 seconds to turn on"}
+          icon={<Text style={styles.aa}>Aa</Text>}
+          onConfirm={() => actions.setLargeText(profile.id, !profile.largeText)}
+        />
         <Text style={styles.note}>
           {voice
             ? `Turn it off if ${profile.name} reads well or needs quiet. Sound effects have their own button in the top bar.`
@@ -84,6 +92,7 @@ const styles = StyleSheet.create({
   grownUp: { gap: 10 },
   grownUpHead: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 6 },
   grownUpTitle: { fontFamily: fonts.textBold, fontSize: 13, letterSpacing: 1, textTransform: "uppercase", color: GROWN_UP.ink },
+  aa: { fontFamily: fonts.textBold, fontSize: 18, color: GROWN_UP.ink },
   note: { fontFamily: fonts.textSemiBold, fontSize: 14, lineHeight: 19, color: colors.muted, paddingHorizontal: 6 },
   label: { fontFamily: fonts.textBold, fontSize: 18, color: colors.atTeal },
 });

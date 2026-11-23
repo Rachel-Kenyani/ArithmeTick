@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from "react
 import Animated, { FadeIn, ReduceMotion, useReducedMotion } from "react-native-reanimated";
 
 import { sfx } from "@/services/audio";
+import { scaleText, useTextScale } from "@/hooks/useTextScale";
 import { narration } from "@/services/voice/narration";
 import type { ArrayProps, LevelDraft } from "@/types/domain";
 import { colors, fonts } from "@/theme";
@@ -223,6 +224,7 @@ function boardLine(phase: Phase, pz: Puzzle, tag: string): { text: string; clip:
 
 function GoalPill({ pz, phase, feedback }: Readonly<{ pz: Puzzle; phase: Phase; feedback: string | null }>) {
   const building = phase === "build" || phase === "show" || phase === "locked";
+  const scale = useTextScale();
   let label = `${pz.rows} rows of ${pz.cols} make ${pz.count} seeds!`;
   if (feedback) {
     label = feedback;
@@ -242,7 +244,7 @@ function GoalPill({ pz, phase, feedback }: Readonly<{ pz: Puzzle; phase: Phase; 
           ))}
         </View>
       ) : null}
-      <Text style={styles.pillText}>{label}</Text>
+      <Text style={scaleText(styles.pillText, scale)}>{label}</Text>
     </View>
   );
 }

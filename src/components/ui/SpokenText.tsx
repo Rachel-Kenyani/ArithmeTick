@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { StyleSheet, Text, type StyleProp, type TextStyle } from "react-native";
 
+import { scaleText, useTextScale } from "@/hooks/useTextScale";
 import { narration } from "@/services/voice/narration";
 import { colors } from "@/theme";
 
@@ -11,10 +12,11 @@ export default function SpokenText({
   offset = 0,
 }: Readonly<{ text: string; style?: StyleProp<TextStyle>; source?: string; offset?: number }>) {
   const spoken = useSyncExternalStore(narration.subscribe, narration.current);
+  const scale = useTextScale();
   const range = spoken?.text === source ? spoken : null;
   const words = [...text.matchAll(/\S+/g)].map((m) => ({ word: m[0], at: m.index }));
   return (
-    <Text style={style} accessibilityLabel={text}>
+    <Text style={scaleText(style, scale)} accessibilityLabel={text}>
       {words.map(({ word, at }, i) => {
         const lit = range !== null && i + offset >= range.from && i + offset < range.to;
         return (

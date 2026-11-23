@@ -39,6 +39,7 @@ export function mergeProfile(local: ChildProfile, remote: ChildProfile): ChildPr
     grade: identity.grade,
     schoolCode: identity.schoolCode,
     sound: identity.sound,
+    largeText: identity.largeText,
     editedAt: Math.max(local.editedAt ?? 0, remote.editedAt ?? 0) || undefined,
     progress: maxPerGrade(local.progress, remote.progress) as Record<Grade, number>,
     stars: Math.max(local.stars, remote.stars),

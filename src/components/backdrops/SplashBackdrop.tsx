@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Image, StyleSheet, View, type ImageSourcePropType } from "react-native";
 
+import { paintCounter } from "@/services/splashGate";
+
 import LayeredSplash from "./LayeredSplash";
 
 export const SPLASH_BACKGROUND = require("../../../assets/splash/bg-12.jpg");
@@ -20,6 +22,7 @@ export default function SplashBackdrop({
       ) : (
         <Image
         source={source}
+        onLoad={paintCounter(1)}
         resizeMode="cover"
         blurRadius={source === HOME_BACKGROUND ? 2 : 0}
         style={styles.image}

@@ -13,6 +13,7 @@ import CaptchaHost from "@/components/ui/CaptchaHost";
 import { useCalm } from "@/hooks/useCalm";
 import { useApplySoundSettings } from "@/hooks/useSoundSettings";
 import { startFamilySync } from "@/services/familySync";
+import { whenBackdropPainted } from "@/services/splashGate";
 import { whenHydrated } from "@/state/store";
 import { colors } from "@/theme";
 
@@ -36,7 +37,8 @@ export default function RootLayout() {
   const ready = (fontsLoaded || fontError !== null) && stateLoaded;
 
   useEffect(() => {
-    if (ready) void SplashScreen.hideAsync().catch(() => {});
+    if (!ready) return;
+    void whenBackdropPainted().then(() => SplashScreen.hideAsync().catch(() => {}));
   }, [ready]);
 
   useEffect(() => (stateLoaded ? startFamilySync() : undefined), [stateLoaded]);

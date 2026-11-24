@@ -55,7 +55,11 @@
         {
           "backgroundColor": "#D2EFEC",
           "image": "./assets/splash-icon.png",
-          "imageWidth": 346
+          "imageWidth": 346,
+          "android": {
+            "image": "./assets/android-icon-foreground.png",
+            "imageWidth": 240
+          }
         }
       ],
       "expo-asset",

@@ -82,7 +82,7 @@ export default function SignupScreen() {
           </Button>
 
           <Text style={styles.legal}>
-            By continuing, you agree to our{" "}
+            By continuing, you confirm you’re a parent or guardian aged 18 or over, and agree to our{" "}
             <Text style={styles.legalLink} accessibilityRole="link" onPress={() => void Linking.openURL(TERMS_URL)}>
               Terms of Use
             </Text>{" "}

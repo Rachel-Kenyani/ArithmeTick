@@ -10,6 +10,8 @@ import Animated, {
 import BasketArt from "@/components/illustrations/BasketArt";
 import BrijoMascot from "@/components/mascot/BrijoMascot";
 import Button from "@/components/ui/Button";
+import Scaled from "@/components/ui/Scaled";
+import { useUiScale } from "@/hooks/useUiScale";
 import GrownUpNote from "@/components/ui/GrownUpNote";
 import Panel from "@/components/ui/Panel";
 import { SpeechIcon } from "@/components/ui/icons";
@@ -18,6 +20,9 @@ import type { StoryScene, StoryStop } from "@/data/stories";
 import { narration } from "@/services/voice/narration";
 import { colors, fonts } from "@/theme";
 import Divider from "@/components/ui/Divider";
+
+/** The story card's width on a phone; a tablet enlarges it with everything inside. */
+const CARD_WIDTH = 420;
 
 const POP = ZoomIn.springify()
   .stiffness(300)
@@ -41,6 +46,7 @@ export default function StoryIntro({
   onStart,
 }: Readonly<StoryIntroProps>) {
   const line = story.ask;
+  const scale = useUiScale();
 
   useEffect(() => {
     narration.story(line, grade, level);
@@ -54,8 +60,9 @@ export default function StoryIntro({
       style={[StyleSheet.absoluteFill, styles.overlay]}
       accessibilityViewIsModal
     >
-      <Animated.View entering={POP} style={styles.card}>
-        <Panel style={styles.panel}>
+      <Animated.View entering={POP} style={[styles.card, { maxWidth: CARD_WIDTH * scale }]}>
+        <Scaled>
+          <Panel style={styles.panel}>
           <View style={styles.top}>
             <BrijoMascot mood="talk" size={112} />
           </View>
@@ -81,7 +88,8 @@ export default function StoryIntro({
           <Button trailing="arrow" onPress={onStart}>
             Let&apos;s go!
           </Button>
-        </Panel>
+          </Panel>
+        </Scaled>
       </Animated.View>
     </Animated.View>
   );
@@ -164,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "rgba(0,40,37,0.35)",
   },
-  card: { width: "100%", maxWidth: 420 },
+  card: { width: "100%" },
   panel: { alignItems: "center", gap: 12 },
   top: { flexDirection: "row", alignItems: "center", gap: 10 },
   scene: {

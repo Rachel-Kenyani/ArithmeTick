@@ -13,6 +13,7 @@ import TryAgainPill from "@/features/play/components/TryAgainPill";
 import { usePlaySession } from "@/features/play/hooks/usePlaySession";
 import { gutterFor } from "@/features/play/utils/playFormat";
 import SplashBackdrop from "@/components/backdrops/SplashBackdrop";
+import { ScaledFill } from "@/components/ui/Scaled";
 import AppTopBar from "@/components/top-bar/AppTopBar";
 import InfoBanner from "@/components/top-bar/InfoBanner";
 import { levelCount, type LevelDef } from "@/data/levels";
@@ -82,7 +83,9 @@ export default function PlaySession({ profile, level }: Readonly<{ profile: Chil
             style={styles.mat}
             entering={reduced ? undefined : FadeIn.duration(300)}
           >
-            <LevelContent level={level} childName={profile.name} palActive={palActive} waiting={storyOpen} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
+            <ScaledFill>
+              <LevelContent level={level} childName={profile.name} palActive={palActive} waiting={storyOpen} onStruggle={engagePal} onAttempt={handleAttempt} onDone={handleComplete} draft={draft} onDraft={handleDraft} />
+            </ScaledFill>
           </Animated.View>
           {missedAt !== null && !celebrating ? <TryAgainPill key={missedAt} reduced={reduced} /> : null}
         </View>

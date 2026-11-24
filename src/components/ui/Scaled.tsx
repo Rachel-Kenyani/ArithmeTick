@@ -44,3 +44,31 @@ const styles = StyleSheet.create({
   outer: { width: "100%" },
   inner: { position: "absolute", left: 0, top: 0, transformOrigin: "top left" },
 });
+
+/**
+ * Like Scaled, but for an area that fills its parent, such as a level's play mat: the children get a phone-sized box of
+ * the same shape, which is then enlarged to fill the space on a tablet. On phones it is a plain filling View.
+ */
+export function ScaledFill({ children, style }: Readonly<{ children: ReactNode; style?: StyleProp<ViewStyle> }>) {
+  const scale = useUiScale();
+  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+
+  if (scale === 1) return <View style={[fillStyles.fill, style]}>{children}</View>;
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout;
+    setSize((prev) => (prev?.width === width && prev?.height === height ? prev : { width, height }));
+  };
+
+  return (
+    <View style={[fillStyles.fill, style]} onLayout={onLayout}>
+      {size ? (
+        <View style={[styles.inner, { width: size.width / scale, height: size.height / scale, transform: [{ scale }] }]}>{children}</View>
+      ) : null}
+    </View>
+  );
+}
+
+const fillStyles = StyleSheet.create({
+  fill: { flex: 1, minHeight: 0 },
+});

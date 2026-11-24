@@ -61,8 +61,9 @@ export default function CaptchaHost() {
           onError={() => current.current?.reject(new CaptchaError("webview_error"))}
           javaScriptEnabled
           domStorageEnabled
-          // The web view's own wrapper stretches to fill its parent; on the card the parent has no height, so the
-          // wrapper is given the widget's size or the checkbox collapses to nothing.
+          thirdPartyCookiesEnabled
+          // The web view's wrapper starts as `flex: 1`, which sizes it from 0 and ignores its height inside a card that
+          // has no height of its own. `flex: 0` makes it use the 80px below, or the checkbox collapses to nothing.
           containerStyle={styles.webBox}
           style={styles.web}
         />
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   scrim: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,30,28,0.55)", alignItems: "center", justifyContent: "center", padding: 16, zIndex: 1000 },
   card: { width: "100%", maxWidth: 360, borderRadius: 24, backgroundColor: colors.white, padding: 16, gap: 10 },
   title: { fontFamily: fonts.textBold, fontSize: 17, color: colors.atInk, textAlign: "center" },
-  webBox: { width: "100%", height: 80, flexGrow: 0, flexShrink: 0 },
+  webBox: { flex: 0, width: "100%", height: 80 },
   web: { width: "100%", height: 80, backgroundColor: "transparent" },
   cancel: { alignSelf: "center", minHeight: 44, paddingHorizontal: 20, justifyContent: "center", borderRadius: 999 },
   cancelPressed: { backgroundColor: "rgba(0,79,74,0.08)" },

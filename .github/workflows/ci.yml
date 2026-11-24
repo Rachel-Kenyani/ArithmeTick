@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: yarn
@@ -28,19 +28,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
       - run: deno check supabase/functions/send-report/index.ts supabase/functions/delete-account/index.ts
-      - run: deno lint supabase/functions/
+      # Only the deployed functions; send-sms is parked with phone sign-in.
+      - run: deno lint supabase/functions/send-report supabase/functions/delete-account
 
   dependencies:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
       # Reports high and critical advisories as a warning. Today they all come from Expo's command-line tools

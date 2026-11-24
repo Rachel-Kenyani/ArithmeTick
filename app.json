@@ -30,9 +30,14 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.SYSTEM_ALERT_WINDOW"
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
       ],
-      "allowBackup": false
+      "allowBackup": false,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "plugins": [
       "expo-router",
@@ -77,6 +82,9 @@
         "projectId": "e7613e45-009a-4ae2-9597-f7c7ace43a81"
       }
     },
-    "owner": "kenyani"
+    "owner": "kenyani",
+    "updates": {
+      "url": "https://u.expo.dev/e7613e45-009a-4ae2-9597-f7c7ace43a81"
+    }
   }
 }

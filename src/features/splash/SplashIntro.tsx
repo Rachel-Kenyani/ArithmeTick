@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import Animated, { useReducedMotion } from "react-native-reanimated";
 
@@ -15,8 +16,12 @@ import { useSplashStyles } from "./hooks/useSplashStyles";
 import { useSplashTimeline } from "./hooks/useSplashTimeline";
 import { useSplashValues } from "./hooks/useSplashValues";
 import { splashLayout } from "./layout";
+import { backdropPainted } from "@/services/splashGate";
 
 export default function SplashIntro({ onDone }: Readonly<{ onDone: () => void }>) {
+  // The intro opens on plain mint, the same as Android's splash, so the splash can close straight away rather than
+  // hiding the start of the animation while it waits for a jungle background.
+  useEffect(() => backdropPainted(), []);
   const reduce = useReducedMotion();
   const { width: W, height: H } = useWindowDimensions();
 
